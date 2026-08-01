@@ -1,0 +1,1577 @@
+[
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "lambda x: x if x > 0 else 0 的功能是？",
+    "options": [
+      "返回x的正数部分，负数变0",
+      "返回x",
+      "返回0",
+      "返回x的绝对值"
+    ],
+    "answer": "0",
+    "explanation": "这是lambda结合<b>三元表达式</b>：x>0返回x，否则返回0，即返回<b>正数部分</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "list(map(lambda x: x**2, [1,2,3])) 的结果是？",
+    "options": [
+      "[1,2,3]",
+      "[1,4,9]",
+      "[2,4,6]",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "map对每个元素求平方，1²=1,2²=4,3²=9，得<b>[1,4,9]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "list(filter(lambda x: x % 2 == 0, [1,2,3,4])) 的结果是？",
+    "options": [
+      "[1,3]",
+      "[2,4]",
+      "[1,2,3,4]",
+      "[]"
+    ],
+    "answer": "1",
+    "explanation": "filter保留lambda返回True的元素（偶数），得<b>[2,4]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "sorted([3,1,2], key=lambda x: -x) 的结果是？",
+    "options": [
+      "[1,2,3]",
+      "[3,2,1]",
+      "[3,1,2]",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "key=lambda x:-x按负数排序，相当于<b>降序</b>，得[3,2,1]。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "sorted(['bb','aaa','c'], key=lambda x: len(x)) 的结果是？",
+    "options": [
+      "['c','bb','aaa']",
+      "['aaa','bb','c']",
+      "['bb','aaa','c']",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "按<b>长度</b>排序，c(1)<bb(2)<aaa(3)，得['c','bb','aaa']。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "max([1,5,3], key=lambda x: -x) 的结果是？",
+    "options": [
+      "5",
+      "1",
+      "3",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "key=lambda x:-x按负数找最大，-1最大（因-1>-5>-3），对应原值<b>1</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "any([0, 0, 1]) 的结果是？",
+    "options": [
+      "True",
+      "False",
+      "1",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>any()</b>只要有一个为True就返回True，里面有1，为<b>True</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "all([1, 2, 0]) 的结果是？",
+    "options": [
+      "True",
+      "False",
+      "0",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "<b>all()</b>要求全部为True才返回True，有0为False，所以结果是<b>False</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "list(zip([1,2], [3,4])) 的结果是？",
+    "options": [
+      "[(1,3),(2,4)]",
+      "[1,2,3,4]",
+      "[(1,2),(3,4)]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>zip</b>把多个列表按位置配对，得<b>[(1,3),(2,4)]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "list(enumerate(['a','b'])) 的结果是？",
+    "options": [
+      "[(0,'a'),(1,'b')]",
+      "['a','b']",
+      "[(1,'a'),(2,'b')]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>enumerate</b>给元素配索引（从0开始），得<b>[(0,'a'),(1,'b')]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "from functools import reduce; reduce(lambda a,b: a+b, [1,2,3]) 的结果是？",
+    "options": [
+      "6",
+      "123",
+      "[1,2,3]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>reduce</b>逐步累积：((1+2)+3)=<b>6</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "list(map(str, [1,2,3])) 的结果是？",
+    "options": [
+      "['1','2','3']",
+      "[1,2,3]",
+      "'123'",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "map把每个元素转成字符串，得<b>['1','2','3']</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "sorted([3,1,2]) 的结果是？",
+    "options": [
+      "[1,2,3]",
+      "[3,2,1]",
+      "[3,1,2]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>sorted()</b>默认升序，得<b>[1,2,3]</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "max([3,7,2]) 的结果是？",
+    "options": [
+      "3",
+      "7",
+      "2",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "<b>max()</b>返回最大值，是<b>7</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "min([3,7,2]) 的结果是？",
+    "options": [
+      "3",
+      "7",
+      "2",
+      "报错"
+    ],
+    "answer": "2",
+    "explanation": "<b>min()</b>返回最小值，是<b>2</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "judge",
+    "topic_name": "lambda与内置函数",
+    "content": "map 对可迭代对象的每个元素应用函数，返回迭代器。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>map</b>返回迭代器，常用list()转成列表查看。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "lambda与内置函数",
+    "content": "filter 根据条件筛选元素，保留返回True的。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>filter</b>保留使函数返回True的元素。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "lambda与内置函数",
+    "content": "sorted 的 key 参数可以接收 lambda 来自定义排序规则。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>key=lambda</b>常用于自定义排序。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "lambda与内置函数",
+    "content": "any 只要有一个元素为True就返回True。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>any</b>有一个True即True。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "lambda与内置函数",
+    "content": "all 要求所有元素都为True才返回True。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>all</b>全部为True才True。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "lambda与内置函数",
+    "content": "print(list(map(lambda x: x ** 2, [1, 2, 3])))",
+    "options": null,
+    "answer": "[1, 4, 9]",
+    "explanation": "每个元素平方，得<b>[1, 4, 9]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "lambda与内置函数",
+    "content": "print(list(filter(lambda x: x % 2 == 0, [1, 2, 3, 4])))",
+    "options": null,
+    "answer": "[2, 4]",
+    "explanation": "保留偶数，得<b>[2, 4]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "lambda与内置函数",
+    "content": "print(sorted([3, 1, 2]))",
+    "options": null,
+    "answer": "[1, 2, 3]",
+    "explanation": "升序排序，得<b>[1, 2, 3]</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "calc",
+    "topic_name": "lambda与内置函数",
+    "content": "print(max([3, 7, 2]))",
+    "options": null,
+    "answer": "7",
+    "explanation": "最大值是<b>7</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "calc",
+    "topic_name": "lambda与内置函数",
+    "content": "print(list(zip([1, 2], [3, 4])))",
+    "options": null,
+    "answer": "[(1, 3), (2, 4)]",
+    "explanation": "按位置配对，得<b>[(1, 3), (2, 4)]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "abs(-5) 的结果是？",
+    "options": [
+      "5",
+      "-5",
+      "0",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>abs()</b>返回绝对值，-5的绝对值是<b>5</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "round(3.7) 的结果是？",
+    "options": [
+      "3",
+      "4",
+      "3.7",
+      "3.5"
+    ],
+    "answer": "1",
+    "explanation": "<b>round()</b>四舍五入，3.7进位得<b>4</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "divmod(7, 2) 的结果是？",
+    "options": [
+      "(3, 1)",
+      "(1, 3)",
+      "3",
+      "1"
+    ],
+    "answer": "0",
+    "explanation": "<b>divmod()</b>返回(商,余数)，7÷2=3余1，得<b>(3,1)</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "pow(2, 3) 的结果是？",
+    "options": [
+      "6",
+      "8",
+      "9",
+      "5"
+    ],
+    "answer": "1",
+    "explanation": "<b>pow(a,b)</b>是a的b次方，2³=<b>8</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "sum([1, 2, 3]) 的结果是？",
+    "options": [
+      "6",
+      "123",
+      "[1,2,3]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>sum()</b>求和，1+2+3=<b>6</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "list(reversed([1, 2, 3])) 的结果是？",
+    "options": [
+      "[3, 2, 1]",
+      "[1, 2, 3]",
+      "[1, 3, 2]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>reversed()</b>反转，得<b>[3, 2, 1]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "list(zip([1, 2], ['a', 'b'])) 的结果是？",
+    "options": [
+      "[(1,'a'),(2,'b')]",
+      "[1,2,'a','b']",
+      "[(1,2),('a','b')]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>zip</b>按位置配对，得<b>[(1,'a'),(2,'b')]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "list(enumerate(['x','y'])) 的结果是？",
+    "options": [
+      "[(0,'x'),(1,'y')]",
+      "['x','y']",
+      "[(1,'x'),(2,'y')]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>enumerate</b>配索引(从0)，得<b>[(0,'x'),(1,'y')]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "a, *b = [1, 2, 3, 4] 后 b 是？",
+    "options": [
+      "[2, 3, 4]",
+      "2",
+      "[1]",
+      "[1, 2, 3, 4]"
+    ],
+    "answer": "0",
+    "explanation": "<b>*b</b>收集剩余元素，a=1，b=<b>[2, 3, 4]</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "def f(a, b, c): pass，f(*[1, 2, 3]) 中 * 的作用是？",
+    "options": [
+      "解包列表成位置参数",
+      "解包成字典",
+      "删除列表",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>*</b>把列表解包成位置参数，f(*[1,2,3])等价于f(1,2,3)。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "def f(a, b): pass，f(**{'a':1, 'b':2}) 中 ** 的作用是？",
+    "options": [
+      "解包字典成关键字参数",
+      "解包成位置参数",
+      "删除字典",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>**</b>把字典解包成关键字参数，等价于f(a=1, b=2)。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "round(3.14159, 2) 的结果是？",
+    "options": [
+      "3.14",
+      "3.1",
+      "3",
+      "3.15"
+    ],
+    "answer": "0",
+    "explanation": "<b>round(x, n)</b>保留n位小数，3.14159保留2位得<b>3.14</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "sum([1, 2, 3], 10) 的结果是？",
+    "options": [
+      "16",
+      "6",
+      "10",
+      "26"
+    ],
+    "answer": "0",
+    "explanation": "<b>sum(列表, 初始值)</b>，10+1+2+3=<b>16</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "abs(-3.5) 的结果是？",
+    "options": [
+      "3.5",
+      "-3.5",
+      "3",
+      "4"
+    ],
+    "answer": "0",
+    "explanation": "<b>abs()</b>绝对值，-3.5的绝对值是<b>3.5</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "list(zip([1, 2, 3], [4, 5])) 的结果是？",
+    "options": [
+      "[(1,4),(2,5)]",
+      "[(1,4),(2,5),(3,None)]",
+      "[(1,2,3),(4,5)]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "zip以<b>最短</b>为准，第二个列表只有2个元素，得<b>[(1,4),(2,5)]</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "内置函数与拆包",
+    "content": "abs() 返回一个数的绝对值。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>abs()</b>返回绝对值（非负）。",
+    "difficulty": 1
+  },
+  {
+    "type": "judge",
+    "topic_name": "内置函数与拆包",
+    "content": "round() 用于四舍五入。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>round()</b>四舍五入。",
+    "difficulty": 1
+  },
+  {
+    "type": "judge",
+    "topic_name": "内置函数与拆包",
+    "content": "divmod(a, b) 返回 (商, 余数)。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>divmod</b>同时返回商和余数。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "内置函数与拆包",
+    "content": "* 可以把列表解包成位置参数传给函数。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>f(*[1,2])</b>等价于f(1,2)。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "内置函数与拆包",
+    "content": "** 可以把字典解包成关键字参数传给函数。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>f(**{'a':1})</b>等价于f(a=1)。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "内置函数与拆包",
+    "content": "print(abs(-5))",
+    "options": null,
+    "answer": "5",
+    "explanation": "绝对值是<b>5</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "calc",
+    "topic_name": "内置函数与拆包",
+    "content": "print(round(3.7))",
+    "options": null,
+    "answer": "4",
+    "explanation": "四舍五入得<b>4</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "calc",
+    "topic_name": "内置函数与拆包",
+    "content": "print(divmod(7, 2))",
+    "options": null,
+    "answer": "(3, 1)",
+    "explanation": "7÷2=3余1，得<b>(3, 1)</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "内置函数与拆包",
+    "content": "print(sum([1, 2, 3]))",
+    "options": null,
+    "answer": "6",
+    "explanation": "1+2+3=<b>6</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "calc",
+    "topic_name": "内置函数与拆包",
+    "content": "print(list(reversed([1, 2, 3])))",
+    "options": null,
+    "answer": "[3, 2, 1]",
+    "explanation": "反转得<b>[3, 2, 1]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "try-except 中 except 捕获到异常后会？",
+    "options": [
+      "继续执行try",
+      "执行except块",
+      "结束程序",
+      "重新执行try"
+    ],
+    "answer": "1",
+    "explanation": "try里出错时，跳到<b>except块</b>执行（处理异常）。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "try-except-else 中 else 何时执行？",
+    "options": [
+      "有异常时",
+      "无异常时",
+      "每次都执行",
+      "从不执行"
+    ],
+    "answer": "1",
+    "explanation": "<b>else</b>在try<b>没有异常</b>时执行。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "finally 块的特点是？",
+    "options": [
+      "有异常才执行",
+      "无异常才执行",
+      "无论是否异常都执行",
+      "从不执行"
+    ],
+    "answer": "2",
+    "explanation": "<b>finally</b>无论是否异常<b>都会执行</b>（常用于清理）。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "raise 语句的作用是？",
+    "options": [
+      "捕获异常",
+      "主动抛出异常",
+      "忽略异常",
+      "结束循环"
+    ],
+    "answer": "1",
+    "explanation": "<b>raise</b>主动<b>抛出异常</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "所有异常的基类是？",
+    "options": [
+      "Exception",
+      "Error",
+      "BaseException",
+      "Fault"
+    ],
+    "answer": "0",
+    "explanation": "<b>Exception</b>是所有常规异常的基类。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "import math 后，使用 math 里的 sqrt 用？",
+    "options": [
+      "math.sqrt()",
+      "sqrt()",
+      "import.sqrt()",
+      "math->sqrt()"
+    ],
+    "answer": "0",
+    "explanation": "import math后，用<b>math.函数名</b>调用，如math.sqrt()。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "from math import sqrt 后，使用 sqrt 用？",
+    "options": [
+      "math.sqrt()",
+      "sqrt()",
+      "math->sqrt()",
+      "import.sqrt()"
+    ],
+    "answer": "1",
+    "explanation": "from...import直接导入函数，可直接用<b>sqrt()</b>。",
+    "difficulty": 1
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "import math as m 中 as 的作用是？",
+    "options": [
+      "重命名模块为m",
+      "删除模块",
+      "复制模块",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>as</b>给模块起别名，之后用<b>m</b>代替math。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "try: 1/0 except ZeroDivisionError: print('e') 输出？",
+    "options": [
+      "e",
+      "报错",
+      "什么都不输出",
+      "0"
+    ],
+    "answer": "0",
+    "explanation": "1/0引发ZeroDivisionError，被except捕获，输出<b>e</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "try: int('abc') 会引发什么异常？",
+    "options": [
+      "ValueError",
+      "TypeError",
+      "NameError",
+      "IndexError"
+    ],
+    "answer": "0",
+    "explanation": "'abc'不是数字，int()转换失败引发<b>ValueError</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "访问不存在的列表索引会引发？",
+    "options": [
+      "IndexError",
+      "KeyError",
+      "ValueError",
+      "NameError"
+    ],
+    "answer": "0",
+    "explanation": "列表索引越界引发<b>IndexError</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "访问字典不存在的键(用[])会引发？",
+    "options": [
+      "KeyError",
+      "IndexError",
+      "ValueError",
+      "NameError"
+    ],
+    "answer": "0",
+    "explanation": "用[]访问字典不存在的键引发<b>KeyError</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "使用未定义的变量会引发？",
+    "options": [
+      "NameError",
+      "ValueError",
+      "TypeError",
+      "IndexError"
+    ],
+    "answer": "0",
+    "explanation": "使用未定义的变量引发<b>NameError</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "包目录中必须包含哪个文件？",
+    "options": [
+      "__init__.py",
+      "main.py",
+      "setup.py",
+      "package.py"
+    ],
+    "answer": "0",
+    "explanation": "包目录需有<b>__init__.py</b>文件（可为空）标识为包。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "异常模块与包",
+    "content": "if __name__ == '__main__': 的作用是？",
+    "options": [
+      "定义主函数",
+      "判断是否直接运行（被导入时不执行）",
+      "报错",
+      "导入模块"
+    ],
+    "answer": "1",
+    "explanation": "判断模块是否<b>直接运行</b>，被导入时不执行该块。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "异常模块与包",
+    "content": "except 用于捕获和处理异常。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>except</b>捕获try中的异常并处理。",
+    "difficulty": 1
+  },
+  {
+    "type": "judge",
+    "topic_name": "异常模块与包",
+    "content": "finally 块无论是否发生异常都会执行。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>finally</b>总会执行。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "异常模块与包",
+    "content": "raise 可以主动抛出异常。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>raise</b>主动抛出指定异常。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "异常模块与包",
+    "content": "from 模块 import 名称 可以直接使用导入的名称。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。from...import后可直接用名称，不用加模块名前缀。",
+    "difficulty": 1
+  },
+  {
+    "type": "judge",
+    "topic_name": "异常模块与包",
+    "content": "包目录必须包含 __init__.py 文件。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>__init__.py</b>标识目录是包。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "异常模块与包",
+    "content": "try:\\n  print(1 // 0)\\n except ZeroDivisionError:\\n  print('err')",
+    "options": null,
+    "answer": "err",
+    "explanation": "1//0除以0引发异常，被except捕获，输出<b>err</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "异常模块与包",
+    "content": "import math\\n print(math.floor(3.8))",
+    "options": null,
+    "answer": "3",
+    "explanation": "<b>math.floor()</b>向下取整，3.8得<b>3</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "异常模块与包",
+    "content": "try:\\n  print('a')\\n except:\\n  print('b')\\n finally:\\n  print('c')",
+    "options": null,
+    "answer": "a c",
+    "explanation": "无异常：输出a，跳过except，finally执行输出c，共<b>a c</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "异常模块与包",
+    "content": "import math\\n print(math.ceil(3.2))",
+    "options": null,
+    "answer": "4",
+    "explanation": "<b>math.ceil()</b>向上取整，3.2得<b>4</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "异常模块与包",
+    "content": "print(round(2.5))",
+    "options": null,
+    "answer": "2",
+    "explanation": "Python3的round对.5是<b> banker's rounding</b>（向偶数取整），2.5→<b>2</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "闭包是指？",
+    "options": [
+      "内部函数引用了外部函数的变量",
+      "函数返回函数",
+      "函数嵌套",
+      "全局变量"
+    ],
+    "answer": "0",
+    "explanation": "<b>闭包</b>是内部函数引用了外层函数的变量，且外层函数已返回。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "装饰器的本质是什么？",
+    "options": [
+      "一个类",
+      "一个函数（接收函数返回新函数）",
+      "一个变量",
+      "一个模块"
+    ],
+    "answer": "1",
+    "explanation": "装饰器本质是<b>一个函数</b>，接收原函数，返回新函数。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "装饰器的作用是？",
+    "options": [
+      "在不修改原函数的前提下增加功能",
+      "删除函数",
+      "重命名函数",
+      "运行函数"
+    ],
+    "answer": "0",
+    "explanation": "装饰器<b>不修改原函数</b>，给函数增加额外功能。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "在闭包中修改外层函数的变量，需要用？",
+    "options": [
+      "global",
+      "nonlocal",
+      "return",
+      "pass"
+    ],
+    "answer": "1",
+    "explanation": "在闭包(嵌套函数)中修改外层函数变量用<b>nonlocal</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "def outer(): x = 1; def inner(): return x，inner 引用的 x 是？",
+    "options": [
+      "闭包变量（外层函数的）",
+      "全局变量",
+      "局部变量",
+      "内置变量"
+    ],
+    "answer": "0",
+    "explanation": "inner引用的是<b>外层函数outer的变量x</b>，这是闭包。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "装饰器函数通常返回什么？",
+    "options": [
+      "原函数",
+      "一个新函数（wrapper）",
+      "None",
+      "数字"
+    ],
+    "answer": "1",
+    "explanation": "装饰器通常返回一个<b>新函数(wrapper)</b>，在原函数前后增加功能。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "functools.wraps 的作用是？",
+    "options": [
+      "保留原函数的元信息（如名字、文档）",
+      "删除函数",
+      "加快运行",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>@wraps</b>保留原函数的名字、文档等元信息。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "多个装饰器叠加时，执行顺序是？",
+    "options": [
+      "从下往上装饰，从上往下执行",
+      "从上往下装饰，从下往上执行",
+      "随机",
+      "只执行一个"
+    ],
+    "answer": "0",
+    "explanation": "多个装饰器<b>从下往上装饰</b>（离函数近的先装饰），调用时<b>从外到内</b>执行。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "闭包中，外层函数返回后，被引用的变量？",
+    "options": [
+      "被销毁",
+      "依然存活（被闭包保留）",
+      "变成全局",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "闭包<b>保留</b>了外层函数的变量，即使外层函数已返回。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "装饰器能装饰带参数的函数吗？",
+    "options": [
+      "能（用*args, **kwargs）",
+      "不能",
+      "只能无参数函数",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "能。wrapper用<b>*args, **kwargs</b>接收任意参数。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "def deco(f): def w(): return f() + 1; return w，这是？",
+    "options": [
+      "一个装饰器",
+      "一个类",
+      "一个循环",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "这是<b>装饰器</b>：接收函数f，返回新函数w（在f基础上+1）。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "闭包常见用途是？",
+    "options": [
+      "装饰器、回调函数、保留状态",
+      "删除变量",
+      "循环",
+      "输入输出"
+    ],
+    "answer": "0",
+    "explanation": "闭包常用于<b>装饰器、回调、保留状态</b>等。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "装饰器 @deco 等价于？",
+    "options": [
+      "func = deco(func)",
+      "func = func(deco)",
+      "deco = func",
+      "func(deco)"
+    ],
+    "answer": "0",
+    "explanation": "<b>@deco</b>等价于<b>func = deco(func)</b>，用装饰器装饰func。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "带参数的装饰器需要几层函数？",
+    "options": [
+      "1层",
+      "2层",
+      "3层（外层接收参数，中层接收函数，内层执行）",
+      "4层"
+    ],
+    "answer": "2",
+    "explanation": "带参数装饰器需<b>3层</b>：最外层接收参数，中层接收函数，内层是wrapper。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "闭包中如果只读取外层变量（不修改）？",
+    "options": [
+      "需要nonlocal",
+      "不需要nonlocal，直接读",
+      "需要global",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "只<b>读取</b>外层变量不需要nonlocal，直接读即可；修改才需要。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "闭包与装饰器",
+    "content": "闭包是内部函数引用了外部函数的变量。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。这是闭包的定义。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "闭包与装饰器",
+    "content": "装饰器可以在不修改原函数代码的前提下增加功能。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。这是装饰器的<b>核心作用</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "闭包与装饰器",
+    "content": "在闭包中修改外层函数变量需要用 nonlocal。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>nonlocal</b>用于闭包中修改外层变量。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "闭包与装饰器",
+    "content": "@deco 等价于 func = deco(func)。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。这是语法糖的等价转换。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "闭包与装饰器",
+    "content": "functools.wraps 用于保留被装饰函数的元信息。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>@wraps</b>保留原函数名、文档等。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "闭包与装饰器",
+    "content": "def outer():\\n  x = 10\\n  def inner():\\n    return x\\n  return inner\\n f = outer()\\n print(f())",
+    "options": null,
+    "answer": "10",
+    "explanation": "闭包inner引用outer的x=10，调用f()返回<b>10</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "闭包与装饰器",
+    "content": "def deco(f):\\n  def w():\\n    return f() + 1\\n  return w\\n @deco\\n def hi():\\n  return 5\\n print(hi())",
+    "options": null,
+    "answer": "6",
+    "explanation": "@deco装饰后hi=deco(hi)，调用hi()执行w()返回5+1=<b>6</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "闭包与装饰器",
+    "content": "def make_adder(n):\\n  def adder(x):\\n    return x + n\\n  return adder\\n add5 = make_adder(5)\\n print(add5(3))",
+    "options": null,
+    "answer": "8",
+    "explanation": "闭包adder引用n=5，add5(3)=3+5=<b>8</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "闭包与装饰器",
+    "content": "def deco(f):\\n  def w():\\n    return f() * 2\\n  return w\\n @deco\\n def get():\\n  return 10\\n print(get())",
+    "options": null,
+    "answer": "20",
+    "explanation": "@deco装饰，get()执行w()返回10*2=<b>20</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "闭包与装饰器",
+    "content": "def outer():\\n  x = 1\\n  def inner():\\n    nonlocal x\\n    x = x + 1\\n    return x\\n  inner()\\n  return x\\n print(outer())",
+    "options": null,
+    "answer": "2",
+    "explanation": "nonlocal修改x，inner()里x=1+1=2，返回<b>2</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@property 装饰器的作用是？",
+    "options": [
+      "把方法变成属性访问",
+      "删除属性",
+      "创建类",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>@property</b>把方法变成<b>属性</b>，可用obj.名访问（不加括号）。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@staticmethod 的作用是？",
+    "options": [
+      "定义静态方法（不需实例和self）",
+      "定义类方法",
+      "删除方法",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>@staticmethod</b>定义静态方法，调用时<b>不需要self或cls</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@classmethod 的特点是？",
+    "options": [
+      "第一个参数是实例",
+      "第一个参数是类(cls)",
+      "没有参数",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "<b>@classmethod</b>第一个参数是<b>类(cls)</b>，不是实例。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@语法糖 @deco 等价于？",
+    "options": [
+      "func = deco(func)",
+      "deco = func",
+      "func(deco)",
+      "func = func(deco)"
+    ],
+    "answer": "0",
+    "explanation": "<b>@deco</b>放在函数上，等价于<b>func = deco(func)</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "多个装饰器 @a @b def f() 的装饰顺序是？",
+    "options": [
+      "先a后b（从上往下）",
+      "先b后a（从下往上）",
+      "随机",
+      "只a"
+    ],
+    "answer": "1",
+    "explanation": "装饰顺序<b>从下往上</b>：先b装饰f，再a装饰（结果相当于a(b(f))）。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@functools.wraps(f) 用在装饰器哪里？",
+    "options": [
+      "wrapper函数上",
+      "原函数上",
+      "类上",
+      "模块上"
+    ],
+    "answer": "0",
+    "explanation": "<b>@wraps(f)</b>用在装饰器的<b>wrapper函数上</b>，保留原函数元信息。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "带参数的装饰器 @deco(arg) 需要？",
+    "options": [
+      "1层函数",
+      "2层函数",
+      "3层函数（参数→函数→wrapper）",
+      "4层函数"
+    ],
+    "answer": "2",
+    "explanation": "带参数装饰器需<b>3层</b>：外层接收参数，中层接收函数，内层wrapper执行。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@property 配合 @x.setter 可以？",
+    "options": [
+      "设置属性的写权限",
+      "删除属性",
+      "创建类",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>@x.setter</b>定义属性的<b>赋值</b>方法，配合@property实现可控读写。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "语法糖是指？",
+    "options": [
+      "一种语法简写（让代码更简洁）",
+      "一种错误",
+      "一种循环",
+      "一种数据类型"
+    ],
+    "answer": "0",
+    "explanation": "<b>语法糖</b>是简化语法的写法，如@装饰器是func=deco(func)的简写。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@deco def f(): pass 后，f 实际指向？",
+    "options": [
+      "原函数f",
+      "deco返回的新函数",
+      "deco本身",
+      "None"
+    ],
+    "answer": "1",
+    "explanation": "装饰后f指向<b>deco返回的新函数</b>（wrapper），不是原f。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@staticmethod 装饰的方法调用方式？",
+    "options": [
+      "实例.方法() 或 类.方法()",
+      "只能实例.方法()",
+      "只能类.方法()",
+      "不能调用"
+    ],
+    "answer": "0",
+    "explanation": "静态方法<b>既可用实例也可用类</b>调用。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@classmethod 装饰的方法第一个参数是？",
+    "options": [
+      "self（实例）",
+      "cls（类）",
+      "无参数",
+      "任意"
+    ],
+    "answer": "1",
+    "explanation": "类方法第一个参数是<b>cls</b>（类本身）。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "装饰器可以叠加多个吗？",
+    "options": [
+      "可以",
+      "不可以",
+      "只能一个",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "<b>可以</b>叠加多个装饰器。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@property 让方法变成属性后，访问方式是？",
+    "options": [
+      "obj.方法名()",
+      "obj.方法名（不加括号）",
+      "obj->方法名",
+      "不能访问"
+    ],
+    "answer": "1",
+    "explanation": "@property后用<b>obj.方法名</b>访问（不加括号），像属性一样。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "以下哪个不是Python内置装饰器？",
+    "options": [
+      "@property",
+      "@staticmethod",
+      "@decorator_factory",
+      "@classmethod"
+    ],
+    "answer": "2",
+    "explanation": "<b>@decorator_factory</b>不是内置装饰器（自定义名称），其余三个都是内置。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@property 可以把方法变成属性来访问。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。<b>@property</b>让方法像属性一样访问。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@staticmethod 定义的方法不需要 self 参数。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。静态方法<b>不需要self</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@classmethod 的第一个参数是 cls（类）。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。类方法第一个参数是<b>cls</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "@deco 是 func = deco(func) 的语法糖。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。这是<b>语法糖</b>的等价转换。",
+    "difficulty": 2
+  },
+  {
+    "type": "judge",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "多个装饰器可以叠加使用。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。多个装饰器可<b>叠加</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "calc",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "def deco(f):\\n  def w():\\n    return f() + 100\\n  return w\\n @deco\\n def get():\\n  return 1\\n print(get())",
+    "options": null,
+    "answer": "101",
+    "explanation": "@deco装饰，get()返回1+100=<b>101</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "def d2(f):\\n  def w():\\n    return f() * 2\\n  return w\\n def d3(f):\\n  def w():\\n    return f() * 3\\n  return w\\n @d2\\n @d3\\n def n():\\n  return 1\\n print(n())",
+    "options": null,
+    "answer": "6",
+    "explanation": "从下往上装饰：先d3使n=1*3=3，再d2使3*2=<b>6</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "def deco(f):\\n  def w(x):\\n    return f(x) + 1\\n  return w\\n @deco\\n def sq(x):\\n  return x * x\\n print(sq(3))",
+    "options": null,
+    "answer": "10",
+    "explanation": "sq(3)=3*3+1=<b>10</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "def deco(f):\\n  def w():\\n    return '-' + f() + '-'\\n  return w\\n @deco\\n def hi():\\n  return 'hi'\\n print(hi())",
+    "options": null,
+    "answer": "-hi-",
+    "explanation": "@deco在hi()前后加'-'，得<b>-hi-</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "标准装饰器与语法糖",
+    "content": "def deco(f):\\n  def w():\\n    return f() + '!'\\n  return w\\n @deco\\n def say():\\n  return 'hello'\\n print(say())",
+    "options": null,
+    "answer": "hello!",
+    "explanation": "@deco在say()后加'!'，得<b>hello!</b>。",
+    "difficulty": 3
+  }
+]

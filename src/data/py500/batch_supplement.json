@@ -1,0 +1,289 @@
+[
+  {
+    "type": "choice",
+    "topic_name": "数值类型与字符串",
+    "content": "'abc' < 'abd' 的结果是？（字符串比较）",
+    "options": [
+      "True",
+      "False",
+      "报错",
+      "None"
+    ],
+    "answer": "0",
+    "explanation": "字符串<b>按字典序逐字符比较</b>，c<d所以<b>True</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "if判断与比较逻辑运算",
+    "content": "判断变量 x 是否为 None，推荐用哪种写法？",
+    "options": [
+      "x == None",
+      "x is None",
+      "x = None",
+      "x === None"
+    ],
+    "answer": "1",
+    "explanation": "判断None推荐用<b>is None</b>（身份比较），更规范。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "字符串查找判断修改",
+    "content": "'hello world'.title() 的结果是？",
+    "options": [
+      "'Hello world'",
+      "'Hello World'",
+      "'HELLO WORLD'",
+      "'hello world'"
+    ],
+    "answer": "1",
+    "explanation": "<b>title()</b>每个单词首字母大写，得<b>Hello World</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "字符串查找判断修改",
+    "content": "'Hello'.swapcase() 的结果是？",
+    "options": [
+      "'hello'",
+      "'HELLO'",
+      "'hELLO'",
+      "'Hello'"
+    ],
+    "answer": "2",
+    "explanation": "<b>swapcase()</b>大小写互换，H变h，eLLO变ELLO，得<b>hELLO</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "字符串查找判断修改",
+    "content": "'hi'.center(6) 的结果是？",
+    "options": [
+      "'  hi  '",
+      "'hi    '",
+      "'    hi'",
+      "'hi'"
+    ],
+    "answer": "0",
+    "explanation": "<b>center(宽度)</b>居中填充空格，得<b>  hi  </b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "字符串查找判断修改",
+    "content": "'abc123'.isalpha() 的结果是？",
+    "options": [
+      "True",
+      "False",
+      "报错",
+      "None"
+    ],
+    "answer": "1",
+    "explanation": "<b>isalpha()</b>判断是否全字母，含数字123所以<b>False</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "字符串查找判断修改",
+    "content": "'123'.isdigit() 的结果是？",
+    "options": [
+      "True",
+      "False",
+      "报错",
+      "None"
+    ],
+    "answer": "0",
+    "explanation": "<b>isdigit()</b>判断是否全数字，123全是数字，<b>True</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "字符串查找判断修改",
+    "content": "'abc'.islower() 的结果是？",
+    "options": [
+      "True",
+      "False",
+      "报错",
+      "None"
+    ],
+    "answer": "0",
+    "explanation": "<b>islower()</b>判断是否全小写，abc全小写，<b>True</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "类型转换",
+    "content": "hex(15) 的结果是？",
+    "options": [
+      "'0xf'",
+      "'f'",
+      "15",
+      "'0xF'"
+    ],
+    "answer": "0",
+    "explanation": "<b>hex()</b>转十六进制字符串，15的十六进制是<b>0xf</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "类型转换",
+    "content": "oct(8) 的结果是？",
+    "options": [
+      "'0o10'",
+      "8",
+      "'10'",
+      "'0o8'"
+    ],
+    "answer": "0",
+    "explanation": "<b>oct()</b>转八进制，8的八进制是10，得<b>0o10</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "sorted([3,1,2], reverse=True) 的结果是？",
+    "options": [
+      "[1,2,3]",
+      "[3,2,1]",
+      "[3,1,2]",
+      "报错"
+    ],
+    "answer": "1",
+    "explanation": "<b>reverse=True</b>降序，得<b>[3,2,1]</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "list(map(lambda x,y: x+y, [1,2], [3,4])) 的结果是？",
+    "options": [
+      "[4,6]",
+      "[1,2,3,4]",
+      "[3,7]",
+      "报错"
+    ],
+    "answer": "0",
+    "explanation": "map可传多个可迭代对象，1+3=4,2+4=6，得<b>[4,6]</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "list(filter(None, [0,1,2])) 的结果是？",
+    "options": [
+      "[0,1,2]",
+      "[1,2]",
+      "[0]",
+      "[]"
+    ],
+    "answer": "1",
+    "explanation": "<b>filter(None,...)</b>过滤掉假值，0是False被过滤，得<b>[1,2]</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "f = lambda: 10; f() 的结果是？",
+    "options": [
+      "10",
+      "报错",
+      "None",
+      "lambda"
+    ],
+    "answer": "0",
+    "explanation": "<b>无参数lambda</b>，f()直接返回10。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "map(str, [1]) 返回的类型是？",
+    "options": [
+      "list",
+      "map迭代器",
+      "str",
+      "tuple"
+    ],
+    "answer": "1",
+    "explanation": "map返回<b>迭代器</b>（不是列表），需用list()转换。",
+    "difficulty": 3
+  },
+  {
+    "type": "calc",
+    "topic_name": "lambda与内置函数",
+    "content": "print(list(map(str, range(3))))",
+    "options": null,
+    "answer": "['0', '1', '2']",
+    "explanation": "range(3)=0,1,2，map转字符串，得<b>['0', '1', '2']</b>。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "lambda与内置函数",
+    "content": "sorted([('a',3),('b',1)], key=lambda x: x[1]) 的结果是？",
+    "options": [
+      "[('a',3),('b',1)]",
+      "[('b',1),('a',3)]",
+      "报错",
+      "[('a',1),('b',3)]"
+    ],
+    "answer": "1",
+    "explanation": "按第2个元素排序，1<3，得<b>[('b',1),('a',3)]</b>。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "内置函数与拆包",
+    "content": "sorted('cab') 的结果是？",
+    "options": [
+      "['a','b','c']",
+      "['c','a','b']",
+      "'abc'",
+      "'cab'"
+    ],
+    "answer": "0",
+    "explanation": "<b>sorted()</b>对字符串排序返回<b>字符列表</b>，得['a','b','c']。",
+    "difficulty": 2
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "闭包计数器的原理是？",
+    "options": [
+      "外层函数变量被内层函数引用并修改(nonlocal)",
+      "全局变量",
+      "类属性",
+      "列表"
+    ],
+    "answer": "0",
+    "explanation": "闭包计数器用<b>nonlocal修改外层变量</b>，每次调用+1。",
+    "difficulty": 3
+  },
+  {
+    "type": "judge",
+    "topic_name": "闭包与装饰器",
+    "content": "装饰器常用于记录函数调用次数、计时等场景。",
+    "options": [
+      "对",
+      "错"
+    ],
+    "answer": "0",
+    "explanation": "对。装饰器常用于<b>日志、计时、计数</b>等。",
+    "difficulty": 3
+  },
+  {
+    "type": "choice",
+    "topic_name": "闭包与装饰器",
+    "content": "多个闭包函数共享同一外层变量时？",
+    "options": [
+      "各自独立互不影响",
+      "共享同一变量（修改互相可见）",
+      "报错",
+      "变成全局"
+    ],
+    "answer": "1",
+    "explanation": "多个内部函数引用<b>同一外层变量</b>，修改互相可见。",
+    "difficulty": 3
+  }
+]

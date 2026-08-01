@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库闯关 - 答题</title>
+<link rel="stylesheet" href="css/common.css">
+<!-- CodeMirror 5（UMD 同步加载，稳定可靠，非 esm.sh 异步链） -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/addon/hint/show-hint.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/theme/dracula.min.css">
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/mode/python/python.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/addon/hint/show-hint.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/addon/hint/anyword-hint.min.js"></script>
+<style>
+  /* Python 代码编辑器（textarea 版，稳定可靠） */
+  .code-editor {
+    position: relative;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    background: #fafafa;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .code-editor.filled { border-color: #69db7c; }
+  .code-editor:focus-within { border-color: #74c0fc; }
+  .code-editor-inner {
+    display: flex;
+  }
+  .code-editor-gutter {
+    padding: 12px 10px 12px 12px;
+    background: #f5f5f5;
+    color: #aaa;
+    font-family: Consolas, Menlo, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: right;
+    user-select: none;
+    min-width: 44px;
+    border-right: 1px solid #e0e0e0;
+    white-space: pre;
+    overflow: hidden;
+  }
+  .code-textarea {
+    flex: 1;
+    padding: 12px;
+    font-family: Consolas, Menlo, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    background: transparent;
+    border: none;
+    outline: none;
+    resize: vertical;
+    min-height: 220px;
+    max-height: 360px;
+    tab-size: 4;
+    -moz-tab-size: 4;
+    caret-color: #2f9e44;
+    white-space: pre;
+    overflow: auto;
+  }
+  /* 旧的高亮样式保留（万一以后切换回 contenteditable） */
+  .ce-kw { color: #d73a49; font-weight: 600; }
+  .ce-str { color: #032f62; }
+  .ce-num { color: #005cc5; }
+  .ce-com { color: #6a737d; font-style: italic; }
+  .ce-fn { color: #6f42c1; }
+  /* 运行按钮 + 输出区 */
+  .code-toolbar { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+  .btn-run {
+    background: linear-gradient(135deg, #69db7c, #2f9e44);
+    color: #fff; border: none; border-radius: 8px;
+    padding: 8px 18px; font-size: 14px; font-weight: 700; cursor: pointer;
+    transition: transform .1s;
+  }
+  .btn-run:active { transform: scale(.95); }
+  .btn-run:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-run-browser {
+    background: linear-gradient(135deg, #9775fa, #5f3dc4);
+    color: #fff; border: none; border-radius: 8px;
+    padding: 8px 18px; font-size: 14px; font-weight: 700; cursor: pointer;
+  }
+  .btn-run-browser:disabled { opacity: .5; cursor: not-allowed; }
+  .run-output {
+    margin-top: 10px; padding: 12px 14px; border-radius: 10px;
+    background: #1e1e2e; color: #cdd6f4;
+    font-family: Consolas, Menlo, monospace; font-size: 13px; line-height: 1.6;
+    white-space: pre-wrap; word-break: break-all;
+    max-height: 220px; overflow-y: auto; min-height: 0;
+    display: none;
+  }
+  .run-output.visible { display: block; }
+  .run-output.has-error { background: #2e1e1e; color: #f38ba8; }
+  .code-hint-2 { margin-top: 8px; color: #888; font-size: 12px; }
+  /* CodeMirror 5 编辑器样式覆盖（浅色背景，圆角边框） */
+  .CodeMirror {
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 12px !important;
+    font-family: Consolas, Menlo, monospace !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    min-height: 220px !important;
+    max-height: 360px !important;
+    background: #fafafa !important;
+    transition: border-color .2s;
+  }
+  .code-editor.filled .CodeMirror { border-color: #69db7c !important; }
+  .CodeMirror-focused { border-color: #74c0fc !important; }
+  .CodeMirror-gutters {
+    background: #f5f5f5 !important;
+    border-right: 1px solid #e0e0e0 !important;
+  }
+  .CodeMirror-linenumber { color: #aaa !important; }
+  /* 智能提示弹层（CodeMirror 自带的） */
+  .CodeMirror-hints {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    border: 1px solid #ccc !important;
+    font-family: Consolas, Menlo, monospace !important;
+    font-size: 13px !important;
+    max-height: 180px !important;
+  }
+  .CodeMirror-hint {
+    padding: 4px 12px !important;
+    line-height: 1.6 !important;
+  }
+  li.CodeMirror-hint-active {
+    background: #74c0fc !important;
+    color: #fff !important;
+  }
+</style>
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<header class="page-header">
+  <div class="icon" id="headerIcon">🎯</div>
+  <h1 id="headerTitle">闯关中</h1>
+  <div class="subtitle" id="headerSub">认真读题，仔细作答！</div>
+</header>
+
+<main id="quizMain">
+  <div class="quiz-info">
+    <div id="typeTags"></div>
+    <div class="progress">已答 <span class="cur" id="answeredCount">0</span> / <span id="totalCount">0</span></div>
+  </div>
+
+  <div class="nav-dots" id="navDots"></div>
+
+  <div id="qContainer"></div>
+
+  <div class="nav-bar">
+    <button class="btn-nav btn-prev" id="prevBtn" onclick="goPrev()">⬅ 上一题</button>
+    <div class="nav-center">第 <span class="cur" id="curIdx">1</span> / <span id="totalIdx">0</span> 题</div>
+    <button class="btn-nav btn-next" id="nextBtn" onclick="goNext()">下一题 ➡</button>
+  </div>
+
+  <div class="submit-bar">
+    <button class="btn-submit" id="submitBtn" onclick="confirmSubmit()">🎉 提交闯关</button>
+  </div>
+</main>
+
+<div id="result" style="display:none;max-width:820px;margin:0 auto;padding:0 16px 40px;"></div>
+
+<div class="modal-mask" id="modal">
+  <div class="modal">
+    <h3>🤔 确定提交吗？</h3>
+    <p id="modalText">你还有题目没答完，确定要提交吗？</p>
+    <div class="btns">
+      <button class="btn-yes" onclick="doSubmit()">确定提交</button>
+      <button class="btn-no" onclick="closeModal()">再检查一下</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+const user = requireAuth();
+if (!user) throw new Error('redirect');
+document.getElementById('topbar').innerHTML = renderTopbar();
+
+const examData = JSON.parse(localStorage.getItem('quiz_exam') || 'null');
+if (!examData) location.href = 'home.html';
+
+let questions = examData.questions;
+const examSubjectId = examData.subject_id;
+const examMode = examData.mode || 'custom';
+const examTopicIds = examData.topic_ids || [];
+const examStartTs = Date.now();
+let subject = examData.subject;
+let userAnswers = new Array(questions.length).fill(null);
+let curIdx = 0;
+let submitted = false;
+
+document.getElementById('headerTitle').textContent = (subject ? subject.name : '闯关') + '闯关';
+document.getElementById('headerIcon').textContent = subject ? subject.icon : '🎯';
+document.getElementById('totalCount').textContent = questions.length;
+document.getElementById('totalIdx').textContent = questions.length;
+
+const letters = ['A','B','C','D'];
+
+function renderQuestion() {
+  const q = questions[curIdx];
+  const [cls, label] = typeTag(q.type);
+  document.getElementById('curIdx').textContent = curIdx + 1;
+
+  let optsHtml = '';
+  if (q.type === 'choice' || q.type === 'judge') {
+    const opts = q.options || (q.type === 'judge' ? ['对','错'] : []);
+    optsHtml = '<div class="options">' + opts.map((opt, oi) => {
+      const selected = userAnswers[curIdx] === oi ? 'selected' : '';
+      const letter = q.type === 'judge' ? (oi === 0 ? '✓' : '✗') : letters[oi];
+      return `<div class="opt ${selected}" onclick="pickOption(${oi})">
+        <div class="letter">${letter}</div>
+        <div class="opt-text">${esc(opt)}</div>
+      </div>`;
+    }).join('') + '</div>';
+  } else if (q.type === 'calc') {
+    const val = userAnswers[curIdx] != null ? userAnswers[curIdx] : '';
+    const filled = val !== '' && val != null ? 'filled' : '';
+    optsHtml = `<div class="calc-wrap">
+      <div class="calc-input-wrap ${filled}">
+        <input type="text" class="calc-input" id="calcInput" placeholder="在这里输入答案" 
+          value="${esc(val)}" oninput="onCalcInput(this)" onkeydown="onCalcKey(event)">
+      </div>
+    </div>
+    <div class="calc-hint">💡 填完答案可以按回车键跳到下一题</div>`;
+  } else if (q.type === 'code') {
+    const val = userAnswers[curIdx] != null ? userAnswers[curIdx] : '';
+    const filled = (val !== '' && val != null) ? 'filled' : '';
+    const hintHtml = q.explanation
+      ? `<div class="code-hint">
+           <div class="code-hint-title">💡 指导思路</div>
+           <div id="codeHint" class="code-hint-box">${nl2br(q.explanation)}</div>
+         </div>`
+      : '';
+    // 用 textarea 作为基础元素，CodeMirror 5 会把它升级为带高亮+智能提示的编辑器
+    optsHtml = `<div class="code-wrap">
+      <div class="code-editor ${filled}" id="codeEditor">
+        <textarea class="code-textarea" id="codeInput" spellcheck="false"
+          placeholder="在这里写 Python 代码..."
+          autocapitalize="off" autocomplete="off" autocorrect="off">${esc(val)}</textarea>
+      </div>
+      <div class="code-toolbar">
+        <button class="btn-run" id="runBtn" onclick="runUserCode()">▶ 运行代码（服务端）</button>
+        <button class="btn-run-browser" id="runBtnBrowser" onclick="runBrowserCode()" title="用浏览器内 Pyodide 跑 Python，无网络延迟（首次加载约 6MB）">🧠 浏览器内运行</button>
+        <span style="color:#888;font-size:12px;">输入字母自动补全 · Ctrl+Space 手动触发 · Tab 缩进</span>
+      </div>
+      <div class="run-output" id="runOutput"></div>
+      ${hintHtml}
+      <div class="code-hint-2">⌨️ Python 语法高亮 · 智能提示 · Tab 缩进 · 写完后点「下一题」或最后「提交闯关」</div>
+    </div>`;
+  }
+
+  document.getElementById('qContainer').innerHTML = `
+    <div class="q-card">
+      <div class="q-head">
+        <div class="q-num">${curIdx + 1}</div>
+        <span class="${cls}">${label}</span>
+        ${q.topic_name ? `<span class="q-topic">${esc(q.topic_name)}</span>` : ''}
+      </div>
+      <div class="q-title">${nl2br(esc(q.content))}</div>
+      ${optsHtml}
+    </div>`;
+
+  updateNav();
+  if (q.type === 'calc') {
+    setTimeout(() => { const el = document.getElementById('calcInput'); if (el) el.focus(); }, 100);
+  } else if (q.type === 'code') {
+    setTimeout(() => initCodeEditor(), 0);
+  }
+}
+
+function pickOption(oi) {
+  userAnswers[curIdx] = oi;
+  renderQuestion();
+  updateDots();
+}
+
+function onCalcInput(el) {
+  userAnswers[curIdx] = el.value;
+  el.parentElement.classList.toggle('filled', el.value !== '');
+  updateDots();
+}
+
+function onCalcKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); goNext(); }
+}
+
+// ============ Python 代码编辑器（CodeMirror 5 + Pyodide）============
+// - CodeMirror 5 是 UMD 同步加载（不是 esm.sh 异步链），稳定可靠
+// - 内置 Python 语法高亮、行号、Tab 缩进、Enter 换行、中文输入法、复制粘贴
+// - 智能提示：输入字母时自动弹出补全（Ctrl+Space 也能触发）
+// - "▶ 运行代码（服务端）" 调 /api/exam/run-code
+// - "🧠 浏览器内运行" 走 Pyodide
+
+let cmEditor = null;  // 当前 CodeMirror 实例
+
+function initCodeEditor() {
+  const textarea = document.getElementById('codeInput');
+  if (!textarea) return;
+
+  // 若 CodeMirror 加载失败（CDN 不可达），降级为纯 textarea
+  if (typeof CodeMirror === 'undefined') {
+    console.warn('[CodeMirror] CDN 加载失败，降级为纯 textarea');
+    bindPlainTextarea(textarea);
+    return;
+  }
+
+  // 先销毁旧实例（切题时 renderQuestion 重建 DOM，但 CM 实例可能残留）
+  if (cmEditor && cmEditor.toTextArea) {
+    try { cmEditor.toTextArea(); } catch(e) {}
+    cmEditor = null;
+  }
+
+  const initialVal = userAnswers[curIdx] != null ? userAnswers[curIdx] : '';
+
+  // 用 CodeMirror.fromTextArea 把 textarea 升级为 CM 编辑器
+  cmEditor = CodeMirror.fromTextArea(textarea, {
+    mode: { name: 'python', version: 3, singleLineStringErrors: false },
+    theme: 'default',  // 浅色主题，配合上面的 CSS 覆盖
+    lineNumbers: true,
+    indentUnit: 4,
+    tabSize: 4,
+    indentWithTabs: false,
+    smartIndent: true,       // 智能缩进（: 后自动缩进）
+    electricChars: true,     // 输入 : 自动触发缩进
+    autoCloseBrackets: true, // 自动配对括号
+    matchBrackets: true,     // 高亮匹配括号
+    styleActiveLine: true,
+    extraKeys: {
+      'Tab': (cm) => {
+        // Tab 插入 4 空格（不切焦点）
+        if (cm.somethingSelected()) {
+          cm.indentSelection('add');
+        } else {
+          cm.replaceSelection('    ', 'end');
+        }
+      },
+      'Ctrl-Space': 'autocomplete',  // Ctrl+Space 手动触发补全
+      'Cmd-Space': 'autocomplete',   // Mac 兼容
+    },
+  });
+
+  // 设置初始内容
+  cmEditor.setValue(initialVal);
+
+  // change 事件：同步代码到 userAnswers + 更新 filled 状态
+  cmEditor.on('change', (instance, change) => {
+    const code = instance.getValue();
+    userAnswers[curIdx] = code;
+    const editor = document.getElementById('codeEditor');
+    if (editor) editor.classList.toggle('filled', code.trim() !== '');
+    updateDots();
+
+    // 输入字母/下划线时自动触发智能提示（不弹得太频繁）
+    if (change.origin === '+input' && change.text && change.text.length === 1) {
+      const ch = change.text[0];
+      if (/[a-zA-Z_]/.test(ch)) {
+        // 用 setTimeout 0 让 CM 完成更新，再触发 hint
+        setTimeout(() => {
+          try {
+            CodeMirror.showHint(cmEditor, pythonHint, {
+              completeSingle: false,
+            });
+          } catch (e) { /* 补全失败不影响编辑 */ }
+        }, 0);
+      }
+    }
+  });
+
+  // 焦点
+  setTimeout(() => cmEditor.focus(), 50);
+}
+
+// 智能提示词表（Python 关键字 + 内置函数）
+const PY_HINT_WORDS = [
+  'False','None','True','and','as','assert','break','class','continue','def','del',
+  'elif','else','except','finally','for','from','global','if','import','in','is',
+  'lambda','nonlocal','not','or','pass','raise','return','try','while','with','yield',
+  'print','input','len','range','int','str','float','list','dict','tuple','set',
+  'bool','enumerate','zip','map','filter','sorted','reversed','sum','min','max',
+  'abs','round','type','isinstance','open','format','append','extend','pop','insert',
+  'remove','sort','reverse','keys','values','items','split','join','replace','strip',
+  'upper','lower','find','startswith','endswith','count','index',
+];
+
+// 自定义 Python 关键字补全
+// anyword-hint 只会补全「文档里已出现过的词」，无法补全尚未输入的关键字（如空白文件里输入 pri）。
+// 这里改为按光标前的词前缀过滤 PY_HINT_WORDS，实现真正的语法关键字补全。
+function pythonHint(cm) {
+  const cur = cm.getCursor();
+  const line = cm.getLine(cur.line);
+  let start = cur.ch;
+  while (start > 0 && /[A-Za-z0-9_.]/.test(line.charAt(start - 1))) start--;
+  const word = line.slice(start, cur.ch);
+  if (!word) return;  // 词为空时不弹
+  const lower = word.toLowerCase();
+  const list = PY_HINT_WORDS.filter(w => w.toLowerCase().indexOf(lower) === 0);
+  if (!list.length) return;
+  return {
+    list: list,
+    from: CodeMirror.Pos(cur.line, start),
+    to: CodeMirror.Pos(cur.line, cur.ch),
+  };
+}
+// 注册为 python 模式的 hint，使 Ctrl/Cmd-Space 也走关键字补全
+CodeMirror.registerHelper('hint', 'python', pythonHint);
+
+// 降级方案：CDN 加载失败时用纯 textarea
+function bindPlainTextarea(textarea) {
+  textarea.addEventListener('input', () => {
+    userAnswers[curIdx] = textarea.value;
+    const editor = document.getElementById('codeEditor');
+    if (editor) editor.classList.toggle('filled', textarea.value.trim() !== '');
+    updateDots();
+  });
+  textarea.addEventListener('keydown', (e) => {
+    if (e.key === 'Tab') {
+      e.preventDefault();
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      textarea.setRangeText('    ', start, end, 'end');
+    }
+  });
+  setTimeout(() => textarea.focus(), 0);
+}
+
+function getCodeValue() {
+  // 优先从 CodeMirror 实例读，降级到 textarea
+  if (cmEditor) {
+    try { return cmEditor.getValue(); } catch(e) {}
+  }
+  const ta = document.getElementById('codeInput');
+  return ta ? ta.value : (userAnswers[curIdx] || '');
+}
+
+async function runUserCode() {
+  const code = getCodeValue();
+  if (!code || !code.trim()) { toast('代码不能为空', 'error'); return; }
+  const btn = document.getElementById('runBtn');
+  const out = document.getElementById('runOutput');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ 运行中...'; }
+  if (out) { out.classList.remove('visible', 'has-error'); out.textContent = ''; }
+  const runQId = curIdx;
+  try {
+    const q = questions[runQId];
+    const res = await API.post('/api/exam/run-code', {
+      code,
+      sample_input: q.sample_input || '',
+    });
+    if (runQId !== curIdx) return;
+    if (out) {
+      let txt = '';
+      if (res.rc === 0) {
+        txt = res.output || '(代码执行成功，无输出)';
+      } else if (res.rc === -1) {
+        txt = res.error || '运行超时';
+      } else {
+        txt = res.error || res.output || '运行出错';
+        if (txt.length > 800) txt = txt.slice(0, 800) + '\n... (输出过长，已截断)';
+      }
+      out.textContent = txt;
+      out.classList.add('visible');
+      if (res.rc !== 0) out.classList.add('has-error');
+    }
+  } catch (e) {
+    if (runQId !== curIdx) return;
+    if (out) {
+      out.textContent = '❌ ' + e.message;
+      out.classList.add('visible', 'has-error');
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '▶ 运行代码（服务端）'; }
+  }
+}
+
+// ============ Pyodide 浏览器内 Python 解释器（lazy load）============
+let pyodideInstance = null;
+let pyodideLoading = null;
+
+async function loadPyodideLib() {
+  if (pyodideInstance) return pyodideInstance;
+  if (pyodideLoading) return pyodideLoading;
+  pyodideLoading = new Promise(async (resolve, reject) => {
+    try {
+      // 动态注入 pyodide.js 脚本
+      if (!window.loadPyodide) {
+        await new Promise((res, rej) => {
+          const s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js';
+          s.onload = res;
+          s.onerror = rej;
+          document.head.appendChild(s);
+        });
+      }
+      pyodideInstance = await window.loadPyodide({
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/',
+      });
+      resolve(pyodideInstance);
+    } catch (e) {
+      pyodideLoading = null;
+      reject(e);
+    }
+  });
+  return pyodideLoading;
+}
+
+// 页面加载后立即后台预加载 Pyodide（切到 code 题时大概率已经准备好）
+if (typeof window !== 'undefined') {
+  // 用 requestIdleCallback 等主线程空闲再加载，不影响首屏渲染
+  const startPreload = () => {
+    loadPyodideLib().then(() => {
+      console.log('[Pyodide] 已加载完成');
+      const btn = document.getElementById('runBtnBrowser');
+      if (btn) btn.textContent = '🧠 浏览器内运行（已就绪）';
+    }).catch((e) => {
+      console.warn('[Pyodide] 预加载失败（首次点击时会重试）:', e.message);
+    });
+  };
+  if (window.requestIdleCallback) {
+    requestIdleCallback(startPreload, { timeout: 5000 });
+  } else {
+    setTimeout(startPreload, 1500);
+  }
+}
+
+async function runBrowserCode() {
+  const code = getCodeValue();
+  if (!code || !code.trim()) { toast('代码不能为空', 'error'); return; }
+  const btn = document.getElementById('runBtnBrowser');
+  const out = document.getElementById('runOutput');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ 加载 Pyodide...'; }
+  if (out) { out.classList.remove('visible', 'has-error'); out.textContent = '首次加载 Pyodide（~6MB），请稍候...'; out.classList.add('visible'); }
+  const runQId = curIdx;
+  try {
+    const pyodide = await loadPyodideLib();
+    if (runQId !== curIdx) return;
+    if (btn) btn.textContent = '⏳ 运行中...';
+    // 注入 sample_input
+    const q = questions[runQId];
+    const sampleInput = q.sample_input || '';
+    pyodide.globals.set('__sample_input__', sampleInput);
+    // 捕获 stdout/stderr
+    let captured = '';
+    pyodide.setStdout({ batched: (s) => { captured += s + '\n'; } });
+    pyodide.setStderr({ batched: (s) => { captured += s + '\n'; } });
+    // 用 StringIO 包裹 stdin
+    const stdinScript = sampleInput
+      ? `import sys, io\nsys.stdin = io.StringIO(__sample_input__)\n`
+      : '';
+    let result;
+    try {
+      result = pyodide.runPython(stdinScript + code);
+    } catch (e) {
+      captured += '\n❌ ' + e.message;
+    }
+    if (runQId !== curIdx) return;
+    if (out) {
+      let txt = captured.trim();
+      if (result != null && typeof result !== 'undefined') txt += '\n[返回值] ' + String(result);
+      if (!txt) txt = '(代码执行成功，无输出)';
+      if (txt.length > 1500) txt = txt.slice(0, 1500) + '\n... (输出过长，已截断)';
+      out.textContent = txt;
+      out.classList.add('visible');
+      out.classList.remove('has-error');
+    }
+  } catch (e) {
+    if (runQId !== curIdx) return;
+    if (out) {
+      out.textContent = '❌ Pyodide 加载失败：' + e.message + '\n\n（请尝试「▶ 运行代码（服务端）」按钮）';
+      out.classList.add('visible', 'has-error');
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '🧠 浏览器内运行'; }
+  }
+}
+
+function updateNav() {
+  document.getElementById('prevBtn').disabled = curIdx === 0;
+  const nextBtn = document.getElementById('nextBtn');
+  if (curIdx === questions.length - 1) {
+    nextBtn.textContent = '🎉 提交闯关';
+    nextBtn.classList.add('btn-submit-nav');
+    nextBtn.onclick = confirmSubmit;
+  } else {
+    nextBtn.textContent = '下一题 ➡';
+    nextBtn.classList.remove('btn-submit-nav');
+    nextBtn.onclick = goNext;
+  }
+}
+
+function goPrev() {
+  if (curIdx > 0) { curIdx--; renderQuestion(); updateDots(); }
+}
+
+function goNext() {
+  if (curIdx < questions.length - 1) { curIdx++; renderQuestion(); updateDots(); }
+  else { confirmSubmit(); }
+}
+
+function jumpTo(idx) {
+  curIdx = idx;
+  renderQuestion();
+  updateDots();
+}
+
+function updateDots() {
+  const answered = userAnswers.filter(a => a !== null && a !== '').length;
+  document.getElementById('answeredCount').textContent = answered;
+  const dots = document.getElementById('navDots');
+  dots.innerHTML = questions.map((_, i) => {
+    let cls = 'dot';
+    if (userAnswers[i] !== null && userAnswers[i] !== '') cls += ' answered';
+    if (i === curIdx) cls += ' current';
+    return `<div class="${cls}" onclick="jumpTo(${i})">${i+1}</div>`;
+  }).join('');
+}
+
+function confirmSubmit() {
+  const unanswered = userAnswers.filter(a => a === null || a === '').length;
+  document.getElementById('modalText').textContent = unanswered > 0
+    ? `你还有 ${unanswered} 题没答，确定要提交吗？`
+    : '所有题都答完啦，确定提交吗？';
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+}
+
+async function doSubmit() {
+  closeModal();
+  if (submitted) return;
+  submitted = true;
+
+  // 提交前确保当前 code 题的最新代码已同步到 userAnswers
+  if (questions[curIdx] && questions[curIdx].type === 'code') {
+    const code = getCodeValue();
+    userAnswers[curIdx] = code;
+  }
+
+  const answers = questions.map((q, i) => ({
+    question_id: q.id,
+    user_answer: userAnswers[i] != null ? String(userAnswers[i]) : null,
+  }));
+
+  try {
+    const duration_seconds = Math.max(0, Math.floor((Date.now() - examStartTs) / 1000));
+    const res = await API.post('/api/exam/submit', {
+      subject_id: examSubjectId,
+      mode: examMode,
+      topic_ids: examTopicIds,
+      answers,
+      duration_seconds,
+    });
+    showResult(res);
+  } catch (e) {
+    toast(e.message, 'error');
+    submitted = false;
+  }
+}
+
+function showResult(record) {
+  document.getElementById('quizMain').style.display = 'none';
+  const r = document.getElementById('result');
+  r.style.display = 'block';
+
+  const rank = scoreRank(record.score);
+  const correct = record.correct;
+  const wrong = record.wrong;
+
+  let html = `
+    <div class="score-banner">
+      <div class="emoji">${rank.emoji}</div>
+      <h2>${rank.text}</h2>
+      <div class="score">${record.score}<span style="font-size:28px;">分</span></div>
+      <div class="detail">答对 ${correct} 题 · 答错 ${wrong} 题 · 共 ${record.total} 题 · 用时 ${fmtDuration(record.duration_seconds)}</div>
+      <div class="rank">${record.subject_name || ''} · ${record.mode === 'wrong' ? '错题重做' : record.mode === 'random' ? '随机挑战' : '自由组卷'}</div>
+    </div>`;
+
+  if (wrong === 0 && record.total > 0) {
+    html += `<div class="no-wrong">🌟 全对啦！你太棒了！</div>`;
+  }
+  // 总是展开每一题（无论对错），方便复盘：实操题做对也能看到题干/代码/点评
+  if (record.answer_records && record.answer_records.length) {
+    html += `<div class="section-title"><span class="icon">📖</span>答题详情（共 ${record.total} 题）</div>`;
+    record.answer_records.forEach((ar, i) => {
+      const q = ar.question;
+      if (!q) return;
+      const isRight = (ar.is_correct === true) || (ar.is_correct === null && ar.llm_score != null && ar.llm_score >= 60);
+      const [cls, label] = typeTag(q.type);
+      const stTag = isRight
+        ? '<span class="status status-right">✅ 答对</span>'
+        : '<span class="status status-wrong">❌ 答错</span>';
+      let body;
+      if (q.type === 'code') {
+        body = renderAnswerCard(q, ar, { skipQuestion: true });
+      } else {
+        const yourAns = answerText(q, ar.user_answer);
+        const correctAns = answerText(q, q.answer);
+        body = `
+          <div class="explain-box">
+            <span class="label label-your">${isRight ? '✓' : '✗'} 你的答案</span><span class="${isRight ? 'correct-answer' : 'your-answer-wrong'}">${esc(yourAns)}</span>
+          </div>
+          <div class="explain-box">
+            <span class="label label-correct">✓ 正确答案</span><span class="correct-answer">${esc(correctAns)}</span>
+          </div>
+          <div class="explain-text">💡 ${q.explanation || '暂无讲解'}</div>`;
+      }
+      html += `
+        <div class="explain-card ${isRight ? 'is-correct' : ''}">
+          <div class="explain-head">
+            <div class="q-num">${i + 1}</div>
+            <span class="${cls}">${label}</span>
+            ${q.topic_name ? `<span class="q-topic">${esc(q.topic_name)}</span>` : ''}
+            ${stTag}
+          </div>
+          <div class="explain-q">${nl2br(esc(q.content))}</div>
+          ${body}
+        </div>`;
+    });
+  }
+
+  const againBtn = (examData.practical && subject)
+    ? `<button class="btn btn-blue" onclick="location.href='home.html?pick=${subject.id}'">🔁 继续选课做题</button>`
+    : `<button class="btn btn-blue" onclick="location.href='home.html'">📚 再做一套</button>`;
+  html += `
+    <div style="text-align:center;margin-top:24px;">
+      ${againBtn}
+      <button class="btn btn-green" onclick="location.href='records.html'" style="margin-left:10px;">📋 查看记录</button>
+      <button class="btn btn-yellow" onclick="location.href='wrong.html'" style="margin-left:10px;">❌ 错题本</button>
+    </div>`;
+  r.innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+// 初始化
+renderQuestion();
+updateDots();
+</script>
+</body>
+</html>

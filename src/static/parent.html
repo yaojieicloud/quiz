@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库闯关 - 家长视角</title>
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<header class="page-header">
+  <div class="icon">👨‍👩‍👧</div>
+  <h1>孩子情况</h1>
+  <div class="subtitle">关注孩子的学习，一起成长</div>
+</header>
+
+<main>
+  <!-- 绑定孩子 -->
+  <div class="card" id="bindCard">
+    <div class="card-title">🔗 绑定孩子</div>
+    <p style="color:#7a6c8c;font-size:14px;margin-bottom:12px;">请孩子登录其学生账号，在个人中心查看绑定码，输入下方完成绑定。</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <input type="text" class="form-input" id="bindCode" placeholder="输入6位绑定码" style="flex:1;min-width:180px;">
+      <button class="btn btn-green" onclick="bindChild()">绑定</button>
+    </div>
+  </div>
+
+  <!-- 孩子列表 -->
+  <div id="childrenBox"></div>
+
+  <!-- 选中孩子的详情 -->
+  <div id="childDetail"></div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+const user = requireAuth();
+if (!user) throw new Error('redirect');
+if (user.role !== 'parent') {
+  document.body.innerHTML = '<div class="empty"><div class="icon">🔒</div><p>此页面仅家长可访问</p></div>';
+  throw new Error('forbidden');
+}
+document.getElementById('topbar').innerHTML = renderTopbar('parent');
+
+let children = [];
+let currentChild = null;
+
+async function loadChildren() {
+  try {
+    children = await API.get('/api/auth/children');
+    const box = document.getElementById('childrenBox');
+    if (!children.length) {
+      box.innerHTML = '<div class="empty"><div class="icon">👶</div><p>还没有绑定孩子，请在上方输入绑定码</p></div>';
+      return;
+    }
+    box.innerHTML = `<div class="card"><div class="card-title">👶 我的孩子</div>
+      ${children.map(c => `<div class="list-item" style="cursor:pointer;" onclick="selectChild(${c.id})">
+        <div class="main-info">
+          <div class="title">${esc(c.nickname)} (${esc(c.username)})</div>
+          <div class="sub">绑定码：${esc(c.bind_code)} · 注册于 ${fmtTime(c.created_at)}</div>
+        </div>
+        <button class="btn btn-sm btn-blue">查看</button>
+      </div>`).join('')}
+    </div>`;
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function bindChild() {
+  const code = document.getElementById('bindCode').value.trim();
+  if (!code) { toast('请输入绑定码', 'error'); return; }
+  try {
+    await API.post('/api/auth/bind-child', { bind_code: code });
+    toast('绑定成功！', 'success');
+    document.getElementById('bindCode').value = '';
+    loadChildren();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function selectChild(childId) {
+  currentChild = children.find(c => c.id === childId);
+  const box = document.getElementById('childDetail');
+  box.innerHTML = '<div class="card">加载中...</div>';
+
+  try {
+    const [stats, records] = await Promise.all([
+      API.get(`/api/parent/children/${childId}/stats`),
+      API.get(`/api/parent/children/${childId}/records`),
+    ]);
+
+    let html = `<div class="card">
+      <div class="card-title">📊 ${esc(currentChild.nickname)} 的学习概览</div>
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="num">${stats.total_exams}</div><div class="label">闯关次数</div></div>
+        <div class="stat-card green"><div class="num">${stats.avg_score}</div><div class="label">平均分</div></div>
+        <div class="stat-card"><div class="num">${stats.best_score}</div><div class="label">最高分</div></div>
+        <div class="stat-card orange"><div class="num">${stats.total_wrong}</div><div class="label">待消灭错题</div></div>
+      </div>
+    </div>`;
+
+    if (stats.subjects.length) {
+      html += `<div class="card"><div class="card-title">📚 各科目表现</div>
+        ${stats.subjects.map(s => `<div class="list-item">
+          <div class="main-info">
+            <div class="title">${esc(s.subject_name)}</div>
+            <div class="sub">闯关 ${s.exam_count} 次 · 平均 ${s.avg_score} · 错题 ${s.wrong_count}</div>
+          </div>
+          <div class="score-badge ${scoreRank(s.best_score).cls}">最高${s.best_score}</div>
+        </div>`).join('')}
+      </div>`;
+    }
+
+    html += `<div class="card"><div class="card-title">📋 最近答题记录</div>`;
+    if (!records.length) {
+      html += '<div class="empty"><div class="icon">📭</div><p>孩子还没有答题记录</p></div>';
+    } else {
+      html += records.slice(0, 10).map(r => `<div class="list-item">
+        <div class="main-info">
+          <div class="title">${esc(r.subject_name)} · ${r.mode==='wrong'?'错题重做':r.mode==='random'?'随机挑战':'自由组卷'}</div>
+          <div class="sub">对${r.correct} 错${r.wrong} · ${fmtTime(r.finished_at)}</div>
+        </div>
+        <div class="score-badge ${scoreRank(r.score).cls}">${r.score}分</div>
+      </div>`).join('');
+    }
+    html += '</div>';
+
+    box.innerHTML = html;
+    box.scrollIntoView({ behavior: 'smooth' });
+  } catch (e) {
+    box.innerHTML = `<div class="card">加载失败：${esc(e.message)}</div>`;
+  }
+}
+
+loadChildren();
+</script>
+</body>
+</html>

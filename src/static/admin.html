@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>管理后台 - 题库闯关系统</title>
+<link rel="stylesheet" href="css/common.css">
+<style>
+/* 管理后台特有样式 */
+.admin-main { max-width: 960px; }
+.tab-bar { display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+.admin-table { width:100%; border-collapse:collapse; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 4px 14px rgba(0,0,0,0.08); }
+.admin-table th { background:#f4f0fa; color:#7a6c8c; padding:12px 14px; text-align:left; font-size:14px; }
+.admin-table td { padding:12px 14px; border-top:1px solid #f1f3f5; font-size:14px; vertical-align:top; }
+.admin-table tr:hover td { background:#fffae8; }
+.q-content-cell { max-width:340px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.icon-btn { border:none; background:none; cursor:pointer; font-size:18px; padding:4px 8px; border-radius:8px; transition:background 0.2s; }
+.icon-btn:hover { background:#ffe08a; }
+.icon-btn.del:hover { background:#ffa8a8; }
+.section-box { background:#fff; border-radius:18px; padding:20px; box-shadow:0 4px 14px rgba(0,0,0,0.08); margin-bottom:16px; }
+.section-box h3 { font-size:18px; color:#3a3a55; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+.topic-row { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f8f9fc; border-radius:12px; margin-bottom:8px; }
+.topic-row .name { font-weight:bold; color:#3a3a55; }
+.topic-row .cnt { font-size:13px; color:#9c8bb5; background:#fff; padding:2px 10px; border-radius:10px; }
+.filter-bar { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:16px; }
+.filter-bar .form-group { margin:0; flex:1; min-width:140px; }
+.filter-bar select { padding:10px 14px; }
+/* 表单弹窗 */
+.form-modal-mask { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:99; align-items:flex-start; justify-content:center; overflow-y:auto; padding:30px 16px; }
+.form-modal-mask.show { display:flex; }
+.form-modal { background:#fff; border-radius:24px; padding:28px; width:100%; max-width:560px; box-shadow:0 10px 40px rgba(0,0,0,0.2); animation:fadeIn 0.3s ease; }
+.form-modal h3 { font-size:22px; color:#3a3a55; margin-bottom:18px; text-align:center; }
+.form-modal .btn-row { display:flex; gap:12px; justify-content:center; margin-top:20px; }
+textarea.form-input { resize:vertical; min-height:70px; line-height:1.6; }
+textarea.form-input.lg { min-height:120px; }
+.opt-input-row { display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+.opt-input-row .letter-tag { width:30px; height:30px; border-radius:50%; background:#dee2e6; color:#495057; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:14px; flex-shrink:0; }
+.opt-input-row .form-input { flex:1; padding:8px 12px; font-size:14px; }
+.opt-input-row .correct-radio { width:20px; height:20px; cursor:pointer; }
+.json-textarea { width:100%; min-height:280px; font-family:Consolas,monospace; font-size:13px; line-height:1.5; padding:14px; border:3px solid #e9ecef; border-radius:14px; background:#f8f9fc; color:#3a3a55; }
+.json-textarea:focus { border-color:#74c0fc; background:#fff; outline:none; box-shadow:0 0 0 4px rgba(116,192,252,0.2); }
+.format-hint { background:#f8f9fc; border-radius:12px; padding:14px 16px; font-size:13px; color:#7a6c8c; line-height:1.7; margin-top:12px; }
+.format-hint code { background:#e9ecef; padding:2px 6px; border-radius:4px; font-family:Consolas,monospace; color:#e8590c; }
+.format-hint pre { background:#3a3a55; color:#a5d8ff; padding:12px; border-radius:10px; overflow-x:auto; margin-top:8px; font-size:12px; }
+.subject-expand { margin-top:10px; padding:14px; background:#fffae8; border-radius:14px; }
+.pager { display:flex; gap:8px; justify-content:center; align-items:center; margin-top:16px; flex-wrap:wrap; }
+.pager button { padding:6px 12px; border:none; background:#f4f0fa; border-radius:10px; cursor:pointer; font-weight:bold; font-size:14px; color:#7a6c8c; }
+.pager button.active { background:linear-gradient(135deg,#74c0fc,#4dabf7); color:#fff; }
+.pager button:disabled { opacity:0.4; cursor:default; }
+/* 学员答题记录 */
+.stu-q-card { background:#f8f9fc; border-radius:14px; padding:16px 18px; margin-bottom:14px; border:1px solid #f1f3f5; }
+</style>
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<header class="page-header">
+  <div class="icon">⚙️</div>
+  <h1>管理后台</h1>
+  <div class="subtitle">📚 科目 / 章节 / 题目管理 & 批量导入</div>
+</header>
+
+<main class="admin-main">
+
+  <div class="tab-bar">
+    <span class="chip active" id="tabSubjects" onclick="switchTab('subjects')">📚 科目与章节</span>
+    <span class="chip" id="tabQuestions" onclick="switchTab('questions')">📝 题目管理</span>
+    <span class="chip" id="tabStudents" onclick="switchTab('students')">👀 学员答题</span>
+    <span class="chip" id="tabImport" onclick="switchTab('import')">📥 批量导入</span>
+    <span class="chip" id="tabSql" onclick="switchTab('sql')">🛠 SQL 运维</span>
+    <span class="chip" id="tabBackup" onclick="switchTab('backup')">🗄 数据备份</span>
+  </div>
+
+  <!-- ===== 科目与章节 ===== -->
+  <div id="paneSubjects">
+    <div class="section-box">
+      <h3>📚 科目列表 <button class="btn btn-blue btn-sm" style="margin-left:auto;" onclick="openSubjectModal()">+ 新建科目</button></h3>
+      <div id="subjectList"></div>
+    </div>
+  </div>
+
+  <!-- ===== 题目管理 ===== -->
+  <div id="paneQuestions" style="display:none;">
+    <div class="section-box">
+      <div class="filter-bar">
+        <div class="form-group">
+          <label>科目</label>
+          <select class="form-select" id="qFilterSubject" onchange="onFilterSubjectChange()">
+            <option value="">全部科目</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>章节</label>
+          <select class="form-select" id="qFilterTopic" onchange="loadQuestions(1)">
+            <option value="">全部章节</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>题型</label>
+          <select class="form-select" id="qFilterType" onchange="loadQuestions(1)">
+            <option value="">全部题型</option>
+            <option value="choice">选择题</option>
+            <option value="judge">判断题</option>
+            <option value="calc">计算题</option>
+          </select>
+        </div>
+        <button class="btn btn-yellow btn-sm" onclick="loadQuestions(1)">🔍 查询</button>
+        <button class="btn btn-green btn-sm" onclick="openQuestionModal()">+ 新建题目</button>
+      </div>
+      <div id="questionList"></div>
+      <div id="questionPager" class="pager"></div>
+    </div>
+  </div>
+
+  <!-- ===== 学员答题记录 ===== -->
+  <div id="paneStudents" style="display:none;">
+    <div class="section-box">
+      <h3>👀 学员答题记录 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">选择学员 → 点某次记录看每题详情（含实操提交的代码）</span></h3>
+      <div class="filter-bar">
+        <div class="form-group" style="flex:2;">
+          <label>选择学员</label>
+          <select class="form-select" id="stuSelect" onchange="onStudentChange()">
+            <option value="">请选择学员...</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="loadStudents(true)">🔄 刷新学员</button>
+      </div>
+      <div id="stuSubjectFilter" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px;"></div>
+      <div id="stuRecordList"></div>
+    </div>
+    <div id="stuRecordDetail"></div>
+  </div>
+
+  <!-- ===== 批量导入 ===== -->
+  <div id="paneImport" style="display:none;">
+    <div class="section-box">
+      <h3>📥 JSON 批量导入</h3>
+      <div class="form-group">
+        <label>导入到科目</label>
+        <select class="form-select" id="importSubject">
+          <option value="">请选择科目...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>题目 JSON（粘贴数组，格式见下方说明）</label>
+        <textarea class="json-textarea" id="importJson" placeholder='[
+  {
+    "type": "choice",
+    "topic_name": "变量与标识符",
+    "content": "下面哪个是合法的变量名？",
+    "options": ["2name", "name_2", "class", "my-name"],
+    "answer": "1",
+    "explanation": "变量名只能用字母、数字、下划线组成...",
+    "difficulty": 1
+  }
+]'></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="doBatchImport()">🚀 校验并导入</button>
+      <div class="format-hint">
+        <b>📋 格式说明：</b><br>
+        • <code>type</code>: 题型，<code>choice</code>(选择) / <code>judge</code>(判断) / <code>calc</code>(计算)<br>
+        • <code>topic_name</code>: 章节名称（不存在会自动创建）<br>
+        • <code>unit</code>: 所属单元（可选，文化类科目用，如"三年级上册"）<br>
+        • <code>content</code>: 题干内容（可用 <code>\n</code> 换行）<br>
+        • <code>options</code>: 选项数组（选择题4个，判断题写 <code>["对","错"]</code>，计算题写 <code>null</code>）<br>
+        • <code>answer</code>: 答案。选择题/判断题填选项序号（从0开始），计算题填具体答案<br>
+        • <code>explanation</code>: 错题讲解（可选，支持HTML标签如 <code>&lt;b&gt;</code>）<br>
+        • <code>difficulty</code>: 难度1-5（可选，默认1）<br>
+        <pre>[
+  {"type":"choice","topic_name":"变量与标识符","content":"1+1=?","options":["1","2","3","4"],"answer":"1","explanation":"1+1=2","difficulty":1},
+  {"type":"judge","topic_name":"注释","content":"# 是注释符号","options":["对","错"],"answer":"0","explanation":"对的"},
+  {"type":"calc","topic_name":"加减法","content":"458+376=?","options":null,"answer":"834","explanation":"列竖式计算...","difficulty":2}
+]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SQL 运维 ===== -->
+  <div id="paneSql" style="display:none;">
+    <div class="section-box">
+      <h3>🛠 SQL 执行 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">执行前自动备份数据库文件（落在数据卷，可回滚）</span></h3>
+      <div class="filter-bar">
+        <label class="form-check" style="display:flex;align-items:center;gap:6px;font-size:14px;color:#7a6c8c;">
+          <input type="checkbox" id="sqlScript"> 作为脚本执行（多条语句）
+        </label>
+        <button class="btn btn-primary" onclick="doExecSql()">💾 备份并执行</button>
+      </div>
+      <textarea class="json-textarea" id="sqlInput" placeholder="例如：&#10;SELECT * FROM question WHERE type='code' LIMIT 10;&#10;-- 或 &#10;UPDATE question SET difficulty=2 WHERE subject_id=3;"></textarea>
+      <div id="sqlResult" style="margin-top:14px;"></div>
+    </div>
+
+    <div class="section-box">
+      <h3>🔧 高级 · 系统文件更新 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">供后续纯 API 更新源码 / 前端（无需 docker）</span></h3>
+      <div class="filter-bar">
+        <div class="form-group" style="flex:2;">
+          <label>目标路径（须为 /app 内）</label>
+          <input type="text" class="form-input" id="filePath" placeholder="如 /app/static/quiz.html 或 /app/routers/exam.py">
+        </div>
+      </div>
+      <textarea class="json-textarea" id="fileContent" placeholder="写入的文件内容（完整文本）" style="min-height:160px;"></textarea>
+      <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;">
+        <button class="btn btn-blue" onclick="doUpdateFile()">📝 写入文件</button>
+        <button class="btn btn-warn" onclick="doRestart()">🔄 重启容器加载新代码</button>
+      </div>
+      <div id="fileResult" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- ===== 数据备份 ===== -->
+  <div id="paneBackup" style="display:none;">
+    <div class="section-box">
+      <h3>🗄 数据库备份 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">步骤① 在服务器本地（数据卷）生成备份，步骤② 下载到本机</span></h3>
+      <div class="filter-bar">
+        <button class="btn btn-primary" onclick="doBackupNow()">💾 立即在服务器备份</button>
+        <button class="btn btn-blue" onclick="doBackupAndDownload()">⬇ 备份并下载到本机</button>
+        <button class="btn btn-ghost" onclick="loadBackups()">🔄 刷新列表</button>
+      </div>
+      <div id="backupList" style="margin-top:14px;"></div>
+      <div id="backupResult" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ===== 表单弹窗 ===== -->
+<div class="form-modal-mask" id="formModal">
+  <div class="form-modal" id="formModalContent"></div>
+</div>
+
+<!-- ===== 确认弹窗 ===== -->
+<div class="modal-mask" id="confirmModal">
+  <div class="modal">
+    <h3 id="confirmTitle">确认</h3>
+    <p id="confirmMsg"></p>
+    <div class="btns">
+      <button class="btn-no" onclick="closeConfirm()">取消</button>
+      <button class="btn-yes" id="confirmYesBtn">确定</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+// ============ 权限检查 ============
+const user = requireAuth();
+if (!user || user.role !== 'admin') {
+  toast('仅管理员可访问', 'error');
+  setTimeout(() => location.href = 'index.html', 800);
+}
+document.getElementById('topbar').innerHTML = renderTopbar('admin');
+
+// ============ 状态 ============
+let currentTab = 'subjects';
+let subjects = [];
+let topicsCache = {}; // subjectId -> [topics]
+let selectedSubjectId = null;
+let questions = [];
+let qPage = 1, qPageSize = 15, qTotal = 0;
+
+// ============ Tab 切换 ============
+function switchTab(tab) {
+  currentTab = tab;
+  ['Subjects','Questions','Students','Import','Sql','Backup'].forEach(t => {
+    const id = t.toLowerCase();
+    const tabEl = document.getElementById('tab'+t);
+    const paneEl = document.getElementById('pane'+t);
+    if (tabEl) tabEl.classList.toggle('active', tab === id);
+    if (paneEl) paneEl.style.display = tab === id ? 'block' : 'none';
+  });
+  if (tab === 'subjects') loadSubjects();
+  if (tab === 'questions') { initQuestionFilters(); loadQuestions(1); }
+  if (tab === 'students') loadStudents();
+  if (tab === 'import') initImportSubject();
+  if (tab === 'backup') loadBackups();
+}
+
+// ============ 科目与章节 ============
+async function loadSubjects() {
+  try {
+    subjects = await API.get('/api/subjects');
+    renderSubjects();
+    // 刷新题目筛选和导入的科目下拉
+    refreshSubjectDropdowns();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderSubjects() {
+  const el = document.getElementById('subjectList');
+  if (!subjects.length) {
+    el.innerHTML = '<div class="empty"><div class="icon">📭</div><p>还没有科目，点击右上角新建</p></div>';
+    return;
+  }
+  el.innerHTML = subjects.map(s => `
+    <div class="list-item" style="flex-direction:column;align-items:stretch;">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
+        <div class="main-info">
+          <span style="font-size:28px;">${s.icon||'📚'}</span>
+          <span class="title">${esc(s.name)}</span>
+          ${s.grade ? `<span class="tag tag-gray" style="margin-left:8px;">${esc(s.grade)}</span>` : ''}
+          <span class="tag tag-gray" style="margin-left:8px;">${s.category==='programming'?'编程类':'文化类'}</span>
+          <span class="tag tag-blue" style="margin-left:8px;">${s.question_count} 题</span>
+        </div>
+        <div class="actions">
+          <button class="icon-btn" title="展开章节" onclick="toggleTopics(${s.id})">📂</button>
+          <button class="icon-btn" title="编辑" onclick="openSubjectModal(${s.id})">✏️</button>
+          <button class="icon-btn del" title="删除" onclick="confirmDeleteSubject(${s.id})">🗑️</button>
+        </div>
+      </div>
+      <div id="topics-${s.id}" style="display:none;" class="subject-expand"></div>
+    </div>
+  `).join('');
+}
+
+function refreshSubjectDropdowns() {
+  const opts = '<option value="">全部科目</option>' + subjects.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+  const qFilter = document.getElementById('qFilterSubject');
+  if (qFilter) qFilter.innerHTML = opts;
+  const impSub = document.getElementById('importSubject');
+  if (impSub) impSub.innerHTML = '<option value="">请选择科目...</option>' + subjects.map(s => `<option value="${s.id}">${esc(s.name)}</option>`).join('');
+}
+
+async function toggleTopics(subjectId) {
+  const el = document.getElementById('topics-' + subjectId);
+  if (el.style.display === 'block') { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = '<div style="color:#9c8bb5;text-align:center;padding:10px;">加载中...</div>';
+  try {
+    const topics = await API.get(`/api/subjects/${subjectId}/topics`);
+    topicsCache[subjectId] = topics;
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <b style="color:#3a3a55;">📖 章节列表（${topics.length}）</b>
+        <button class="btn btn-blue btn-sm" onclick="openTopicModal(null, ${subjectId})">+ 新建章节</button>
+      </div>
+      ${topics.length === 0 ? '<div style="color:#9c8bb5;text-align:center;padding:10px;">暂无章节</div>' :
+        topics.map(t => `
+        <div class="topic-row">
+          <div>
+            ${t.unit ? `<span class="tag tag-gray" style="margin-right:6px;font-size:12px;">${esc(t.unit)}</span>` : ''}
+            <span class="name">${esc(t.name)}</span>
+            <span class="cnt">${t.question_count} 题</span>
+          </div>
+          <div class="actions">
+            <button class="icon-btn" onclick="openTopicModal(${t.id}, ${subjectId})">✏️</button>
+            <button class="icon-btn del" onclick="confirmDeleteTopic(${t.id})">🗑️</button>
+          </div>
+        </div>`).join('')}
+    `;
+  } catch(e) { el.innerHTML = `<div style="color:#c92a2a;">${esc(e.message)}</div>`; }
+}
+
+// ---- 科目表单 ----
+function openSubjectModal(id) {
+  const s = id ? subjects.find(x => x.id === id) : null;
+  const cat = s ? s.category : 'culture';
+  document.getElementById('formModalContent').innerHTML = `
+    <h3>${s ? '✏️ 编辑科目' : '➕ 新建科目'}</h3>
+    <div class="form-group"><label>科目名称</label><input type="text" class="form-input" id="fSubName" value="${s?esc(s.name):''}" placeholder="如：语文"></div>
+    <div class="form-group"><label>科目类型</label>
+      <select class="form-select" id="fSubCategory">
+        <option value="culture" ${cat==='culture'?'selected':''}>文化类（按单元+课时组织）</option>
+        <option value="programming" ${cat==='programming'?'selected':''}>编程类（按课扁平组织）</option>
+      </select>
+    </div>
+    <div class="form-group"><label>图标（emoji）</label><input type="text" class="form-input" id="fSubIcon" value="${s?esc(s.icon||'📚'):'📚'}" placeholder="📚"></div>
+    <div class="form-group"><label>年级/描述（可选）</label><input type="text" class="form-input" id="fSubGrade" value="${s?esc(s.grade||''):''}" placeholder="如：三年级"></div>
+    <div class="form-group"><label>简介（可选）</label><input type="text" class="form-input" id="fSubDesc" value="${s?esc(s.description||''):''}" placeholder="科目简介"></div>
+    <div class="btn-row">
+      <button class="btn-no" style="padding:10px 26px;border-radius:30px;border:none;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit;" onclick="closeFormModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveSubject(${id||'null'})">💾 保存</button>
+    </div>`;
+  document.getElementById('formModal').classList.add('show');
+}
+
+async function saveSubject(id) {
+  const name = document.getElementById('fSubName').value.trim();
+  if (!name) { toast('请填科目名称', 'error'); return; }
+  const data = {
+    name,
+    category: document.getElementById('fSubCategory').value,
+    icon: document.getElementById('fSubIcon').value.trim() || '📚',
+    grade: document.getElementById('fSubGrade').value.trim() || null,
+    description: document.getElementById('fSubDesc').value.trim() || null,
+  };
+  try {
+    if (id) {
+      await API.put('/api/subjects/'+id, data);
+      toast('科目已更新', 'success');
+    } else {
+      await API.post('/api/subjects', data);
+      toast('科目已创建', 'success');
+    }
+    closeFormModal();
+    loadSubjects();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function confirmDeleteSubject(id) {
+  const s = subjects.find(x => x.id === id);
+  if (!s) { toast('科目不存在或已被删除', 'error'); return; }
+  showConfirm('删除科目', `确定删除「${s.name}」？该科目下的章节也会一起删除。如果科目下有题目，需要先删除题目。`, async () => {
+    try { await API.del('/api/subjects/'+id); toast('已删除', 'success'); loadSubjects(); }
+    catch(e) { toast(e.message, 'error'); }
+  });
+}
+
+// ---- 章节表单 ----
+function openTopicModal(topicId, subjectId) {
+  const topics = topicsCache[subjectId] || [];
+  const t = topicId ? topics.find(x => x.id === topicId) : null;
+  const sub = subjects.find(s => s.id === subjectId);
+  const isCulture = sub && sub.category !== 'programming';
+  document.getElementById('formModalContent').innerHTML = `
+    <h3>${t ? '✏️ 编辑章节' : '➕ 新建章节'}</h3>
+    <div class="form-group"><label>章节名称</label><input type="text" class="form-input" id="fTopicName" value="${t?esc(t.name):''}" placeholder="如：变量与标识符"></div>
+    ${isCulture ? `<div class="form-group"><label>所属单元（如：三年级上册）</label><input type="text" class="form-input" id="fTopicUnit" value="${t?esc(t.unit||''):''}" placeholder="留空则归入「未分单元」"></div>` : ''}
+    <div class="form-group"><label>排序（数字，越小越靠前）</label><input type="number" class="form-input" id="fTopicOrder" value="${t?t.sort_order:0}"></div>
+    <div class="btn-row">
+      <button class="btn-no" style="padding:10px 26px;border-radius:30px;border:none;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit;" onclick="closeFormModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveTopic(${topicId||'null'}, ${subjectId})">💾 保存</button>
+    </div>`;
+  document.getElementById('formModal').classList.add('show');
+}
+
+async function saveTopic(topicId, subjectId) {
+  const name = document.getElementById('fTopicName').value.trim();
+  if (!name) { toast('请填章节名称', 'error'); return; }
+  const order = parseInt(document.getElementById('fTopicOrder').value) || 0;
+  const unitEl = document.getElementById('fTopicUnit');
+  const unit = unitEl ? (unitEl.value.trim() || null) : null;
+  try {
+    if (topicId) {
+      await API.put('/api/topics/'+topicId, { name, unit, sort_order: order });
+      toast('章节已更新', 'success');
+    } else {
+      await API.post('/api/topics', { subject_id: subjectId, name, unit });
+      toast('章节已创建', 'success');
+    }
+    closeFormModal();
+    toggleTopics(subjectId);
+    document.getElementById('topics-'+subjectId).style.display = 'block';
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function confirmDeleteTopic(id) {
+  showConfirm('删除章节', `确定删除该章节？如果章节下有题目，需要先删除题目。`, async () => {
+    try { await API.del('/api/topics/'+id); toast('已删除', 'success'); 
+      // 刷新展开的章节列表
+      for (const sid in topicsCache) { if (topicsCache[sid].some(t=>t.id===id)) { toggleTopics(parseInt(sid)); break; } }
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+
+// ============ 题目管理 ============
+function initQuestionFilters() {
+  // 科目下拉已在 loadSubjects 时刷新
+}
+
+async function onFilterSubjectChange() {
+  const sid = document.getElementById('qFilterSubject').value;
+  const topicSel = document.getElementById('qFilterTopic');
+  if (!sid) {
+    topicSel.innerHTML = '<option value="">全部章节</option>';
+  } else {
+    try {
+      const topics = await API.get(`/api/subjects/${sid}/topics`);
+      topicSel.innerHTML = '<option value="">全部章节</option>' + topics.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+    } catch(e) { toast(e.message, 'error'); }
+  }
+  loadQuestions(1);
+}
+
+async function loadQuestions(page) {
+  qPage = page || 1;
+  const params = new URLSearchParams();
+  const sid = document.getElementById('qFilterSubject').value;
+  const tid = document.getElementById('qFilterTopic').value;
+  const tp = document.getElementById('qFilterType').value;
+  if (sid) params.set('subject_id', sid);
+  if (tid) params.set('topic_id', tid);
+  if (tp) params.set('type', tp);
+  try {
+    questions = await API.get('/api/questions?' + params.toString());
+    qTotal = questions.length;
+    renderQuestions();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderQuestions() {
+  const el = document.getElementById('questionList');
+  if (!questions.length) {
+    el.innerHTML = '<div class="empty"><div class="icon">📭</div><p>没有符合条件的题目</p></div>';
+    document.getElementById('questionPager').innerHTML = '';
+    return;
+  }
+  // 分页
+  const start = (qPage-1) * qPageSize;
+  const pageItems = questions.slice(start, start + qPageSize);
+  const tp = typeTag;
+  el.innerHTML = `<table class="admin-table"><thead><tr>
+    <th style="width:50px;">ID</th><th style="width:80px;">题型</th><th>题干</th><th style="width:100px;">章节</th><th style="width:80px;">答案</th><th style="width:90px;">操作</th>
+  </tr></thead><tbody>` + pageItems.map(q => `
+    <tr>
+      <td>${q.id}</td>
+      <td><span class="${tp(q.type)[0]}">${tp(q.type)[1]}</span></td>
+      <td class="q-content-cell" title="${esc(q.content)}">${esc(q.content.replace(/\n/g,' '))}</td>
+      <td style="font-size:12px;color:#9c8bb5;">${esc(q.topic_name||'-')}</td>
+      <td style="font-weight:bold;color:#2b8a3e;">${esc(displayAnswer(q))}</td>
+      <td>
+        <button class="icon-btn" onclick="openQuestionModal(${q.id})">✏️</button>
+        <button class="icon-btn del" onclick="confirmDeleteQuestion(${q.id})">🗑️</button>
+      </td>
+    </tr>`).join('') + `</tbody></table>`;
+  renderPager();
+}
+
+function displayAnswer(q) {
+  if (q.type === 'choice' && q.options) {
+    const idx = parseInt(q.answer);
+    return q.options[idx] || q.answer;
+  }
+  if (q.type === 'judge' && q.options) {
+    return q.answer === '0' ? '对' : '错';
+  }
+  return q.answer || '-';
+}
+
+function renderPager() {
+  const pages = Math.ceil(qTotal / qPageSize);
+  if (pages <= 1) { document.getElementById('questionPager').innerHTML = `<span style="color:#9c8bb5;font-size:14px;">共 ${qTotal} 题</span>`; return; }
+  let html = `<button onclick="loadQuestions(${qPage-1})" ${qPage<=1?'disabled':''}>上一页</button>`;
+  for (let i=1; i<=pages; i++) {
+    if (i === qPage || (i<=3) || (i>=pages-1) || Math.abs(i-qPage)<=1) {
+      html += `<button class="${i===qPage?'active':''}" onclick="loadQuestions(${i})">${i}</button>`;
+    } else if (i === 4 || i === pages-2) {
+      html += '<span>...</span>';
+    }
+  }
+  html += `<button onclick="loadQuestions(${qPage+1})" ${qPage>=pages?'disabled':''}>下一页</button>`;
+  html += `<span style="color:#9c8bb5;font-size:14px;">共 ${qTotal} 题</span>`;
+  document.getElementById('questionPager').innerHTML = html;
+}
+
+// ---- 题目表单 ----
+async function openQuestionModal(id) {
+  const q = id ? questions.find(x => x.id === id) : null;
+  // 加载科目和章节
+  const sid = q ? q.subject_id : (document.getElementById('qFilterSubject').value ? parseInt(document.getElementById('qFilterSubject').value) : (subjects[0]?subjects[0].id:null));
+  let topicOpts = '<option value="">请选择章节</option>';
+  if (sid) {
+    try {
+      const topics = await API.get(`/api/subjects/${sid}/topics`);
+      topicOpts += topics.map(t => `<option value="${t.id}" ${q&&q.topic_id===t.id?'selected':''}>${esc(t.name)}</option>`).join('');
+    } catch(e) {}
+  }
+  const type = q ? q.type : 'choice';
+  document.getElementById('formModalContent').innerHTML = `
+    <h3>${q ? '✏️ 编辑题目' : '➕ 新建题目'}</h3>
+    <div class="form-group"><label>所属科目</label>
+      <select class="form-select" id="fQSubject" onchange="reloadTopicOptions()">
+        ${subjects.map(s => `<option value="${s.id}" ${sid===s.id?'selected':''}>${esc(s.name)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-group"><label>所属章节</label>
+      <select class="form-select" id="fQTopic">${topicOpts}</select>
+    </div>
+    <div class="form-group"><label>题型</label>
+      <select class="form-select" id="fQType" onchange="onTypeChange()">
+        <option value="choice" ${type==='choice'?'selected':''}>选择题</option>
+        <option value="judge" ${type==='judge'?'selected':''}>判断题</option>
+        <option value="calc" ${type==='calc'?'selected':''}>计算题</option>
+      </select>
+    </div>
+    <div class="form-group"><label>题干内容（可用 \\n 换行）</label>
+      <textarea class="form-input" id="fQContent" placeholder="输入题目内容...">${q?esc(q.content):''}</textarea>
+    </div>
+    <div class="form-group" id="fQOptionsBox"><label>选项（勾选正确答案）</label><div id="fQOptions"></div></div>
+    <div class="form-group" id="fQAnswerCalcBox" style="display:none;"><label>正确答案</label><input type="text" class="form-input" id="fQCalcAnswer" value="${q&&q.type==='calc'?esc(q.answer):''}" placeholder="如：834"></div>
+    <div class="form-group"><label>错题讲解（支持HTML）</label>
+      <textarea class="form-input lg" id="fQExplain" placeholder="答错时显示的讲解...">${q?esc(q.explanation||''):''}</textarea>
+    </div>
+    <div class="form-group"><label>难度（1-5）</label>
+      <select class="form-select" id="fQDiff">
+        ${[1,2,3,4,5].map(d => `<option value="${d}" ${q&&q.difficulty===d?'selected':''}>${d} 星</option>`).join('')}
+      </select>
+    </div>
+    <div class="btn-row">
+      <button class="btn-no" style="padding:10px 26px;border-radius:30px;border:none;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit;" onclick="closeFormModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveQuestion(${id||'null'})">💾 保存</button>
+    </div>`;
+  document.getElementById('formModal').classList.add('show');
+  onTypeChange(q);
+}
+
+async function reloadTopicOptions() {
+  const sid = parseInt(document.getElementById('fQSubject').value);
+  const topicSel = document.getElementById('fQTopic');
+  topicSel.innerHTML = '<option value="">加载中...</option>';
+  try {
+    const topics = await API.get(`/api/subjects/${sid}/topics`);
+    topicSel.innerHTML = '<option value="">请选择章节</option>' + topics.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function onTypeChange(editingQ) {
+  const type = document.getElementById('fQType').value;
+  const optBox = document.getElementById('fQOptionsBox');
+  const calcBox = document.getElementById('fQAnswerCalcBox');
+  const optEl = document.getElementById('fQOptions');
+  if (type === 'calc') {
+    optBox.style.display = 'none';
+    calcBox.style.display = 'block';
+    return;
+  }
+  optBox.style.display = 'block';
+  calcBox.style.display = 'none';
+  let opts = [];
+  let correctIdx = 0;
+  if (editingQ && editingQ.options) {
+    opts = editingQ.options;
+    correctIdx = parseInt(editingQ.answer) || 0;
+  } else if (type === 'judge') {
+    opts = ['对', '错'];
+    correctIdx = 0;
+  } else {
+    opts = ['', '', '', ''];
+  }
+  const letters = ['A','B','C','D','E','F'];
+  optEl.innerHTML = opts.map((opt, i) => `
+    <div class="opt-input-row">
+      <span class="letter-tag">${letters[i]||i}</span>
+      <input type="text" class="form-input" value="${esc(opt)}" placeholder="选项${letters[i]||i+1}" oninput="syncOptions()">
+      <input type="radio" class="correct-radio" name="correctOpt" value="${i}" ${i===correctIdx?'checked':''} title="设为正确答案">
+    </div>
+  `).join('') + (type === 'choice' ? `<button class="btn btn-sm btn-blue" style="margin-top:6px;" onclick="addOption()">+ 添加选项</button>` : '');
+}
+
+function addOption() {
+  const optEl = document.getElementById('fQOptions');
+  const rows = optEl.querySelectorAll('.opt-input-row');
+  const letters = ['A','B','C','D','E','F'];
+  const idx = rows.length;
+  const btn = optEl.querySelector('button');
+  const newrow = document.createElement('div');
+  newrow.className = 'opt-input-row';
+  newrow.innerHTML = `<span class="letter-tag">${letters[idx]||idx}</span><input type="text" class="form-input" value="" placeholder="选项${letters[idx]||idx+1}" oninput="syncOptions()"><input type="radio" class="correct-radio" name="correctOpt" value="${idx}" title="设为正确答案">`;
+  optEl.insertBefore(newrow, btn);
+}
+
+function syncOptions() { /* 实时读取即可，保存时统一收集 */ }
+
+async function saveQuestion(id) {
+  const subject_id = parseInt(document.getElementById('fQSubject').value);
+  const topic_id = parseInt(document.getElementById('fQTopic').value);
+  const type = document.getElementById('fQType').value;
+  const content = document.getElementById('fQContent').value.trim();
+  if (!topic_id) { toast('请选择章节', 'error'); return; }
+  if (!content) { toast('请填写题干', 'error'); return; }
+  const explanation = document.getElementById('fQExplain').value.trim();
+  const difficulty = parseInt(document.getElementById('fQDiff').value);
+  let options = null, answer = '';
+  if (type === 'calc') {
+    answer = document.getElementById('fQCalcAnswer').value.trim();
+    if (!answer) { toast('请填写正确答案', 'error'); return; }
+  } else {
+    const rows = document.querySelectorAll('#fQOptions .opt-input-row');
+    options = [];
+    rows.forEach(r => { options.push(r.querySelector('input[type=text]').value); });
+    const checked = document.querySelector('input[name=correctOpt]:checked');
+    if (!checked) { toast('请勾选正确答案', 'error'); return; }
+    answer = checked.value;
+    if (type === 'judge' && !options.every(o => o)) { /* 判断题默认对/错 */ options = ['对','错']; }
+    if (type === 'choice' && options.some(o => !o)) { toast('选项不能为空', 'error'); return; }
+  }
+  const data = { subject_id, topic_id, type, content, options, answer: String(answer), explanation, difficulty };
+  try {
+    if (id) {
+      await API.put('/api/questions/'+id, data);
+      toast('题目已更新', 'success');
+    } else {
+      await API.post('/api/questions', data);
+      toast('题目已创建', 'success');
+    }
+    closeFormModal();
+    loadQuestions(qPage);
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function confirmDeleteQuestion(id) {
+  showConfirm('删除题目', `确定删除题目 #${id}？此操作不可撤销。`, async () => {
+    try { await API.del('/api/questions/'+id); toast('已删除', 'success'); loadQuestions(qPage); }
+    catch(e) { toast(e.message, 'error'); }
+  });
+}
+
+// ============ 学员答题记录 ============
+let students = [];
+let allStuRecords = [];
+let allStuSubjects = [];
+let selectedStuSubjects = new Set(); // 空集合 = 全部
+let expandedStuRecordId = null; // 当前展开的学员记录ID（同时只展开一条抽屉）
+let currentDetailAnswerRecords = []; // 当前展开详情里的答题明细（供编辑弹框取数据）
+
+async function loadStudents(showToast) {
+  try {
+    students = await API.get('/api/admin/students');
+    const sel = document.getElementById('stuSelect');
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">请选择学员...</option>' + students.map(s =>
+      `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)}）· 共 ${s.exam_count} 次答题</option>`).join('');
+    if (cur && students.some(s => String(s.id) === cur)) sel.value = cur;
+    if (showToast) toast('学员列表已刷新', 'success');
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function renderStuSubjectFilter() {
+  const box = document.getElementById('stuSubjectFilter');
+  if (!allStuSubjects.length) { box.innerHTML = ''; return; }
+  const chips = allStuSubjects.map(s => {
+    const active = selectedStuSubjects.has(s.id) ? 'active' : '';
+    return `<span class="chip ${active}" data-sid="${s.id}" onclick="toggleStuSubject(${s.id})">${esc(s.icon||'📚')} ${esc(s.name)}</span>`;
+  }).join('');
+  const clearBtn = selectedStuSubjects.size ? '<span class="chip" style="border-style:dashed;" onclick="clearStuSubjects()">✕ 清除筛选</span>' : '';
+  box.innerHTML = `<span style="font-size:13px;color:#9c8bb5;margin-right:4px;">📚 筛选科目（可多选）：</span>${chips}${clearBtn}`;
+}
+
+function toggleStuSubject(sid) {
+  if (selectedStuSubjects.has(sid)) selectedStuSubjects.delete(sid);
+  else selectedStuSubjects.add(sid);
+  renderStuSubjectFilter();
+  renderStuRecordList();
+}
+
+function clearStuSubjects() {
+  selectedStuSubjects.clear();
+  renderStuSubjectFilter();
+  renderStuRecordList();
+}
+
+function renderStuRecordList() {
+  const box = document.getElementById('stuRecordList');
+  let records = allStuRecords;
+  if (selectedStuSubjects.size) {
+    records = records.filter(r => selectedStuSubjects.has(r.subject_id));
+  }
+  if (!records.length) {
+    box.innerHTML = '<div class="empty"><div class="icon">📭</div><p>没有符合条件的答题记录</p></div>';
+    return;
+  }
+  box.innerHTML = records.map(r => {
+    const rank = scoreRank(r.score);
+    const modeTxt = r.mode === 'wrong' ? '❌ 错题重做' : r.mode === 'random' ? '🎲 随机挑战' : '🎯 组卷/闯关';
+    const unfinished = r.finished_at ? '' : ' <span class="tag tag-gray">未交卷</span>';
+    const isOpen = expandedStuRecordId === r.id;
+    const btnTxt = isOpen ? '收起' : '查看详情';
+    const btnCls = isOpen ? 'btn-yellow' : 'btn-blue';
+    return `<div class="record-row" id="stu-row-${r.id}">
+      <div class="list-item" onclick="showStuDetail(${r.id})" style="cursor:pointer;">
+        <div class="main-info">
+          <div class="title">${esc(r.subject_name || '')} · ${modeTxt}${unfinished}</div>
+          <div class="sub">✅ ${r.correct} 对 · ❌ ${r.wrong} 错 / 共 ${r.total} 题 · ⏰ ${fmtTime(r.finished_at || r.started_at)} · 用时 ${fmtDuration(r.duration_seconds)}</div>
+        </div>
+        <div class="score-badge ${rank.cls}">${r.score}分</div>
+        <button class="btn btn-sm ${btnCls}" onclick="event.stopPropagation();showStuDetail(${r.id})">${btnTxt}</button>
+        <button class="btn btn-sm btn-red" onclick="event.stopPropagation();deleteRecord(${r.id})" style="margin-left:4px;">🗑️ 删除</button>
+      </div>
+      <div class="drawer" id="stu-drawer-${r.id}" style="display:${isOpen ? 'block' : 'none'};"></div>
+    </div>`;
+  }).join('');
+  if (expandedStuRecordId) fillStuDrawer(expandedStuRecordId);
+}
+
+async function onStudentChange() {
+  const sid = document.getElementById('stuSelect').value;
+  document.getElementById('stuRecordDetail').innerHTML = '';
+  expandedStuRecordId = null;
+  selectedStuSubjects.clear();
+  const box = document.getElementById('stuRecordList');
+  const filterBox = document.getElementById('stuSubjectFilter');
+  if (!sid) { box.innerHTML = ''; filterBox.innerHTML = ''; allStuRecords = []; return; }
+  box.innerHTML = '<div style="color:#9c8bb5;text-align:center;padding:14px;">加载中…</div>';
+  try {
+    allStuRecords = await API.get(`/api/admin/students/${sid}/records`);
+    // 从记录里提取该学员涉及到的科目（去重）
+    const seen = new Set();
+    allStuSubjects = [];
+    for (const r of allStuRecords) {
+      if (r.subject_id && !seen.has(r.subject_id)) {
+        seen.add(r.subject_id);
+        allStuSubjects.push({ id: r.subject_id, name: r.subject_name, icon: '📚' });
+      }
+    }
+    renderStuSubjectFilter();
+    renderStuRecordList();
+  } catch(e) { box.innerHTML = `<div style="color:#e03131;">${esc(e.message)}</div>`; }
+}
+
+async function showStuDetail(recordId) {
+  const rid = Number(recordId);
+  if (expandedStuRecordId === rid) {
+    expandedStuRecordId = null;
+    renderStuRecordList();
+    return;
+  }
+  expandedStuRecordId = rid;
+  renderStuRecordList();
+}
+
+async function deleteRecord(recordId) {
+  if (!confirm('确定删除这条答题记录吗？\n删除后无法恢复（含该次所有答题明细）。')) return;
+  try {
+    await API.del(`/api/admin/records/${recordId}`);
+    toast('已删除', 'success');
+    // 从本地数据移除并重新渲染
+    allStuRecords = allStuRecords.filter(r => r.id !== recordId);
+    expandedStuRecordId = null;
+    renderStuRecordList();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function editAnswerRecord(arId) {
+  const ar = currentDetailAnswerRecords.find(a => a.id === arId);
+  if (!ar) { toast('数据未找到，请重新展开详情', 'error'); return; }
+  const currentScore = ar.llm_score != null ? ar.llm_score : 0;
+  const currentFeedback = ar.llm_feedback || '';
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-mask';
+  overlay.id = 'editAnswerModal';
+  overlay.style.display = 'flex';
+  overlay.innerHTML = `
+    <div class="modal" style="max-width:500px;">
+      <h3>✏️ 修改评分与评语</h3>
+      <div style="margin:12px 0;">
+        <label style="font-size:13px;color:#7a6c8c;">评分（0-100，≥60 算通过）</label>
+        <input type="number" id="editScore" min="0" max="100" value="${currentScore}" class="form-select" style="width:100%;margin-top:4px;">
+      </div>
+      <div style="margin:12px 0;">
+        <label style="font-size:13px;color:#7a6c8c;">老师评语</label>
+        <textarea id="editFeedback" rows="5" style="width:100%;margin-top:4px;padding:8px 10px;border-radius:8px;border:1px solid #e0dcef;font-size:14px;box-sizing:border-box;" placeholder="输入评语（可选）">${esc(currentFeedback)}</textarea>
+      </div>
+      <div class="btns" style="margin-top:16px;">
+        <button class="btn-yes" onclick="saveEditAnswer(${arId})">💾 保存</button>
+        <button class="btn-no" onclick="document.getElementById('editAnswerModal').remove()">取消</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function saveEditAnswer(arId) {
+  const score = parseInt(document.getElementById('editScore').value);
+  const feedback = document.getElementById('editFeedback').value;
+  if (isNaN(score) || score < 0 || score > 100) {
+    toast('评分必须是 0-100 的数字', 'error');
+    return;
+  }
+  try {
+    const res = await API.put(`/api/admin/answer-records/${arId}`, { llm_score: score, llm_feedback: feedback });
+    toast('已保存修改', 'success');
+    const modal = document.getElementById('editAnswerModal');
+    if (modal) modal.remove();
+    // 更新本地数据
+    const ar = currentDetailAnswerRecords.find(a => a.id === arId);
+    if (ar) { ar.llm_score = score; ar.llm_feedback = feedback; ar.is_correct = score >= 60; }
+    const rec = allStuRecords.find(r => r.id === expandedStuRecordId);
+    if (rec) {
+      rec.score = res.record_score;
+      rec.correct = res.record_correct;
+      rec.wrong = res.record_wrong;
+    }
+    // 重新渲染列表（更新分数）+ 重新加载抽屉（更新评分显示）
+    renderStuRecordList();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function fillStuDrawer(recordId) {
+  const drawer = document.getElementById('stu-drawer-' + recordId);
+  if (!drawer) return;
+  drawer.innerHTML = '<div style="color:#9c8bb5;text-align:center;padding:14px;">加载详情…</div>';
+  try {
+    const r = await API.get(`/api/admin/records/${recordId}`);
+    const sel = document.getElementById('stuSelect');
+    const stu = students.find(s => String(s.id) === sel.value);
+    let html = `<div class="section-box" style="margin:8px 0 4px;">
+      <h3>📋 ${stu ? esc(stu.nickname) + ' · ' : ''}${esc(r.subject_name || '')} · ${r.score}分（对 ${r.correct} / 错 ${r.wrong}）
+        <button class="btn btn-sm btn-yellow" style="margin-left:auto;" onclick="showStuDetail(${recordId})">收起</button>
+      </h3>
+      <div style="font-size:13px;color:#9c8bb5;margin-bottom:14px;">⏰ ${fmtTime(r.started_at)} 开始 · 用时 ${fmtDuration(r.duration_seconds)} · 共 ${r.total} 题 · 记录ID ${r.id}</div>`;
+    if (!r.answer_records || !r.answer_records.length) {
+      html += '<div class="empty"><div class="icon">📭</div><p>该次答题没有作答明细（可能未交卷）</p></div>';
+      currentDetailAnswerRecords = [];
+    } else {
+      currentDetailAnswerRecords = r.answer_records;
+      r.answer_records.forEach((ar, i) => {
+        const q = ar.question || {};
+        const [cls, label] = typeTag(q.type);
+        const isRight = (ar.is_correct === true) || (ar.is_correct === null && ar.llm_score != null && ar.llm_score >= 60);
+        const stTag = isRight
+          ? '<span class="tag" style="background:#d3f9d8;color:#2b8a3e;">✅ 答对</span>'
+          : '<span class="tag" style="background:#ffe3e3;color:#c92a2a;">❌ 答错</span>';
+        const body = renderAnswerCard(q, ar, { showRefCode: true, skipQuestion: true });
+        html += `<div class="stu-q-card">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+            <b style="color:#3a3a55;">第 ${i + 1} 题</b>
+            <span class="${cls}">${label}</span>
+            ${q.topic_name ? `<span class="tag tag-gray">${esc(q.topic_name)}</span>` : ''}
+            ${stTag}
+            <span style="font-size:12px;color:#c5b9d6;">评分 ${ar.llm_score != null ? ar.llm_score : '-'}分</span>
+            <span style="font-size:12px;color:#c5b9d6;margin-left:auto;">题目ID ${q.id || '-'}</span>
+            <button class="btn btn-sm btn-yellow" onclick="editAnswerRecord(${ar.id})">✏️ 改评分</button>
+          </div>
+          <div style="font-size:15px;color:#3a3a55;line-height:1.7;">${nl2br(esc(q.content || ''))}</div>
+          ${body}
+        </div>`;
+      });
+    }
+    html += '</div>';
+    drawer.innerHTML = html;
+  } catch(e) { drawer.innerHTML = `<div style="color:#e03131;padding:14px;">${esc(e.message)}</div>`; }
+}
+
+// ============ 批量导入 ============
+function initImportSubject() {
+  const sel = document.getElementById('importSubject');
+  if (sel.options.length <= 1) refreshSubjectDropdowns();
+}
+
+async function doBatchImport() {
+  const subjectId = parseInt(document.getElementById('importSubject').value);
+  if (!subjectId) { toast('请选择科目', 'error'); return; }
+  const jsonText = document.getElementById('importJson').value.trim();
+  if (!jsonText) { toast('请粘贴JSON', 'error'); return; }
+  let items;
+  try { items = JSON.parse(jsonText); }
+  catch(e) { toast('JSON格式错误：'+e.message, 'error'); return; }
+  if (!Array.isArray(items) || items.length === 0) { toast('请粘贴题目数组', 'error'); return; }
+  // 获取该科目已有章节
+  let topics;
+  try { topics = await API.get(`/api/subjects/${subjectId}/topics`); }
+  catch(e) { toast(e.message, 'error'); return; }
+  const topicMap = {}; topics.forEach(t => topicMap[t.name] = t.id);
+  // 对每题做校验和转换
+  const payload = [];
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i];
+    if (!it.type || !['choice','judge','calc','code'].includes(it.type)) { toast(`第${i+1}题：题型无效`, 'error'); return; }
+    if (!it.content) { toast(`第${i+1}题：题干为空`, 'error'); return; }
+    if (!it.topic_name) { toast(`第${i+1}题：缺少 topic_name`, 'error'); return; }
+    // 章节不存在则创建
+    if (!topicMap[it.topic_name]) {
+      try {
+        const t = await API.post('/api/topics', { subject_id: subjectId, name: it.topic_name, unit: it.unit || null });
+        topicMap[it.topic_name] = t.id;
+      } catch(e) { toast(`第${i+1}题：创建章节「${it.topic_name}」失败：`+e.message, 'error'); return; }
+    }
+    payload.push({
+      subject_id: subjectId,
+      topic_id: topicMap[it.topic_name],
+      type: it.type,
+      content: it.content,
+      options: it.options || null,
+      answer: String(it.answer),
+      explanation: it.explanation || '',
+      difficulty: it.difficulty || 1,
+    });
+  }
+  // 调批量导入API
+  showConfirm('确认导入', `共 ${payload.length} 道题，将导入到所选科目。是否继续？`, async () => {
+    try {
+      const res = await API.post('/api/questions/batch', payload);
+      toast(`导入成功！新增 ${res.created} 题`, 'success');
+      document.getElementById('importJson').value = '';
+      loadSubjects();
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+
+// ============ 弹窗工具 ============
+function closeFormModal() { document.getElementById('formModal').classList.remove('show'); }
+
+let confirmCallback = null;
+function showConfirm(title, msg, cb) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  confirmCallback = cb;
+  document.getElementById('confirmModal').classList.add('show');
+}
+function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); confirmCallback = null; }
+document.getElementById('confirmYesBtn').onclick = function() {
+  closeConfirm();
+  if (confirmCallback) confirmCallback();
+};
+
+// 点击遮罩关闭弹窗
+document.getElementById('formModal').addEventListener('click', function(e) {
+  if (e.target === this) closeFormModal();
+});
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirm();
+});
+
+// ============ SQL 运维 ============
+async function doExecSql() {
+  const sql = document.getElementById('sqlInput').value.trim();
+  if (!sql) { toast('请输入 SQL', 'error'); return; }
+  const script = document.getElementById('sqlScript').checked;
+  const box = document.getElementById('sqlResult');
+  box.innerHTML = '<div style="color:#9c8bb5;">执行中…</div>';
+  try {
+    const res = await API.post('/api/admin/exec-sql', { sql, script });
+    let html = `<div style="font-size:13px;color:#2b8a3e;margin-bottom:8px;">✅ 执行成功` +
+      (res.backup ? ` · 已备份：<code style="background:#e9ecef;padding:1px 5px;border-radius:4px;">${esc(res.backup)}</code>` : '') + `</div>`;
+    if (res.script) {
+      html += `<div style="font-size:14px;color:#3a3a55;">影响行数：${res.rowcount ?? 0}</div>`;
+    } else if (Array.isArray(res.rows)) {
+      if (res.rows.length === 0) {
+        html += `<div style="color:#7a6c8c;">查询无结果（影响行数：${res.rowcount ?? 0}）</div>`;
+      } else {
+        // 缺 columns 时从首行推断
+        const cols = res.columns && res.columns.length ? res.columns : Object.keys(res.rows[0] || {});
+        if (!cols.length) {
+          html += '<div style="color:#7a6c8c;">查询无列</div>';
+        } else {
+          html += '<div style="max-height:360px;overflow:auto;border:1px solid #f1f3f5;border-radius:12px;">' +
+            '<table class="admin-table" style="box-shadow:none;"><thead><tr>' +
+            cols.map(c => `<th>${esc(String(c))}</th>`).join('') + '</tr></thead><tbody>' +
+            res.rows.map(r => '<tr>' + cols.map(c => {
+              const v = r[c];
+              if (v == null) return '<td style="color:#9c8bb5;">NULL</td>';
+              return `<td style="max-width:300px;white-space:pre-wrap;">${esc(String(v))}</td>`;
+            }).join('') + '</tr>').join('') +
+            '</tbody></table></div>';
+        }
+      }
+    } else {
+      html += `<div style="font-size:14px;color:#3a3a55;">影响行数：${res.rowcount ?? 0}</div>`;
+    }
+    box.innerHTML = html;
+  } catch(e) { box.innerHTML = `<div style="color:#e03131;">❌ ${esc(e.message)}</div>`; }
+}
+
+async function doUpdateFile() {
+  const path = document.getElementById('filePath').value.trim();
+  const content = document.getElementById('fileContent').value;
+  const box = document.getElementById('fileResult');
+  if (!path) { toast('请填写目标路径', 'error'); return; }
+  box.innerHTML = '<div style="color:#9c8bb5;">写入中…</div>';
+  try {
+    const res = await API.post('/api/admin/update-file', { path, content });
+    box.innerHTML = `<div style="color:#2b8a3e;">✅ 已写入 ${esc(res.path)}（${res.bytes} 字节）。改完所有文件后点「重启容器」生效。</div>`;
+  } catch(e) { box.innerHTML = `<div style="color:#e03131;">❌ ${esc(e.message)}</div>`; }
+}
+
+function doRestart() {
+  showConfirm('重启容器', '将立即重启容器以加载 /app 下最新源码与前端文件。重启期间服务短暂不可用（约数秒），确定？', async () => {
+    try {
+      const res = await API.post('/api/admin/restart', {});
+      toast(res.msg || '已触发重启', 'success');
+    } catch(e) { toast('重启请求发送失败：' + e.message, 'error'); }
+  });
+}
+
+// ============ 数据备份 ============
+async function doBackupNow() {
+  try {
+    const r = await API.post('/api/admin/backup-db');
+    document.getElementById('backupResult').innerHTML =
+      `<div class="ok-msg">✅ 服务器已生成备份：<b>${esc(r.name)}</b>（${r.size} 字节）</div>`;
+    loadBackups();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function loadBackups() {
+  try {
+    const r = await API.get('/api/admin/backup-db');
+    const box = document.getElementById('backupList');
+    if (!r.files.length) {
+      box.innerHTML = '<div class="empty"><div class="icon">🗄</div><p>暂无备份，点击「立即在服务器备份」</p></div>';
+      return;
+    }
+    box.innerHTML = `<table class="data-table"><thead><tr><th>文件名</th><th>大小</th><th>时间</th><th>操作</th></tr></thead><tbody>` +
+      r.files.map(f => `<tr>
+        <td>${esc(f.name)}</td>
+        <td>${(f.size/1024).toFixed(1)} KB</td>
+        <td>${new Date(f.mtime*1000).toLocaleString()}</td>
+        <td><button class="btn btn-blue btn-sm" onclick='downloadBackup(${JSON.stringify(f.name)})'>⬇ 下载</button></td>
+      </tr>`).join('') + '</tbody></table>';
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function downloadBackup(name) {
+  try {
+    const token = localStorage.getItem('quiz_token');
+    const url = `/api/admin/backup-db/download?name=${encodeURIComponent(name)}`;
+    const res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+    if (!res.ok) { toast('下载失败：' + res.status, 'error'); return; }
+    const blob = await res.blob();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(a.href);
+    toast('已开始下载：' + name, 'success');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function doBackupAndDownload() {
+  try {
+    const r = await API.post('/api/admin/backup-db');
+    document.getElementById('backupResult').innerHTML =
+      `<div class="ok-msg">✅ 服务器已生成备份：<b>${esc(r.name)}</b>，正在下载...</div>`;
+    await downloadBackup(r.name);
+    loadBackups();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ 启动 ============
+loadSubjects();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+services:
+  quiz-app:
+    image: quiz-system:latest
+    # 如果用已构建好的镜像，注释掉 build，改用 image:
+    # image: quiz-system:latest
+    container_name: quiz-system
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      # 数据库文件映射到宿主机，数据持久化
+      - ./quiz-data:/app/data
+    environment:
+      - QUIZ_DB_PATH=/app/data/quiz.db
+      - QUIZ_SECRET_KEY=quiz-system-secret-key-change-in-production-2024
+      - QUIZ_REGKEY=openschool2026
+      - TZ=Asia/Shanghai

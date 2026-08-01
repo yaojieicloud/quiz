@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库闯关 - 错题本</title>
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<header class="page-header">
+  <div class="icon">❌</div>
+  <h1>错题本</h1>
+  <div class="subtitle">错题是进步的阶梯，把它们都学会！</div>
+</header>
+
+<main>
+  <div id="summary"></div>
+  <div id="listBox"></div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+const user = requireAuth();
+if (!user) throw new Error('redirect');
+document.getElementById('topbar').innerHTML = renderTopbar('wrong');
+
+let wrongList = [];
+
+async function load() {
+  await loadSubjectMap();
+  try {
+    wrongList = await API.get('/api/wrong-questions');
+    const active = wrongList.filter(w => !w.mastered);
+    document.getElementById('summary').innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card orange"><div class="num">${active.length}</div><div class="label">待消灭错题</div></div>
+        <div class="stat-card green"><div class="num">${wrongList.length - active.length}</div><div class="label">已掌握</div></div>
+        <div class="stat-card"><div class="num">${wrongList.length}</div><div class="label">累计错题</div></div>
+      </div>`;
+
+    const box = document.getElementById('listBox');
+    if (!wrongList.length) {
+      box.innerHTML = '<div class="empty"><div class="icon">🎉</div><p>还没有错题，继续保持！</p></div>';
+      return;
+    }
+
+    // 按科目分组（用 question.subject_id 精确判断，不再硬编码 topic 名单）
+    const groups = {};
+    wrongList.forEach(w => {
+      const sname = w.question ? guessSubject(w.question) : '其他';
+      if (!groups[sname]) groups[sname] = [];
+      groups[sname].push(w);
+    });
+
+    box.innerHTML = Object.entries(groups).map(([sname, items]) => `
+      <div class="card">
+        <div class="card-title">${esc(sname)} <span class="tag tag-gray">${items.length}题</span></div>
+        ${items.map(w => renderWrong(w)).join('')}
+      </div>
+    `).join('');
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+// 全部科目从后端拉取（动态），新增科目自动适配
+let subjectMap = {};
+async function loadSubjectMap() {
+  try {
+    const subjects = await API.get('/api/subjects');
+    subjects.forEach(s => { subjectMap[s.id] = s.name; });
+  } catch (e) { /* 失败时降级为静态 map */ }
+}
+
+function guessSubject(q) {
+  if (q && q.subject_id) {
+    if (subjectMap[q.subject_id]) return subjectMap[q.subject_id];
+    // 兜底静态（首次加载失败时）
+    const fallback = { 1: 'Python基础理论', 2: '数学(三年级)', 3: 'Python基础实操' };
+    if (fallback[q.subject_id]) return fallback[q.subject_id];
+  }
+  return '其他';
+}
+
+function renderWrong(w) {
+  const q = w.question;
+  if (!q) return '';
+  const [cls, label] = typeTag(q.type);
+  const masteredTag = w.mastered ? '<span class="tag tag-green">已掌握</span>' : '';
+  return `
+    <div class="explain-card" id="wrong-${w.id}">
+      <div class="explain-head">
+        <div class="q-num">${q.id}</div>
+        <span class="${cls}">${label}</span>
+        ${q.topic_name ? `<span class="q-topic">${esc(q.topic_name)}</span>` : ''}
+        <span class="tag tag-pink">错${w.wrong_count}次</span>
+        ${masteredTag}
+      </div>
+      <div class="explain-q">${nl2br(esc(q.content))}</div>
+      ${q.type === 'code'
+        ? `<div class="explain-text">💡 指导思路：${q.explanation ? nl2br(esc(q.explanation)) : '暂无'}</div>
+           ${w.user_answer ? `<div class="explain-text">🧒 你上次提交的代码：</div><pre class="code-pre">${esc(w.user_answer)}</pre>` : ''}
+           ${w.run_output ? `<div class="explain-text">🖥 后台运行结果：</div><pre class="code-pre code-pre-run">${esc(w.run_output)}</pre>` : ''}`
+        : `<div class="explain-box"><span class="label label-correct">正确答案</span><span class="correct-answer">${esc(answerText(q, q.answer))}</span></div>
+      <div class="explain-text">💡 ${q.explanation ? nl2br(esc(q.explanation)) : '暂无讲解'}</div>`}
+      <div class="actions" style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn btn-sm btn-green" onclick="master(${w.id})">✅ 标记已掌握</button>
+        <button class="btn btn-sm btn-yellow" onclick="removeWrong(${w.id})">🗑️ 移除</button>
+      </div>
+    </div>`;
+}
+
+async function master(id) {
+  try {
+    await API.post(`/api/wrong-questions/${id}/master`);
+    toast('已标记掌握，真棒！', 'success');
+    load();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function removeWrong(id) {
+  if (!confirm('确定移除这道错题吗？')) return;
+  try {
+    await API.del(`/api/wrong-questions/${id}`);
+    toast('已移除', 'success');
+    load();
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+load();
+</script>
+</body>
+</html>

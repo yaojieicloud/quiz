@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库闯关小达人 - 登录</title>
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<header class="page-header">
+  <div class="icon">🎯</div>
+  <h1>题库闯关小达人</h1>
+  <div class="subtitle">✨ 边玩边学，越闯越聪明！加油小朋友！✨</div>
+</header>
+
+<main>
+  <div class="card" style="max-width:420px;margin:20px auto;">
+    <div class="chip-group" style="justify-content:center;margin-bottom:20px;">
+      <span class="chip active" id="tabLogin" onclick="switchTab('login')">🔑 登录</span>
+      <span class="chip" id="tabRegister" onclick="switchTab('register')" style="display:none;">📝 注册</span>
+    </div>
+
+    <div id="roleBox" style="display:none;margin-bottom:16px;">
+      <div class="form-group">
+        <label>我是...</label>
+        <div class="role-pick">
+          <label>
+            <input type="radio" name="role" value="student" checked>
+            <span>🧒 学生（答题闯关）</span>
+          </label>
+          <label>
+            <input type="radio" name="role" value="parent">
+            <span>👨‍👩‍👧 家长（查看成绩）</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>用户名</label>
+      <input type="text" class="form-input" id="username" placeholder="请输入用户名（3位以上）">
+    </div>
+
+    <div class="form-group" id="nicknameBox" style="display:none;">
+      <label>昵称</label>
+      <input type="text" class="form-input" id="nickname" placeholder="小朋友的名字">
+    </div>
+
+    <div class="form-group">
+      <label>密码</label>
+      <input type="password" class="form-input" id="password" placeholder="请输入密码（6位以上）">
+    </div>
+
+    <button class="btn btn-primary btn-block" id="submitBtn" onclick="doSubmit()">🚀 登 录</button>
+
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:#9c8bb5;">
+      家长请先让孩子注册学生账号，再用绑定码绑定
+    </div>
+  </div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+let mode = 'login';
+
+// 注册功能默认隐藏；仅在访问地址带正确参数时才显示，例如：
+//   index.html?regkey=openschool2026
+const REGKEY = 'openschool2026';
+function getRegKey() {
+  return new URLSearchParams(location.search).get('regkey');
+}
+function canRegister() { return getRegKey() === REGKEY; }
+// 若带正确参数，显示注册标签
+if (canRegister()) document.getElementById('tabRegister').style.display = '';
+
+// 已登录则按角色跳转
+function redirectByRole() {
+  const u = getUser();
+  if (localStorage.getItem('quiz_token') && u) {
+    location.href = u.role === 'admin' ? 'admin.html' : 'home.html';
+  }
+}
+redirectByRole();
+
+function switchTab(m) {
+  mode = m;
+  document.getElementById('tabLogin').classList.toggle('active', m === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', m === 'register');
+  document.getElementById('roleBox').style.display = m === 'register' ? 'block' : 'none';
+  document.getElementById('nicknameBox').style.display = m === 'register' ? 'block' : 'none';
+  document.getElementById('submitBtn').textContent = m === 'login' ? '🚀 登 录' : '✨ 注 册';
+}
+
+async function doSubmit() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  if (!username || !password) { toast('请填写用户名和密码', 'error'); return; }
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+
+  try {
+    let res;
+    if (mode === 'login') {
+      res = await API.post('/api/auth/login', { username, password });
+    } else {
+      const nickname = document.getElementById('nickname').value.trim() || username;
+      const role = document.querySelector('input[name=role]:checked').value;
+      const rk = getRegKey();
+      const regUrl = '/api/auth/register' + (rk ? `?regkey=${encodeURIComponent(rk)}` : '');
+      res = await API.post(regUrl, { username, nickname, password, role });
+    }
+    localStorage.setItem('quiz_token', res.access_token);
+    localStorage.setItem('quiz_user', JSON.stringify(res.user));
+    toast(mode === 'login' ? '登录成功' : '注册成功', 'success');
+    setTimeout(() => location.href = res.user.role === 'admin' ? 'admin.html' : 'home.html', 600);
+  } catch (e) {
+    toast(e.message, 'error');
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>

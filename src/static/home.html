@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库闯关 - 首页</title>
+<link rel="stylesheet" href="css/common.css">
+<style>
+/* 单元分组折叠样式（文化类科目） */
+.unit-group { background:#f8f9fc; border-radius:14px; margin-bottom:10px; overflow:hidden; border:2px solid #ece6f7; }
+.unit-header { display:flex; align-items:center; gap:10px; padding:12px 16px; cursor:pointer; user-select:none; background:#fffae8; transition:background 0.2s; }
+.unit-header:hover { background:#fff3c4; }
+.unit-arrow { font-size:14px; color:#9c8bb5; transition:transform 0.2s; display:inline-block; }
+.unit-group.collapsed .unit-arrow { transform:rotate(-90deg); }
+.unit-name { font-weight:bold; color:#3a3a55; font-size:15px; }
+.unit-count { font-size:13px; color:#9c8bb5; background:#fff; padding:2px 10px; border-radius:10px; }
+.unit-select-all { margin-left:auto; border:none; background:linear-gradient(135deg,#69db7c,#51cf66); color:#fff; padding:5px 14px; border-radius:20px; font-size:13px; font-weight:bold; cursor:pointer; font-family:inherit; }
+.unit-select-all:hover { filter:brightness(1.05); }
+.unit-select-all.all-active { background:linear-gradient(135deg,#ffa94d,#ff922b); }
+.unit-topics { padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px; }
+.unit-group.collapsed .unit-topics { display:none; }
+</style>
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<header class="page-header">
+  <div class="icon">📚</div>
+  <h1>选择题库</h1>
+  <div class="subtitle">挑一个科目，开始今天的闯关吧！</div>
+</header>
+
+<main>
+  <!-- 科目列表 -->
+  <div class="subject-grid" id="subjectGrid"></div>
+
+  <!-- 实操课程选择弹层（递进式：第 N 课的题综合运用第 1~N 课知识点） -->
+  <div class="modal-mask" id="courseModal">
+    <div class="modal" style="max-width:560px;text-align:left;">
+      <h3 style="text-align:center;">📖 选择课程</h3>
+      <p style="text-align:center;" id="courseSubjectName"></p>
+      <div class="config-section">
+        <div class="label">🎯 选一课开始实操（单选）</div>
+        <div class="chip-group" id="courseChips"></div>
+      </div>
+      <div style="font-size:13px;color:#9c8bb5;margin-top:10px;line-height:1.6;">
+        💡 课程是递进的：选第 N 课，题目会综合运用第 1 ~ N 课学过的知识点。每次实操 1 题，提交后可以回来继续选课。
+      </div>
+      <div class="btns" style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
+        <button class="btn btn-yellow btn-sm" onclick="closeCoursePick()">取消</button>
+        <button class="btn btn-green" onclick="startCourseExam()">🚀 开始实操</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 组卷配置弹层 -->
+  <div class="modal-mask" id="configModal">
+    <div class="modal" style="max-width:560px;text-align:left;">
+      <h3 style="text-align:center;">⚙️ 组卷设置</h3>
+      <p style="text-align:center;" id="configSubjectName"></p>
+
+      <div class="config-section">
+        <div class="label" id="topicSectionLabel">📖 章节（可多选，不选=全部）</div>
+        <div class="chip-group" id="topicChips"></div>
+      </div>
+
+      <div class="config-section">
+        <div class="label">🏷️ 题型（可多选，不选=全部）</div>
+        <div class="chip-group">
+          <span class="chip" data-type="choice" onclick="toggleChip(this)">🔵 选择题</span>
+          <span class="chip" data-type="judge" onclick="toggleChip(this)">🟢 判断题</span>
+          <span class="chip" data-type="calc" onclick="toggleChip(this)">🟠 计算题</span>
+        </div>
+      </div>
+
+      <div class="config-section">
+        <div class="label">🔢 题目数量</div>
+        <div class="chip-group">
+          <span class="chip active" data-count="10" onclick="pickCount(this)">10题</span>
+          <span class="chip" data-count="20" onclick="pickCount(this)">20题</span>
+          <span class="chip" data-count="50" onclick="pickCount(this)">50题</span>
+        </div>
+      </div>
+
+      <div class="config-section">
+        <div class="label">🎮 模式</div>
+        <div class="chip-group">
+          <span class="chip active" data-mode="custom" onclick="pickMode(this)">🎯 自由组卷</span>
+          <span class="chip" data-mode="random" onclick="pickMode(this)">🎲 随机挑战</span>
+          <span class="chip" data-mode="wrong" onclick="pickMode(this)">❌ 错题重做</span>
+        </div>
+      </div>
+
+      <div class="btns" style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
+        <button class="btn btn-yellow btn-sm" onclick="closeConfig()">取消</button>
+        <button class="btn btn-green" onclick="startExam()">🚀 开始闯关</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+const user = requireAuth();
+if (!user) throw new Error('redirect');
+document.getElementById('topbar').innerHTML = renderTopbar('home');
+
+let subjects = [];
+let currentSubject = null;
+let topics = [];
+let selectedTopics = new Set();
+let selectedTypes = new Set();
+let selectedCount = 10;
+let selectedMode = 'custom';
+
+async function loadSubjects() {
+  try {
+    subjects = await API.get('/api/subjects');
+    const grid = document.getElementById('subjectGrid');
+    if (!subjects.length) {
+      grid.innerHTML = '<div class="empty"><div class="icon">📭</div><p>还没有科目，请联系管理员添加题目</p></div>';
+      return;
+    }
+    grid.innerHTML = subjects.map(s => `
+      <div class="subject-card" onclick="startOrConfig(${s.id})">
+        <div class="icon">${s.icon || '📚'}</div>
+        <h3>${esc(s.name)}</h3>
+        ${s.grade ? `<span class="grade">${esc(s.grade)}</span>` : ''}
+        <div class="count">📝 ${s.question_count} 题</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+// 实操科目（含 code 编程题）：先选课程再单题闯关；其他科目（理论/数学等）：正常组卷弹层
+function isPractical(sub) {
+  return sub && sub.category === 'programming' && sub.name.includes('实操');
+}
+
+async function startOrConfig(subjectId) {
+  const sub = subjects.find(s => s.id === subjectId);
+  if (isPractical(sub)) {
+    openCoursePick(subjectId);
+  } else {
+    openConfig(subjectId);
+  }
+}
+
+// ===== 实操选课（递进式） =====
+let selectedCourse = null;
+
+async function openCoursePick(subjectId) {
+  currentSubject = subjects.find(s => s.id === subjectId);
+  if (!currentSubject) return;
+  selectedCourse = null;
+  document.getElementById('courseSubjectName').textContent =
+    `${currentSubject.icon || ''} ${currentSubject.name} · 共 ${currentSubject.question_count} 题`;
+  try {
+    topics = await API.get(`/api/subjects/${subjectId}/topics`);
+  } catch (e) {
+    toast('加载课程失败', 'error');
+    return;
+  }
+  const box = document.getElementById('courseChips');
+  box.innerHTML = topics.map((t, i) =>
+    `<span class="chip" data-tid="${t.id}" onclick="pickCourse(this)">第${i + 1}课 ${esc(t.name)} (${t.question_count})</span>`
+  ).join('');
+  document.getElementById('courseModal').classList.add('show');
+}
+
+function pickCourse(el) {
+  document.querySelectorAll('#courseChips .chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedCourse = parseInt(el.dataset.tid);
+}
+
+function closeCoursePick() {
+  document.getElementById('courseModal').classList.remove('show');
+}
+
+async function startCourseExam() {
+  if (!selectedCourse) {
+    toast('先选一课再开始哦', 'error');
+    return;
+  }
+  try {
+    const res = await API.post('/api/exam/start', {
+      subject_id: currentSubject.id,
+      topic_ids: [selectedCourse],
+      types: [],
+      count: 1,
+      mode: 'custom',
+    });
+    if (!res.questions.length) {
+      toast('这一课还没有题目，换一课试试', 'error');
+      return;
+    }
+    closeCoursePick();
+    localStorage.setItem('quiz_exam', JSON.stringify({
+      subject_id: currentSubject.id,
+      mode: 'custom',
+      topic_ids: [selectedCourse],
+      questions: res.questions,
+      subject: currentSubject,
+      practical: true,
+    }));
+    location.href = 'quiz.html';
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+async function openConfig(subjectId) {
+  currentSubject = subjects.find(s => s.id === subjectId);
+  document.getElementById('configSubjectName').textContent = `${currentSubject.icon} ${currentSubject.name} · 共 ${currentSubject.question_count} 题`;
+  // 按 category 调整章节区标签文案
+  const isProg = currentSubject.category === 'programming';
+  document.getElementById('topicSectionLabel').textContent = isProg
+    ? '📖 选哪几课（可多选，不选=全部）'
+    : '📖 选单元 / 课时（可多选，不选=全部）';
+  selectedTopics = new Set();
+  selectedTypes = new Set();
+  selectedCount = 10;
+  selectedMode = 'custom';
+  // 重置 chip
+  document.querySelectorAll('#configModal .chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('.chip[data-count="10"]').classList.add('active');
+  document.querySelector('.chip[data-mode="custom"]').classList.add('active');
+
+  // 加载章节
+  try {
+    topics = await API.get(`/api/subjects/${subjectId}/topics`);
+    const box = document.getElementById('topicChips');
+    if (currentSubject.category === 'programming') {
+      // 编程类：扁平多选（选哪几课）
+      box.innerHTML = topics.map(t => `<span class="chip" data-tid="${t.id}" onclick="toggleChip(this)">${esc(t.name)} (${t.question_count})</span>`).join('');
+    } else {
+      // 文化类：按 unit 分组折叠
+      box.innerHTML = renderTopicGroups(topics);
+    }
+  } catch (e) {
+    toast('加载章节失败', 'error');
+  }
+  document.getElementById('configModal').classList.add('show');
+}
+
+// 文化类科目：按 unit 分组渲染
+function renderTopicGroups(topics) {
+  const groups = {};
+  const order = [];
+  topics.forEach(t => {
+    const u = t.unit || '未分单元';
+    if (!groups[u]) { groups[u] = []; order.push(u); }
+    groups[u].push(t);
+  });
+  return order.map(u => {
+    const list = groups[u];
+    const total = list.reduce((s, t) => s + t.question_count, 0);
+    const safe = esc(u).replace(/'/g, "\\'");
+    return `
+      <div class="unit-group">
+        <div class="unit-header" onclick="toggleUnitGroup(this)">
+          <span class="unit-arrow">▼</span>
+          <span class="unit-name">${esc(u)}</span>
+          <span class="unit-count">共 ${total} 题 · ${list.length} 课时</span>
+          <button class="unit-select-all" onclick="event.stopPropagation(); selectAllUnit('${safe}', this)">全选本单元</button>
+        </div>
+        <div class="unit-topics">
+          ${list.map(t => `<span class="chip" data-tid="${t.id}" data-unit="${esc(u)}" onclick="toggleChip(this)">${esc(t.name)} (${t.question_count})</span>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// 折叠/展开单元分组
+function toggleUnitGroup(headerEl) {
+  headerEl.parentElement.classList.toggle('collapsed');
+}
+
+// 全选/取消本单元
+function selectAllUnit(unitName, btnEl) {
+  const chips = document.querySelectorAll(`.chip[data-unit="${unitName}"]`);
+  const allActive = [...chips].every(c => c.classList.contains('active'));
+  chips.forEach(c => c.classList.toggle('active', !allActive));
+  btnEl.classList.toggle('all-active', !allActive);
+  btnEl.textContent = allActive ? '全选本单元' : '取消全选';
+}
+
+function closeConfig() {
+  document.getElementById('configModal').classList.remove('show');
+}
+
+function toggleChip(el) {
+  el.classList.toggle('active');
+}
+
+function pickCount(el) {
+  document.querySelectorAll('.chip[data-count]').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedCount = parseInt(el.dataset.count);
+}
+
+function pickMode(el) {
+  document.querySelectorAll('.chip[data-mode]').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedMode = el.dataset.mode;
+}
+
+async function startExam() {
+  selectedTopics = new Set([...document.querySelectorAll('.chip[data-tid].active')].map(c => parseInt(c.dataset.tid)));
+  selectedTypes = new Set([...document.querySelectorAll('.chip[data-type].active')].map(c => c.dataset.type));
+
+  try {
+    const res = await API.post('/api/exam/start', {
+      subject_id: currentSubject.id,
+      topic_ids: [...selectedTopics],
+      types: [...selectedTypes],
+      count: selectedCount,
+      mode: selectedMode,
+    });
+    if (!res.questions.length) {
+      toast('没有符合条件的题目，试试其他设置吧', 'error');
+      return;
+    }
+    localStorage.setItem('quiz_exam', JSON.stringify({
+      subject_id: currentSubject.id,
+      mode: selectedMode,
+      topic_ids: [...selectedTopics],
+      questions: res.questions,
+      subject: currentSubject,
+    }));
+    location.href = 'quiz.html';
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+// 支持 quiz 结果页「继续选课做题」跳回：home.html?pick=<subjectId>
+loadSubjects().then(() => {
+  const pick = new URLSearchParams(location.search).get('pick');
+  if (!pick) return;
+  const sub = subjects.find(s => s.id === parseInt(pick));
+  if (!sub) return;
+  if (isPractical(sub)) openCoursePick(sub.id);
+  else openConfig(sub.id);
+});
+</script>
+</body>
+</html>

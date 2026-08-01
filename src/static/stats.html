@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库闯关 - 学习统计</title>
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<header class="page-header">
+  <div class="icon">📊</div>
+  <h1>学习统计</h1>
+  <div class="subtitle">用数据看见你的每一次进步！</div>
+</header>
+
+<main>
+  <div id="overview"></div>
+  <div id="subjectBox"></div>
+</main>
+
+<script src="js/common.js"></script>
+<script>
+const user = requireAuth();
+if (!user) throw new Error('redirect');
+document.getElementById('topbar').innerHTML = renderTopbar('stats');
+
+async function load() {
+  try {
+    const s = await API.get('/api/stats/overview');
+    document.getElementById('overview').innerHTML = `
+      <div class="stats-grid">
+        <div class="stat-card blue"><div class="num">${s.total_exams}</div><div class="label">总闯关次数</div></div>
+        <div class="stat-card green"><div class="num">${s.avg_score}</div><div class="label">平均分</div></div>
+        <div class="stat-card"><div class="num">${s.best_score}</div><div class="label">最高分</div></div>
+        <div class="stat-card orange"><div class="num">${s.total_wrong}</div><div class="label">待消灭错题</div></div>
+      </div>`;
+
+    const box = document.getElementById('subjectBox');
+    if (!s.subjects.length) {
+      box.innerHTML = '<div class="empty"><div class="icon">📭</div><p>暂无科目数据</p></div>';
+      return;
+    }
+    box.innerHTML = `<div class="card">
+      <div class="card-title">📚 各科目情况</div>
+      ${s.subjects.map(sub => {
+        const rank = scoreRank(sub.best_score);
+        return `<div class="list-item">
+          <div class="main-info">
+            <div class="title">${esc(sub.subject_name)} <span class="tag tag-gray">${sub.question_count}题库</span></div>
+            <div class="sub">闯关 ${sub.exam_count} 次 · 平均 ${sub.avg_score} 分 · 错题 ${sub.wrong_count} 题</div>
+          </div>
+          <div class="score-badge ${rank.cls}">最高 ${sub.best_score}</div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  } catch (e) {
+    toast(e.message, 'error');
+  }
+}
+
+load();
+</script>
+</body>
+</html>

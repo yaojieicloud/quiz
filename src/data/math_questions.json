@@ -1,0 +1,560 @@
+{
+  "subject": {
+    "name": "数学(三年级)",
+    "icon": "📐",
+    "grade": "三年级",
+    "desc": "人教版三年级数学，上下册全覆盖"
+  },
+  "questions": [
+    {
+      "type": "choice",
+      "topic_name": "时、分、秒",
+      "content": "电影2:15开始，4:05结束，放映了多少分钟？",
+      "options": [
+        "110分钟",
+        "90分钟",
+        "130分钟",
+        "100分钟"
+      ],
+      "answer": "0",
+      "explanation": "4:05 - 2:15 = 1时50分 = <b>110分钟</b>。算法：2:15到4:15是2小时（120分钟），但实际只到4:05，少10分钟，所以120-10=110分钟。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "时、分、秒",
+      "content": "1时30分 = （  ）分",
+      "options": [
+        "90",
+        "130",
+        "120",
+        "100"
+      ],
+      "answer": "0",
+      "explanation": "1时 = 60分，60 + 30 = <b>90</b>分。时化分，乘进率60。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "时、分、秒",
+      "content": "3时20分 - 1时45分 = ?时?分（答案写成 X时X分）",
+      "options": null,
+      "answer": "1时35分",
+      "explanation": "3时20分不够减45分，借1时变60分：3时20分 = 2时80分，2时80分 - 1时45分 = <b>1时35分</b>。分不够减向时借1（=60分）。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "时、分、秒",
+      "content": "8:25开始上课，一节课40分钟，几点下课？（答案写成 X:XX）",
+      "options": null,
+      "answer": "9:05",
+      "explanation": "8:25 + 40分：25+40=65分=1时5分，8时+1时=9时，剩5分，所以是<b>9:05</b>。满60分要进1时。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "万以内的加减法",
+      "content": "398 + 201 大约是（  ）",
+      "options": [
+        "500",
+        "600",
+        "700",
+        "800"
+      ],
+      "answer": "1",
+      "explanation": "估算：398≈400，201≈200，400+200 = <b>600</b>。把数看成接近的整百数来估算。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "万以内的加减法",
+      "content": "458 + 376 = ?",
+      "options": null,
+      "answer": "834",
+      "explanation": "列竖式（相同数位对齐）：8+6=14写4进1，5+7+1=13写3进1，4+3+1=8，所以是<b>834</b>。满十进一。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "万以内的加减法",
+      "content": "803 - 457 = ?",
+      "options": null,
+      "answer": "346",
+      "explanation": "列竖式：个位3减7不够，向十位借1变13-7=6；十位0被借1变9，9-5=4；百位8-1-4=3，所以是<b>346</b>。注意退位。验算：346+457=803。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "万以内的加减法",
+      "content": "569 + 287 = ?",
+      "options": null,
+      "answer": "856",
+      "explanation": "9+7=16写6进1，6+8+1=15写5进1，5+2+1=8，所以是<b>856</b>。连续进位要仔细，别漏进位。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "万以内的加减法",
+      "content": "1000 - 468 = ?",
+      "options": null,
+      "answer": "532",
+      "explanation": "个位0不够减8，连续借位。1000-468 = <b>532</b>。验算：532+468=1000 ✓。被减数中间有0时退位要特别小心。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "万以内的加减法",
+      "content": "385 + 496 = ?",
+      "options": null,
+      "answer": "881",
+      "explanation": "5+6=11写1进1，8+9+1=18写8进1，3+4+1=8，所以是<b>881</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "测量",
+      "content": "一头大象重约5（  ）",
+      "options": [
+        "千克",
+        "吨",
+        "克",
+        "米"
+      ],
+      "answer": "1",
+      "explanation": "大象很重，用<b>吨</b>做单位。1吨=1000千克，大约相当于20个三年级小朋友的体重。克用于很轻的东西，米是长度单位不是重量。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "测量",
+      "content": "4千米50米 = （  ）米",
+      "options": [
+        "450",
+        "4050",
+        "4005",
+        "4500"
+      ],
+      "answer": "1",
+      "explanation": "4千米 = 4000米，再加50米 = <b>4050</b>米。注意：千米化米乘1000，4千米是4000米不是4米，别漏0。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "测量",
+      "content": "5千米 = ? 米",
+      "options": null,
+      "answer": "5000",
+      "explanation": "1千米 = 1000米，5千米 = 5 × 1000 = <b>5000</b>米。千米化米乘1000，就是加3个0。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "测量",
+      "content": "3吨 = ? 千克",
+      "options": null,
+      "answer": "3000",
+      "explanation": "1吨 = 1000千克，3吨 = 3 × 1000 = <b>3000</b>千克。吨化千克乘1000。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "倍的认识",
+      "content": "红花12朵，是黄花的3倍，黄花有几朵？",
+      "options": [
+        "36",
+        "4",
+        "9",
+        "15"
+      ],
+      "answer": "1",
+      "explanation": "\"红花是黄花的3倍\"说明把黄花分3份等于红花，12 ÷ 3 = <b>4</b>朵。已知几倍数求一倍数用<b>除法</b>，别看到\"倍\"就乘！",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "倍的认识",
+      "content": "小明9岁，爸爸的年龄是小明的4倍，爸爸几岁？",
+      "options": [
+        "13",
+        "36",
+        "27",
+        "45"
+      ],
+      "answer": "1",
+      "explanation": "9 × 4 = <b>36</b>岁。已知一倍数求几倍数用<b>乘法</b>。注意和上一题区分：求一倍数用除法，求几倍数用乘法。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "倍的认识",
+      "content": "梨有8个，苹果的个数是梨的3倍，苹果有几个？",
+      "options": null,
+      "answer": "24",
+      "explanation": "求\"几倍是多少\"用乘法：8 × 3 = <b>24</b>个。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "多位数乘一位数",
+      "content": "0 × 5 和 0 + 5 比较，（  ）",
+      "options": [
+        "0×5大",
+        "0+5大",
+        "相等",
+        "无法比较"
+      ],
+      "answer": "1",
+      "explanation": "0 × 5 = 0，0 + 5 = 5，所以<b>0+5大</b>。记住：<b>0乘任何数都得0</b>，但0加一个数等于那个数本身。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "多位数乘一位数",
+      "content": "246 × 3 = ?",
+      "options": null,
+      "answer": "738",
+      "explanation": "3×6=18写8进1，3×4+1=13写3进1，3×2+1=7，所以是<b>738</b>。从个位乘起，满几十进几。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "多位数乘一位数",
+      "content": "508 × 4 = ?",
+      "options": null,
+      "answer": "2032",
+      "explanation": "4×8=32写2进3，4×0+3=3，4×5=20，所以是<b>2032</b>。中间的0也要乘，别漏掉进位。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "多位数乘一位数",
+      "content": "365 × 6 = ?",
+      "options": null,
+      "answer": "2190",
+      "explanation": "6×5=30写0进3，6×6+3=39写9进3，6×3+3=21，所以是<b>2190</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "长方形和正方形",
+      "content": "正方形边长4厘米，周长是多少？",
+      "options": [
+        "8厘米",
+        "12厘米",
+        "16厘米",
+        "20厘米"
+      ],
+      "answer": "2",
+      "explanation": "正方形周长 = 边长 × 4 = 4 × 4 = <b>16厘米</b>。四条边一样长。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "长方形和正方形",
+      "content": "长方形周长公式是？",
+      "options": [
+        "长×宽",
+        "(长+宽)×2",
+        "长+宽",
+        "长×宽×2"
+      ],
+      "answer": "1",
+      "explanation": "长方形有两条长两条宽，周长 = <b>(长+宽)×2</b>。长×宽是面积公式，别和周长记混了！",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "长方形和正方形",
+      "content": "长方形长8厘米、宽5厘米，周长是多少厘米？",
+      "options": null,
+      "answer": "26",
+      "explanation": "周长 = (长+宽)×2 = (8+5)×2 = 13×2 = <b>26</b>厘米。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "分数的初步认识",
+      "content": "1/3 和 1/5 比较，（  ）",
+      "options": [
+        "1/3大",
+        "1/5大",
+        "相等",
+        "无法比较"
+      ],
+      "answer": "0",
+      "explanation": "同样大小的东西，<b>平均分的份数越多，每份越小</b>。分成3份的1份比分成5份的1份大，所以1/3 > 1/5。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "分数的初步认识",
+      "content": "把一根绳子平均分成6段，每段是这根绳子的（  ）",
+      "options": [
+        "1/6",
+        "1/3",
+        "1/2",
+        "6"
+      ],
+      "answer": "0",
+      "explanation": "平均分成6段，每段就是<b>1/6</b>。注意必须是\"平均分\"（每段一样长）才能这样写分数。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "分数的初步认识",
+      "content": "1/5 + 2/5 = ?（答案写成分数，如 3/5）",
+      "options": null,
+      "answer": "3/5",
+      "explanation": "同分母分数相加：<b>分母不变，分子相加</b>。1+2=3，所以是<b>3/5</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "分数的初步认识",
+      "content": "7/9 - 4/9 = ?（答案写成分数）",
+      "options": null,
+      "answer": "3/9",
+      "explanation": "同分母分数相减：<b>分母不变，分子相减</b>。7-4=3，所以是<b>3/9</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "分数的初步认识",
+      "content": "2/7 + 3/7 = ?（答案写成分数）",
+      "options": null,
+      "answer": "5/7",
+      "explanation": "分母不变，分子相加：2+3=5，所以是<b>5/7</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "位置与方向",
+      "content": "早晨太阳从（  ）方升起。",
+      "options": [
+        "东",
+        "南",
+        "西",
+        "北"
+      ],
+      "answer": "0",
+      "explanation": "太阳从<b>东</b>方升起，从西方落下。早晨面对太阳就是面向东方，背后是西，左边是北，右边是南。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "除数是一位数的除法",
+      "content": "0 ÷ 8 = （  ）",
+      "options": [
+        "0",
+        "8",
+        "无法计算",
+        "1"
+      ],
+      "answer": "0",
+      "explanation": "<b>0除以任何非零数都得0</b>，所以0 ÷ 8 = 0。但注意：0不能做除数（8÷0无意义）。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "除数是一位数的除法",
+      "content": "846 ÷ 3 = ?",
+      "options": null,
+      "answer": "282",
+      "explanation": "8÷3=2余2，24÷3=8，6÷3=2，所以是<b>282</b>。从高位除起。验算：282×3=846 ✓。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "除数是一位数的除法",
+      "content": "625 ÷ 5 = ?",
+      "options": null,
+      "answer": "125",
+      "explanation": "6÷5=1余1，12÷5=2余2，25÷5=5，所以是<b>125</b>。验算：125×5=625 ✓。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "除数是一位数的除法",
+      "content": "308 ÷ 4 = ?",
+      "options": null,
+      "answer": "77",
+      "explanation": "3÷4不够商1，看前两位30÷4=7余2，落下8变28÷4=7，所以是<b>77</b>。最高位不够除要看前两位。验算：77×4=308 ✓。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "除数是一位数的除法",
+      "content": "567 ÷ 9 = ?",
+      "options": null,
+      "answer": "63",
+      "explanation": "56÷9=6余2，27÷9=3，所以是<b>63</b>。用乘法口诀：9×6=54，余2，27÷9=3。验算：63×9=567 ✓。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "两位数乘两位数",
+      "content": "25 × 40 = （  ）",
+      "options": [
+        "100",
+        "1000",
+        "650",
+        "400"
+      ],
+      "answer": "1",
+      "explanation": "25 × 40：先算25×4=100，再补一个0 = <b>1000</b>。末尾有0的乘法，先算0前面的数，最后补0。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "两位数乘两位数",
+      "content": "23 × 14 = ?",
+      "options": null,
+      "answer": "322",
+      "explanation": "用竖式：23×4=92，23×10=230，92+230=<b>322</b>。第二部分积要左移一位（乘的是10不是1）。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "两位数乘两位数",
+      "content": "45 × 26 = ?",
+      "options": null,
+      "answer": "1170",
+      "explanation": "用竖式：45×6=270，45×20=900，270+900=<b>1170</b>。注意第二部分乘20要左移一位。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "两位数乘两位数",
+      "content": "38 × 15 = ?",
+      "options": null,
+      "answer": "570",
+      "explanation": "用竖式：38×5=190，38×10=380，190+380=<b>570</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "两位数乘两位数",
+      "content": "62 × 23 = ?",
+      "options": null,
+      "answer": "1426",
+      "explanation": "用竖式：62×3=186，62×20=1240，186+1240=<b>1426</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "面积",
+      "content": "教室地面面积大约是50（  ）",
+      "options": [
+        "平方厘米",
+        "平方分米",
+        "平方米",
+        "平方毫米"
+      ],
+      "answer": "2",
+      "explanation": "教室比较大，用<b>平方米</b>。平方厘米指甲盖大小，平方分米课本大小，都不够大。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "面积",
+      "content": "两个长方形周长相等，它们的面积（  ）",
+      "options": [
+        "一定相等",
+        "可能不相等",
+        "一定不相等",
+        "无法比较"
+      ],
+      "answer": "1",
+      "explanation": "<b>可能不相等</b>。比如长10宽1和长6宽3，周长都是22，但面积分别是10和18。周长相等面积不一定相等，这是常见易错题！",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "面积",
+      "content": "长方形长9米、宽6米，面积是多少平方米？",
+      "options": null,
+      "answer": "54",
+      "explanation": "面积 = 长×宽 = 9 × 6 = <b>54</b>平方米。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "年、月、日",
+      "content": "下面哪一年是闰年？",
+      "options": [
+        "2023",
+        "2024",
+        "2025",
+        "2026"
+      ],
+      "answer": "1",
+      "explanation": "2024 ÷ 4 = 506 能整除，是<b>闰年</b>。其他年份除以4都有余数，是平年。闰年2月有29天，全年366天。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "年、月、日",
+      "content": "2024年2月有（  ）天。",
+      "options": [
+        "28",
+        "29",
+        "30",
+        "31"
+      ],
+      "answer": "1",
+      "explanation": "2024是闰年，2月有<b>29</b>天。平年2月只有28天。记住：四年一闰。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "年、月、日",
+      "content": "4个星期零3天，一共多少天？",
+      "options": null,
+      "answer": "31",
+      "explanation": "1个星期=7天，4个星期=4×7=28天，28+3=<b>31</b>天。",
+      "difficulty": 1
+    },
+    {
+      "type": "choice",
+      "topic_name": "小数的初步认识",
+      "content": "0.5 和 0.8 比较，（  ）",
+      "options": [
+        "0.5大",
+        "0.8大",
+        "相等",
+        "无法比较"
+      ],
+      "answer": "1",
+      "explanation": "比较小数先看整数部分（都是0），再看小数部分第一位：8 > 5，所以<b>0.8大</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "小数的初步认识",
+      "content": "3.5 + 2.8 = ?",
+      "options": null,
+      "answer": "6.3",
+      "explanation": "小数加法：小数点对齐，5+8=13写3进1，3+2+1=6，所以是<b>6.3</b>。记得对齐小数点、点上小数点。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "小数的初步认识",
+      "content": "7.2 - 4.6 = ?",
+      "options": null,
+      "answer": "2.6",
+      "explanation": "小数减法：小数点对齐，2减6不够借1变12-6=6，7借走1剩6，6-4=2，所以是<b>2.6</b>。",
+      "difficulty": 1
+    },
+    {
+      "type": "calc",
+      "topic_name": "小数的初步认识",
+      "content": "小明有10元，买笔用去3.5元，还剩多少元？",
+      "options": null,
+      "answer": "6.5",
+      "explanation": "10 - 3.5 = <b>6.5</b>元。把10看成10.0，0减5不够借1变10-5=5，9-3=6，所以6.5。",
+      "difficulty": 1
+    }
+  ]
+}

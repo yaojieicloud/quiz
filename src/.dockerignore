@@ -1,0 +1,31 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+*.egg-info/
+.git/
+.gitignore
+
+# 数据库文件不打包进镜像（用卷映射）
+quiz.db
+quiz.db-journal
+*.db
+data/backups/
+
+# 虚拟环境
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# 文档
+README.md
+data/QUESTION_TEMPLATE.md
+
+# 测试脚本
+data/test_api.py
+data/test_admin_api.py
