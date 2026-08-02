@@ -103,6 +103,10 @@ textarea.form-input.lg { min-height:120px; }
             <option value="choice">选择题</option>
             <option value="judge">判断题</option>
             <option value="calc">计算题</option>
+            <option value="fill">填空题</option>
+            <option value="essay">应用题</option>
+            <option value="match">连线题</option>
+            <option value="sort">排序题</option>
           </select>
         </div>
         <button class="btn btn-yellow btn-sm" onclick="loadQuestions(1)">🔍 查询</button>
@@ -170,7 +174,10 @@ textarea.form-input.lg { min-height:120px; }
         <pre>[
   {"type":"choice","topic_name":"变量与标识符","content":"1+1=?","options":["1","2","3","4"],"answer":"1","explanation":"1+1=2","difficulty":1},
   {"type":"judge","topic_name":"注释","content":"# 是注释符号","options":["对","错"],"answer":"0","explanation":"对的"},
-  {"type":"calc","topic_name":"加减法","content":"458+376=?","options":null,"answer":"834","explanation":"列竖式计算...","difficulty":2}
+  {"type":"calc","topic_name":"加减法","content":"458+376=?","options":null,"answer":"834","explanation":"列竖式计算...","difficulty":2},
+  {"type":"fill","topic_name":"应用题","content":"小明有12个苹果，给了小红5个，还剩几个？","answer":"7","blank_count":1,"tolerance":0,"explanation":"12-5=7","difficulty":1},
+  {"type":"fill","topic_name":"应用题","content":"先列算式再求结果：36+36=____，结果是____","options":null,"answer":"36+36","blank_count":2,"blank_answers":["36+36","72"],"tolerance":0.01,"explanation":"...","difficulty":2},
+  {"type":"essay","topic_name":"看图写话","content":"请用3-5句话描述这幅图","options":null,"answer":"待老师点评","explanation":"参考：春天来了...","difficulty":1}
 ]</pre>
       </div>
     </div>
@@ -570,13 +577,34 @@ async function openQuestionModal(id) {
         <option value="choice" ${type==='choice'?'selected':''}>选择题</option>
         <option value="judge" ${type==='judge'?'selected':''}>判断题</option>
         <option value="calc" ${type==='calc'?'selected':''}>计算题</option>
+        <option value="fill" ${type==='fill'?'selected':''}>填空题</option>
+        <option value="essay" ${type==='essay'?'selected':''}>应用题</option>
+        <option value="match" ${type==='match'?'selected':''}>连线题</option>
+        <option value="sort" ${type==='sort'?'selected':''}>排序题</option>
       </select>
+    </div>
+    <div class="form-group" id="fQMultiBox" style="display:none;">
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="checkbox" id="fQIsMultiple"> 这是一道多选题
+      </label>
     </div>
     <div class="form-group"><label>题干内容（可用 \\n 换行）</label>
       <textarea class="form-input" id="fQContent" placeholder="输入题目内容...">${q?esc(q.content):''}</textarea>
     </div>
-    <div class="form-group" id="fQOptionsBox"><label>选项（勾选正确答案）</label><div id="fQOptions"></div></div>
+    <div class="form-group" id="fQOptionsBox"><label id="fQOptionsLabel">选项（勾选正确答案）</label><div id="fQOptions"></div></div>
     <div class="form-group" id="fQAnswerCalcBox" style="display:none;"><label>正确答案</label><input type="text" class="form-input" id="fQCalcAnswer" value="${q&&q.type==='calc'?esc(q.answer):''}" placeholder="如：834"></div>
+    <div class="form-group" id="fQFillBox" style="display:none;">
+      <label>填空题配置</label>
+      <div style="margin-bottom:8px;">
+        <span style="font-size:13px;color:#666;">填空数量：</span>
+        <input type="number" class="form-input" id="fQBlankCount" value="${q&&q.blank_count?q.blank_count:1}" min="1" max="10" style="width:80px;display:inline-block;" onchange="onFillCountChange()">
+      </div>
+      <div id="fQBlankAnswers"></div>
+      <div style="margin-top:8px;">
+        <span style="font-size:13px;color:#666;">数字容差（0=严格匹配）：</span>
+        <input type="number" class="form-input" id="fQTolerance" value="${q&&q.tolerance?q.tolerance:0.01}" min="0" step="0.001" style="width:100px;display:inline-block;">
+      </div>
+    </div>
     <div class="form-group"><label>错题讲解（支持HTML）</label>
       <textarea class="form-input lg" id="fQExplain" placeholder="答错时显示的讲解...">${q?esc(q.explanation||''):''}</textarea>
     </div>
@@ -607,19 +635,103 @@ function onTypeChange(editingQ) {
   const type = document.getElementById('fQType').value;
   const optBox = document.getElementById('fQOptionsBox');
   const calcBox = document.getElementById('fQAnswerCalcBox');
+  const fillBox = document.getElementById('fQFillBox');
+  const multiBox = document.getElementById('fQMultiBox');
   const optEl = document.getElementById('fQOptions');
-  if (type === 'calc') {
-    optBox.style.display = 'none';
+
+  // 默认隐藏所有特殊区域
+  optBox.style.display = 'none';
+  calcBox.style.display = 'none';
+  fillBox.style.display = 'none';
+  multiBox.style.display = 'none';
+
+  if (type === 'choice') {
+    optBox.style.display = 'block';
+    multiBox.style.display = 'block';
+    document.getElementById('fQIsMultiple').checked = editingQ ? (editingQ.is_multiple || false) : false;
+  } else if (type === 'judge') {
+    optBox.style.display = 'block';
+  } else if (type === 'calc') {
     calcBox.style.display = 'block';
+  } else if (type === 'fill') {
+    fillBox.style.display = 'block';
+    const bc = editingQ ? (editingQ.blank_count || 1) : 1;
+    const ba = editingQ ? (editingQ.blank_answers || []) : [];
+    onFillCountChange(bc, ba);
+    document.getElementById('fQTolerance').value = editingQ ? (editingQ.tolerance || 0.01) : 0.01;
+    // 单空时答案仍放在 fQCalcAnswer
+    if (bc === 1) {
+      calcBox.style.display = 'block';
+      document.getElementById('fQCalcAnswer').value = editingQ ? (editingQ.answer || '') : '';
+    }
+    return;
+  } else if (type === 'essay') {
+    // 应用题不需要选项和答案框
+    return;
+  } else if (type === 'match') {
+    // 连线题：左侧项目 + 右侧选项
+    optBox.style.display = 'block';
+    document.getElementById('fQOptionsLabel').textContent = '左侧项目';
+    const leftOpts = editingQ && editingQ.options ? editingQ.options : ['', ''];
+    const rightOpts = editingQ && editingQ.match_options ? editingQ.match_options : ['', ''];
+    const pairs = editingQ && editingQ.answer ? editingQ.answer.split(',').map(p => p.split(':')) : [];
+    
+    let html = '<div id="matchLeftBox">';
+    leftOpts.forEach((opt, i) => {
+      html += `<div class="opt-input-row">
+        <span class="letter-tag">${i+1}</span>
+        <input type="text" class="form-input match-left-input" value="${esc(opt)}" placeholder="左侧项目${i+1}">
+        <select class="form-select match-right-select" style="width:150px;">
+          <option value="">选择右侧</option>
+          ${rightOpts.map((r, ri) => `<option value="${ri}" ${pairs.some(p => p[0]==String(i) && p[1]==String(ri))?'selected':''}>${esc(r)}</option>`).join('')}
+        </select>
+      </div>`;
+    });
+    html += '</div>';
+    html += '<div style="margin:12px 0;"><b>右侧选项：</b></div>';
+    html += '<div id="matchRightBox">';
+    rightOpts.forEach((opt, i) => {
+      html += `<div class="opt-input-row">
+        <span class="letter-tag">${String.fromCharCode(65+i)}</span>
+        <input type="text" class="form-input match-right-input" value="${esc(opt)}" placeholder="右侧选项${String.fromCharCode(65+i)}">
+      </div>`;
+    });
+    html += '</div>';
+    html += '<button class="btn btn-sm btn-blue" style="margin-top:6px;" onclick="addMatchOption()">+ 添加右侧选项</button>';
+    optEl.innerHTML = html;
+    return;
+  } else if (type === 'sort') {
+    // 排序题：项目列表 + 正确顺序
+    optBox.style.display = 'block';
+    document.getElementById('fQOptionsLabel').textContent = '排序项目';
+    const opts = editingQ && editingQ.options ? editingQ.options : ['', '', ''];
+    const correctOrder = editingQ && editingQ.answer ? editingQ.answer.split(',') : opts.map((_, i) => String(i));
+    
+    let html = '';
+    opts.forEach((opt, i) => {
+      html += `<div class="opt-input-row">
+        <span class="letter-tag">${i+1}</span>
+        <input type="text" class="form-input sort-item-input" value="${esc(opt)}" placeholder="项目${i+1}">
+        <select class="form-select sort-order-select" style="width:100px;">
+          ${opts.map((_, oi) => `<option value="${oi}" ${correctOrder[i]==String(oi)?'selected':''}>第${oi+1}</option>`).join('')}
+        </select>
+      </div>`;
+    });
+    optEl.innerHTML = html;
     return;
   }
-  optBox.style.display = 'block';
-  calcBox.style.display = 'none';
+
   let opts = [];
   let correctIdx = 0;
+  let isMulti = false;
   if (editingQ && editingQ.options) {
     opts = editingQ.options;
-    correctIdx = parseInt(editingQ.answer) || 0;
+    isMulti = editingQ.is_multiple || false;
+    if (isMulti && editingQ.answer) {
+      // 多选：逗号分隔
+    } else {
+      correctIdx = parseInt(editingQ.answer) || 0;
+    }
   } else if (type === 'judge') {
     opts = ['对', '错'];
     correctIdx = 0;
@@ -631,9 +743,27 @@ function onTypeChange(editingQ) {
     <div class="opt-input-row">
       <span class="letter-tag">${letters[i]||i}</span>
       <input type="text" class="form-input" value="${esc(opt)}" placeholder="选项${letters[i]||i+1}" oninput="syncOptions()">
-      <input type="radio" class="correct-radio" name="correctOpt" value="${i}" ${i===correctIdx?'checked':''} title="设为正确答案">
+      ${isMulti ?
+        `<input type="checkbox" class="correct-check" data-idx="${i}" ${editingQ && editingQ.answer && String(editingQ.answer).includes(String(i))?'checked':''} title="设为正确答案">`
+        :
+        `<input type="radio" class="correct-radio" name="correctOpt" value="${i}" ${i===correctIdx?'checked':''} title="设为正确答案">`
+      }
     </div>
   `).join('') + (type === 'choice' ? `<button class="btn btn-sm btn-blue" style="margin-top:6px;" onclick="addOption()">+ 添加选项</button>` : '');
+}
+
+function onFillCountChange(count, answers) {
+  count = count || parseInt(document.getElementById('fQBlankCount').value) || 1;
+  answers = answers || [];
+  const container = document.getElementById('fQBlankAnswers');
+  let html = '';
+  for (let i = 0; i < count; i++) {
+    html += `<div style="margin-bottom:6px;">
+      <span style="font-size:13px;color:#666;">第${i+1}空答案：</span>
+      <input type="text" class="form-input" data-blank-ans="${i}" value="${answers[i]||''}" placeholder="第${i+1}空的标准答案">
+    </div>`;
+  }
+  container.innerHTML = html;
 }
 
 function addOption() {
@@ -648,6 +778,27 @@ function addOption() {
   optEl.insertBefore(newrow, btn);
 }
 
+function addMatchOption() {
+  const rightBox = document.getElementById('matchRightBox');
+  const rightInputs = rightBox.querySelectorAll('.match-right-input');
+  const idx = rightInputs.length;
+  const letter = String.fromCharCode(65 + idx);
+  
+  const newrow = document.createElement('div');
+  newrow.className = 'opt-input-row';
+  newrow.innerHTML = `<span class="letter-tag">${letter}</span><input type="text" class="form-input match-right-input" value="" placeholder="右侧选项${letter}">`;
+  rightBox.appendChild(newrow);
+  
+  // 更新所有左侧下拉框，增加新选项
+  const leftSelects = document.querySelectorAll('.match-right-select');
+  leftSelects.forEach(sel => {
+    const opt = document.createElement('option');
+    opt.value = String(idx);
+    opt.textContent = `右侧选项${letter}`;
+    sel.appendChild(opt);
+  });
+}
+
 function syncOptions() { /* 实时读取即可，保存时统一收集 */ }
 
 async function saveQuestion(id) {
@@ -659,21 +810,138 @@ async function saveQuestion(id) {
   if (!content) { toast('请填写题干', 'error'); return; }
   const explanation = document.getElementById('fQExplain').value.trim();
   const difficulty = parseInt(document.getElementById('fQDiff').value);
-  let options = null, answer = '';
-  if (type === 'calc') {
-    answer = document.getElementById('fQCalcAnswer').value.trim();
-    if (!answer) { toast('请填写正确答案', 'error'); return; }
-  } else {
+  let options = null, answer = '', is_multiple = false, blank_count = 1, blank_answers = null, tolerance = 0.01;
+
+  if (type === 'choice') {
+    is_multiple = document.getElementById('fQIsMultiple').checked;
     const rows = document.querySelectorAll('#fQOptions .opt-input-row');
     options = [];
     rows.forEach(r => { options.push(r.querySelector('input[type=text]').value); });
+    if (options.some(o => !o)) { toast('选项不能为空', 'error'); return; }
+    if (is_multiple) {
+      // 多选题：收集所有勾选的复选框
+      const checks = document.querySelectorAll('.correct-check:checked');
+      if (checks.length === 0) { toast('请至少勾选一个正确答案', 'error'); return; }
+      answer = Array.from(checks).map(c => c.dataset.idx).join(',');
+    } else {
+      const checked = document.querySelector('input[name=correctOpt]:checked');
+      if (!checked) { toast('请勾选正确答案', 'error'); return; }
+      answer = checked.value;
+    }
+  } else if (type === 'judge') {
+    options = ['对', '错'];
     const checked = document.querySelector('input[name=correctOpt]:checked');
     if (!checked) { toast('请勾选正确答案', 'error'); return; }
     answer = checked.value;
-    if (type === 'judge' && !options.every(o => o)) { /* 判断题默认对/错 */ options = ['对','错']; }
-    if (type === 'choice' && options.some(o => !o)) { toast('选项不能为空', 'error'); return; }
+  } else if (type === 'calc') {
+    answer = document.getElementById('fQCalcAnswer').value.trim();
+    if (!answer) { toast('请填写正确答案', 'error'); return; }
+  } else if (type === 'fill') {
+    blank_count = parseInt(document.getElementById('fQBlankCount').value) || 1;
+    tolerance = parseFloat(document.getElementById('fQTolerance').value) || 0.01;
+    if (blank_count === 1) {
+      // 单空：答案放在 answer 字段
+      answer = document.getElementById('fQCalcAnswer').value.trim();
+      if (!answer) { toast('请填写正确答案', 'error'); return; }
+    } else {
+      // 多空：收集各空答案
+      blank_answers = [];
+      for (let i = 0; i < blank_count; i++) {
+        const el = document.querySelector(`input[data-blank-ans="${i}"]`);
+        const val = el ? el.value.trim() : '';
+        if (!val) { toast(`请填写第${i+1}空的答案`, 'error'); return; }
+        blank_answers.push(val);
+      }
+      answer = blank_answers[0]; // 至少需要非空的 answer
+    }
+  } else if (type === 'essay') {
+    answer = explanation || '待老师点评'; // 用解析作为参考答案
+  } else if (type === 'match') {
+    // 连线题：收集左侧项目和右侧选项
+    const leftInputs = document.querySelectorAll('.match-left-input');
+    const rightInputs = document.querySelectorAll('.match-right-input');
+    const leftSelects = document.querySelectorAll('.match-right-select');
+    
+    options = [];
+    leftInputs.forEach(inp => options.push(inp.value.trim()));
+    
+    const match_options = [];
+    rightInputs.forEach(inp => match_options.push(inp.value.trim()));
+    
+    if (options.some(o => !o)) { toast('左侧项目不能为空', 'error'); return; }
+    if (match_options.some(o => !o)) { toast('右侧选项不能为空', 'error'); return; }
+    
+    // 收集匹配关系
+    const pairs = [];
+    leftSelects.forEach((sel, i) => {
+      const rightIdx = sel.value;
+      if (rightIdx !== '') {
+        pairs.push(`${i}:${rightIdx}`);
+      }
+    });
+    
+    if (pairs.length !== options.length) {
+      toast('请为每个左侧项目选择对应的右侧选项', 'error');
+      return;
+    }
+    
+    answer = pairs.join(',');
+    const data = { subject_id, topic_id, type, content, options, match_options, answer, explanation, difficulty };
+    
+    try {
+      if (id) {
+        await API.put('/api/questions/'+id, data);
+        toast('题目已更新', 'success');
+      } else {
+        await API.post('/api/questions', data);
+        toast('题目已创建', 'success');
+      }
+      closeFormModal();
+      loadQuestions(qPage);
+    } catch(e) { toast(e.message, 'error'); }
+    return;
+  } else if (type === 'sort') {
+    // 排序题：收集项目和正确顺序
+    const itemInputs = document.querySelectorAll('.sort-item-input');
+    const orderSelects = document.querySelectorAll('.sort-order-select');
+    
+    options = [];
+    itemInputs.forEach(inp => options.push(inp.value.trim()));
+    
+    if (options.some(o => !o)) { toast('排序项目不能为空', 'error'); return; }
+    
+    // 收集正确顺序
+    const order = [];
+    orderSelects.forEach(sel => order.push(sel.value));
+    
+    // 检查是否有重复
+    const uniqueOrders = new Set(order);
+    if (uniqueOrders.size !== order.length) {
+      toast('每个项目的正确位置不能重复', 'error');
+      return;
+    }
+    
+    answer = order.join(',');
+    const data = { subject_id, topic_id, type, content, options, answer, explanation, difficulty };
+    
+    try {
+      if (id) {
+        await API.put('/api/questions/'+id, data);
+        toast('题目已更新', 'success');
+      } else {
+        await API.post('/api/questions', data);
+        toast('题目已创建', 'success');
+      }
+      closeFormModal();
+      loadQuestions(qPage);
+    } catch(e) { toast(e.message, 'error'); }
+    return;
   }
+
   const data = { subject_id, topic_id, type, content, options, answer: String(answer), explanation, difficulty };
+  if (type === 'choice') data.is_multiple = is_multiple;
+  if (type === 'fill') { data.blank_count = blank_count; data.tolerance = tolerance; if (blank_answers) data.blank_answers = blank_answers; }
+
   try {
     if (id) {
       await API.put('/api/questions/'+id, data);

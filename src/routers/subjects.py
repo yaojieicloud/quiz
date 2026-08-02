@@ -17,6 +17,11 @@ def list_subjects(db: Session = Depends(get_db), _=Depends(get_current_user)):
     for s in subjects:
         out = SubjectOut.model_validate(s)
         out.question_count = db.query(Question).filter(Question.subject_id == s.id).count()
+        out.available_types = [
+            r[0] for r in db.query(Question.type)
+            .filter(Question.subject_id == s.id)
+            .distinct().all()
+        ]
         result.append(out)
     return result
 

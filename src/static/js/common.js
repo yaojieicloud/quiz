@@ -112,7 +112,7 @@ function nl2br(s) {
 
 // 题型标签
 function typeTag(type) {
-  const map = { choice: ['tag tag-choice','🔵 选择题'], judge: ['tag tag-judge','🟢 判断题'], calc: ['tag tag-calc','🟠 计算题'], code: ['tag tag-code','💻 编程题'] };
+  const map = { choice: ['tag tag-choice','🔵 选择题'], judge: ['tag tag-judge','🟢 判断题'], calc: ['tag tag-calc','🟠 计算题'], code: ['tag tag-code','💻 编程题'], fill: ['tag tag-calc','✏️ 填空题'], essay: ['tag tag-calc','📝 应用题'], match: ['tag tag-blue','🔗 连线题'], sort: ['tag tag-blue','📋 排序题'] };
   return map[type] || ['tag tag-gray', type];
 }
 
@@ -120,8 +120,15 @@ function typeTag(type) {
 function answerText(question, answer) {
   if (answer == null || answer === '') return '（未作答）';
   if (question && question.options && (question.type === 'choice' || question.type === 'judge')) {
+    if (question.is_multiple) {
+      const indices = answer.split(',').map(s => parseInt(s.trim()));
+      return indices.map(idx => question.options[idx] || idx).join('、');
+    }
     const idx = parseInt(answer);
     return question.options[idx] || answer;
+  }
+  if (question && question.type === 'fill' && (question.blank_count || 1) > 1) {
+    return answer.split('|').map((a, i) => `空${i+1}: ${a}`).join('；');
   }
   return answer;
 }
@@ -198,6 +205,90 @@ function renderAnswerCard(q, ar, opts) {
       html += `<pre class="code-pre">${esc(q.answer)}</pre>`;
     }
     if (q.explanation) html += `<div class="explain-text">💡 指导思路：${nl2br(esc(q.explanation))}</div>`;
+  } else if (q.type === 'match') {
+    // 连线题：显示左右项目和匹配关系
+    const options = q.options || [];
+    const matchOptions = q.match_options || [];
+    const userPairs = (ar.user_answer || '').split(',').filter(s => s.includes(':'));
+    const correctPairs = (q.answer || '').split(',').filter(s => s.includes(':'));
+    
+    html += `<div class="match-display" style="margin:10px 0;">`;
+    html += `<div style="display:flex;gap:20px;justify-content:center;">`;
+    html += `<div class="match-left">`;
+    options.forEach((opt, i) => {
+      html += `<div class="match-item" style="padding:8px 16px;background:#e7f5ff;border-radius:8px;margin:4px 0;">${esc(opt)}</div>`;
+    });
+    html += `</div>`;
+    html += `<div class="match-right">`;
+    matchOptions.forEach((opt, i) => {
+      html += `<div class="match-item" style="padding:8px 16px;background:#fff3bf;border-radius:8px;margin:4px 0;">${esc(opt)}</div>`;
+    });
+    html += `</div>`;
+    html += `</div>`;
+    
+    // 显示用户的匹配
+    html += `<div style="margin-top:10px;font-size:14px;">`;
+    html += `<span class="ans-label ${isRight ? 'label-correct' : 'label-your'}">${isRight ? '✓ 你的连线' : '✗ 你的连线'}</span><br>`;
+    userPairs.forEach(pair => {
+      const [left, right] = pair.split(':').map(Number);
+      if (options[left] && matchOptions[right]) {
+        const isCorrectPair = correctPairs.includes(pair);
+        const color = isCorrectPair ? '#2b8a3e' : '#c92a2a';
+        html += `<span style="color:${color};">${esc(options[left])} → ${esc(matchOptions[right])} ${isCorrectPair ? '✓' : '✗'}</span><br>`;
+      }
+    });
+    if (!isRight) {
+      html += `<span class="ans-label label-correct">✓ 正确答案</span><br>`;
+      correctPairs.forEach(pair => {
+        const [left, right] = pair.split(':').map(Number);
+        if (options[left] && matchOptions[right]) {
+          html += `<span style="color:#2b8a3e;">${esc(options[left])} → ${esc(matchOptions[right])}</span><br>`;
+        }
+      });
+    }
+    html += `</div></div>`;
+    if (q.explanation) html += `<div class="explain-text">💡 ${nl2br(esc(q.explanation))}</div>`;
+  } else if (q.type === 'sort') {
+    // 排序题：显示项目和顺序
+    const options = q.options || [];
+    const userOrder = (ar.user_answer || '').split(',').filter(s => s !== '').map(Number);
+    const correctOrder = (q.answer || '').split(',').filter(s => s !== '').map(Number);
+    
+    html += `<div class="sort-display" style="margin:10px 0;">`;
+    
+    // 显示原始项目
+    html += `<div style="margin-bottom:10px;font-size:14px;color:#7a6c8c;">原始项目：</div>`;
+    html += `<div style="display:flex;flex-direction:column;gap:4px;">`;
+    options.forEach((opt, i) => {
+      html += `<div style="padding:8px 16px;background:#f8f9fa;border-radius:8px;">${esc(opt)}</div>`;
+    });
+    html += `</div>`;
+    
+    // 显示用户的排序
+    html += `<div style="margin-top:10px;font-size:14px;">`;
+    html += `<span class="ans-label ${isRight ? 'label-correct' : 'label-your'}">${isRight ? '✓ 你的排序' : '✗ 你的排序'}</span><br>`;
+    html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">`;
+    userOrder.forEach((idx, pos) => {
+      if (options[idx]) {
+        const isCorrectPos = correctOrder[pos] === idx;
+        const color = isCorrectPos ? '#2b8a3e' : '#c92a2a';
+        html += `<div style="padding:8px 16px;background:${isCorrectPos ? '#d3f9d8' : '#ffe3e3'};border-radius:8px;color:${color};">${pos + 1}. ${esc(options[idx])} ${isCorrectPos ? '✓' : '✗'}</div>`;
+      }
+    });
+    html += `</div>`;
+    
+    if (!isRight) {
+      html += `<div style="margin-top:10px;"><span class="ans-label label-correct">✓ 正确答案</span></div>`;
+      html += `<div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">`;
+      correctOrder.forEach((idx, pos) => {
+        if (options[idx]) {
+          html += `<div style="padding:8px 16px;background:#d3f9d8;border-radius:8px;color:#2b8a3e;">${pos + 1}. ${esc(options[idx])}</div>`;
+        }
+      });
+      html += `</div>`;
+    }
+    html += `</div></div>`;
+    if (q.explanation) html += `<div class="explain-text">💡 ${nl2br(esc(q.explanation))}</div>`;
   }
   return html;
 }

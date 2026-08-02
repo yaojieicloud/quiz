@@ -20,6 +20,7 @@ FILES = [
     ("models.py", "/app/models.py"),
     ("schemas.py", "/app/schemas.py"),
     ("routers/exam.py", "/app/routers/exam.py"),
+    ("routers/subjects.py", "/app/routers/subjects.py"),
     ("routers/questions.py", "/app/routers/questions.py"),
     ("routers/admin.py", "/app/routers/admin.py"),
     ("core/code_runner.py", "/app/core/code_runner.py"),

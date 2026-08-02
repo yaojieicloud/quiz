@@ -61,6 +61,14 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+# Quiz 项目数据库（含线上用户数据，禁止入库）
+*.db
+*.db-journal
+*.db.old
+*.db.bak_*
+src/quiz.db
+src/quiz.db.old
+
 # Flask stuff:
 instance/
 .webassets-cache

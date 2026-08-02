@@ -19,6 +19,37 @@
 .unit-select-all.all-active { background:linear-gradient(135deg,#ffa94d,#ff922b); }
 .unit-topics { padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px; }
 .unit-group.collapsed .unit-topics { display:none; }
+
+/* ============ 组卷弹层：固定头部 + 中间滚动 + 固定底部按钮 ============ */
+.cfg-modal {
+  display:flex; flex-direction:column;
+  padding:0; overflow:hidden;          /* 覆盖 .modal 的整体滚动 */
+  text-align:left;
+}
+.cfg-head {
+  flex:0 0 auto; text-align:center;
+  padding:22px 26px 12px;
+  border-bottom:2px solid #f1f3f5;
+}
+.cfg-head h3 { margin:0 0 6px; }
+.cfg-head p { margin:0; color:#7a6c8c; font-size:15px; }
+.cfg-body {
+  flex:1 1 auto; overflow-y:auto;       /* 只有中间区域滚动 */
+  padding:18px 26px; min-height:120px;
+  scrollbar-width:thin; scrollbar-color:#c3c9e0 transparent;  /* Firefox */
+}
+/* Webkit 细滚动条：贴边但不突兀 */
+.cfg-body::-webkit-scrollbar { width:8px; }
+.cfg-body::-webkit-scrollbar-track { background:transparent; }
+.cfg-body::-webkit-scrollbar-thumb { background:#c3c9e0; border-radius:8px; border:2px solid #fff; }
+.cfg-body::-webkit-scrollbar-thumb:hover { background:#9aa3c7; }
+.cfg-foot {
+  flex:0 0 auto; display:flex; gap:12px; justify-content:center; align-items:center;
+  padding:14px 26px;
+  background:#fff;
+  border-top:2px solid #f1f3f5;
+  box-shadow:0 -6px 16px rgba(58,58,85,0.06);  /* 轻微浮起感，提示底部固定 */
+}
 </style>
 </head>
 <body>
@@ -37,62 +68,76 @@
 
   <!-- 实操课程选择弹层（递进式：第 N 课的题综合运用第 1~N 课知识点） -->
   <div class="modal-mask" id="courseModal">
-    <div class="modal" style="max-width:560px;text-align:left;">
-      <h3 style="text-align:center;">📖 选择课程</h3>
-      <p style="text-align:center;" id="courseSubjectName"></p>
-      <div class="config-section">
-        <div class="label">🎯 选一课开始实操（单选）</div>
-        <div class="chip-group" id="courseChips"></div>
+    <div class="modal cfg-modal" style="max-width:560px;">
+      <div class="cfg-head">
+        <h3>📖 选择课程</h3>
+        <p id="courseSubjectName"></p>
       </div>
-      <div style="font-size:13px;color:#9c8bb5;margin-top:10px;line-height:1.6;">
-        💡 课程是递进的：选第 N 课，题目会综合运用第 1 ~ N 课学过的知识点。每次实操 1 题，提交后可以回来继续选课。
+
+      <div class="cfg-body">
+        <div class="config-section">
+          <div class="label">🎯 选一课开始实操（单选）</div>
+          <div class="chip-group" id="courseChips"></div>
+        </div>
+        <div style="font-size:13px;color:#9c8bb5;line-height:1.6;">
+          💡 课程是递进的：选第 N 课，题目会综合运用第 1 ~ N 课学过的知识点。每次实操 1 题，提交后可以回来继续选课。
+        </div>
       </div>
-      <div class="btns" style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
+
+      <div class="cfg-foot">
         <button class="btn btn-yellow btn-sm" onclick="closeCoursePick()">取消</button>
         <button class="btn btn-green" onclick="startCourseExam()">🚀 开始实操</button>
       </div>
     </div>
   </div>
 
-  <!-- 组卷配置弹层 -->
+  <!-- 组卷配置弹层（固定头部 + 中间滚动 + 固定底部按钮） -->
   <div class="modal-mask" id="configModal">
-    <div class="modal" style="max-width:560px;text-align:left;">
-      <h3 style="text-align:center;">⚙️ 组卷设置</h3>
-      <p style="text-align:center;" id="configSubjectName"></p>
-
-      <div class="config-section">
-        <div class="label" id="topicSectionLabel">📖 章节（可多选，不选=全部）</div>
-        <div class="chip-group" id="topicChips"></div>
+    <div class="modal cfg-modal" style="max-width:560px;">
+      <div class="cfg-head">
+        <h3>⚙️ 组卷设置</h3>
+        <p id="configSubjectName"></p>
       </div>
 
-      <div class="config-section">
-        <div class="label">🏷️ 题型（可多选，不选=全部）</div>
-        <div class="chip-group">
-          <span class="chip" data-type="choice" onclick="toggleChip(this)">🔵 选择题</span>
-          <span class="chip" data-type="judge" onclick="toggleChip(this)">🟢 判断题</span>
-          <span class="chip" data-type="calc" onclick="toggleChip(this)">🟠 计算题</span>
+      <div class="cfg-body">
+        <div class="config-section" id="topicSection">
+          <div class="label" id="topicSectionLabel">📖 章节（可多选，不选=全部）</div>
+          <div class="chip-group" id="topicChips"></div>
+        </div>
+
+        <div class="config-section" id="typeSection">
+          <div class="label">🏷️ 题型（可多选，不选=全部）</div>
+          <div class="chip-group">
+            <span class="chip" data-type="choice" onclick="toggleChip(this)">🔵 选择题</span>
+            <span class="chip" data-type="judge" onclick="toggleChip(this)">🟢 判断题</span>
+            <span class="chip" data-type="calc" onclick="toggleChip(this)">🟠 计算题</span>
+            <span class="chip" data-type="fill" onclick="toggleChip(this)">✏️ 填空题</span>
+            <span class="chip" data-type="essay" onclick="toggleChip(this)">📝 应用题</span>
+            <span class="chip" data-type="match" onclick="toggleChip(this)">🔗 连线题</span>
+            <span class="chip" data-type="sort" onclick="toggleChip(this)">📋 排序题</span>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <div class="label">🔢 题目数量</div>
+          <div class="chip-group">
+            <span class="chip active" data-count="10" onclick="pickCount(this)">10题</span>
+            <span class="chip" data-count="20" onclick="pickCount(this)">20题</span>
+            <span class="chip" data-count="50" onclick="pickCount(this)">50题</span>
+          </div>
+        </div>
+
+        <div class="config-section">
+          <div class="label">🎮 模式</div>
+          <div class="chip-group">
+            <span class="chip active" data-mode="custom" onclick="pickMode(this)">🎯 自由组卷</span>
+            <span class="chip" data-mode="random" onclick="pickMode(this)">🎲 随机挑战</span>
+            <span class="chip" data-mode="wrong" onclick="pickMode(this)">❌ 错题重做</span>
+          </div>
         </div>
       </div>
 
-      <div class="config-section">
-        <div class="label">🔢 题目数量</div>
-        <div class="chip-group">
-          <span class="chip active" data-count="10" onclick="pickCount(this)">10题</span>
-          <span class="chip" data-count="20" onclick="pickCount(this)">20题</span>
-          <span class="chip" data-count="50" onclick="pickCount(this)">50题</span>
-        </div>
-      </div>
-
-      <div class="config-section">
-        <div class="label">🎮 模式</div>
-        <div class="chip-group">
-          <span class="chip active" data-mode="custom" onclick="pickMode(this)">🎯 自由组卷</span>
-          <span class="chip" data-mode="random" onclick="pickMode(this)">🎲 随机挑战</span>
-          <span class="chip" data-mode="wrong" onclick="pickMode(this)">❌ 错题重做</span>
-        </div>
-      </div>
-
-      <div class="btns" style="display:flex;gap:12px;justify-content:center;margin-top:20px;">
+      <div class="cfg-foot">
         <button class="btn btn-yellow btn-sm" onclick="closeConfig()">取消</button>
         <button class="btn btn-green" onclick="startExam()">🚀 开始闯关</button>
       </div>
@@ -216,30 +261,50 @@ async function startCourseExam() {
 async function openConfig(subjectId) {
   currentSubject = subjects.find(s => s.id === subjectId);
   document.getElementById('configSubjectName').textContent = `${currentSubject.icon} ${currentSubject.name} · 共 ${currentSubject.question_count} 题`;
-  // 按 category 调整章节区标签文案
   const isProg = currentSubject.category === 'programming';
+  const isCulture = currentSubject.category === 'culture';
+
+  // 需求1：不让选"题型"，只选题数随机抽 → 题型区对所有非实操科目隐藏
+  document.getElementById('typeSection').style.display = 'none';
+  // 章节/课程清单始终显示（需求8：文化类进去默认全选）
+  document.getElementById('topicSection').style.display = '';
   document.getElementById('topicSectionLabel').textContent = isProg
     ? '📖 选哪几课（可多选，不选=全部）'
-    : '📖 选单元 / 课时（可多选，不选=全部）';
+    : '📖 选单元 / 课时（默认全选，可手动取消）';
+
   selectedTopics = new Set();
   selectedTypes = new Set();
-  selectedCount = 10;
+  // 需求8：文化类默认 50 题；编程理论默认 10 题
+  selectedCount = isCulture ? 50 : 10;
   selectedMode = 'custom';
   // 重置 chip
   document.querySelectorAll('#configModal .chip').forEach(c => c.classList.remove('active'));
-  document.querySelector('.chip[data-count="10"]').classList.add('active');
+  document.querySelector(`.chip[data-count="${selectedCount}"]`).classList.add('active');
   document.querySelector('.chip[data-mode="custom"]').classList.add('active');
+
+  // 切换科目：立即清空章节区，避免残留上一科目的内容
+  const box = document.getElementById('topicChips');
+  box.innerHTML = '<div style="color:#9c8bb5;font-size:14px;padding:8px 0;">⏳ 正在加载章节...</div>';
+  topics = [];
 
   // 加载章节
   try {
     topics = await API.get(`/api/subjects/${subjectId}/topics`);
-    const box = document.getElementById('topicChips');
-    if (currentSubject.category === 'programming') {
-      // 编程类：扁平多选（选哪几课）
+    // 防护：加载期间用户又切了别的科目，丢弃过期结果
+    if (currentSubject.id !== subjectId) return;
+    if (!topics.length) {
+      box.innerHTML = '<div style="color:#9c8bb5;font-size:14px;padding:8px 0;">📭 该科目还没有章节，请先在管理后台添加</div>';
+    } else if (isProg) {
+      // 编程类理论：扁平多选
       box.innerHTML = topics.map(t => `<span class="chip" data-tid="${t.id}" onclick="toggleChip(this)">${esc(t.name)} (${t.question_count})</span>`).join('');
     } else {
       // 文化类：按 unit 分组折叠
       box.innerHTML = renderTopicGroups(topics);
+    }
+    // 需求8：文化类默认全选所有章节
+    if (isCulture) {
+      box.querySelectorAll('.chip[data-tid]').forEach(c => c.classList.add('active'));
+      box.querySelectorAll('.unit-select-all').forEach(b => { b.classList.add('all-active'); b.textContent = '取消全选'; });
     }
   } catch (e) {
     toast('加载章节失败', 'error');

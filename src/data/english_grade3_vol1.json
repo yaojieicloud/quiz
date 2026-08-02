@@ -1,0 +1,3362 @@
+[
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Hello' 是什么意思？",
+    "answer": "1",
+    "explanation": "Hello是你好，用于打招呼。",
+    "difficulty": 1,
+    "options": [
+      "再见",
+      "你好",
+      "谢谢",
+      "对不起"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Goodbye' 是什么意思？",
+    "answer": "2",
+    "explanation": "Goodbye是再见，用于告别。",
+    "difficulty": 1,
+    "options": [
+      "你好",
+      "早上好",
+      "再见",
+      "晚安"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'pen' 是什么意思？",
+    "answer": "1",
+    "explanation": "pen是钢笔，pencil才是铅笔。",
+    "difficulty": 1,
+    "options": [
+      "铅笔",
+      "钢笔",
+      "尺子",
+      "橡皮"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'pencil' 是什么意思？",
+    "answer": "1",
+    "explanation": "pencil是铅笔。",
+    "difficulty": 1,
+    "options": [
+      "钢笔",
+      "铅笔",
+      "蜡笔",
+      "书包"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'ruler' 是什么意思？",
+    "answer": "1",
+    "explanation": "ruler是尺子。",
+    "difficulty": 1,
+    "options": [
+      "橡皮",
+      "尺子",
+      "蜡笔",
+      "书包"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'eraser' 是什么意思？",
+    "answer": "2",
+    "explanation": "eraser是橡皮。",
+    "difficulty": 1,
+    "options": [
+      "尺子",
+      "蜡笔",
+      "橡皮",
+      "钢笔"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'crayon' 是什么意思？",
+    "answer": "0",
+    "explanation": "crayon是蜡笔。",
+    "difficulty": 1,
+    "options": [
+      "蜡笔",
+      "铅笔",
+      "钢笔",
+      "尺子"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'bag' 是什么意思？",
+    "answer": "1",
+    "explanation": "bag是书包。",
+    "difficulty": 1,
+    "options": [
+      "书",
+      "书包",
+      "铅笔盒",
+      "橡皮"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "早上见到老师，应该说：",
+    "answer": "1",
+    "explanation": "早上见面说Good morning（早上好）。",
+    "difficulty": 1,
+    "options": [
+      "Good night!",
+      "Good morning!",
+      "Goodbye!",
+      "Sorry!"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "放学回家时，跟老师说：",
+    "answer": "2",
+    "explanation": "离开时说Goodbye（再见）。",
+    "difficulty": 1,
+    "options": [
+      "Hello!",
+      "Good morning!",
+      "Goodbye!",
+      "Thank you!"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'I'm Sarah.' 是什么意思？",
+    "answer": "0",
+    "explanation": "I'm = I am，意思是我是。",
+    "difficulty": 1,
+    "options": [
+      "我是Sarah。",
+      "你好Sarah。",
+      "再见Sarah。",
+      "谢谢Sarah。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'What's your name?' 是在问什么？",
+    "answer": "1",
+    "explanation": "What's your name? 问你叫什么名字。",
+    "difficulty": 1,
+    "options": [
+      "你几岁？",
+      "你叫什么名字？",
+      "你好吗？",
+      "你在哪里？"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "别人问你叫什么名字，你应该回答：",
+    "answer": "1",
+    "explanation": "回答名字用My name is...或I'm...",
+    "difficulty": 1,
+    "options": [
+      "I'm fine.",
+      "My name is Tom.",
+      "Goodbye.",
+      "Thank you."
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Show me your pencil.' 是什么意思？",
+    "answer": "0",
+    "explanation": "Show me是给我看看的意思。",
+    "difficulty": 2,
+    "options": [
+      "给我看看你的铅笔。",
+      "给我一支铅笔。",
+      "你的铅笔在哪里？",
+      "这是你的铅笔。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "下列哪个是'橡皮'的英文？",
+    "answer": "1",
+    "explanation": "eraser是橡皮。",
+    "difficulty": 1,
+    "options": [
+      "ruler",
+      "eraser",
+      "crayon",
+      "pen"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Open your bag.' 是什么意思？",
+    "answer": "1",
+    "explanation": "Open是打开的意思。",
+    "difficulty": 2,
+    "options": [
+      "关上你的书包。",
+      "打开你的书包。",
+      "看看你的书包。",
+      "这是你的书包。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Close your book.' 是什么意思？",
+    "answer": "1",
+    "explanation": "Close是关上的意思。",
+    "difficulty": 2,
+    "options": [
+      "打开你的书。",
+      "关上你的书。",
+      "看看你的书。",
+      "给我你的书。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'I have a ruler.' 是什么意思？",
+    "answer": "0",
+    "explanation": "I have是我也有的意思。",
+    "difficulty": 1,
+    "options": [
+      "我有一把尺子。",
+      "这是一把尺子。",
+      "我喜欢尺子。",
+      "尺子在哪里？"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Good afternoon' 是什么意思？",
+    "answer": "1",
+    "explanation": "afternoon是下午，Good afternoon是下午好。",
+    "difficulty": 1,
+    "options": [
+      "早上好",
+      "下午好",
+      "晚上好",
+      "晚安"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Me too!' 是什么意思？",
+    "answer": "0",
+    "explanation": "Me too表示我也是，用于附和别人。",
+    "difficulty": 1,
+    "options": [
+      "我也是！",
+      "谢谢你！",
+      "对不起！",
+      "再见！"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'pen' 的意思是铅笔。",
+    "answer": "1",
+    "explanation": "pen是钢笔，pencil才是铅笔。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Hello' 和 'Hi' 都是打招呼用的。",
+    "answer": "0",
+    "explanation": "对的，Hello和Hi都表示你好。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Goodbye' 是早上好的意思。",
+    "answer": "1",
+    "explanation": "Goodbye是再见，Good morning才是早上好。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'eraser' 的意思是橡皮。",
+    "answer": "0",
+    "explanation": "对的，eraser就是橡皮。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'ruler' 的意思是蜡笔。",
+    "answer": "1",
+    "explanation": "ruler是尺子，crayon才是蜡笔。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'bag' 的意思是书包。",
+    "answer": "0",
+    "explanation": "对的，bag就是书包。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'crayon' 的意思是钢笔。",
+    "answer": "1",
+    "explanation": "crayon是蜡笔，pen才是钢笔。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Good night' 是睡觉前说的。",
+    "answer": "0",
+    "explanation": "对的，Good night是晚安，睡觉前说。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'pencil' 的意思是尺子。",
+    "answer": "1",
+    "explanation": "pencil是铅笔，ruler才是尺子。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'I'm Tom.' 和 'My name is Tom.' 意思一样。",
+    "answer": "0",
+    "explanation": "对的，两种说法都表示我叫Tom。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Good morning' 是晚上说的。",
+    "answer": "1",
+    "explanation": "Good morning是早上好，早上说的。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Show me' 是给我看看的意思。",
+    "answer": "0",
+    "explanation": "对的，Show me就是给我看看。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Open' 是关上的意思。",
+    "answer": "1",
+    "explanation": "Open是打开，Close才是关上。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'I have a pen.' 意思是我有一支钢笔。",
+    "answer": "0",
+    "explanation": "对的，I have是我有。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'What's your name?' 是问你几岁了。",
+    "answer": "1",
+    "explanation": "What's your name是问名字，How old are you才是问年龄。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Good afternoon' 是下午好。",
+    "answer": "0",
+    "explanation": "对的，afternoon是下午。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Me too' 是对不起的意思。",
+    "answer": "1",
+    "explanation": "Me too是我也是，Sorry才是对不起。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Thank you' 是谢谢的意思。",
+    "answer": "0",
+    "explanation": "对的，Thank you就是谢谢。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Close your book' 是打开你的书。",
+    "answer": "1",
+    "explanation": "Close是关上，Open才是打开。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'Hi' 只能对老师说，不能对同学说。",
+    "answer": "1",
+    "explanation": "Hi可以对任何人说，同学、老师、朋友都可以。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'钢笔'的英文是____。",
+    "answer": "pen",
+    "explanation": "pen是钢笔。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'铅笔'的英文是____。",
+    "answer": "pencil",
+    "explanation": "pencil是铅笔。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'尺子'的英文是____。",
+    "answer": "ruler",
+    "explanation": "ruler是尺子。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'橡皮'的英文是____。",
+    "answer": "eraser",
+    "explanation": "eraser是橡皮。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'蜡笔'的英文是____。",
+    "answer": "crayon",
+    "explanation": "crayon是蜡笔。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'书包'的英文是____。",
+    "answer": "bag",
+    "explanation": "bag是书包。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "早上见面说Good ____。",
+    "answer": "morning",
+    "explanation": "Good morning是早上好。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "告别时说____。",
+    "answer": "Goodbye",
+    "explanation": "Goodbye是再见。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "自我介绍：My ____ is Tom.",
+    "answer": "name",
+    "explanation": "My name is...是自我介绍的常用句型。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "问别人名字：What's your ____?",
+    "answer": "name",
+    "explanation": "What's your name? 问你叫什么名字。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'给我看看'的英文是____ me。",
+    "answer": "Show",
+    "explanation": "Show me是给我看看。",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'打开'的英文是____。",
+    "answer": "Open",
+    "explanation": "Open是打开。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'关上'的英文是____。",
+    "answer": "Close",
+    "explanation": "Close是关上。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'我也是'的英文是Me ____。",
+    "answer": "too",
+    "explanation": "Me too是我也是。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'谢谢'的英文是____ you。",
+    "answer": "Thank",
+    "explanation": "Thank you是谢谢。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'下午好'是Good ____。",
+    "answer": "afternoon",
+    "explanation": "afternoon是下午。",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'晚安'是Good ____。",
+    "answer": "night",
+    "explanation": "Good night是晚安。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'我有一支铅笔'：I have a ____。",
+    "answer": "pencil",
+    "explanation": "pencil是铅笔。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'你好'的英文是____。",
+    "answer": "Hello",
+    "explanation": "Hello是你好。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "'对不起'的英文是____。",
+    "answer": "Sorry",
+    "explanation": "Sorry是对不起。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文写一段自我介绍，包括你的名字和年龄。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：Hello! My name is... I'm... years old. I'm a boy/girl. Nice to meet you!",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文介绍你的书包里有什么。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：This is my bag. I have a pen. I have a pencil. I have a ruler. I have an eraser.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段你和朋友的对话，包括打气和问名字。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：A: Hello! B: Hi! A: What's your name? B: My name is...",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文描述你的铅笔盒里有什么文具。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I have a pencil box. There is a pen. There is a pencil. There is a ruler. There is an eraser.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段早上到学校后和老师同学的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Good morning, Miss Li! Good morning, Tom! Hello! Hi!",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文写一写你今天带了哪些文具上学。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：Today I have a pen. I have a pencil. I have a ruler. I have a crayon.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段放学时和同学告别的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Goodbye, Tom! Bye! See you tomorrow! See you!",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文介绍你最喜欢的一种文具，说说为什么喜欢它。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I like my crayon. It's red. I can draw pictures with it. I like it very much.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段你和新同学第一次见面的对话。（至少5句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Hello! Hi! What's your name? My name is... Nice to meet you! Nice to meet you, too!",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文写一写你的书包是什么颜色的，里面有什么。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：My bag is blue. I have a pen in my bag. I have a book. I have a ruler.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段课堂上老师说Show me your pencil后你的回答。（至少3句）",
+    "answer": "待老师点评",
+    "explanation": "参考：OK! This is my pencil. Here you are.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文写一写你文具盒里有几支铅笔、几块橡皮。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I have three pencils. I have two erasers. I have one ruler. I have many crayons.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段你教新同学认识文具的对话。（至少5句）",
+    "answer": "待老师点评",
+    "explanation": "参考：This is a pen. This is a pencil. This is a ruler. What's this? It's an eraser.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文写一写你最喜欢上什么课，为什么。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I like English class. I can learn new words. I like my teacher. English is fun.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段你借文具给同学的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Can I have a pencil? Sure, here you are. Thank you! You're welcome.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文描述你的一天中什么时候说Hello、Goodbye。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：In the morning, I say Hello to my teacher. At school, I say Hi to my friends. After school, I say Goodbye.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段你向妈妈介绍新同学的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Mum, this is my friend. Her name is Lily. Hello, Lily! Nice to meet you!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文写一写你的文具都有什么颜色。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：My pen is black. My pencil is yellow. My ruler is blue. My eraser is white.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "写一段你丢失文具后寻找的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Where is my pencil? Is it in your bag? No, it's not. Oh, here it is! Thank you!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "用英文写一写开学第一天你的心情。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：Today is the first day of school. I'm happy. I have a new bag. I have new pencils. I like school.",
+    "difficulty": 2
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文单词与中文意思连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "pen钢笔，pencil铅笔，ruler尺子，eraser橡皮。",
+    "difficulty": 1,
+    "options": [
+      "pen",
+      "pencil",
+      "ruler",
+      "eraser"
+    ],
+    "match_options": [
+      "铅笔",
+      "钢笔",
+      "橡皮",
+      "尺子"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文单词与中文意思连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "crayon蜡笔，bag书包，book书，hello你好。",
+    "difficulty": 1,
+    "options": [
+      "crayon",
+      "bag",
+      "book",
+      "hello"
+    ],
+    "match_options": [
+      "书包",
+      "蜡笔",
+      "你好",
+      "书"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将问候语与使用场景连线。",
+    "answer": "0:2,1:0,2:1,3:3",
+    "explanation": "Good morning早上，Good afternoon下午，Good night睡前，Goodbye离开。",
+    "difficulty": 1,
+    "options": [
+      "Good morning",
+      "Good afternoon",
+      "Good night",
+      "Goodbye"
+    ],
+    "match_options": [
+      "下午见面",
+      "睡觉前",
+      "早上见面",
+      "离开时"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "Open打开，Close关上，Show展示，Have有。",
+    "difficulty": 2,
+    "options": [
+      "Open",
+      "Close",
+      "Show",
+      "Have"
+    ],
+    "match_options": [
+      "关上",
+      "打开",
+      "有",
+      "展示"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将文具与用途连线。",
+    "answer": "0:1,1:0,2:2,3:3",
+    "explanation": "pen写字，ruler画直线，eraser擦错字，crayon画画。",
+    "difficulty": 2,
+    "options": [
+      "pen",
+      "ruler",
+      "eraser",
+      "crayon"
+    ],
+    "match_options": [
+      "画直线",
+      "写字",
+      "擦错字",
+      "画画"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:3,2:0,3:1",
+    "explanation": "I'm我是，My name is我的名字是，Thank you谢谢，Me too我也是。",
+    "difficulty": 1,
+    "options": [
+      "I'm",
+      "My name is",
+      "Thank you",
+      "Me too"
+    ],
+    "match_options": [
+      "谢谢",
+      "我也是",
+      "我是",
+      "我的名字是"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "What's your name问名字，How are you问好，Nice to meet you初次见面，See you再见。",
+    "difficulty": 2,
+    "options": [
+      "What's your name?",
+      "How are you?",
+      "Nice to meet you.",
+      "See you."
+    ],
+    "match_options": [
+      "再见。",
+      "你叫什么名字？",
+      "很高兴认识你。",
+      "你好吗？"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "red红，blue蓝，green绿，yellow黄。",
+    "difficulty": 2,
+    "options": [
+      "red pen",
+      "blue ruler",
+      "green bag",
+      "yellow pencil"
+    ],
+    "match_options": [
+      "黄色铅笔",
+      "红色钢笔",
+      "绿色书包",
+      "蓝色尺子"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:0,3:2",
+    "explanation": "I have我有，Show me给我看，Open打开，Close关上。",
+    "difficulty": 2,
+    "options": [
+      "I have a pen.",
+      "Show me your book.",
+      "Open your bag.",
+      "Close your pencil box."
+    ],
+    "match_options": [
+      "打开你的书包。",
+      "我有一支钢笔。",
+      "关上你的铅笔盒。",
+      "给我看看你的书。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:0,3:2",
+    "explanation": "根据句意匹配。",
+    "difficulty": 1,
+    "options": [
+      "Good morning, Miss Li.",
+      "Hello, I'm Sarah.",
+      "Goodbye, Tom.",
+      "Thank you, Mum."
+    ],
+    "match_options": [
+      "再见，Tom。",
+      "早上好，李老师。",
+      "谢谢，妈妈。",
+      "你好，我是Sarah。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:0,2:1,3:3",
+    "explanation": "pencil铅笔，eraser橡皮，crayon蜡笔，bag书包。",
+    "difficulty": 1,
+    "options": [
+      "pencil",
+      "eraser",
+      "crayon",
+      "bag"
+    ],
+    "match_options": [
+      "橡皮",
+      "蜡笔",
+      "铅笔",
+      "书包"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:3,2:1,3:0",
+    "explanation": "pen钢笔，ruler尺子，book书，hello你好。",
+    "difficulty": 1,
+    "options": [
+      "pen",
+      "ruler",
+      "book",
+      "hello"
+    ],
+    "match_options": [
+      "你好",
+      "书",
+      "钢笔",
+      "尺子"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:2,2:3,3:0",
+    "explanation": "Good night晚安，Good afternoon下午好，Good morning早上好，Goodbye再见。",
+    "difficulty": 1,
+    "options": [
+      "Good night",
+      "Good afternoon",
+      "Good morning",
+      "Goodbye"
+    ],
+    "match_options": [
+      "再见",
+      "晚安",
+      "下午好",
+      "早上好"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:3,1:1,2:0,3:2",
+    "explanation": "I'm fine我很好，Me too我也是，Here you are给你，You're welcome不客气。",
+    "difficulty": 2,
+    "options": [
+      "I'm fine.",
+      "Me too.",
+      "Here you are.",
+      "You're welcome."
+    ],
+    "match_options": [
+      "给你。",
+      "我也是。",
+      "不客气。",
+      "我很好。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "What's this这是什么，It's a pen它是钢笔，I like it我喜欢，Thank you谢谢。",
+    "difficulty": 1,
+    "options": [
+      "What's this?",
+      "It's a pen.",
+      "I like it.",
+      "Thank you."
+    ],
+    "match_options": [
+      "谢谢。",
+      "这是什么？",
+      "我喜欢它。",
+      "它是一支钢笔。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "Show me给我看，I have我有，Open打开，Good morning早上好。",
+    "difficulty": 2,
+    "options": [
+      "Show me your ruler.",
+      "I have a crayon.",
+      "Open your book.",
+      "Good morning."
+    ],
+    "match_options": [
+      "早上好。",
+      "给我看看你的尺子。",
+      "打开你的书。",
+      "我有一支蜡笔。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:3,2:0,3:1",
+    "explanation": "pencil铅笔，pen钢笔，bag书包，eraser橡皮。",
+    "difficulty": 1,
+    "options": [
+      "pencil",
+      "pen",
+      "bag",
+      "eraser"
+    ],
+    "match_options": [
+      "书包",
+      "橡皮",
+      "铅笔",
+      "钢笔"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "Hello你好，Goodbye再见，Sorry对不起，Please请。",
+    "difficulty": 1,
+    "options": [
+      "Hello",
+      "Goodbye",
+      "Sorry",
+      "Please"
+    ],
+    "match_options": [
+      "请",
+      "你好",
+      "对不起",
+      "再见"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "ruler尺子，crayon蜡笔，pen钢笔，pencil铅笔。",
+    "difficulty": 1,
+    "options": [
+      "ruler",
+      "crayon",
+      "pen",
+      "pencil"
+    ],
+    "match_options": [
+      "蜡笔",
+      "铅笔",
+      "尺子",
+      "钢笔"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:2,2:3,3:0",
+    "explanation": "I'm Tom我是Tom，Nice to meet you很高兴认识你，See you再见，Good night晚安。",
+    "difficulty": 1,
+    "options": [
+      "I'm Tom.",
+      "Nice to meet you.",
+      "See you.",
+      "Good night."
+    ],
+    "match_options": [
+      "晚安。",
+      "我是Tom。",
+      "很高兴认识你。",
+      "再见。"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列字母按字母表顺序排列。",
+    "answer": "1,3,0,2",
+    "explanation": "字母表顺序：A, B, C, D。",
+    "difficulty": 1,
+    "options": [
+      "C",
+      "A",
+      "D",
+      "B"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列字母按字母表顺序排列。",
+    "answer": "0,2,1,3",
+    "explanation": "字母表顺序：E, F, G, H。",
+    "difficulty": 1,
+    "options": [
+      "E",
+      "G",
+      "F",
+      "H"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列字母按字母表顺序排列。",
+    "answer": "1,0,3,2",
+    "explanation": "字母表顺序：I, J, K, L。",
+    "difficulty": 1,
+    "options": [
+      "J",
+      "I",
+      "L",
+      "K"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列字母按字母表顺序排列。",
+    "answer": "1,0,3,2",
+    "explanation": "字母表顺序：M, N, O, P。",
+    "difficulty": 1,
+    "options": [
+      "N",
+      "M",
+      "P",
+      "O"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列字母按字母表顺序排列。",
+    "answer": "1,0,3,2",
+    "explanation": "字母表顺序：Q, R, S, T。",
+    "difficulty": 1,
+    "options": [
+      "R",
+      "Q",
+      "T",
+      "S"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "1,2,0,3",
+    "explanation": "先打招呼，再问名字，然后回答，最后说很高兴认识你。",
+    "difficulty": 1,
+    "options": [
+      "My name is Tom.",
+      "Hello!",
+      "What's your name?",
+      "Nice to meet you!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "1,3,0,2",
+    "explanation": "先早上好，再你好，然后再见，最后明天见。",
+    "difficulty": 1,
+    "options": [
+      "Goodbye!",
+      "Good morning!",
+      "See you tomorrow!",
+      "Hello!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "2,1,0,3",
+    "explanation": "先请求，再给，然后谢谢，最后不客气。",
+    "difficulty": 2,
+    "options": [
+      "Thank you!",
+      "Here you are.",
+      "Can I have a pen?",
+      "You're welcome."
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "1,3,2,0",
+    "explanation": "先早上好，再回早上好，然后问好，最后回答。",
+    "difficulty": 2,
+    "options": [
+      "I'm fine, thank you.",
+      "Good morning!",
+      "How are you?",
+      "Good morning!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "1,2,3,0",
+    "explanation": "先自我介绍，再问名字，再回答并说高兴认识你，最后回应。",
+    "difficulty": 2,
+    "options": [
+      "Nice to meet you, too.",
+      "Hello, I'm Sarah.",
+      "What's your name?",
+      "My name is Mike. Nice to meet you!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列单词按字母个数从少到多排列。",
+    "answer": "1,3,0,2",
+    "explanation": "pen(3), bag(3), pencil(6), eraser(6)。按字母数：pen, bag, pencil, eraser。",
+    "difficulty": 2,
+    "options": [
+      "pencil",
+      "pen",
+      "eraser",
+      "bag"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列单词按字母表顺序排列。",
+    "answer": "2,3,1,0",
+    "explanation": "字母表顺序：bag, eraser, pen, ruler。",
+    "difficulty": 2,
+    "options": [
+      "ruler",
+      "pen",
+      "bag",
+      "eraser"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列单词按字母表顺序排列。",
+    "answer": "1,0,3,2",
+    "explanation": "字母表顺序：book, crayon, desk, pencil。",
+    "difficulty": 2,
+    "options": [
+      "crayon",
+      "book",
+      "pencil",
+      "desk"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列数字按从小到大排列。",
+    "answer": "1,3,0,2",
+    "explanation": "one(1), two(2), three(3), five(5)。",
+    "difficulty": 1,
+    "options": [
+      "three",
+      "one",
+      "five",
+      "two"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列数字按从小到大排列。",
+    "answer": "1,2,3,0",
+    "explanation": "seven(7), eight(8), nine(9), ten(10)。",
+    "difficulty": 1,
+    "options": [
+      "ten",
+      "seven",
+      "eight",
+      "nine"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "3,0,1,2",
+    "explanation": "先早上好，再要求展示，再给，最后谢谢。",
+    "difficulty": 2,
+    "options": [
+      "Show me your pencil.",
+      "OK! Here you are.",
+      "Thank you!",
+      "Good morning, class!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "1,2,0,3",
+    "explanation": "先早上好，再回早上好，放学再见，明天见。",
+    "difficulty": 1,
+    "options": [
+      "Goodbye, Miss Li!",
+      "Good morning, Miss Li!",
+      "Good morning, class!",
+      "See you tomorrow!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列句子按正确顺序排列成对话。",
+    "answer": "1,3,2,0",
+    "explanation": "先Hello，再Hi，再问名字，最后回答。",
+    "difficulty": 1,
+    "options": [
+      "I'm Tom.",
+      "Hello!",
+      "What's your name?",
+      "Hi!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列字母按字母表顺序排列。",
+    "answer": "0,2,1,3",
+    "explanation": "字母表顺序：U, V, W, X。",
+    "difficulty": 1,
+    "options": [
+      "U",
+      "W",
+      "V",
+      "X"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Hello!",
+    "unit": "Unit 1",
+    "content": "将下列字母按字母表顺序排列。",
+    "answer": "3,2,1,0",
+    "explanation": "字母表顺序：W, X, Y, Z。",
+    "difficulty": 1,
+    "options": [
+      "Z",
+      "Y",
+      "X",
+      "W"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'red' 是什么颜色？",
+    "answer": "1",
+    "explanation": "red是红色。",
+    "difficulty": 1,
+    "options": [
+      "蓝色",
+      "红色",
+      "绿色",
+      "黄色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'blue' 是什么颜色？",
+    "answer": "2",
+    "explanation": "blue是蓝色。",
+    "difficulty": 1,
+    "options": [
+      "红色",
+      "绿色",
+      "蓝色",
+      "白色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'green' 是什么颜色？",
+    "answer": "1",
+    "explanation": "green是绿色。",
+    "difficulty": 1,
+    "options": [
+      "黄色",
+      "绿色",
+      "黑色",
+      "橙色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'yellow' 是什么颜色？",
+    "answer": "2",
+    "explanation": "yellow是黄色。",
+    "difficulty": 1,
+    "options": [
+      "红色",
+      "蓝色",
+      "黄色",
+      "绿色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'white' 是什么颜色？",
+    "answer": "1",
+    "explanation": "white是白色。",
+    "difficulty": 1,
+    "options": [
+      "黑色",
+      "白色",
+      "棕色",
+      "橙色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'black' 是什么颜色？",
+    "answer": "1",
+    "explanation": "black是黑色。",
+    "difficulty": 1,
+    "options": [
+      "白色",
+      "黑色",
+      "灰色",
+      "棕色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'orange' 是什么颜色？",
+    "answer": "1",
+    "explanation": "orange是橙色。",
+    "difficulty": 1,
+    "options": [
+      "红色",
+      "橙色",
+      "黄色",
+      "棕色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'brown' 是什么颜色？",
+    "answer": "1",
+    "explanation": "brown是棕色。",
+    "difficulty": 1,
+    "options": [
+      "橙色",
+      "棕色",
+      "黑色",
+      "红色"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "天空是什么颜色？",
+    "answer": "2",
+    "explanation": "天空是蓝色的，blue。",
+    "difficulty": 1,
+    "options": [
+      "red",
+      "green",
+      "blue",
+      "yellow"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "草地是什么颜色？",
+    "answer": "1",
+    "explanation": "草地是绿色的，green。",
+    "difficulty": 1,
+    "options": [
+      "blue",
+      "green",
+      "red",
+      "white"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "太阳是什么颜色？",
+    "answer": "2",
+    "explanation": "太阳是黄色的，yellow。",
+    "difficulty": 1,
+    "options": [
+      "blue",
+      "green",
+      "yellow",
+      "black"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "雪是什么颜色？",
+    "answer": "1",
+    "explanation": "雪是白色的，white。",
+    "difficulty": 1,
+    "options": [
+      "black",
+      "white",
+      "green",
+      "red"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'I see red.' 是什么意思？",
+    "answer": "1",
+    "explanation": "I see是我看到。",
+    "difficulty": 1,
+    "options": [
+      "我是红色的。",
+      "我看到红色。",
+      "我喜欢红色。",
+      "红色在哪里？"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'Show me green.' 是什么意思？",
+    "answer": "0",
+    "explanation": "Show me是给我看看。",
+    "difficulty": 1,
+    "options": [
+      "给我看看绿色。",
+      "我是绿色。",
+      "绿色在哪里？",
+      "我喜欢绿色。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'The flower is red.' 是什么意思？",
+    "answer": "0",
+    "explanation": "flower是花，red是红色。",
+    "difficulty": 1,
+    "options": [
+      "花是红色的。",
+      "花是绿色的。",
+      "红色的花在哪里？",
+      "我喜欢花。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'What colour is it?' 是在问什么？",
+    "answer": "1",
+    "explanation": "What colour问颜色。",
+    "difficulty": 2,
+    "options": [
+      "它在哪里？",
+      "它是什么颜色？",
+      "它是什么？",
+      "它是谁的？"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'It's blue and white.' 是什么意思？",
+    "answer": "1",
+    "explanation": "and是和，blue and white是蓝白相间。",
+    "difficulty": 2,
+    "options": [
+      "它是蓝色的。",
+      "它是蓝白相间的。",
+      "它是白色的。",
+      "它是蓝色的或白色的。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'Colour the apple red.' 是什么意思？",
+    "answer": "0",
+    "explanation": "Colour作动词是涂色。",
+    "difficulty": 2,
+    "options": [
+      "把苹果涂成红色。",
+      "苹果是红色的。",
+      "红色的苹果在哪里？",
+      "我喜欢红苹果。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'I like blue.' 是什么意思？",
+    "answer": "2",
+    "explanation": "I like是我喜欢。",
+    "difficulty": 1,
+    "options": [
+      "我是蓝色的。",
+      "蓝色在哪里？",
+      "我喜欢蓝色。",
+      "这是蓝色的。"
+    ]
+  },
+  {
+    "type": "choice",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'The cat is black.' 是什么意思？",
+    "answer": "1",
+    "explanation": "cat是猫，black是黑色。",
+    "difficulty": 1,
+    "options": [
+      "猫是白色的。",
+      "猫是黑色的。",
+      "黑色的猫在哪里？",
+      "我喜欢猫。"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'red' 的意思是蓝色。",
+    "answer": "1",
+    "explanation": "red是红色，blue才是蓝色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'green' 的意思是绿色。",
+    "answer": "0",
+    "explanation": "对的，green就是绿色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'yellow' 的意思是黄色。",
+    "answer": "0",
+    "explanation": "对的，yellow就是黄色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'white' 的意思是黑色。",
+    "answer": "1",
+    "explanation": "white是白色，black才是黑色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'black' 的意思是白色。",
+    "answer": "1",
+    "explanation": "black是黑色，white才是白色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'orange' 的意思是橙色。",
+    "answer": "0",
+    "explanation": "对的，orange就是橙色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'brown' 的意思是棕色。",
+    "answer": "0",
+    "explanation": "对的，brown就是棕色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'blue' 的意思是红色。",
+    "answer": "1",
+    "explanation": "blue是蓝色，red才是红色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "天空通常是green色的。",
+    "answer": "1",
+    "explanation": "天空是blue蓝色的，不是green绿色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'I see red' 意思是我看到红色。",
+    "answer": "0",
+    "explanation": "对的，I see是我看到。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'Show me' 是给我看看的意思。",
+    "answer": "0",
+    "explanation": "对的，Show me就是给我看看。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'colour' 只能做名词，不能做动词。",
+    "answer": "1",
+    "explanation": "colour也可以做动词，表示涂色。",
+    "difficulty": 2,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'The sky is blue.' 意思是天空是蓝色的。",
+    "answer": "0",
+    "explanation": "对的，sky天空，blue蓝色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'What colour' 是问什么东西。",
+    "answer": "1",
+    "explanation": "What colour是问什么颜色，What才是问什么。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'I like green.' 意思是我喜欢绿色。",
+    "answer": "0",
+    "explanation": "对的，I like是我喜欢。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'and' 是但是的意思。",
+    "answer": "1",
+    "explanation": "and是和、并且，but才是但是。",
+    "difficulty": 2,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'The grass is green.' 意思是草是绿色的。",
+    "answer": "0",
+    "explanation": "对的，grass草，green绿色。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'orange' 只能表示颜色，不能表示水果。",
+    "answer": "1",
+    "explanation": "orange既可以表示橙色，也可以表示橙子。",
+    "difficulty": 2,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'It's red and yellow.' 意思是它是红黄相间的。",
+    "answer": "0",
+    "explanation": "对的，and表示和、并且。",
+    "difficulty": 1,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "judge",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'Colour it blue.' 意思是把它涂成蓝色。",
+    "answer": "0",
+    "explanation": "对的，Colour作动词是涂色。",
+    "difficulty": 2,
+    "options": [
+      "对",
+      "错"
+    ]
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'红色'的英文是____。",
+    "answer": "red",
+    "explanation": "red是红色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'蓝色'的英文是____。",
+    "answer": "blue",
+    "explanation": "blue是蓝色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'绿色'的英文是____。",
+    "answer": "green",
+    "explanation": "green是绿色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'黄色'的英文是____。",
+    "answer": "yellow",
+    "explanation": "yellow是黄色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'白色'的英文是____。",
+    "answer": "white",
+    "explanation": "white是白色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'黑色'的英文是____。",
+    "answer": "black",
+    "explanation": "black是黑色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'橙色'的英文是____。",
+    "answer": "orange",
+    "explanation": "orange是橙色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'棕色'的英文是____。",
+    "answer": "brown",
+    "explanation": "brown是棕色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "天空是蓝色的：The sky is ____。",
+    "answer": "blue",
+    "explanation": "blue是蓝色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "草是绿色的：The grass is ____。",
+    "answer": "green",
+    "explanation": "green是绿色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'给我看看红色'：Show me ____。",
+    "answer": "red",
+    "explanation": "red是红色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'我看到黄色'：I see ____。",
+    "answer": "yellow",
+    "explanation": "yellow是黄色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'我喜欢蓝色'：I like ____。",
+    "answer": "blue",
+    "explanation": "blue是蓝色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'它是什么颜色？'：What ____ is it?",
+    "answer": "colour",
+    "explanation": "colour是颜色。",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'把它涂成绿色'：Colour it ____。",
+    "answer": "green",
+    "explanation": "green是绿色。",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'花是红色的'：The flower is ____。",
+    "answer": "red",
+    "explanation": "red是红色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'雪是白色的'：The snow is ____。",
+    "answer": "white",
+    "explanation": "white是白色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'猫是黑色的'：The cat is ____。",
+    "answer": "black",
+    "explanation": "black是黑色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'它是蓝白相间的'：It's blue ____ white。",
+    "answer": "and",
+    "explanation": "and是和、并且。",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "fill",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "'太阳是黄色的'：The sun is ____。",
+    "answer": "yellow",
+    "explanation": "yellow是黄色。",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你最喜欢的颜色，说说为什么喜欢它。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：My favourite colour is blue. I like blue. The sky is blue. The sea is blue. Blue is beautiful.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你看到的彩虹有哪些颜色。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I see a rainbow. It's red and orange. It's yellow and green. It's blue and purple. It's beautiful!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你的书包是什么颜色的，里面有什么颜色的东西。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：My bag is blue. My pen is red. My pencil is yellow. My ruler is green. I like my bag.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "写一段你和朋友讨论颜色的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：What colour do you like? I like blue. What about you? I like green.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你画的一幅画用了哪些颜色。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I draw a picture. The sun is yellow. The sky is blue. The grass is green. The flower is red.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你的房间有哪些颜色的东西。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：My room is white. My bed is blue. My desk is brown. My chair is black. I like my room.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "写一段你教弟弟妹妹认识颜色的对话。（至少5句）",
+    "answer": "待老师点评",
+    "explanation": "参考：What colour is this? It's red. What colour is that? It's blue. Good job!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你最喜欢的水果是什么颜色的。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I like apples. Apples are red. I like bananas. Bananas are yellow. They are yummy!",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述四季的颜色。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：Spring is green. Summer is blue. Autumn is yellow. Winter is white. I love all seasons.",
+    "difficulty": 3
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "写一段你在美术课上涂色的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Colour the sky blue. OK! Colour the grass green. Done! It's beautiful!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你的衣服今天是什么颜色的。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：My shirt is white. My pants are blue. My shoes are black. I look nice today.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你看到的国旗有哪些颜色。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：The flag is red. It has yellow stars. Red and yellow are beautiful. I love my country.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "写一段你和妈妈买衣服时讨论颜色的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Mum, I like the red one. The blue one is nice too. Let's get the red one. OK!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你画的动物用了哪些颜色。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I draw a cat. The cat is black. The eyes are green. The nose is pink. It's cute!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述交通灯有哪些颜色，各代表什么。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：The traffic light has three colours. Red means stop. Yellow means wait. Green means go.",
+    "difficulty": 3
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "写一段你看到彩虹后和朋友的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：Look! A rainbow! What colours can you see? I see red, yellow and blue. It's so beautiful!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你的铅笔盒里有哪些颜色的笔。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I have many pens. The red pen is for drawing. The blue pen is for writing. The green pen is for marking.",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你最喜欢的花是什么颜色的。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I like roses. Roses are red. I also like sunflowers. They are yellow. Flowers are beautiful.",
+    "difficulty": 1
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "写一段你在公园里看到各种颜色的对话。（至少4句）",
+    "answer": "待老师点评",
+    "explanation": "参考：The grass is green. The sky is blue. The flowers are red and yellow. What a beautiful park!",
+    "difficulty": 2
+  },
+  {
+    "type": "essay",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "用英文描述你梦想中的房间是什么颜色的。（3-5句话）",
+    "answer": "待老师点评",
+    "explanation": "参考：I want a blue room. The walls are blue. The bed is white. The curtains are yellow. It's my dream room.",
+    "difficulty": 2
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色英文与中文连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "red红，blue蓝，green绿，yellow黄。",
+    "difficulty": 1,
+    "options": [
+      "red",
+      "blue",
+      "green",
+      "yellow"
+    ],
+    "match_options": [
+      "蓝色",
+      "红色",
+      "黄色",
+      "绿色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色英文与中文连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "white白，black黑，orange橙，brown棕。",
+    "difficulty": 1,
+    "options": [
+      "white",
+      "black",
+      "orange",
+      "brown"
+    ],
+    "match_options": [
+      "黑色",
+      "白色",
+      "棕色",
+      "橙色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色与对应事物连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "blue天空，green草地，yellow太阳，white雪。",
+    "difficulty": 1,
+    "options": [
+      "blue",
+      "green",
+      "yellow",
+      "white"
+    ],
+    "match_options": [
+      "草地",
+      "天空",
+      "雪",
+      "太阳"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色与对应事物连线。",
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "red苹果，black猫，brown熊，orange橙子。",
+    "difficulty": 2,
+    "options": [
+      "red",
+      "black",
+      "brown",
+      "orange"
+    ],
+    "match_options": [
+      "橙子",
+      "苹果",
+      "熊",
+      "猫"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "I see我看到，Show me给我看，I like我喜欢，Colour it涂色。",
+    "difficulty": 2,
+    "options": [
+      "I see",
+      "Show me",
+      "I like",
+      "Colour it"
+    ],
+    "match_options": [
+      "给我看看",
+      "涂色",
+      "我看到",
+      "我喜欢"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "根据句意匹配。",
+    "difficulty": 1,
+    "options": [
+      "The sky is blue.",
+      "The grass is green.",
+      "The sun is yellow.",
+      "The snow is white."
+    ],
+    "match_options": [
+      "草是绿色的。",
+      "雪是白色的。",
+      "天空是蓝色的。",
+      "太阳是黄色的。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色英文与中文连线。",
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "red红，green绿，blue蓝，white白。",
+    "difficulty": 1,
+    "options": [
+      "red",
+      "green",
+      "blue",
+      "white"
+    ],
+    "match_options": [
+      "绿色",
+      "白色",
+      "红色",
+      "蓝色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色英文与中文连线。",
+    "answer": "0:1,1:3,2:0,3:2",
+    "explanation": "yellow黄，black黑，orange橙，brown棕。",
+    "difficulty": 1,
+    "options": [
+      "yellow",
+      "black",
+      "orange",
+      "brown"
+    ],
+    "match_options": [
+      "橙色",
+      "黄色",
+      "棕色",
+      "黑色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:1,1:3,2:0,3:2",
+    "explanation": "根据句意匹配。",
+    "difficulty": 2,
+    "options": [
+      "What colour?",
+      "I like red.",
+      "Show me blue.",
+      "It's green."
+    ],
+    "match_options": [
+      "给我看看蓝色。",
+      "它是什么颜色？",
+      "它是绿色的。",
+      "我喜欢红色。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色与对应事物连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "blue天空，red苹果，green树叶，yellow香蕉。",
+    "difficulty": 1,
+    "options": [
+      "blue",
+      "red",
+      "green",
+      "yellow"
+    ],
+    "match_options": [
+      "苹果",
+      "天空",
+      "香蕉",
+      "树叶"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:3,1:2,2:1,3:0",
+    "explanation": "red红，blue蓝，green绿，yellow黄。",
+    "difficulty": 1,
+    "options": [
+      "red",
+      "blue",
+      "green",
+      "yellow"
+    ],
+    "match_options": [
+      "黄色",
+      "绿色",
+      "蓝色",
+      "红色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:3,1:2,2:1,3:0",
+    "explanation": "white白，black黑，orange橙，brown棕。",
+    "difficulty": 1,
+    "options": [
+      "white",
+      "black",
+      "orange",
+      "brown"
+    ],
+    "match_options": [
+      "棕色",
+      "橙色",
+      "黑色",
+      "白色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色与对应事物连线。",
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "white雪，black夜晚，green树叶，blue大海。",
+    "difficulty": 2,
+    "options": [
+      "white",
+      "black",
+      "green",
+      "blue"
+    ],
+    "match_options": [
+      "大海",
+      "雪",
+      "树叶",
+      "夜晚"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "根据句意匹配。",
+    "difficulty": 2,
+    "options": [
+      "Colour the apple.",
+      "I see red.",
+      "The sky is blue.",
+      "Show me green."
+    ],
+    "match_options": [
+      "我看到红色。",
+      "给我看看绿色。",
+      "把苹果涂色。",
+      "天空是蓝色的。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色英文与中文连线。",
+    "answer": "0:2,1:3,2:0,3:1",
+    "explanation": "red红，yellow黄，blue蓝，green绿。",
+    "difficulty": 1,
+    "options": [
+      "red",
+      "yellow",
+      "blue",
+      "green"
+    ],
+    "match_options": [
+      "蓝色",
+      "绿色",
+      "红色",
+      "黄色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色与对应事物连线。",
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "orange橙子，brown熊，white兔子，black猫。",
+    "difficulty": 2,
+    "options": [
+      "orange",
+      "brown",
+      "white",
+      "black"
+    ],
+    "match_options": [
+      "熊",
+      "橙子",
+      "猫",
+      "兔子"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:3,2:0,3:1",
+    "explanation": "根据句意匹配。",
+    "difficulty": 2,
+    "options": [
+      "I like blue.",
+      "It's red.",
+      "What colour?",
+      "Show me yellow."
+    ],
+    "match_options": [
+      "它是什么颜色？",
+      "给我看看黄色。",
+      "我喜欢蓝色。",
+      "它是红色的。"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色英文与中文连线。",
+    "answer": "0:2,1:3,2:1,3:0",
+    "explanation": "green绿，red红，black黑，white白。",
+    "difficulty": 1,
+    "options": [
+      "green",
+      "red",
+      "black",
+      "white"
+    ],
+    "match_options": [
+      "白色",
+      "黑色",
+      "绿色",
+      "红色"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将颜色与对应事物连线。",
+    "answer": "0:0,1:2,2:3,3:1",
+    "explanation": "yellow太阳，blue大海，red苹果，green草地。",
+    "difficulty": 1,
+    "options": [
+      "yellow",
+      "blue",
+      "red",
+      "green"
+    ],
+    "match_options": [
+      "太阳",
+      "草地",
+      "大海",
+      "苹果"
+    ]
+  },
+  {
+    "type": "match",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将英文与中文连线。",
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "根据句意匹配。",
+    "difficulty": 1,
+    "options": [
+      "The flower is red.",
+      "The sky is blue.",
+      "The grass is green.",
+      "The snow is white."
+    ],
+    "match_options": [
+      "天空是蓝色的。",
+      "雪是白色的。",
+      "花是红色的。",
+      "草是绿色的。"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按彩虹顺序排列（红橙黄绿蓝）。",
+    "answer": "1,3,0,2",
+    "explanation": "彩虹顺序：red, orange, yellow, green, blue。这里取红黄绿蓝。",
+    "difficulty": 2,
+    "options": [
+      "green",
+      "red",
+      "blue",
+      "yellow"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "3,1,2,0",
+    "explanation": "字母表顺序：black, blue, green, red。",
+    "difficulty": 2,
+    "options": [
+      "red",
+      "blue",
+      "green",
+      "black"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "3,2,0,1",
+    "explanation": "字母表顺序：brown, orange, white, yellow。",
+    "difficulty": 2,
+    "options": [
+      "white",
+      "yellow",
+      "orange",
+      "brown"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "2,3,1,0",
+    "explanation": "先要求展示，再给，再问颜色，最后回答。",
+    "difficulty": 2,
+    "options": [
+      "It's red.",
+      "What colour is it?",
+      "Show me your crayon.",
+      "OK! Here you are."
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "1,0,3,2",
+    "explanation": "先问喜欢什么颜色，再回答，再说我也喜欢蓝色，最后说我也是。",
+    "difficulty": 2,
+    "options": [
+      "I like blue.",
+      "What colour do you like?",
+      "Me too!",
+      "I like blue too."
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列句子按正确顺序排列成对话。",
+    "answer": "1,0,3,2",
+    "explanation": "先问颜色，再回答，再确认，最后肯定。",
+    "difficulty": 2,
+    "options": [
+      "The sky is blue.",
+      "What colour is the sky?",
+      "Yes, it is.",
+      "Is it blue?"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "2,0,1,3",
+    "explanation": "字母表顺序：blue, green, red, yellow。",
+    "difficulty": 2,
+    "options": [
+      "green",
+      "red",
+      "blue",
+      "yellow"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "2,3,0,1",
+    "explanation": "字母表顺序：black, brown, orange, white。",
+    "difficulty": 2,
+    "options": [
+      "orange",
+      "white",
+      "black",
+      "brown"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "2,3,0,1",
+    "explanation": "先要求展示，再给并夸赞，再要求涂色，最后完成。",
+    "difficulty": 2,
+    "options": [
+      "Colour it red.",
+      "OK! It's red now.",
+      "Show me your picture.",
+      "Here you are. It's beautiful!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列句子按正确顺序排列。",
+    "answer": "1,3,0,2",
+    "explanation": "先看草，再问颜色，再说看到绿色，最后确认。",
+    "difficulty": 2,
+    "options": [
+      "I see green.",
+      "Look at the grass!",
+      "Yes, the grass is green.",
+      "What colour is it?"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "1,0,2,3",
+    "explanation": "字母表顺序：pink, purple, red, white。",
+    "difficulty": 2,
+    "options": [
+      "purple",
+      "pink",
+      "red",
+      "white"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "1,0,3,2",
+    "explanation": "先问颜色，再回答，再问喜不喜欢，最后确认。",
+    "difficulty": 2,
+    "options": [
+      "It's yellow.",
+      "What colour is the banana?",
+      "Yes, bananas are yellow.",
+      "Do you like bananas?"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "3,0,1,2",
+    "explanation": "字母表顺序：black, blue, green, red。",
+    "difficulty": 2,
+    "options": [
+      "blue",
+      "green",
+      "red",
+      "black"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列句子按正确顺序排列。",
+    "answer": "2,0,3,1",
+    "explanation": "先问颜色，再说苹果是红色，再说又红又甜，最后说喜欢。",
+    "difficulty": 2,
+    "options": [
+      "The apple is red.",
+      "I like apples.",
+      "What colour is the apple?",
+      "It's red and sweet."
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "3,2,1,0",
+    "explanation": "字母表顺序：green, orange, white, yellow。",
+    "difficulty": 2,
+    "options": [
+      "yellow",
+      "white",
+      "orange",
+      "green"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "0,1,2,3",
+    "explanation": "先要求，再给，再谢谢，最后不客气。",
+    "difficulty": 1,
+    "options": [
+      "Show me blue.",
+      "Here is the blue crayon.",
+      "Thank you!",
+      "You're welcome."
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "1,0,2,3",
+    "explanation": "字母表顺序：black, brown, blue, green。",
+    "difficulty": 2,
+    "options": [
+      "brown",
+      "black",
+      "blue",
+      "green"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列句子按正确顺序排列。",
+    "answer": "0,1,2,3",
+    "explanation": "先看到彩虹，再问颜色，再回答，最后感叹。",
+    "difficulty": 2,
+    "options": [
+      "I see a rainbow.",
+      "What colours can you see?",
+      "Red, yellow, green and blue.",
+      "How beautiful!"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列颜色按字母表顺序排列。",
+    "answer": "3,1,0,2",
+    "explanation": "字母表顺序：green, orange, red, yellow。",
+    "difficulty": 2,
+    "options": [
+      "red",
+      "orange",
+      "yellow",
+      "green"
+    ]
+  },
+  {
+    "type": "sort",
+    "topic_name": "Colours!",
+    "unit": "Unit 2",
+    "content": "将下列对话按正确顺序排列。",
+    "answer": "0,1,3,2",
+    "explanation": "先问颜色，再回答，再说我也喜欢蓝色，最后回应。",
+    "difficulty": 2,
+    "options": [
+      "What colour is your bag?",
+      "It's blue.",
+      "I like blue too!",
+      "Me too! Blue is nice."
+    ]
+  }
+]

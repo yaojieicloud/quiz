@@ -1,0 +1,3802 @@
+[
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "小红每分钟跑14米，跑了12分钟，跑了多少米？",
+    "options": null,
+    "answer": "168",
+    "explanation": "计算过程：小红每分钟跑14米，跑了12分钟，跑了多少米？ → 168",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "学校买了55本书，又买了3本，一共有几本？",
+    "options": null,
+    "answer": "58",
+    "explanation": "计算过程：学校买了55本书，又买了3本，一共有几本？ → 58",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "小红每分钟跑11米，跑了12分钟，跑了多少米？",
+    "options": null,
+    "answer": "132",
+    "explanation": "计算过程：小红每分钟跑11米，跑了12分钟，跑了多少米？ → 132",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "每天喝45杯牛奶，一周（7天）喝几杯？",
+    "options": null,
+    "answer": "315",
+    "explanation": "计算过程：每天喝45杯牛奶，一周（7天）喝几杯？ → 315",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "50个小朋友平均分成5组，每组几个？",
+    "options": null,
+    "answer": "10",
+    "explanation": "计算过程：50个小朋友平均分成5组，每组几个？ → 10",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "一箱鸡蛋有59个，卖了一半，卖了几个？",
+    "options": null,
+    "answer": "29",
+    "explanation": "计算过程：一箱鸡蛋有59个，卖了一半，卖了几个？ → 29",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "教室里有29张桌子，每张坐4人，能坐几人？",
+    "options": null,
+    "answer": "116",
+    "explanation": "计算过程：教室里有29张桌子，每张坐4人，能坐几人？ → 116",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "小红每分钟跑54米，跑了12分钟，跑了多少米？",
+    "options": null,
+    "answer": "648",
+    "explanation": "计算过程：小红每分钟跑54米，跑了12分钟，跑了多少米？ → 648",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "50个足球和2个篮球一共有几个球？",
+    "options": null,
+    "answer": "52",
+    "explanation": "计算过程：50个足球和2个篮球一共有几个球？ → 52",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "每天喝22杯牛奶，一周（7天）喝几杯？",
+    "options": null,
+    "answer": "154",
+    "explanation": "计算过程：每天喝22杯牛奶，一周（7天）喝几杯？ → 154",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "一个长方形长55厘米、宽8厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "126",
+    "explanation": "计算过程：一个长方形长55厘米、宽8厘米，周长是多少厘米？ → 126",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小红每分钟跑45米，跑了2分钟，跑了多少米？",
+    "options": null,
+    "answer": "90",
+    "explanation": "计算过程：小红每分钟跑45米，跑了2分钟，跑了多少米？ → 90",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "每天喝99杯牛奶，一周（7天）喝几杯？",
+    "options": null,
+    "answer": "693",
+    "explanation": "计算过程：每天喝99杯牛奶，一周（7天）喝几杯？ → 693",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "小明有44个苹果，吃了10个，还剩几个？",
+    "options": null,
+    "answer": "34",
+    "explanation": "计算过程：小明有44个苹果，吃了10个，还剩几个？ → 34",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "一箱牛奶24瓶，喝了72瓶，还剩几瓶？",
+    "options": null,
+    "answer": "-48",
+    "explanation": "计算过程：一箱牛奶24瓶，喝了72瓶，还剩几瓶？ → -48",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "36除以6等于几？",
+    "options": null,
+    "answer": "6",
+    "explanation": "计算过程：36除以6等于几？ → 6",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "75个小朋友平均分成15组，每组几个？",
+    "options": null,
+    "answer": "5",
+    "explanation": "计算过程：75个小朋友平均分成15组，每组几个？ → 5",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "一盒巧克力有144颗，分给18个小朋友，每人几颗？",
+    "options": null,
+    "answer": "8",
+    "explanation": "计算过程：一盒巧克力有144颗，分给18个小朋友，每人几颗？ → 8",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "小明今年44岁，爸爸是他的4倍，爸爸几岁？",
+    "options": null,
+    "answer": "176",
+    "explanation": "计算过程：小明今年44岁，爸爸是他的4倍，爸爸几岁？ → 176",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "100个小朋友平均分成20组，每组几个？",
+    "options": null,
+    "answer": "5",
+    "explanation": "计算过程：100个小朋友平均分成20组，每组几个？ → 5",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "小红每分钟跑75米，跑了7分钟，跑了多少米？",
+    "options": null,
+    "answer": "525",
+    "explanation": "计算过程：小红每分钟跑75米，跑了7分钟，跑了多少米？ → 525",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "36个小朋友平均分成6组，每组几个？",
+    "options": null,
+    "answer": "6",
+    "explanation": "计算过程：36个小朋友平均分成6组，每组几个？ → 6",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "每排站78人，站了14排，一共几人？",
+    "options": null,
+    "answer": "1092",
+    "explanation": "计算过程：每排站78人，站了14排，一共几人？ → 1092",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "学校买了21本书，又买了10本，一共有几本？",
+    "options": null,
+    "answer": "31",
+    "explanation": "计算过程：学校买了21本书，又买了10本，一共有几本？ → 31",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "77除以6等于几？",
+    "options": null,
+    "answer": "12",
+    "explanation": "计算过程：77除以6等于几？ → 12",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "每天读71页书，读了19天，共读了几页？",
+    "options": null,
+    "answer": "1349",
+    "explanation": "计算过程：每天读71页书，读了19天，共读了几页？ → 1349",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "学校买了73本书，又买了8本，一共有几本？",
+    "options": null,
+    "answer": "81",
+    "explanation": "计算过程：学校买了73本书，又买了8本，一共有几本？ → 81",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "一箱牛奶24瓶，喝了73瓶，还剩几瓶？",
+    "options": null,
+    "answer": "-49",
+    "explanation": "计算过程：一箱牛奶24瓶，喝了73瓶，还剩几瓶？ → -49",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "教室里有42张桌子，每张坐4人，能坐几人？",
+    "options": null,
+    "answer": "168",
+    "explanation": "计算过程：教室里有42张桌子，每张坐4人，能坐几人？ → 168",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明的身高是130厘米，比弟弟高18厘米，弟弟多高？",
+    "options": null,
+    "answer": "112",
+    "explanation": "计算过程：小明的身高是130厘米，比弟弟高18厘米，弟弟多高？ → 112",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "学校买了20本书，又买了14本，一共有几本？",
+    "options": null,
+    "answer": "34",
+    "explanation": "计算过程：学校买了20本书，又买了14本，一共有几本？ → 34",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "小明的身高是130厘米，比弟弟高60厘米，弟弟多高？",
+    "options": null,
+    "answer": "70",
+    "explanation": "计算过程：小明的身高是130厘米，比弟弟高60厘米，弟弟多高？ → 70",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明有26个苹果，吃了14个，还剩几个？",
+    "options": null,
+    "answer": "12",
+    "explanation": "计算过程：小明有26个苹果，吃了14个，还剩几个？ → 12",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "6个小朋友平均分成2组，每组几个？",
+    "options": null,
+    "answer": "3",
+    "explanation": "计算过程：6个小朋友平均分成2组，每组几个？ → 3",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "24元可以买3支铅笔，每支几元？",
+    "options": null,
+    "answer": "8",
+    "explanation": "计算过程：24元可以买3支铅笔，每支几元？ → 8",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "每天读40页书，读了13天，共读了几页？",
+    "options": null,
+    "answer": "520",
+    "explanation": "计算过程：每天读40页书，读了13天，共读了几页？ → 520",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "小明今年23岁，爸爸是他的4倍，爸爸几岁？",
+    "options": null,
+    "answer": "92",
+    "explanation": "计算过程：小明今年23岁，爸爸是他的4倍，爸爸几岁？ → 92",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "一个长方形长66厘米、宽4厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "140",
+    "explanation": "计算过程：一个长方形长66厘米、宽4厘米，周长是多少厘米？ → 140",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "小明的身高是130厘米，比弟弟高96厘米，弟弟多高？",
+    "options": null,
+    "answer": "34",
+    "explanation": "计算过程：小明的身高是130厘米，比弟弟高96厘米，弟弟多高？ → 34",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "每排站6人，站了13排，一共几人？",
+    "options": null,
+    "answer": "78",
+    "explanation": "计算过程：每排站6人，站了13排，一共几人？ → 78",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "24元可以买12支铅笔，每支几元？",
+    "options": null,
+    "answer": "2",
+    "explanation": "计算过程：24元可以买12支铅笔，每支几元？ → 2",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "一箱鸡蛋有94个，卖了一半，卖了几个？",
+    "options": null,
+    "answer": "47",
+    "explanation": "计算过程：一箱鸡蛋有94个，卖了一半，卖了几个？ → 47",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "每天读34页书，读了2天，共读了几页？",
+    "options": null,
+    "answer": "68",
+    "explanation": "计算过程：每天读34页书，读了2天，共读了几页？ → 68",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "每天读87页书，读了2天，共读了几页？",
+    "options": null,
+    "answer": "174",
+    "explanation": "计算过程：每天读87页书，读了2天，共读了几页？ → 174",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "小明有66个苹果，吃了7个，还剩几个？",
+    "options": null,
+    "answer": "59",
+    "explanation": "计算过程：小明有66个苹果，吃了7个，还剩几个？ → 59",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "32除以6等于几？",
+    "options": null,
+    "answer": "5",
+    "explanation": "计算过程：32除以6等于几？ → 5",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "一箱牛奶24瓶，喝了65瓶，还剩几瓶？",
+    "options": null,
+    "answer": "-41",
+    "explanation": "计算过程：一箱牛奶24瓶，喝了65瓶，还剩几瓶？ → -41",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "小红每分钟跑44米，跑了4分钟，跑了多少米？",
+    "options": null,
+    "answer": "176",
+    "explanation": "计算过程：小红每分钟跑44米，跑了4分钟，跑了多少米？ → 176",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "图书馆有86本故事书，借出19本，还剩几本？",
+    "options": null,
+    "answer": "67",
+    "explanation": "计算过程：图书馆有86本故事书，借出19本，还剩几本？ → 67",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "一个长方形长27厘米、宽16厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "86",
+    "explanation": "计算过程：一个长方形长27厘米、宽16厘米，周长是多少厘米？ → 86",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "每天喝99杯牛奶，一周（7天）喝几杯？",
+    "options": null,
+    "answer": "693",
+    "explanation": "计算过程：每天喝99杯牛奶，一周（7天）喝几杯？ → 693",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "一个长方形长47厘米、宽10厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "114",
+    "explanation": "计算过程：一个长方形长47厘米、宽10厘米，周长是多少厘米？ → 114",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "小明有34个苹果，吃了3个，还剩几个？",
+    "options": null,
+    "answer": "31",
+    "explanation": "计算过程：小明有34个苹果，吃了3个，还剩几个？ → 31",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "80个足球和10个篮球一共有几个球？",
+    "options": null,
+    "answer": "90",
+    "explanation": "计算过程：80个足球和10个篮球一共有几个球？ → 90",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "180元可以买18支铅笔，每支几元？",
+    "options": null,
+    "answer": "10",
+    "explanation": "计算过程：180元可以买18支铅笔，每支几元？ → 10",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "学校买了98本书，又买了17本，一共有几本？",
+    "options": null,
+    "answer": "115",
+    "explanation": "计算过程：学校买了98本书，又买了17本，一共有几本？ → 115",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "小明有9个苹果，吃了18个，还剩几个？",
+    "options": null,
+    "answer": "-9",
+    "explanation": "计算过程：小明有9个苹果，吃了18个，还剩几个？ → -9",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "一个长方形长31厘米、宽7厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "76",
+    "explanation": "计算过程：一个长方形长31厘米、宽7厘米，周长是多少厘米？ → 76",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "171除以6等于几？",
+    "options": null,
+    "answer": "28",
+    "explanation": "计算过程：171除以6等于几？ → 28",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "一袋大米重73千克，用了12千克，还剩几千克？",
+    "options": null,
+    "answer": "61",
+    "explanation": "计算过程：一袋大米重73千克，用了12千克，还剩几千克？ → 61",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "图书馆有59本故事书，借出20本，还剩几本？",
+    "options": null,
+    "answer": "39",
+    "explanation": "计算过程：图书馆有59本故事书，借出20本，还剩几本？ → 39",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "112元可以买14支铅笔，每支几元？",
+    "options": null,
+    "answer": "8",
+    "explanation": "计算过程：112元可以买14支铅笔，每支几元？ → 8",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "图书馆有31本故事书，借出14本，还剩几本？",
+    "options": null,
+    "answer": "17",
+    "explanation": "计算过程：图书馆有31本故事书，借出14本，还剩几本？ → 17",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "学校买了52本书，又买了18本，一共有几本？",
+    "options": null,
+    "answer": "70",
+    "explanation": "计算过程：学校买了52本书，又买了18本，一共有几本？ → 70",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "学校买了25本书，又买了3本，一共有几本？",
+    "options": null,
+    "answer": "28",
+    "explanation": "计算过程：学校买了25本书，又买了3本，一共有几本？ → 28",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "91个小朋友平均分成13组，每组几个？",
+    "options": null,
+    "answer": "7",
+    "explanation": "计算过程：91个小朋友平均分成13组，每组几个？ → 7",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "每天读40页书，读了15天，共读了几页？",
+    "options": null,
+    "answer": "600",
+    "explanation": "计算过程：每天读40页书，读了15天，共读了几页？ → 600",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "学校买了42本书，又买了9本，一共有几本？",
+    "options": null,
+    "answer": "51",
+    "explanation": "计算过程：学校买了42本书，又买了9本，一共有几本？ → 51",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "一个长方形长57厘米、宽2厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "118",
+    "explanation": "计算过程：一个长方形长57厘米、宽2厘米，周长是多少厘米？ → 118",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "教室里有24张桌子，每张坐4人，能坐几人？",
+    "options": null,
+    "answer": "96",
+    "explanation": "计算过程：教室里有24张桌子，每张坐4人，能坐几人？ → 96",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "每天读30页书，读了19天，共读了几页？",
+    "options": null,
+    "answer": "570",
+    "explanation": "计算过程：每天读30页书，读了19天，共读了几页？ → 570",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "每排站18人，站了5排，一共几人？",
+    "options": null,
+    "answer": "90",
+    "explanation": "计算过程：每排站18人，站了5排，一共几人？ → 90",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "一个长方形长92厘米、宽9厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "202",
+    "explanation": "计算过程：一个长方形长92厘米、宽9厘米，周长是多少厘米？ → 202",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "教室里有15张桌子，每张坐4人，能坐几人？",
+    "options": null,
+    "answer": "60",
+    "explanation": "计算过程：教室里有15张桌子，每张坐4人，能坐几人？ → 60",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "小明今年24岁，爸爸是他的4倍，爸爸几岁？",
+    "options": null,
+    "answer": "96",
+    "explanation": "计算过程：小明今年24岁，爸爸是他的4倍，爸爸几岁？ → 96",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "每天读36页书，读了12天，共读了几页？",
+    "options": null,
+    "answer": "432",
+    "explanation": "计算过程：每天读36页书，读了12天，共读了几页？ → 432",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "140除以6等于几？",
+    "options": null,
+    "answer": "23",
+    "explanation": "计算过程：140除以6等于几？ → 23",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "小红每分钟跑52米，跑了18分钟，跑了多少米？",
+    "options": null,
+    "answer": "936",
+    "explanation": "计算过程：小红每分钟跑52米，跑了18分钟，跑了多少米？ → 936",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "56个足球和8个篮球一共有几个球？",
+    "options": null,
+    "answer": "64",
+    "explanation": "计算过程：56个足球和8个篮球一共有几个球？ → 64",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明的身高是130厘米，比弟弟高11厘米，弟弟多高？",
+    "options": null,
+    "answer": "119",
+    "explanation": "计算过程：小明的身高是130厘米，比弟弟高11厘米，弟弟多高？ → 119",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "每天喝49杯牛奶，一周（7天）喝几杯？",
+    "options": null,
+    "answer": "343",
+    "explanation": "计算过程：每天喝49杯牛奶，一周（7天）喝几杯？ → 343",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "学校买了89本书，又买了12本，一共有几本？",
+    "options": null,
+    "answer": "101",
+    "explanation": "计算过程：学校买了89本书，又买了12本，一共有几本？ → 101",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "一箱鸡蛋有60个，卖了一半，卖了几个？",
+    "options": null,
+    "answer": "30",
+    "explanation": "计算过程：一箱鸡蛋有60个，卖了一半，卖了几个？ → 30",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "小明有45个苹果，吃了19个，还剩几个？",
+    "options": null,
+    "answer": "26",
+    "explanation": "计算过程：小明有45个苹果，吃了19个，还剩几个？ → 26",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "教室里有14张桌子，每张坐4人，能坐几人？",
+    "options": null,
+    "answer": "56",
+    "explanation": "计算过程：教室里有14张桌子，每张坐4人，能坐几人？ → 56",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "果园有苹果树73棵，梨树是苹果树的3倍，梨树几棵？",
+    "options": null,
+    "answer": "219",
+    "explanation": "计算过程：果园有苹果树73棵，梨树是苹果树的3倍，梨树几棵？ → 219",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "一盒巧克力有133颗，分给19个小朋友，每人几颗？",
+    "options": null,
+    "answer": "7",
+    "explanation": "计算过程：一盒巧克力有133颗，分给19个小朋友，每人几颗？ → 7",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "18除以6等于几？",
+    "options": null,
+    "answer": "3",
+    "explanation": "计算过程：18除以6等于几？ → 3",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "小明的身高是130厘米，比弟弟高24厘米，弟弟多高？",
+    "options": null,
+    "answer": "106",
+    "explanation": "计算过程：小明的身高是130厘米，比弟弟高24厘米，弟弟多高？ → 106",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "图书馆有21本故事书，借出11本，还剩几本？",
+    "options": null,
+    "answer": "10",
+    "explanation": "计算过程：图书馆有21本故事书，借出11本，还剩几本？ → 10",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "一个长方形长29厘米、宽2厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "62",
+    "explanation": "计算过程：一个长方形长29厘米、宽2厘米，周长是多少厘米？ → 62",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "果园有苹果树27棵，梨树是苹果树的3倍，梨树几棵？",
+    "options": null,
+    "answer": "81",
+    "explanation": "计算过程：果园有苹果树27棵，梨树是苹果树的3倍，梨树几棵？ → 81",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "一袋大米重82千克，用了6千克，还剩几千克？",
+    "options": null,
+    "answer": "76",
+    "explanation": "计算过程：一袋大米重82千克，用了6千克，还剩几千克？ → 76",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "84个足球和16个篮球一共有几个球？",
+    "options": null,
+    "answer": "100",
+    "explanation": "计算过程：84个足球和16个篮球一共有几个球？ → 100",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明的身高是130厘米，比弟弟高92厘米，弟弟多高？",
+    "options": null,
+    "answer": "38",
+    "explanation": "计算过程：小明的身高是130厘米，比弟弟高92厘米，弟弟多高？ → 38",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明的身高是130厘米，比弟弟高73厘米，弟弟多高？",
+    "options": null,
+    "answer": "57",
+    "explanation": "计算过程：小明的身高是130厘米，比弟弟高73厘米，弟弟多高？ → 57",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "小明今年36岁，爸爸是他的4倍，爸爸几岁？",
+    "options": null,
+    "answer": "144",
+    "explanation": "计算过程：小明今年36岁，爸爸是他的4倍，爸爸几岁？ → 144",
+    "difficulty": 2,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "24除以6等于几？",
+    "options": null,
+    "answer": "4",
+    "explanation": "计算过程：24除以6等于几？ → 4",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "一个长方形长35厘米、宽18厘米，周长是多少厘米？",
+    "options": null,
+    "answer": "106",
+    "explanation": "计算过程：一个长方形长35厘米、宽18厘米，周长是多少厘米？ → 106",
+    "difficulty": 1,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "每天喝45杯牛奶，一周（7天）喝几杯？",
+    "options": null,
+    "answer": "315",
+    "explanation": "计算过程：每天喝45杯牛奶，一周（7天）喝几杯？ → 315",
+    "difficulty": 3,
+    "blank_count": 1,
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "小明有22个苹果，小红有6个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "28",
+    "explanation": "第一步：28；第二步：14",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "28",
+      "14"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "有19个学生去郊游，每辆车坐2人，算式是__(___)，需要__(___)辆车。",
+    "options": null,
+    "answer": "19÷2",
+    "explanation": "第一步：19÷2；第二步：10",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "19÷2",
+      "10"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明每天零花钱36元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "36×7",
+    "explanation": "第一步：36×7；第二步：252",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "36×7",
+      "252"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "长44厘米、宽10厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(44+10)×2",
+    "explanation": "第一步：(44+10)×2；第二步：108",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "(44+10)×2",
+      "108"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "30支铅笔平均分给5个同学，算式是__(___)，每人__(___)支。",
+    "options": null,
+    "answer": "30÷5",
+    "explanation": "第一步：30÷5；第二步：6",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "30÷5",
+      "6"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "有40个学生去郊游，每辆车坐2人，算式是__(___)，需要__(___)辆车。",
+    "options": null,
+    "answer": "40÷2",
+    "explanation": "第一步：40÷2；第二步：20",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "40÷2",
+      "20"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "小明有14个苹果，小红有4个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "18",
+    "explanation": "第一步：18；第二步：9",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "18",
+      "9"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "35支铅笔平均分给5个同学，算式是__(___)，每人__(___)支。",
+    "options": null,
+    "answer": "35÷5",
+    "explanation": "第一步：35÷5；第二步：7",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "35÷5",
+      "7"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "每分钟走60米，走了31分钟，算式是__(___)，共走__(___)米。",
+    "options": null,
+    "answer": "60×31",
+    "explanation": "第一步：60×31；第二步：1860",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "60×31",
+      "1860"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "有5个学生去郊游，每辆车坐8人，算式是__(___)，需要__(___)辆车。",
+    "options": null,
+    "answer": "5÷8",
+    "explanation": "第一步：5÷8；第二步：1",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "5÷8",
+      "1"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "一块正方形边长46厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "46×4",
+    "explanation": "第一步：46×4；第二步：184",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "46×4",
+      "184"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "小明每天零花钱22元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "22×7",
+    "explanation": "第一步：22×7；第二步：154",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "22×7",
+      "154"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋39千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×39",
+    "explanation": "第一步：3×39；第二步：117",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×39",
+      "117"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋49千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×49",
+    "explanation": "第一步：3×49；第二步：147",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×49",
+      "147"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "小明有43个苹果，小红有10个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "53",
+    "explanation": "第一步：53；第二步：26",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "53",
+      "26"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "40个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "40÷4",
+    "explanation": "第一步：40÷4；第二步：10",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "40÷4",
+      "10"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "长15厘米、宽5厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(15+5)×2",
+    "explanation": "第一步：(15+5)×2；第二步：40",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "(15+5)×2",
+      "40"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "12个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "12÷4",
+    "explanation": "第一步：12÷4；第二步：3",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "12÷4",
+      "3"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "每分钟走60米，走了19分钟，算式是__(___)，共走__(___)米。",
+    "options": null,
+    "answer": "60×19",
+    "explanation": "第一步：60×19；第二步：1140",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "60×19",
+      "1140"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "36个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "36÷4",
+    "explanation": "第一步：36÷4；第二步：9",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "36÷4",
+      "9"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "有48个学生去郊游，每辆车坐4人，算式是__(___)，需要__(___)辆车。",
+    "options": null,
+    "answer": "48÷4",
+    "explanation": "第一步：48÷4；第二步：12",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "48÷4",
+      "12"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "小明每天零花钱23元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "23×7",
+    "explanation": "第一步：23×7；第二步：161",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "23×7",
+      "161"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋25千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×25",
+    "explanation": "第一步：3×25；第二步：75",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×25",
+      "75"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "20个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "20÷4",
+    "explanation": "第一步：20÷4；第二步：5",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20÷4",
+      "5"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋44千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×44",
+    "explanation": "第一步：3×44；第二步：132",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×44",
+      "132"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "小明有20元，买书花了20元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-20",
+    "explanation": "第一步：20-20；第二步：0",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-20",
+      "0"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "一块正方形边长6厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "6×4",
+    "explanation": "第一步：6×4；第二步：24",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "6×4",
+      "24"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "小明有20个苹果，小红有7个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "27",
+    "explanation": "第一步：27；第二步：13",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "27",
+      "13"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "一块正方形边长35厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "35×4",
+    "explanation": "第一步：35×4；第二步：140",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "35×4",
+      "140"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "小明有19个苹果，小红有5个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "24",
+    "explanation": "第一步：24；第二步：12",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "24",
+      "12"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "一块正方形边长32厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "32×4",
+    "explanation": "第一步：32×4；第二步：128",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "32×4",
+      "128"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "小明有20元，买书花了42元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-42",
+    "explanation": "第一步：20-42；第二步：-22",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-42",
+      "-22"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "小明有26个苹果，小红有10个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "36",
+    "explanation": "第一步：36；第二步：18",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "36",
+      "18"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "小明有20元，买书花了28元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-28",
+    "explanation": "第一步：20-28；第二步：-8",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-28",
+      "-8"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋36千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×36",
+    "explanation": "第一步：3×36；第二步：108",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×36",
+      "108"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋20千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×20",
+    "explanation": "第一步：3×20；第二步：60",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×20",
+      "60"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "小明每天零花钱6元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "6×7",
+    "explanation": "第一步：6×7；第二步：42",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "6×7",
+      "42"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "小明每天零花钱50元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "50×7",
+    "explanation": "第一步：50×7；第二步：350",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "50×7",
+      "350"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "36个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "36÷4",
+    "explanation": "第一步：36÷4；第二步：9",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "36÷4",
+      "9"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "一块正方形边长29厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "29×4",
+    "explanation": "第一步：29×4；第二步：116",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "29×4",
+      "116"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明有20元，买书花了22元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-22",
+    "explanation": "第一步：20-22；第二步：-2",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-22",
+      "-2"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "小明每天零花钱36元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "36×7",
+    "explanation": "第一步：36×7；第二步：252",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "36×7",
+      "252"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "小明有28个苹果，小红有10个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "38",
+    "explanation": "第一步：38；第二步：19",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "38",
+      "19"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "10支铅笔平均分给5个同学，算式是__(___)，每人__(___)支。",
+    "options": null,
+    "answer": "10÷5",
+    "explanation": "第一步：10÷5；第二步：2",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "10÷5",
+      "2"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "长35厘米、宽5厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(35+5)×2",
+    "explanation": "第一步：(35+5)×2；第二步：80",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "(35+5)×2",
+      "80"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "有24个学生去郊游，每辆车坐5人，算式是__(___)，需要__(___)辆车。",
+    "options": null,
+    "answer": "24÷5",
+    "explanation": "第一步：24÷5；第二步：5",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "24÷5",
+      "5"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明每天零花钱37元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "37×7",
+    "explanation": "第一步：37×7；第二步：259",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "37×7",
+      "259"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "一块正方形边长11厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "11×4",
+    "explanation": "第一步：11×4；第二步：44",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "11×4",
+      "44"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明有43个苹果，小红有3个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "46",
+    "explanation": "第一步：46；第二步：23",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "46",
+      "23"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "20个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "20÷4",
+    "explanation": "第一步：20÷4；第二步：5",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20÷4",
+      "5"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "小明有11个苹果，小红有7个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "18",
+    "explanation": "第一步：18；第二步：9",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "18",
+      "9"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "小明有20元，买书花了20元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-20",
+    "explanation": "第一步：20-20；第二步：0",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-20",
+      "0"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "fill",
+    "content": "长12厘米、宽10厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(12+10)×2",
+    "explanation": "第一步：(12+10)×2；第二步：44",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "(12+10)×2",
+      "44"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "小明有45个苹果，小红有2个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "47",
+    "explanation": "第一步：47；第二步：23",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "47",
+      "23"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "小明有34个苹果，小红有7个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "41",
+    "explanation": "第一步：41；第二步：20",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "41",
+      "20"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "每分钟走60米，走了23分钟，算式是__(___)，共走__(___)米。",
+    "options": null,
+    "answer": "60×23",
+    "explanation": "第一步：60×23；第二步：1380",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "60×23",
+      "1380"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "小明有15个苹果，小红有5个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "20",
+    "explanation": "第一步：20；第二步：10",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20",
+      "10"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "每分钟走60米，走了30分钟，算式是__(___)，共走__(___)米。",
+    "options": null,
+    "answer": "60×30",
+    "explanation": "第一步：60×30；第二步：1800",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "60×30",
+      "1800"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "32个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "32÷4",
+    "explanation": "第一步：32÷4；第二步：8",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "32÷4",
+      "8"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明有25个苹果，小红有8个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "33",
+    "explanation": "第一步：33；第二步：16",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "33",
+      "16"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "fill",
+    "content": "小明有20元，买书花了39元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-39",
+    "explanation": "第一步：20-39；第二步：-19",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-39",
+      "-19"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "小明每天零花钱46元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "46×7",
+    "explanation": "第一步：46×7；第二步：322",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "46×7",
+      "322"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明每天零花钱39元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "39×7",
+    "explanation": "第一步：39×7；第二步：273",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "39×7",
+      "273"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "有45个学生去郊游，每辆车坐3人，算式是__(___)，需要__(___)辆车。",
+    "options": null,
+    "answer": "45÷3",
+    "explanation": "第一步：45÷3；第二步：15",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "45÷3",
+      "15"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明有20元，买书花了27元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-27",
+    "explanation": "第一步：20-27；第二步：-7",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-27",
+      "-7"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明有20元，买书花了32元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-32",
+    "explanation": "第一步：20-32；第二步：-12",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-32",
+      "-12"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "每分钟走60米，走了40分钟，算式是__(___)，共走__(___)米。",
+    "options": null,
+    "answer": "60×40",
+    "explanation": "第一步：60×40；第二步：2400",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "60×40",
+      "2400"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋11千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×11",
+    "explanation": "第一步：3×11；第二步：33",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×11",
+      "33"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "24个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "24÷4",
+    "explanation": "第一步：24÷4；第二步：6",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "24÷4",
+      "6"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明每天零花钱26元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "26×7",
+    "explanation": "第一步：26×7；第二步：182",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "26×7",
+      "182"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "fill",
+    "content": "一块正方形边长19厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "19×4",
+    "explanation": "第一步：19×4；第二步：76",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "19×4",
+      "76"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "50支铅笔平均分给5个同学，算式是__(___)，每人__(___)支。",
+    "options": null,
+    "answer": "50÷5",
+    "explanation": "第一步：50÷5；第二步：10",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "50÷5",
+      "10"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "长22厘米、宽5厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(22+5)×2",
+    "explanation": "第一步：(22+5)×2；第二步：54",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "(22+5)×2",
+      "54"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "长16厘米、宽6厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(16+6)×2",
+    "explanation": "第一步：(16+6)×2；第二步：44",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "(16+6)×2",
+      "44"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "每分钟走60米，走了37分钟，算式是__(___)，共走__(___)米。",
+    "options": null,
+    "answer": "60×37",
+    "explanation": "第一步：60×37；第二步：2220",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "60×37",
+      "2220"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "小明有41个苹果，小红有10个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "51",
+    "explanation": "第一步：51；第二步：25",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "51",
+      "25"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "小明有40个苹果，小红有6个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "46",
+    "explanation": "第一步：46；第二步：23",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "46",
+      "23"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "小明有20元，买书花了46元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-46",
+    "explanation": "第一步：20-46；第二步：-26",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-46",
+      "-26"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋23千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×23",
+    "explanation": "第一步：3×23；第二步：69",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×23",
+      "69"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "小明有9个苹果，小红有10个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "19",
+    "explanation": "第一步：19；第二步：9",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "19",
+      "9"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "50支铅笔平均分给5个同学，算式是__(___)，每人__(___)支。",
+    "options": null,
+    "answer": "50÷5",
+    "explanation": "第一步：50÷5；第二步：10",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "50÷5",
+      "10"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "一块正方形边长20厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "20×4",
+    "explanation": "第一步：20×4；第二步：80",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "20×4",
+      "80"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "一块正方形边长21厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "21×4",
+    "explanation": "第一步：21×4；第二步：84",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "21×4",
+      "84"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "长6厘米、宽2厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(6+2)×2",
+    "explanation": "第一步：(6+2)×2；第二步：16",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "(6+2)×2",
+      "16"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "一块正方形边长11厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "11×4",
+    "explanation": "第一步：11×4；第二步：44",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "11×4",
+      "44"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "长27厘米、宽5厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(27+5)×2",
+    "explanation": "第一步：(27+5)×2；第二步：64",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "(27+5)×2",
+      "64"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "妈妈买了3袋大米，每袋20千克，算式是__(___)，一共__(___)千克。",
+    "options": null,
+    "answer": "3×20",
+    "explanation": "第一步：3×20；第二步：60",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "3×20",
+      "60"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "小明每天零花钱22元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "22×7",
+    "explanation": "第一步：22×7；第二步：154",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "22×7",
+      "154"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "fill",
+    "content": "小明有18个苹果，小红有10个，先算一共有几个(___)，再算平均每人几个(___)。",
+    "options": null,
+    "answer": "28",
+    "explanation": "第一步：28；第二步：14",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "28",
+      "14"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "fill",
+    "content": "每分钟走60米，走了22分钟，算式是__(___)，共走__(___)米。",
+    "options": null,
+    "answer": "60×22",
+    "explanation": "第一步：60×22；第二步：1320",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "60×22",
+      "1320"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "fill",
+    "content": "长24厘米、宽8厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(24+8)×2",
+    "explanation": "第一步：(24+8)×2；第二步：64",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "(24+8)×2",
+      "64"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "12个橙子分给4个人，算式是__(___)，每人分到__(___)个。",
+    "options": null,
+    "answer": "12÷4",
+    "explanation": "第一步：12÷4；第二步：3",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "12÷4",
+      "3"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "长49厘米、宽4厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(49+4)×2",
+    "explanation": "第一步：(49+4)×2；第二步：106",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "(49+4)×2",
+      "106"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "fill",
+    "content": "一块正方形边长26厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "26×4",
+    "explanation": "第一步：26×4；第二步：104",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "26×4",
+      "104"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "fill",
+    "content": "小明每天零花钱36元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "36×7",
+    "explanation": "第一步：36×7；第二步：252",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "36×7",
+      "252"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "fill",
+    "content": "长11厘米、宽9厘米的长方形，周长公式是__(__)_厘米，结果是__(___)_厘米。",
+    "options": null,
+    "answer": "(11+9)×2",
+    "explanation": "第一步：(11+9)×2；第二步：40",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "(11+9)×2",
+      "40"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "fill",
+    "content": "小明每天零花钱48元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "48×7",
+    "explanation": "第一步：48×7；第二步：336",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "48×7",
+      "336"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "fill",
+    "content": "小明有20元，买书花了8元，算式是__(___)，还剩__(___)元。",
+    "options": null,
+    "answer": "20-8",
+    "explanation": "第一步：20-8；第二步：12",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "20-8",
+      "12"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "fill",
+    "content": "一块正方形边长10厘米，周长算式是__(___)，等于__(___)厘米。",
+    "options": null,
+    "answer": "10×4",
+    "explanation": "第一步：10×4；第二步：40",
+    "difficulty": 2,
+    "blank_count": 2,
+    "blank_answers": [
+      "10×4",
+      "40"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "fill",
+    "content": "小明每天零花钱24元，一周7天，算式是__(___)，一共__(___)元。",
+    "options": null,
+    "answer": "24×7",
+    "explanation": "第一步：24×7；第二步：168",
+    "difficulty": 3,
+    "blank_count": 2,
+    "blank_answers": [
+      "24×7",
+      "168"
+    ],
+    "tolerance": 0.01
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "essay",
+    "content": "小明有24个糖果，他要平均分给6个好朋友，每个人能分到几个？请写出你的思考过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "妈妈买了5千克苹果和3千克香蕉，苹果每千克8元，香蕉每千克6元，一共花了多少钱？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "essay",
+    "content": "一个长方形花园长15米、宽8米，要在四周围栅栏，需要多长的栅栏？面积是多少？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "小华每天读20页书，读了一本120页的书，需要几天才能读完？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "essay",
+    "content": "班级里有36个同学，要分成若干小组做游戏，如果每组6人，可以分几组？如果每组4人呢？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "爸爸今年35岁，小明今年7岁，爸爸的年龄是小明的几倍？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "一辆公交车上原来有45人，到了一站下去18人，又上来12人，现在车上有多少人？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "essay",
+    "content": "果园里有苹果树28棵，梨树比苹果树多15棵，两种树一共有多少棵？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "小红每天存5角钱，一个月（30天）能存多少钱？够买一本15元的书吗？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "一个游泳池长25米，小明游了4个来回，一共游了多少米？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "essay",
+    "content": "超市大减价：一支钢笔原价12元，现在打8折（八折就是原价的80%），现价多少元？便宜了几元？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "小明的书架上有3层，每层放了24本书，一共有多少本书？如果拿走了15本，还剩几本？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "妈妈做了48块饼干，平均分给8个孩子，每人几块？如果再买16块，重新分的话每人又能分几块？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "一个正方形操场边长是30米，小刚沿操场跑了3圈，一共跑了多少米？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "三年级一班有男生22人、女生18人，全班平均分成4个小组，每组几人？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "小红有98个糖果，想平均分给9个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "essay",
+    "content": "小刚在超市买了92元的书和9元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "游泳池里有8只白鹤和14只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "essay",
+    "content": "小丽有30个糖果，想平均分给5个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "小龙在超市买了87元的书和13元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "公园里有17只白鹤和13只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "书店的长方形场地长41米、宽18米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "果园的长方形场地长54米、宽7米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "小红有77个糖果，想平均分给2个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "操场的长方形场地长52米、宽9米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "小丽在公园买了85元的书和18元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "书店的长方形场地长97米、宽10米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "超市的长方形场地长85米、宽14米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "操场里有93只白鹤和20只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "果园的长方形场地长71米、宽19米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "图书馆的长方形场地长16米、宽9米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "学校的长方形场地长26米、宽8米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "小红有95个糖果，想平均分给8个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "essay",
+    "content": "图书馆的长方形场地长85米、宽8米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "essay",
+    "content": "小刚在果园买了44元的书和20元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "小刚每天走路上学需要90分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "游泳池的长方形场地长96米、宽13米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "学校的长方形场地长10米、宽18米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "超市的长方形场地长26米、宽14米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "小红有84个糖果，想平均分给18个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "书店的长方形场地长79米、宽13米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "小丽每天走路上学需要55分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "小明每天走路上学需要49分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "公园里有32只白鹤和5只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "essay",
+    "content": "小丽有77个糖果，想平均分给6个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "essay",
+    "content": "小丽每天走路上学需要71分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "公园的长方形场地长35米、宽12米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "小丽有7个糖果，想平均分给11个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "小芳有61个糖果，想平均分给4个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "essay",
+    "content": "小明每天走路上学需要25分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "小芳有61个糖果，想平均分给2个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "公园的长方形场地长28米、宽12米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "公园的长方形场地长43米、宽14米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "小丽有21个糖果，想平均分给4个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "书店的长方形场地长75米、宽13米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "游泳池的长方形场地长19米、宽19米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "小红有77个糖果，想平均分给6个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "书店的长方形场地长20米、宽2米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 19,
+    "type": "essay",
+    "content": "小丽每天走路上学需要87分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "游泳池的长方形场地长35米、宽13米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "小华有97个糖果，想平均分给11个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "小强有37个糖果，想平均分给12个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "游泳池里有85只白鹤和20只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "小丽有51个糖果，想平均分给20个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "小华在游泳池买了10元的书和17元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "图书馆的长方形场地长40米、宽11米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "小红有93个糖果，想平均分给9个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "essay",
+    "content": "公园的长方形场地长11米、宽17米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 15,
+    "type": "essay",
+    "content": "果园里有61只白鹤和7只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "操场里有88只白鹤和6只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "小明每天走路上学需要23分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "essay",
+    "content": "小强有21个糖果，想平均分给11个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "essay",
+    "content": "小华在操场买了49元的书和5元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "小强每天走路上学需要20分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "essay",
+    "content": "小芳有48个糖果，想平均分给3个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "小刚每天走路上学需要20分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "公园的长方形场地长91米、宽14米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "书店里有44只白鹤和10只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "果园里有64只白鹤和16只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "超市的长方形场地长63米、宽6米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "小明每天走路上学需要64分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "公园里有27只白鹤和9只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "超市的长方形场地长72米、宽7米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "essay",
+    "content": "小丽在超市买了77元的书和10元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 23,
+    "type": "essay",
+    "content": "公园里有49只白鹤和12只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 20,
+    "type": "essay",
+    "content": "公园的长方形场地长26米、宽20米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "游泳池里有11只白鹤和7只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 13,
+    "type": "essay",
+    "content": "游泳池的长方形场地长97米、宽7米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "essay",
+    "content": "操场的长方形场地长80米、宽5米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 3
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "图书馆的长方形场地长26米、宽5米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "公园里有31只白鹤和10只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 17,
+    "type": "essay",
+    "content": "图书馆里有11只白鹤和4只灰鹤，白鹤是灰鹤的几倍（取整数）？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 18,
+    "type": "essay",
+    "content": "书店的长方形场地长29米、宽3米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 16,
+    "type": "essay",
+    "content": "公园的长方形场地长71米、宽2米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 24,
+    "type": "essay",
+    "content": "果园的长方形场地长29米、宽5米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "操场的长方形场地长44米、宽6米，求它的周长和面积。请写清计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 14,
+    "type": "essay",
+    "content": "小明每天走路上学需要12分钟，一周上学5天，一周一共花多少分钟在路上？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 12,
+    "type": "essay",
+    "content": "小华有16个糖果，想平均分给17个朋友，每人能分几个？有没有剩余？",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 22,
+    "type": "essay",
+    "content": "小丽在学校买了41元的书和14元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  },
+  {
+    "subject_id": 2,
+    "topic_id": 21,
+    "type": "essay",
+    "content": "小华在操场买了79元的书和12元的文具，一共花了多少钱？请说明计算过程。",
+    "options": null,
+    "answer": "待老师点评",
+    "explanation": "请学生写出完整的计算过程和单位。",
+    "difficulty": 2
+  }
+]

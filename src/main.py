@@ -5,7 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from database import Base, engine
-import models  # noqa: E402  让所有表注册进 Base.metadata（必须在 create_all 之前）
+import models  # noqa: E402
 from config import STATIC_DIR
 
 # 启动时建表（依赖上面的 models 导入，确保 metadata 已包含全部表）

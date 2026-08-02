@@ -32,19 +32,119 @@ def _judge(question: Question, user_answer):
     """判分，返回 (is_correct_bool, run_output, llm_info)。
 
     统一评分体系：llm_score 为唯一评分字段。
-    - choice/judge/calc：对=100(5星)，错=0(0星)，不调 LLM。
-    - code（编程题）：先沙箱实跑，再调 LLM 评星反馈；LLM 不可用时降级回 stdout 匹配，
-      降级时匹配成功=100(5星)，不匹配=0(0星)。
+    - choice/judge：对=100(5星)，错=0(0星)，不调 LLM。
+      多选题需要全部选对才算对。
+    - fill（填空题）：逐空比对，支持数字容差；全对=100(5星)。
+    - essay（应用题）：调 LLM 评星反馈；降级为有内容即通过。
+    - code（编程题）：先沙箱实跑，再调 LLM 评星反馈；LLM 不可用时降级回 stdout 匹配。
+    - match（连线题）：比对左右索引匹配，全对=100(5星)。
+    - sort（排序题）：比对顺序索引，全对=100(5星)。
     """
     if question.type == "code":
         return _judge_code(question, user_answer)
+    if question.type == "fill":
+        return _judge_fill(question, user_answer)
+    if question.type == "essay":
+        return _judge_essay(question, user_answer)
+    if question.type == "match":
+        return _judge_match(question, user_answer)
+    if question.type == "sort":
+        return _judge_sort(question, user_answer)
     if user_answer is None or str(user_answer).strip() == "":
         return False, "", {"stars": 0, "score": 0, "feedback": ""}
-    if question.type == "calc":
-        ok = _normalize(user_answer) == _normalize(question.answer)
-        return ok, "", {"stars": 5 if ok else 0, "score": 100 if ok else 0, "feedback": ""}
-    # choice / judge: answer 存的是索引
-    ok = _normalize(str(user_answer)) == _normalize(str(question.answer))
+    # choice / judge
+    if question.type == "choice" and question.is_multiple:
+        # 多选题：逗号分隔索引，全部选对才算对
+        ok = _normalize(str(user_answer).replace(" ", "").replace("，", ",")) == _normalize(question.answer.replace(" ", ""))
+    else:
+        ok = _normalize(str(user_answer)) == _normalize(str(question.answer))
+    return ok, "", {"stars": 5 if ok else 0, "score": 100 if ok else 0, "feedback": ""}
+
+
+def _judge_fill(question: Question, user_answer):
+    """填空题判分：逐空比对，支持数字容差。
+
+    - 单空题：直接比对 question.answer，支持容差
+    - 多空题：按 | 分割用户答案，与 blank_answers 逐空比对
+    """
+    if user_answer is None or str(user_answer).strip() == "":
+        return False, "", {"stars": 0, "score": 0, "feedback": ""}
+
+    tolerance = question.tolerance if question.tolerance else 0.01
+
+    # 多空题
+    if question.blank_count and question.blank_count > 1 and question.blank_answers:
+        user_parts = str(user_answer).split("|")
+        std_answers = question.blank_answers
+        if len(user_parts) != len(std_answers):
+            return False, "", {"stars": 0, "score": 0, "feedback": ""}
+        for u_part, s_ans in zip(user_parts, std_answers):
+            if not _fill_match(u_part, s_ans, tolerance):
+                return False, "", {"stars": 0, "score": 0, "feedback": ""}
+        return True, "", {"stars": 5, "score": 100, "feedback": ""}
+
+    # 单空题（包括原来的 calc 兼容）
+    ok = _fill_match(str(user_answer), question.answer, tolerance)
+    return ok, "", {"stars": 5 if ok else 0, "score": 100 if ok else 0, "feedback": ""}
+
+
+def _fill_match(user_val: str, std_val: str, tolerance: float) -> bool:
+    """填空答案比对：先精确匹配，失败后尝试数字容差比对。"""
+    # 精确匹配（标准化后）
+    if _normalize(user_val) == _normalize(std_val):
+        return True
+    # 数字容差匹配
+    try:
+        u = float(user_val.replace(" ", ""))
+        s = float(std_val.replace(" ", ""))
+        return abs(u - s) <= tolerance
+    except (ValueError, TypeError):
+        pass
+    return False
+
+
+def _judge_essay(question: Question, user_answer):
+    """应用题判分：调 LLM 评星，降级为有内容即通过。"""
+    if user_answer is None or str(user_answer).strip() == "":
+        return False, "", {"stars": 0, "score": 0, "feedback": ""}
+
+    text = str(user_answer).strip()
+    # 降级策略：≥10个字即算通过（60分/3星）
+    if len(text) >= 10:
+        return True, "", {"stars": 3, "score": 60, "feedback": "有作答，等待老师点评。"}
+    # 内容太少
+    return False, "", {"stars": 0, "score": 0, "feedback": "回答太简短了，再想想看？"}
+
+
+def _judge_match(question: Question, user_answer):
+    """连线题判分：比对左右索引匹配，全对=100(5星)。
+
+    answer 格式: "0:2,1:0,2:1" 表示 左0→右2, 左1→右0, 左2→右1
+    user_answer 格式相同
+    """
+    if user_answer is None or str(user_answer).strip() == "":
+        return False, "", {"stars": 0, "score": 0, "feedback": ""}
+
+    # 标准化后比对
+    user_normalized = _normalize(str(user_answer).replace(" ", ""))
+    answer_normalized = _normalize(str(question.answer).replace(" ", ""))
+    ok = user_normalized == answer_normalized
+    return ok, "", {"stars": 5 if ok else 0, "score": 100 if ok else 0, "feedback": ""}
+
+
+def _judge_sort(question: Question, user_answer):
+    """排序题判分：比对顺序索引，全对=100(5星)。
+
+    answer 格式: "1,0,2,3" 表示正确顺序是 options[1], options[0], options[2], options[3]
+    user_answer 格式相同
+    """
+    if user_answer is None or str(user_answer).strip() == "":
+        return False, "", {"stars": 0, "score": 0, "feedback": ""}
+
+    # 标准化后比对
+    user_normalized = _normalize(str(user_answer).replace(" ", ""))
+    answer_normalized = _normalize(str(question.answer).replace(" ", ""))
+    ok = user_normalized == answer_normalized
     return ok, "", {"stars": 5 if ok else 0, "score": 100 if ok else 0, "feedback": ""}
 
 
@@ -166,6 +266,7 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
         topic_name = q.topic.name if q.topic else None
         questions.append(QuestionForExam(
             id=q.id, type=q.type, content=q.content, options=q.options,
+            match_options=q.match_options,
             topic_name=topic_name, difficulty=q.difficulty,
             explanation=q.explanation if q.type == "code" else None
         ))

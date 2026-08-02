@@ -130,6 +130,72 @@
     background: #74c0fc !important;
     color: #fff !important;
   }
+  /* 连线题样式 */
+  .match-wrap { margin: 16px 0; position: relative; }
+  .match-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: visible; }
+  .match-line { fill: none; stroke: #2f9e44; stroke-width: 3.5; stroke-linecap: round; }
+  /* 已建立连线：画线动画 */
+  @keyframes matchDraw { to { stroke-dashoffset: 0; } }
+  .match-line.animate { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: matchDraw 0.5s ease forwards; }
+  .match-line-temp { fill: none; stroke: #4dabf7; stroke-width: 3.5; stroke-linecap: round; stroke-dasharray: 7 7; opacity: 0.85; }
+  .match-columns { display: flex; gap: 56px; justify-content: center; align-items: flex-start; position: relative; z-index: 1; }
+  .match-column { display: flex; flex-direction: column; gap: 8px; min-width: 120px; }
+  .match-left-item, .match-right-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 16px; border-radius: 10px; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s; user-select: none;
+    border: 2px solid #e0e0e0; background: #fff;
+  }
+  .match-left-item { justify-content: flex-start; cursor: grab; }
+  .match-left-item:active { cursor: grabbing; }
+  .match-right-item { justify-content: flex-end; }
+  .match-left-item:hover, .match-right-item:hover { border-color: #74c0fc; background: #f0f8ff; }
+  .match-left-item.selected { border-color: #74c0fc; background: #d0ebff; box-shadow: 0 0 0 3px rgba(116,192,252,0.3); }
+  /* 拖拽起点 / 拖拽悬停目标 */
+  .match-left-item.dragging-from { border-color: #4dabf7; background: #e7f5ff; box-shadow: 0 0 0 3px rgba(77,171,247,0.35); transform: scale(1.02); }
+  .match-right-item.drag-over { border-color: #4dabf7; background: #d0ebff; box-shadow: 0 0 0 3px rgba(77,171,247,0.4); transform: scale(1.04); }
+  .match-left-item.matched, .match-right-item.matched { border-color: #69db7c; background: #d3f9d8; }
+  @keyframes matchPop { 0% { transform: scale(1); } 45% { transform: scale(1.06); } 100% { transform: scale(1); } }
+  .match-left-item.match-pop, .match-right-item.match-pop { animation: matchPop 0.35s ease; }
+  .match-dot { width: 10px; height: 10px; border-radius: 50%; background: #dee2e6; flex-shrink: 0; }
+  .match-left-item.matched .match-dot, .match-right-item.matched .match-dot { background: #2f9e44; }
+  .match-label { font-size: 14px; line-height: 1.5; }
+  .match-hint { text-align: center; color: #888; font-size: 12px; margin-top: 12px; position: relative; z-index: 1; }
+  /* 排序题样式 */
+  .sort-wrap { margin: 16px 0; }
+  .sort-list { display: flex; flex-direction: column; gap: 6px; max-width: 400px; margin: 0 auto; }
+  .sort-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 10px;
+    border: 2px solid #e0e0e0; background: #fff;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    cursor: grab; user-select: none;
+    animation: sortSlideIn 0.3s ease backwards;
+  }
+  .sort-item:active { cursor: grabbing; }
+  .sort-item:hover { border-color: #74c0fc; background: #f0f8ff; }
+  /* 拖拽中的原位置：半透明虚线占位 */
+  .sort-item.dragging { opacity: 0.35; border-style: dashed; border-color: #4dabf7; background: #e7f5ff; }
+  /* 拖到目标项上/下半部：蓝色插入指示线 */
+  .sort-item.drag-over-top { box-shadow: 0 -4px 0 0 #4dabf7; }
+  .sort-item.drag-over-bottom { box-shadow: 0 4px 0 0 #4dabf7; }
+  /* 放下后的弹跳高亮 */
+  @keyframes sortPop { 0% { transform: scale(1); } 45% { transform: scale(1.045); } 100% { transform: scale(1); } }
+  .sort-item.just-placed { animation: sortPop 0.35s ease; border-color: #69db7c; background: #d3f9d8; }
+  /* 入场：逐个滑入 */
+  @keyframes sortSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .sort-handle { color: #adb5bd; font-size: 18px; line-height: 1; flex-shrink: 0; transition: color 0.15s; }
+  .sort-item:hover .sort-handle { color: #4dabf7; }
+  .sort-buttons { display: flex; flex-direction: column; gap: 2px; flex-shrink: 0; }
+  .sort-btn {
+    width: 28px; height: 22px; border: none; border-radius: 6px;
+    background: #f1f3f5; color: #495057; font-size: 14px; font-weight: bold;
+    cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center;
+  }
+  .sort-btn:hover:not(:disabled) { background: #74c0fc; color: #fff; }
+  .sort-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .sort-content { font-size: 14px; line-height: 1.5; flex: 1; }
+  .sort-hint { text-align: center; color: #888; font-size: 12px; margin-top: 12px; }
 </style>
 </head>
 <body>
@@ -210,15 +276,54 @@ function renderQuestion() {
   let optsHtml = '';
   if (q.type === 'choice' || q.type === 'judge') {
     const opts = q.options || (q.type === 'judge' ? ['对','错'] : []);
+    const isMulti = q.is_multiple;
+    // 多选题：答案是逗号分隔的索引数组
+    let selectedIdxs = [];
+    if (userAnswers[curIdx] != null && userAnswers[curIdx] !== '') {
+      selectedIdxs = String(userAnswers[curIdx]).split(',').map(s => parseInt(s.trim()));
+    }
     optsHtml = '<div class="options">' + opts.map((opt, oi) => {
-      const selected = userAnswers[curIdx] === oi ? 'selected' : '';
+      const selected = isMulti ? (selectedIdxs.includes(oi) ? 'selected' : '') : (userAnswers[curIdx] === oi ? 'selected' : '');
       const letter = q.type === 'judge' ? (oi === 0 ? '✓' : '✗') : letters[oi];
-      return `<div class="opt ${selected}" onclick="pickOption(${oi})">
+      const handler = isMulti ? `pickMulti(${oi})` : `pickOption(${oi})`;
+      return `<div class="opt ${selected}" onclick="${handler}">
         <div class="letter">${letter}</div>
         <div class="opt-text">${esc(opt)}</div>
       </div>`;
     }).join('') + '</div>';
+  } else if (q.type === 'fill') {
+    // 填空题：根据 blank_count 生成 N 个输入框
+    const val = userAnswers[curIdx] != null ? userAnswers[curIdx] : '';
+    const blanks = q.blank_count || 1;
+    let savedParts = val ? val.split('|') : new Array(blanks).fill('');
+    let inputsHtml = '';
+    for (let i = 0; i < blanks; i++) {
+      const fv = savedParts[i] || '';
+      const fc = fv !== '' ? 'filled' : '';
+      inputsHtml += `<div class="calc-wrap" style="margin-bottom:8px;">
+        <div class="calc-input-wrap ${fc}">
+          <input type="text" class="calc-input fill-input" data-blank="${i}" placeholder="填入第${i+1}个空的答案"
+            value="${esc(fv)}" oninput="onFillInput(this)" onkeydown="onFillKey(event, ${i})">
+        </div>
+      </div>`;
+    }
+    optsHtml = `<div class="fill-wrap">${inputsHtml}</div>
+      <div class="calc-hint">💡 填完答案可以按回车键跳到下一题</div>`;
+  } else if (q.type === 'essay') {
+    // 问答题：大文本域
+    const val = userAnswers[curIdx] != null ? userAnswers[curIdx] : '';
+    const filled = val !== '' && val != null ? 'filled' : '';
+    optsHtml = `<div class="essay-wrap">
+      <div class="code-editor ${filled}" id="essayEditor">
+        <textarea class="code-textarea" id="essayInput" spellcheck="true"
+          placeholder="在这里写下你的回答..."
+          style="min-height:160px;font-family:'Microsoft YaHei',sans-serif;">
+${esc(val)}</textarea>
+      </div>
+    </div>
+    <div class="calc-hint">💡 认真思考，完整作答</div>`;
   } else if (q.type === 'calc') {
+    // calc 兼容（旧计算题，等同单空 fill）
     const val = userAnswers[curIdx] != null ? userAnswers[curIdx] : '';
     const filled = val !== '' && val != null ? 'filled' : '';
     optsHtml = `<div class="calc-wrap">
@@ -253,6 +358,58 @@ function renderQuestion() {
       ${hintHtml}
       <div class="code-hint-2">⌨️ Python 语法高亮 · 智能提示 · Tab 缩进 · 写完后点「下一题」或最后「提交闯关」</div>
     </div>`;
+  } else if (q.type === 'match') {
+    // 连线题：左侧项目 + 右侧选项，点击匹配
+    const options = q.options || [];
+    const matchOptions = q.match_options || [];
+    const savedPairs = userAnswers[curIdx] ? JSON.parse(userAnswers[curIdx]) : {};
+    
+    let leftHtml = options.map((opt, i) => {
+      const matched = savedPairs[i] !== undefined;
+      return `<div class="match-left-item ${matched ? 'matched' : ''}" data-side="left" data-idx="${i}" onclick="selectLeft(${i})">
+        <span class="match-label">${esc(opt)}</span>
+        <span class="match-dot"></span>
+      </div>`;
+    }).join('');
+    
+    let rightHtml = matchOptions.map((opt, i) => {
+      const matched = Object.values(savedPairs).includes(i);
+      return `<div class="match-right-item ${matched ? 'matched' : ''}" data-side="right" data-idx="${i}" onclick="selectRight(${i})">
+        <span class="match-dot"></span>
+        <span class="match-label">${esc(opt)}</span>
+      </div>`;
+    }).join('');
+    
+    optsHtml = `<div class="match-wrap" id="matchWrap">
+      <svg class="match-svg" id="matchSvg"></svg>
+      <div class="match-columns">
+        <div class="match-column" id="matchLeftCol">${leftHtml}</div>
+        <div class="match-column" id="matchRightCol">${rightHtml}</div>
+      </div>
+      <div class="match-hint">💡 按住左侧项目拖到右侧连线（也可点击左侧再点右侧）</div>
+    </div>`;
+  } else if (q.type === 'sort') {
+    // 排序题：可拖拽（也保留 ↑↓ 按钮兜底）
+    const options = q.options || [];
+    const savedOrder = userAnswers[curIdx] ? JSON.parse(userAnswers[curIdx]) : options.map((_, i) => i);
+
+    let itemsHtml = savedOrder.map((idx, pos) => {
+      const isFirst = pos === 0;
+      const isLast = pos === savedOrder.length - 1;
+      return `<div class="sort-item" data-pos="${pos}" data-idx="${idx}" draggable="true" style="animation-delay:${pos * 40}ms">
+        <div class="sort-handle">⠿</div>
+        <div class="sort-content">${esc(options[idx])}</div>
+        <div class="sort-buttons">
+          <button class="sort-btn" onclick="moveSort(${pos}, -1)" ${isFirst ? 'disabled' : ''}>↑</button>
+          <button class="sort-btn" onclick="moveSort(${pos}, 1)" ${isLast ? 'disabled' : ''}>↓</button>
+        </div>
+      </div>`;
+    }).join('');
+
+    optsHtml = `<div class="sort-wrap">
+      <div class="sort-list" id="sortList">${itemsHtml}</div>
+      <div class="sort-hint">💡 按住 ⠿ 拖动调整顺序（也可用 ↑↓ 按钮）</div>
+    </div>`;
   }
 
   document.getElementById('qContainer').innerHTML = `
@@ -269,6 +426,14 @@ function renderQuestion() {
   updateNav();
   if (q.type === 'calc') {
     setTimeout(() => { const el = document.getElementById('calcInput'); if (el) el.focus(); }, 100);
+  } else if (q.type === 'fill') {
+    setTimeout(() => { const el = document.querySelector('.fill-input[data-blank="0"]'); if (el) el.focus(); }, 100);
+  } else if (q.type === 'essay') {
+    setTimeout(() => { const el = document.getElementById('essayInput'); if (el) { el.focus(); initEssayInput(); } }, 100);
+  } else if (q.type === 'match') {
+    setTimeout(() => initMatchDrag(), 0);
+  } else if (q.type === 'sort') {
+    setTimeout(() => initSortDrag(), 0);
   } else if (q.type === 'code') {
     setTimeout(() => initCodeEditor(), 0);
   }
@@ -276,6 +441,23 @@ function renderQuestion() {
 
 function pickOption(oi) {
   userAnswers[curIdx] = oi;
+  renderQuestion();
+  updateDots();
+}
+
+// 多选题：切换选中状态
+function pickMulti(oi) {
+  let selected = [];
+  if (userAnswers[curIdx] != null && userAnswers[curIdx] !== '') {
+    selected = String(userAnswers[curIdx]).split(',').map(s => parseInt(s.trim()));
+  }
+  const idx = selected.indexOf(oi);
+  if (idx >= 0) {
+    selected.splice(idx, 1);  // 取消勾选
+  } else {
+    selected.push(oi);  // 勾选
+  }
+  userAnswers[curIdx] = selected.join(',');
   renderQuestion();
   updateDots();
 }
@@ -288,6 +470,240 @@ function onCalcInput(el) {
 
 function onCalcKey(e) {
   if (e.key === 'Enter') { e.preventDefault(); goNext(); }
+}
+
+// ============ 填空题输入处理 ============
+function onFillInput(el) {
+  const blankIdx = parseInt(el.dataset.blank);
+  const blanks = document.querySelectorAll('.fill-input');
+  let parts = [];
+  blanks.forEach(b => parts.push(b.value));
+  userAnswers[curIdx] = parts.join('|');
+  el.parentElement.classList.toggle('filled', el.value !== '');
+  updateDots();
+}
+
+function onFillKey(e, blankIdx) {
+  if (e.key === 'Enter') { e.preventDefault(); goNext(); }
+}
+
+// ============ 连线题交互（拖拽连线 + 点击兜底） ============
+let matchSelectedLeft = null;   // 点击兜底：当前选中的左侧索引
+let _matchDragging = false;     // 拖拽状态
+let _matchDragFrom = null;      // 拖拽起始左侧索引
+let _matchTempLine = null;      // 拖拽中的临时 SVG 线
+
+// —— SVG 画线 ——
+function _matchSvg() { return document.getElementById('matchSvg'); }
+function _matchWrapRect() { return document.getElementById('matchWrap').getBoundingClientRect(); }
+
+// 计算某个 item 相对于 match-wrap 的锚点坐标（左侧取右边缘中点，右侧取左边缘中点）
+function _anchor(el, side) {
+  const wr = _matchWrapRect();
+  const r = el.getBoundingClientRect();
+  return side === 'left'
+    ? { x: r.right - wr.left, y: r.top + r.height / 2 - wr.top }
+    : { x: r.left - wr.left, y: r.top + r.height / 2 - wr.top };
+}
+
+// 生成一条贝塞尔曲线路径（左→右，带弧度更自然）
+function _curvePath(p1, p2) {
+  const dx = Math.max(40, (p2.x - p1.x) * 0.45);
+  return `M ${p1.x} ${p1.y} C ${p1.x + dx} ${p1.y}, ${p2.x - dx} ${p2.y}, ${p2.x} ${p2.y}`;
+}
+
+// 根据当前匹配对，重绘所有连线（可选 animate 触发画线动画）
+function redrawMatchLines(animate) {
+  const svg = _matchSvg();
+  if (!svg) return;
+  svg.innerHTML = '';
+  const pairs = userAnswers[curIdx] ? JSON.parse(userAnswers[curIdx]) : {};
+  Object.keys(pairs).forEach(li => {
+    const ri = pairs[li];
+    const lEl = document.querySelector(`.match-left-item[data-idx="${li}"]`);
+    const rEl = document.querySelector(`.match-right-item[data-idx="${ri}"]`);
+    if (!lEl || !rEl) return;
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', _curvePath(_anchor(lEl, 'left'), _anchor(rEl, 'right')));
+    path.setAttribute('class', 'match-line' + (animate ? ' animate' : ''));
+    svg.appendChild(path);
+  });
+}
+
+// 建立一对匹配（拖拽松开 / 点击右侧 共用）
+function _commitMatch(leftIdx, rightIdx) {
+  let pairs = userAnswers[curIdx] ? JSON.parse(userAnswers[curIdx]) : {};
+  // 清除：该右侧已被别的左侧占用 / 该左侧已有旧连线
+  for (let k in pairs) {
+    if (pairs[k] === rightIdx || parseInt(k) === leftIdx) delete pairs[k];
+  }
+  pairs[leftIdx] = rightIdx;
+  userAnswers[curIdx] = JSON.stringify(pairs);
+  // 刷新 matched 高亮状态
+  document.querySelectorAll('.match-left-item').forEach(el => {
+    el.classList.toggle('matched', pairs[el.dataset.idx] !== undefined);
+    el.classList.remove('selected');
+  });
+  document.querySelectorAll('.match-right-item').forEach(el => {
+    el.classList.toggle('matched', Object.values(pairs).includes(parseInt(el.dataset.idx)));
+  });
+  // 画线 + 弹跳动效
+  redrawMatchLines(true);
+  const lEl = document.querySelector(`.match-left-item[data-idx="${leftIdx}"]`);
+  const rEl = document.querySelector(`.match-right-item[data-idx="${rightIdx}"]`);
+  [lEl, rEl].forEach(el => {
+    if (!el) return;
+    el.classList.remove('match-pop'); void el.offsetWidth; el.classList.add('match-pop');
+  });
+  updateDots();
+}
+
+// —— 点击兜底（触屏/不便拖拽时） ——
+function selectLeft(leftIdx) {
+  matchSelectedLeft = leftIdx;
+  document.querySelectorAll('.match-left-item').forEach(el => el.classList.remove('selected'));
+  document.querySelector(`.match-left-item[data-idx="${leftIdx}"]`).classList.add('selected');
+}
+
+function selectRight(rightIdx) {
+  if (matchSelectedLeft === null) {
+    toast('先点左侧项目，再点右侧（或按住左侧拖到右侧）', 'error');
+    return;
+  }
+  _commitMatch(matchSelectedLeft, rightIdx);
+  matchSelectedLeft = null;
+}
+
+// —— 拖拽连线（pointer 事件，鼠标+触屏通用） ——
+function initMatchDrag() {
+  const wrap = document.getElementById('matchWrap');
+  if (!wrap || wrap._matchInited) return;
+  wrap._matchInited = true;
+  redrawMatchLines(false);  // 首次渲染已有连线
+
+  // 在左侧项上按下 → 开始拖拽
+  wrap.querySelectorAll('.match-left-item').forEach(el => {
+    el.addEventListener('pointerdown', (e) => {
+      if (e.button !== undefined && e.button !== 0) return;  // 仅左键
+      _matchDragging = true;
+      _matchDragFrom = parseInt(el.dataset.idx, 10);
+      el.classList.add('dragging-from');
+      el.setPointerCapture && el.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+  });
+
+  // 移动 → 画临时虚线 + 高亮悬停的右侧目标
+  wrap.addEventListener('pointermove', (e) => {
+    if (!_matchDragging) return;
+    const svg = _matchSvg();
+    const lEl = document.querySelector(`.match-left-item[data-idx="${_matchDragFrom}"]`);
+    if (!svg || !lEl) return;
+    const wr = _matchWrapRect();
+    const from = _anchor(lEl, 'left');
+    const to = { x: e.clientX - wr.left, y: e.clientY - wr.top };
+    if (!_matchTempLine) {
+      _matchTempLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      _matchTempLine.setAttribute('class', 'match-line-temp');
+      svg.appendChild(_matchTempLine);
+    }
+    _matchTempLine.setAttribute('d', _curvePath(from, to));
+    // 高亮当前悬停的右侧项
+    const hover = document.elementFromPoint(e.clientX, e.clientY);
+    const rItem = hover && hover.closest('.match-right-item');
+    wrap.querySelectorAll('.match-right-item').forEach(el => el.classList.remove('drag-over'));
+    if (rItem) rItem.classList.add('drag-over');
+  });
+
+  // 松开 → 若落在右侧项上则建立连线
+  wrap.addEventListener('pointerup', (e) => {
+    if (!_matchDragging) return;
+    _matchDragging = false;
+    document.querySelectorAll('.match-left-item').forEach(el => el.classList.remove('dragging-from'));
+    wrap.querySelectorAll('.match-right-item').forEach(el => el.classList.remove('drag-over'));
+    if (_matchTempLine) { _matchTempLine.remove(); _matchTempLine = null; }
+    const hover = document.elementFromPoint(e.clientX, e.clientY);
+    const rItem = hover && hover.closest('.match-right-item');
+    if (rItem && _matchDragFrom !== null) {
+      _commitMatch(_matchDragFrom, parseInt(rItem.dataset.idx, 10));
+      matchSelectedLeft = null;
+    }
+    _matchDragFrom = null;
+  });
+}
+
+// ============ 排序题交互（拖拽 + 按钮） ============
+// 把当前 DOM 顺序写回 userAnswers 并刷新位置状态（data-pos / 按钮可用性）
+function _commitSortOrder() {
+  const items = document.querySelectorAll('#sortList .sort-item');
+  const order = Array.from(items).map(el => parseInt(el.dataset.idx, 10));
+  userAnswers[curIdx] = JSON.stringify(order);
+  items.forEach((el, pos) => {
+    el.dataset.pos = pos;
+    el.style.animationDelay = '0ms';  // 拖拽换位后不再逐个入场
+    const btns = el.querySelectorAll('.sort-btn');
+    if (btns[0]) btns[0].disabled = (pos === 0);
+    if (btns[1]) btns[1].disabled = (pos === order.length - 1);
+  });
+  updateDots();
+}
+
+// 初始化 HTML5 拖拽排序：拖经过目标时实时换位（所见即所得）
+function initSortDrag() {
+  const list = document.getElementById('sortList');
+  if (!list) return;
+
+  list.querySelectorAll('.sort-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      item.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', ''); } catch (_) { /* 兼容旧浏览器 */ }
+    });
+
+    item.addEventListener('dragover', e => {
+      e.preventDefault();          // 必须，否则浏览器不允许放置
+      e.dataTransfer.dropEffect = 'move';
+      const dragging = list.querySelector('.dragging');
+      if (!dragging || dragging === item) return;
+      const rect = item.getBoundingClientRect();
+      const above = (e.clientY - rect.top) < rect.height / 2;
+      // 实时换位：指针在上半部插到目标前，下半部插到目标后
+      if (above) list.insertBefore(dragging, item);
+      else list.insertBefore(dragging, item.nextSibling);
+    });
+
+    item.addEventListener('dragend', () => {
+      item.classList.remove('dragging');
+      _commitSortOrder();          // 按最终 DOM 顺序提交
+      // 放下后弹跳高亮反馈
+      item.classList.add('just-placed');
+      setTimeout(() => item.classList.remove('just-placed'), 380);
+    });
+  });
+}
+
+// ↑↓ 按钮移动（触屏兜底，保留原有行为）
+function moveSort(pos, direction) {
+  let order = userAnswers[curIdx] ? JSON.parse(userAnswers[curIdx]) : questions[curIdx].options.map((_, i) => i);
+  const newPos = pos + direction;
+  if (newPos < 0 || newPos >= order.length) return;
+  // 交换
+  [order[pos], order[newPos]] = [order[newPos], order[pos]];
+  userAnswers[curIdx] = JSON.stringify(order);
+  renderQuestion();
+  updateDots();
+}
+
+// ============ 问答题输入处理 ============
+function initEssayInput() {
+  const textarea = document.getElementById('essayInput');
+  if (!textarea) return;
+  textarea.addEventListener('input', () => {
+    userAnswers[curIdx] = textarea.value;
+    const editor = document.getElementById('essayEditor');
+    if (editor) editor.classList.toggle('filled', textarea.value.trim() !== '');
+    updateDots();
+  });
 }
 
 // ============ Python 代码编辑器（CodeMirror 5 + Pyodide）============
@@ -637,16 +1053,37 @@ async function doSubmit() {
   if (submitted) return;
   submitted = true;
 
-  // 提交前确保当前 code 题的最新代码已同步到 userAnswers
+  // 提交前确保当前 code/essay 题的最新内容已同步到 userAnswers
   if (questions[curIdx] && questions[curIdx].type === 'code') {
     const code = getCodeValue();
     userAnswers[curIdx] = code;
   }
+  if (questions[curIdx] && questions[curIdx].type === 'essay') {
+    const el = document.getElementById('essayInput');
+    if (el) userAnswers[curIdx] = el.value;
+  }
 
-  const answers = questions.map((q, i) => ({
-    question_id: q.id,
-    user_answer: userAnswers[i] != null ? String(userAnswers[i]) : null,
-  }));
+  // 转换连线题和排序题的答案格式
+  const answers = questions.map((q, i) => {
+    let answer = userAnswers[i];
+    if (q.type === 'match' && answer) {
+      // 前端存的是 JSON object {"0":2,"1":0}, 后端需要 "0:2,1:0"
+      try {
+        const pairs = JSON.parse(answer);
+        answer = Object.entries(pairs).map(([k, v]) => `${k}:${v}`).join(',');
+      } catch (e) {}
+    } else if (q.type === 'sort' && answer) {
+      // 前端存的是 JSON array [1,0,2,3], 后端需要 "1,0,2,3"
+      try {
+        const arr = JSON.parse(answer);
+        answer = arr.join(',');
+      } catch (e) {}
+    }
+    return {
+      question_id: q.id,
+      user_answer: answer != null ? String(answer) : null,
+    };
+  });
 
   try {
     const duration_seconds = Math.max(0, Math.floor((Date.now() - examStartTs) / 1000));
@@ -697,7 +1134,8 @@ function showResult(record) {
         ? '<span class="status status-right">✅ 答对</span>'
         : '<span class="status status-wrong">❌ 答错</span>';
       let body;
-      if (q.type === 'code') {
+      if (q.type === 'code' || q.type === 'sort' || q.type === 'match') {
+        // 编程/排序/连线题用专用渲染（排序/连线显示完整内容而非索引数字）
         body = renderAnswerCard(q, ar, { skipQuestion: true });
       } else {
         const yourAns = answerText(q, ar.user_answer);

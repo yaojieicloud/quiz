@@ -1,11 +1,12 @@
 """ORM 模型 —— 支持多科目、多用户、答题记录与错题追踪"""
 from datetime import datetime
 from sqlalchemy import (
-    Column, Integer, String, Text, Boolean, DateTime, ForeignKey, JSON, UniqueConstraint
+    Column, Integer, String, Text, Boolean, DateTime, ForeignKey, JSON, UniqueConstraint, Float
 )
 from sqlalchemy.orm import relationship
 
 from database import Base
+from database import Base, engine
 
 
 class User(Base):
@@ -82,24 +83,37 @@ class Topic(Base):
 
 
 class Question(Base):
-    """题目表 —— 兼容选择/判断/计算三种题型
+    """题目表 —— 兼容选择/判断/填空/问答/编程/连线/排序七种题型
 
     type:
-      - choice: 选择题，options 为 4 项数组，answer 为正确选项索引(0-3)
+      - choice: 选择题（单选/多选），options 为选项数组，answer 为正确索引
+                多选题用 is_multiple=True 标记，answer 存逗号分隔索引如 "0,2"
       - judge:  判断题，options 为 ["对","错"]，answer 为 0(对) 或 1(错)
-      - calc:   计算题，options 为 null，answer 为字符串答案
+      - fill:   填空题，单空 answer 存标准答案；多空 blank_answers 存 JSON 数组
+                blank_count 记录空的数量，tolerance 支持数字容差
+      - essay:  应用题，无标准答案，LLM 评星反馈（降级：有内容即通过）
+      - code:   编程题，沙箱实跑 + LLM 评星
+      - match:  连线题，options 为左侧项目，answer 存 "左索引:右索引,左索引:右索引"
+      - sort:   排序题，options 为打乱的项目，answer 存正确顺序索引如 "1,0,2,3"
     """
     __tablename__ = "questions"
 
     id = Column(Integer, primary_key=True, index=True)
     subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False, index=True)
     topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False, index=True)
-    type = Column(String(20), nullable=False)  # choice / judge / calc
+    type = Column(String(20), nullable=False)  # choice / judge / fill / essay / code
     content = Column(Text, nullable=False)  # 题干（可含 HTML）
-    options = Column(JSON)  # 选择/判断题的选项数组；计算题为 null
-    answer = Column(String(500), nullable=False)  # 索引或字符串
+    options = Column(JSON)  # 选择/判断题的选项数组；fill/essay/code 为 null
+    match_options = Column(JSON)  # 连线题右侧选项数组（仅 match 类型用）
+    answer = Column(String(500), nullable=False)  # 索引或字符串答案
     explanation = Column(Text)  # 讲解（可含 HTML）
     difficulty = Column(Integer, default=1)  # 1简单 2中等 3较难
+    # 多选题标记（仅 choice 类型用）
+    is_multiple = Column(Boolean, default=False)
+    # 填空题多空支持（仅 fill 类型用）
+    blank_count = Column(Integer, default=1)
+    blank_answers = Column(JSON)  # ["答案1", "答案2", ...]
+    tolerance = Column(Float, default=0.01)  # 数字容差（fill 题用）
     # 编程题判分用：参考代码运行的预期输出 + 需要的 stdin 样例
     expected_output = Column(Text)  # 参考代码运行后的预期 stdout（判分比对）
     sample_input = Column(Text, default="")  # 参考代码里 input() 需要的 stdin 样例

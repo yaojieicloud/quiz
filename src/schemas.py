@@ -48,6 +48,7 @@ class SubjectOut(BaseModel):
     category: str = "culture"
     sort_order: int = 0
     question_count: int = 0
+    available_types: List[str] = []  # 该科目实际包含的题型（去重），供前端动态显示/隐藏题型
     class Config:
         from_attributes = True
 
@@ -106,9 +107,14 @@ class QuestionOut(BaseModel):
     type: str
     content: str
     options: Optional[List[Any]] = None
+    match_options: Optional[List[str]] = None  # 连线题右侧选项
     answer: Optional[str] = None  # 答题时不返回，提交后判分
     explanation: Optional[str] = None
     difficulty: int = 1
+    is_multiple: bool = False
+    blank_count: int = 1
+    blank_answers: Optional[List[str]] = None
+    tolerance: float = 0.01
     topic_name: Optional[str] = None
     class Config:
         from_attributes = True
@@ -120,32 +126,45 @@ class QuestionForExam(BaseModel):
     type: str
     content: str
     options: Optional[List[Any]] = None
+    match_options: Optional[List[str]] = None  # 连线题右侧选项
     topic_name: Optional[str] = None
     difficulty: int = 1
     explanation: Optional[str] = None  # code 题在答题时下发思路提示
+    is_multiple: bool = False
+    blank_count: int = 1
 
 
 class QuestionCreate(BaseModel):
     subject_id: int
     topic_id: int
-    type: str = Field(..., pattern="^(choice|judge|calc|code)$")
+    type: str = Field(..., pattern="^(choice|judge|fill|essay|code|match|sort)$")
     content: str
     options: Optional[List[Any]] = None
+    match_options: Optional[List[str]] = None  # 连线题右侧选项
     answer: str
     explanation: Optional[str] = None
     difficulty: int = 1
+    is_multiple: bool = False
+    blank_count: int = 1
+    blank_answers: Optional[List[str]] = None
+    tolerance: float = 0.01
     expected_output: Optional[str] = None  # 编程题：参考代码运行后的预期输出
     sample_input: Optional[str] = None  # 编程题：参考代码 input() 需要的 stdin 样例
 
 
 class QuestionUpdate(BaseModel):
     topic_id: Optional[int] = None
-    type: Optional[str] = Field(None, pattern="^(choice|judge|calc|code)$")
+    type: Optional[str] = Field(None, pattern="^(choice|judge|fill|essay|code|match|sort)$")
     content: Optional[str] = None
     options: Optional[List[Any]] = None
+    match_options: Optional[List[str]] = None  # 连线题右侧选项
     answer: Optional[str] = None
     explanation: Optional[str] = None
     difficulty: Optional[int] = None
+    is_multiple: Optional[bool] = None
+    blank_count: Optional[int] = None
+    blank_answers: Optional[List[str]] = None
+    tolerance: Optional[float] = None
     expected_output: Optional[str] = None  # 编程题：参考代码运行后的预期输出
     sample_input: Optional[str] = None  # 编程题：参考代码 input() 需要的 stdin 样例
 
