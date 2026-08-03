@@ -475,3 +475,291 @@ def download_backup(name: str, _=Depends(require_role("admin"))):
         media_type="application/octet-stream",
         headers={"Content-Disposition": f"attachment; filename={name}"},
     )
+
+
+# ============ 学情分析（4 个接口） ============
+
+def _fetch_all(db: Session, sql: str, params: dict = None) -> list:
+    """执行查询返回 list[dict]（SQLAlchemy 2.x 用 RowMapping，勿用 row.keys()）"""
+    rows = db.execute(text(sql), params or {}).mappings().all()
+    return [dict(r) for r in rows]
+
+
+@router.get("/analytics/overview")
+def analytics_overview(_=Depends(require_role("admin")), db: Session = Depends(get_db)):
+    """总览仪表盘：核心指标 + 近14天趋势 + 科目/题型正确率 + 活跃榜"""
+    total_ar = db.execute(text(
+        "SELECT COUNT(*) c, SUM(CASE WHEN is_correct=1 THEN 1 ELSE 0 END) ok FROM answer_records")).fetchone()
+    total_exams = db.execute(text("SELECT COUNT(*) c FROM exam_records")).fetchone().c
+    active_students = db.execute(text(
+        "SELECT COUNT(DISTINCT user_id) c FROM exam_records")).fetchone().c
+    today = datetime.now().strftime("%Y-%m-%d")
+    today_ar = db.execute(text(
+        "SELECT COUNT(*) c FROM answer_records ar JOIN exam_records er ON er.id=ar.exam_record_id "
+        "WHERE date(er.started_at)=:d"), {"d": today}).fetchone().c
+    week_ar = db.execute(text(
+        "SELECT COUNT(*) c FROM answer_records ar JOIN exam_records er ON er.id=ar.exam_record_id "
+        "WHERE julianday('now') - julianday(er.started_at) <= 7")).fetchone().c
+
+    trend = _fetch_all(db, """
+        SELECT date(er.started_at) d,
+               COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar JOIN exam_records er ON er.id=ar.exam_record_id
+        WHERE julianday('now') - julianday(er.started_at) <= 14
+        GROUP BY date(er.started_at) ORDER BY d
+    """)
+
+    by_subject = _fetch_all(db, """
+        SELECT s.name subject, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN subjects s ON s.id=er.subject_id
+        GROUP BY s.id ORDER BY total DESC
+    """)
+
+    by_type = _fetch_all(db, """
+        SELECT q.type, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar JOIN questions q ON q.id=ar.question_id
+        GROUP BY q.type ORDER BY total DESC
+    """)
+
+    top_students = _fetch_all(db, """
+        SELECT u.nickname, u.username, COUNT(er.id) exams,
+               MAX(er.started_at) last_at
+        FROM exam_records er JOIN users u ON u.id=er.user_id
+        GROUP BY er.user_id ORDER BY exams DESC LIMIT 10
+    """)
+
+    total_cnt = total_ar.c or 0
+    ok_cnt = total_ar.ok or 0
+    return {
+        "totals": {
+            "answers": total_cnt,
+            "correct_rate": round(ok_cnt / total_cnt * 100, 1) if total_cnt else 0,
+            "exams": total_exams,
+            "active_students": active_students,
+            "today_answers": today_ar,
+            "week_answers": week_ar,
+        },
+        "trend": trend,
+        "by_subject": by_subject,
+        "by_type": by_type,
+        "top_students": top_students,
+    }
+
+
+@router.get("/analytics/student/{student_id}")
+def analytics_student(student_id: int, _=Depends(require_role("admin")), db: Session = Depends(get_db)):
+    """学员深度档案：成绩趋势 + 科目/知识点正确率 + 高频错题 + 最近动态"""
+    student = db.query(User).filter(User.id == student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="学员不存在")
+
+    score_trend = _fetch_all(db, """
+        SELECT er.id, er.started_at, er.score, er.total, er.correct, s.name subject
+        FROM exam_records er JOIN subjects s ON s.id=er.subject_id
+        WHERE er.user_id=:uid ORDER BY er.started_at
+    """, {"uid": student_id})
+
+    by_subject = _fetch_all(db, """
+        SELECT s.name subject, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN subjects s ON s.id=er.subject_id
+        WHERE er.user_id=:uid GROUP BY s.id ORDER BY total DESC
+    """, {"uid": student_id})
+
+    # 各知识点正确率（作答>=2次才统计；SQLite 的 ok/total 是整数除法，需 *1.0）
+    by_topic = _fetch_all(db, """
+        SELECT t.name topic, s.name subject, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN questions q ON q.id=ar.question_id
+        JOIN topics t ON t.id=q.topic_id
+        JOIN subjects s ON s.id=q.subject_id
+        WHERE er.user_id=:uid GROUP BY q.topic_id HAVING COUNT(*)>=2
+        ORDER BY (ok*1.0/total) ASC LIMIT 20
+    """, {"uid": student_id})
+
+    top_wrong = _fetch_all(db, """
+        SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
+               COUNT(*) wrong_times
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN questions q ON q.id=ar.question_id
+        LEFT JOIN topics t ON t.id=q.topic_id
+        LEFT JOIN subjects s ON s.id=q.subject_id
+        WHERE er.user_id=:uid AND ar.is_correct=0
+        GROUP BY q.id ORDER BY wrong_times DESC LIMIT 10
+    """, {"uid": student_id})
+
+    recent = _fetch_all(db, """
+        SELECT er.id, er.started_at, er.score, er.total, er.correct, s.name subject
+        FROM exam_records er JOIN subjects s ON s.id=er.subject_id
+        WHERE er.user_id=:uid ORDER BY er.started_at DESC LIMIT 10
+    """, {"uid": student_id})
+
+    return {
+        "student": {"id": student.id, "nickname": student.nickname, "username": student.username},
+        "score_trend": score_trend,
+        "by_subject": by_subject,
+        "by_topic": by_topic,
+        "top_wrong": top_wrong,
+        "recent": recent,
+    }
+
+
+@router.get("/analytics/weakness")
+def analytics_weakness(_=Depends(require_role("admin")), db: Session = Depends(get_db)):
+    """知识点薄弱分析：薄弱知识点TOP10 + 反复错题榜 + 低正确率题目"""
+    weak_topics = _fetch_all(db, """
+        SELECT t.name topic, s.name subject, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok,
+               ROUND(SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END)*100.0/COUNT(*),1) rate
+        FROM answer_records ar
+        JOIN questions q ON q.id=ar.question_id
+        JOIN topics t ON t.id=q.topic_id
+        JOIN subjects s ON s.id=q.subject_id
+        GROUP BY q.topic_id HAVING COUNT(*)>=5
+        ORDER BY rate ASC LIMIT 10
+    """)
+
+    repeat_wrong = _fetch_all(db, """
+        SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
+               COUNT(DISTINCT w.user_id) students, SUM(w.wrong_count) times
+        FROM wrong_questions w
+        JOIN questions q ON q.id=w.question_id
+        LEFT JOIN topics t ON t.id=q.topic_id
+        LEFT JOIN subjects s ON s.id=q.subject_id
+        WHERE w.mastered=0
+        GROUP BY q.id HAVING SUM(w.wrong_count)>=2
+        ORDER BY times DESC LIMIT 15
+    """)
+
+    hard_questions = _fetch_all(db, """
+        SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
+               COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok,
+               ROUND(SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END)*100.0/COUNT(*),1) rate
+        FROM answer_records ar
+        JOIN questions q ON q.id=ar.question_id
+        LEFT JOIN topics t ON t.id=q.topic_id
+        LEFT JOIN subjects s ON s.id=q.subject_id
+        GROUP BY q.id HAVING COUNT(*)>=3
+        ORDER BY rate ASC LIMIT 15
+    """)
+
+    return {
+        "weak_topics": weak_topics,
+        "repeat_wrong": repeat_wrong,
+        "hard_questions": hard_questions,
+    }
+
+
+class ReportRequest(BaseModel):
+    student_id: int
+
+
+@router.post("/analytics/report")
+def analytics_report(data: ReportRequest, _=Depends(require_role("admin")), db: Session = Depends(get_db)):
+    """AI 学情周报：聚合学员数据 → LLM 生成自然语言评语（失败返回 502，不造假）"""
+    from core import llm_grader
+    from openai import OpenAI
+
+    student = db.query(User).filter(User.id == data.student_id).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="学员不存在")
+    if not llm_grader.LLM_API_KEY:
+        raise HTTPException(status_code=502, detail="LLM_API_KEY 未配置，无法生成 AI 报告")
+
+    by_subject = _fetch_all(db, """
+        SELECT s.name subject, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN subjects s ON s.id=er.subject_id
+        WHERE er.user_id=:uid GROUP BY s.id
+    """, {"uid": data.student_id})
+    by_topic = _fetch_all(db, """
+        SELECT t.name topic, s.name subject, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN questions q ON q.id=ar.question_id
+        JOIN topics t ON t.id=q.topic_id
+        JOIN subjects s ON s.id=q.subject_id
+        WHERE er.user_id=:uid GROUP BY q.topic_id HAVING COUNT(*)>=2
+        ORDER BY (ok*1.0/total) ASC LIMIT 8
+    """, {"uid": data.student_id})
+    exams = _fetch_all(db, """
+        SELECT er.score, er.started_at FROM exam_records er
+        WHERE er.user_id=:uid ORDER BY er.started_at
+    """, {"uid": data.student_id})
+    wrong_cnt = db.execute(text(
+        "SELECT COUNT(*) c FROM wrong_questions WHERE user_id=:uid AND mastered=0"),
+        {"uid": data.student_id}).fetchone().c
+
+    if not exams:
+        raise HTTPException(status_code=400, detail="该学员还没有答题记录，无法生成报告")
+
+    subj_lines = []
+    for r in by_subject:
+        rate = round((r["ok"] or 0) / r["total"] * 100, 1) if r["total"] else 0
+        subj_lines.append(f"- {r['subject']}：作答{r['total']}次，正确率{rate}%")
+    topic_lines = []
+    for r in by_topic:
+        rate = round((r["ok"] or 0) / r["total"] * 100, 1) if r["total"] else 0
+        topic_lines.append(f"- {r['subject']}/{r['topic']}：作答{r['total']}次，正确率{rate}%")
+    scores = [e["score"] for e in exams]
+    recent_scores = scores[-5:]
+    early_scores = scores[:5] if len(scores) >= 5 else scores
+
+    prompt_data = f"""学员：{student.nickname}
+总考试次数：{len(exams)}
+未掌握错题数：{wrong_cnt}
+各科正确率：
+{chr(10).join(subj_lines)}
+正确率最低的知识点（最薄弱）：
+{chr(10).join(topic_lines) if topic_lines else '（数据不足）'}
+最早5次考试分数：{early_scores}
+最近5次考试分数：{recent_scores}"""
+
+    system_prompt = """你是一位温暖专业的少儿学习顾问，请根据数据为一位小学生家长写一份学习周报。
+要求：
+1. 用中文，语气温和鼓励，200-350字
+2. 分三段：【学习概况】【进步与亮点】【薄弱点与建议】
+3. 基于数据客观分析，不要编造数据里没有的信息
+4. 建议要具体可操作（如"建议多练习XX知识点"）
+5. 直接输出周报内容，不要额外说明"""
+
+    try:
+        client = OpenAI(api_key=llm_grader.LLM_API_KEY, base_url=llm_grader.LLM_BASE_URL)
+        resp = client.chat.completions.create(
+            model=llm_grader.LLM_MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": prompt_data},
+            ],
+            temperature=0.7,
+            max_tokens=800,
+            timeout=90,
+        )
+        report_text = resp.choices[0].message.content.strip()
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(status_code=502, detail=f"AI 报告生成失败：{e}")
+
+    return {
+        "student": {"id": student.id, "nickname": student.nickname},
+        "report": report_text,
+        "data_summary": {
+            "exams": len(exams),
+            "unmastered_wrong": wrong_cnt,
+            "avg_score": round(sum(scores) / len(scores), 1),
+            "best_score": max(scores),
+        },
+    }

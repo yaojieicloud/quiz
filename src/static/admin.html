@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>管理后台 - 题库闯关系统</title>
 <link rel="stylesheet" href="css/common.css">
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
 <style>
 /* 管理后台特有样式 */
 .admin-main { max-width: 960px; }
@@ -45,6 +46,26 @@ textarea.form-input.lg { min-height:120px; }
 .subject-expand { margin-top:10px; padding:14px; background:#fffae8; border-radius:14px; }
 .pager { display:flex; gap:8px; justify-content:center; align-items:center; margin-top:16px; flex-wrap:wrap; }
 .pager button { padding:6px 12px; border:none; background:#f4f0fa; border-radius:10px; cursor:pointer; font-weight:bold; font-size:14px; color:#7a6c8c; }
+/* 学情分析 */
+.ana-subtabs { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+.ana-subtab { padding:8px 18px; border-radius:20px; background:#fff; color:#7a6c8c; font-weight:bold; font-size:14px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,0.06); transition:all 0.2s; }
+.ana-subtab:hover { transform:translateY(-1px); }
+.ana-subtab.active { background:#ffd43b; color:#5c4a00; }
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(150px, 1fr)); gap:12px; margin-bottom:16px; }
+.kpi-card { background:#fff; border-radius:16px; padding:16px; box-shadow:0 4px 14px rgba(0,0,0,0.08); text-align:center; }
+.kpi-card .num { font-size:28px; font-weight:bold; color:#3a3a55; }
+.kpi-card .lbl { font-size:13px; color:#9c8bb5; margin-top:4px; }
+.chart-box { width:100%; height:280px; }
+.chart-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media (max-width: 860px) { .chart-row { grid-template-columns:1fr; } }
+.ana-table { width:100%; border-collapse:collapse; font-size:14px; }
+.ana-table th { background:#f4f0fa; color:#7a6c8c; padding:10px 12px; text-align:left; }
+.ana-table td { padding:10px 12px; border-top:1px solid #f1f3f5; vertical-align:top; }
+.rate-badge { display:inline-block; min-width:52px; text-align:center; padding:3px 10px; border-radius:12px; font-weight:bold; font-size:13px; }
+.rate-good { background:#d3f9d8; color:#2b8a3e; }
+.rate-mid { background:#fff3bf; color:#e67700; }
+.rate-bad { background:#ffe3e3; color:#c92a2a; }
+.report-text { background:#fffae8; border-radius:14px; padding:18px 20px; line-height:1.9; font-size:15px; color:#3a3a55; white-space:pre-wrap; }
 .pager button.active { background:linear-gradient(135deg,#74c0fc,#4dabf7); color:#fff; }
 .pager button:disabled { opacity:0.4; cursor:default; }
 /* 学员答题记录 */
@@ -70,6 +91,7 @@ textarea.form-input.lg { min-height:120px; }
     <span class="chip" id="tabImport" onclick="switchTab('import')">📥 批量导入</span>
     <span class="chip" id="tabSql" onclick="switchTab('sql')">🛠 SQL 运维</span>
     <span class="chip" id="tabBackup" onclick="switchTab('backup')">🗄 数据备份</span>
+    <span class="chip" id="tabAnalytics" onclick="switchTab('analytics')">📊 学情分析</span>
   </div>
 
   <!-- ===== 科目与章节 ===== -->
@@ -107,6 +129,7 @@ textarea.form-input.lg { min-height:120px; }
             <option value="essay">应用题</option>
             <option value="match">连线题</option>
             <option value="sort">排序题</option>
+            <option value="reading">阅读理解</option>
           </select>
         </div>
         <button class="btn btn-yellow btn-sm" onclick="loadQuestions(1)">🔍 查询</button>
@@ -228,6 +251,87 @@ textarea.form-input.lg { min-height:120px; }
     </div>
   </div>
 
+  <!-- ===== 学情分析 ===== -->
+  <div id="paneAnalytics" style="display:none;">
+    <div class="ana-subtabs">
+      <span class="ana-subtab active" id="anaTabOverview" onclick="switchAnaPane('overview')">📈 学习总览</span>
+      <span class="ana-subtab" id="anaTabStudent" onclick="switchAnaPane('student')">🎒 学员档案</span>
+      <span class="ana-subtab" id="anaTabWeakness" onclick="switchAnaPane('weakness')">🎯 薄弱分析</span>
+      <span class="ana-subtab" id="anaTabReport" onclick="switchAnaPane('report')">🤖 AI 周报</span>
+    </div>
+
+    <!-- 1. 学习总览 -->
+    <div id="anaPaneOverview">
+      <div class="kpi-grid" id="kpiGrid"></div>
+      <div class="section-box">
+        <h3>📅 近 14 天答题趋势</h3>
+        <div id="chartTrend" class="chart-box"></div>
+      </div>
+      <div class="chart-row">
+        <div class="section-box">
+          <h3>📚 各科目正确率</h3>
+          <div id="chartSubject" class="chart-box"></div>
+        </div>
+        <div class="section-box">
+          <h3>🧩 各题型正确率</h3>
+          <div id="chartType" class="chart-box"></div>
+        </div>
+      </div>
+      <div class="section-box">
+        <h3>🏆 活跃学员榜</h3>
+        <div id="topStudentsBox"></div>
+      </div>
+    </div>
+
+    <!-- 2. 学员档案 -->
+    <div id="anaPaneStudent" style="display:none;">
+      <div class="section-box">
+        <div class="filter-bar">
+          <div class="form-group" style="flex:2;">
+            <label>选择学员</label>
+            <select class="form-select" id="anaStuSelect" onchange="loadAnaStudent()">
+              <option value="">请选择学员...</option>
+            </select>
+          </div>
+        </div>
+        <div id="anaStudentBody"><div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div></div>
+      </div>
+    </div>
+
+    <!-- 3. 薄弱分析 -->
+    <div id="anaPaneWeakness" style="display:none;">
+      <div class="section-box">
+        <h3>🎯 薄弱知识点 TOP10 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">全体学员，作答≥5次的知识点，按正确率升序</span></h3>
+        <div id="weakTopicsBox"></div>
+      </div>
+      <div class="section-box">
+        <h3>🔁 反复错题榜 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">累计错≥2次且未掌握的题</span></h3>
+        <div id="repeatWrongBox"></div>
+      </div>
+      <div class="section-box">
+        <h3>🧗 低正确率题目 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">作答≥3次，正确率最低（可检查题目质量）</span></h3>
+        <div id="hardQuestionsBox"></div>
+      </div>
+    </div>
+
+    <!-- 4. AI 周报 -->
+    <div id="anaPaneReport" style="display:none;">
+      <div class="section-box">
+        <h3>🤖 AI 学情周报 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">基于答题数据，由 LLM 生成家长可读的评语</span></h3>
+        <div class="filter-bar">
+          <div class="form-group" style="flex:2;">
+            <label>选择学员</label>
+            <select class="form-select" id="anaReportSelect">
+              <option value="">请选择学员...</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="genReportBtn" onclick="genAIReport()">✨ 生成周报</button>
+        </div>
+        <div id="reportBody"><div class="empty"><div class="icon">🤖</div><p>选择学员后点击「生成周报」</p></div></div>
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <!-- ===== 表单弹窗 ===== -->
@@ -268,7 +372,7 @@ let qPage = 1, qPageSize = 15, qTotal = 0;
 // ============ Tab 切换 ============
 function switchTab(tab) {
   currentTab = tab;
-  ['Subjects','Questions','Students','Import','Sql','Backup'].forEach(t => {
+  ['Subjects','Questions','Students','Import','Sql','Backup','Analytics'].forEach(t => {
     const id = t.toLowerCase();
     const tabEl = document.getElementById('tab'+t);
     const paneEl = document.getElementById('pane'+t);
@@ -280,6 +384,7 @@ function switchTab(tab) {
   if (tab === 'students') loadStudents();
   if (tab === 'import') initImportSubject();
   if (tab === 'backup') loadBackups();
+  if (tab === 'analytics') initAnalytics();
 }
 
 // ============ 科目与章节 ============
@@ -307,6 +412,7 @@ function renderSubjects() {
           ${s.grade ? `<span class="tag tag-gray" style="margin-left:8px;">${esc(s.grade)}</span>` : ''}
           <span class="tag tag-gray" style="margin-left:8px;">${s.category==='programming'?'编程类':'文化类'}</span>
           <span class="tag tag-blue" style="margin-left:8px;">${s.question_count} 题</span>
+          ${s.allowed_types ? `<span class="tag tag-gray" style="margin-left:8px;" title="已配置允许题型">题型:${s.allowed_types.length}/${ALL_TYPES.length}</span>` : ''}
         </div>
         <div class="actions">
           <button class="icon-btn" title="展开章节" onclick="toggleTopics(${s.id})">📂</button>
@@ -357,10 +463,25 @@ async function toggleTopics(subjectId) {
   } catch(e) { el.innerHTML = `<div style="color:#c92a2a;">${esc(e.message)}</div>`; }
 }
 
+// 全量题型清单（科目题型配置用）
+const ALL_TYPES = [
+  ['choice','🔵 选择题'], ['judge','🟢 判断题'], ['calc','🟠 计算题'], ['fill','✏️ 填空题'],
+  ['essay','📝 应用题'], ['match','🔗 连线题'], ['sort','📋 排序题'], ['code','💻 编程题'],
+  ['reading','📖 阅读理解'],
+];
+
 // ---- 科目表单 ----
 function openSubjectModal(id) {
   const s = id ? subjects.find(x => x.id === id) : null;
   const cat = s ? s.category : 'culture';
+  // 题型配置：null=不限制（默认全勾）；数组=只允许勾选项
+  const allowed = (s && s.allowed_types) ? new Set(s.allowed_types) : null;
+  const typeChecks = ALL_TYPES.map(([t, label]) => {
+    const checked = allowed === null || allowed.has(t);
+    return `<label style="display:inline-flex;align-items:center;gap:6px;margin:4px 12px 4px 0;font-size:14px;cursor:pointer;">
+      <input type="checkbox" class="fSubType" data-type="${t}" ${checked?'checked':''}> ${label}
+    </label>`;
+  }).join('');
   document.getElementById('formModalContent').innerHTML = `
     <h3>${s ? '✏️ 编辑科目' : '➕ 新建科目'}</h3>
     <div class="form-group"><label>科目名称</label><input type="text" class="form-input" id="fSubName" value="${s?esc(s.name):''}" placeholder="如：语文"></div>
@@ -373,6 +494,9 @@ function openSubjectModal(id) {
     <div class="form-group"><label>图标（emoji）</label><input type="text" class="form-input" id="fSubIcon" value="${s?esc(s.icon||'📚'):'📚'}" placeholder="📚"></div>
     <div class="form-group"><label>年级/描述（可选）</label><input type="text" class="form-input" id="fSubGrade" value="${s?esc(s.grade||''):''}" placeholder="如：三年级"></div>
     <div class="form-group"><label>简介（可选）</label><input type="text" class="form-input" id="fSubDesc" value="${s?esc(s.description||''):''}" placeholder="科目简介"></div>
+    <div class="form-group"><label>参与组卷的题型（全勾 = 不限制；未勾选的题型不在学生端显示也不参与组卷）</label>
+      <div style="padding:6px 0;">${typeChecks}</div>
+    </div>
     <div class="btn-row">
       <button class="btn-no" style="padding:10px 26px;border-radius:30px;border:none;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit;" onclick="closeFormModal()">取消</button>
       <button class="btn btn-primary" onclick="saveSubject(${id||'null'})">💾 保存</button>
@@ -383,12 +507,16 @@ function openSubjectModal(id) {
 async function saveSubject(id) {
   const name = document.getElementById('fSubName').value.trim();
   if (!name) { toast('请填科目名称', 'error'); return; }
+  // 题型配置：全勾 = null（不限制）；否则存勾选列表
+  const checked = [...document.querySelectorAll('.fSubType:checked')].map(c => c.dataset.type);
+  const allowedTypes = checked.length === ALL_TYPES.length ? null : checked;
   const data = {
     name,
     category: document.getElementById('fSubCategory').value,
     icon: document.getElementById('fSubIcon').value.trim() || '📚',
     grade: document.getElementById('fSubGrade').value.trim() || null,
     description: document.getElementById('fSubDesc').value.trim() || null,
+    allowed_types: allowedTypes,
   };
   try {
     if (id) {
@@ -530,6 +658,9 @@ function displayAnswer(q) {
   if (q.type === 'judge' && q.options) {
     return q.answer === '0' ? '对' : '错';
   }
+  if (q.type === 'reading' && q.reading_items) {
+    return `${q.reading_items.length}小题 (${q.answer || '-'})`;
+  }
   return q.answer || '-';
 }
 
@@ -581,6 +712,7 @@ async function openQuestionModal(id) {
         <option value="essay" ${type==='essay'?'selected':''}>应用题</option>
         <option value="match" ${type==='match'?'selected':''}>连线题</option>
         <option value="sort" ${type==='sort'?'selected':''}>排序题</option>
+        <option value="reading" ${type==='reading'?'selected':''}>阅读理解</option>
       </select>
     </div>
     <div class="form-group" id="fQMultiBox" style="display:none;">
@@ -604,6 +736,11 @@ async function openQuestionModal(id) {
         <span style="font-size:13px;color:#666;">数字容差（0=严格匹配）：</span>
         <input type="number" class="form-input" id="fQTolerance" value="${q&&q.tolerance?q.tolerance:0.01}" min="0" step="0.001" style="width:100px;display:inline-block;">
       </div>
+    </div>
+    <div class="form-group" id="fQReadingBox" style="display:none;">
+      <label>阅读理解子题（JSON 数组，当前版本子题均为选择题）</label>
+      <textarea class="json-textarea" id="fQReadingItems" style="min-height:180px;" placeholder='[&#10;  {"q": "问题1", "options": ["A","B","C","D"], "answer": "1", "explanation": "讲解"},&#10;  {"q": "问题2", "options": ["A","B","C","D"], "answer": "0", "explanation": "讲解"}&#10;]'></textarea>
+      <div style="font-size:12px;color:#9c8bb5;margin-top:4px;">题干内容框里填文章正文；保存时自动根据子题 answer 生成总答案</div>
     </div>
     <div class="form-group"><label>错题讲解（支持HTML）</label>
       <textarea class="form-input lg" id="fQExplain" placeholder="答错时显示的讲解...">${q?esc(q.explanation||''):''}</textarea>
@@ -637,6 +774,7 @@ function onTypeChange(editingQ) {
   const calcBox = document.getElementById('fQAnswerCalcBox');
   const fillBox = document.getElementById('fQFillBox');
   const multiBox = document.getElementById('fQMultiBox');
+  const readingBox = document.getElementById('fQReadingBox');
   const optEl = document.getElementById('fQOptions');
 
   // 默认隐藏所有特殊区域
@@ -644,6 +782,17 @@ function onTypeChange(editingQ) {
   calcBox.style.display = 'none';
   fillBox.style.display = 'none';
   multiBox.style.display = 'none';
+  if (readingBox) readingBox.style.display = 'none';
+
+  if (type === 'reading') {
+    // 阅读理解：题干=文章正文，子题用 JSON 编辑
+    readingBox.style.display = 'block';
+    const items = editingQ && editingQ.reading_items ? editingQ.reading_items : [
+      { q: '', options: ['', '', '', ''], answer: '0', explanation: '' },
+    ];
+    document.getElementById('fQReadingItems').value = JSON.stringify(items, null, 2);
+    return;
+  }
 
   if (type === 'choice') {
     optBox.style.display = 'block';
@@ -810,7 +959,7 @@ async function saveQuestion(id) {
   if (!content) { toast('请填写题干', 'error'); return; }
   const explanation = document.getElementById('fQExplain').value.trim();
   const difficulty = parseInt(document.getElementById('fQDiff').value);
-  let options = null, answer = '', is_multiple = false, blank_count = 1, blank_answers = null, tolerance = 0.01;
+  let options = null, answer = '', is_multiple = false, blank_count = 1, blank_answers = null, tolerance = 0.01, reading_items = null;
 
   if (type === 'choice') {
     is_multiple = document.getElementById('fQIsMultiple').checked;
@@ -856,6 +1005,34 @@ async function saveQuestion(id) {
     }
   } else if (type === 'essay') {
     answer = explanation || '待老师点评'; // 用解析作为参考答案
+  } else if (type === 'reading') {
+    // 阅读理解：解析子题 JSON，校验并自动生成 answer（子题答案索引串）
+    let items;
+    try { items = JSON.parse(document.getElementById('fQReadingItems').value.trim() || '[]'); }
+    catch(e) { toast('子题 JSON 格式错误：' + e.message, 'error'); return; }
+    if (!Array.isArray(items) || items.length === 0) { toast('请至少添加一道子题', 'error'); return; }
+    for (let si = 0; si < items.length; si++) {
+      const sub = items[si];
+      if (!sub.q || !Array.isArray(sub.options) || sub.options.length < 2) { toast(`第${si+1}小题：缺少 q 或 options`, 'error'); return; }
+      if (sub.answer == null || !(parseInt(sub.answer) >= 0 && parseInt(sub.answer) < sub.options.length)) { toast(`第${si+1}小题：answer 无效（应为选项索引）`, 'error'); return; }
+      sub.type = sub.type || 'choice';
+    }
+    options = null;
+    reading_items = items;
+    answer = items.map(sub => String(parseInt(sub.answer))).join(',');
+    const data = { subject_id, topic_id, type, content, options: null, reading_items, answer, explanation, difficulty };
+    try {
+      if (id) {
+        await API.put('/api/questions/'+id, data);
+        toast('题目已更新', 'success');
+      } else {
+        await API.post('/api/questions', data);
+        toast('题目已创建', 'success');
+      }
+      closeFormModal();
+      loadQuestions(qPage);
+    } catch(e) { toast(e.message, 'error'); }
+    return;
   } else if (type === 'match') {
     // 连线题：收集左侧项目和右侧选项
     const leftInputs = document.querySelectorAll('.match-left-input');
@@ -1211,9 +1388,20 @@ async function doBatchImport() {
   const payload = [];
   for (let i = 0; i < items.length; i++) {
     const it = items[i];
-    if (!it.type || !['choice','judge','calc','code'].includes(it.type)) { toast(`第${i+1}题：题型无效`, 'error'); return; }
+    if (!it.type || !['choice','judge','calc','code','fill','essay','match','sort','reading'].includes(it.type)) { toast(`第${i+1}题：题型无效`, 'error'); return; }
     if (!it.content) { toast(`第${i+1}题：题干为空`, 'error'); return; }
     if (!it.topic_name) { toast(`第${i+1}题：缺少 topic_name`, 'error'); return; }
+    // 阅读理解：校验子题结构并自动生成 answer（子题答案索引串）
+    if (it.type === 'reading') {
+      const ri = it.reading_items;
+      if (!Array.isArray(ri) || ri.length === 0) { toast(`第${i+1}题：reading 题需要 reading_items 子题数组`, 'error'); return; }
+      for (let si = 0; si < ri.length; si++) {
+        const sub = ri[si];
+        if (!sub.q || !Array.isArray(sub.options) || sub.options.length < 2) { toast(`第${i+1}题第${si+1}小题：缺少 q 或 options`, 'error'); return; }
+        if (sub.answer == null || !(parseInt(sub.answer) >= 0 && parseInt(sub.answer) < sub.options.length)) { toast(`第${i+1}题第${si+1}小题：answer 无效`, 'error'); return; }
+      }
+      it.answer = ri.map(sub => String(parseInt(sub.answer))).join(',');
+    }
     // 章节不存在则创建
     if (!topicMap[it.topic_name]) {
       try {
@@ -1227,9 +1415,14 @@ async function doBatchImport() {
       type: it.type,
       content: it.content,
       options: it.options || null,
+      match_options: it.match_options || null,
+      reading_items: it.reading_items || null,
       answer: String(it.answer),
       explanation: it.explanation || '',
       difficulty: it.difficulty || 1,
+      blank_count: it.blank_count || 1,
+      blank_answers: it.blank_answers || null,
+      tolerance: it.tolerance != null ? it.tolerance : 0.01,
     });
   }
   // 调批量导入API
@@ -1380,6 +1573,235 @@ async function doBackupAndDownload() {
     await downloadBackup(r.name);
     loadBackups();
   } catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ 学情分析 ============
+const anaCharts = {};  // 缓存 echarts 实例
+const TYPE_NAME = { choice:'选择', judge:'判断', calc:'计算', fill:'填空', essay:'应用', match:'连线', sort:'排序', code:'编程', reading:'阅读' };
+
+function switchAnaPane(pane) {
+  ['overview','student','weakness','report'].forEach(p => {
+    document.getElementById('anaTab' + p.charAt(0).toUpperCase() + p.slice(1)).classList.toggle('active', p === pane);
+    document.getElementById('anaPane' + p.charAt(0).toUpperCase() + p.slice(1)).style.display = p === pane ? 'block' : 'none';
+  });
+  if (pane === 'overview') loadAnaOverview();
+  if (pane === 'student') loadAnaStudentList();
+  if (pane === 'weakness') loadAnaWeakness();
+  if (pane === 'report') loadAnaReportStudents();
+}
+
+let anaInited = false;
+function initAnalytics() {
+  if (!anaInited) { anaInited = true; loadAnaOverview(); }
+}
+
+function rateBadge(rate) {
+  const cls = rate >= 80 ? 'rate-good' : (rate >= 60 ? 'rate-mid' : 'rate-bad');
+  return `<span class="rate-badge ${cls}">${rate}%</span>`;
+}
+
+async function loadAnaOverview() {
+  try {
+    const d = await API.get('/api/admin/analytics/overview');
+    // KPI
+    const t = d.totals;
+    document.getElementById('kpiGrid').innerHTML = [
+      { num: t.answers, lbl: '📝 总答题数' },
+      { num: t.correct_rate + '%', lbl: '✅ 总正确率' },
+      { num: t.exams, lbl: '📋 考试次数' },
+      { num: t.active_students, lbl: '👦 活跃学员' },
+      { num: t.today_answers, lbl: '☀️ 今日答题' },
+      { num: t.week_answers, lbl: '🗓 近7天答题' },
+    ].map(k => `<div class="kpi-card"><div class="num">${k.num}</div><div class="lbl">${k.lbl}</div></div>`).join('');
+    renderOverviewCharts(d);
+    // 活跃榜
+    const box = document.getElementById('topStudentsBox');
+    if (!d.top_students.length) {
+      box.innerHTML = '<div class="empty"><div class="icon">📭</div><p>暂无答题数据</p></div>';
+    } else {
+      box.innerHTML = `<table class="ana-table"><thead><tr><th>排名</th><th>学员</th><th>考试次数</th><th>最近答题</th></tr></thead><tbody>` +
+        d.top_students.map((s, i) => `<tr><td>${['🥇','🥈','🥉'][i] || (i+1)}</td><td><b>${esc(s.nickname)}</b> <span style="color:#9c8bb5;font-size:12px;">${esc(s.username)}</span></td><td>${s.exams}</td><td style="color:#9c8bb5;font-size:13px;">${s.last_at ? s.last_at.slice(0,16).replace('T',' ') : '—'}</td></tr>`).join('') +
+        `</tbody></table>`;
+    }
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+function renderOverviewCharts(d) {
+  if (typeof echarts === 'undefined') {
+    document.getElementById('chartTrend').innerHTML = '<div class="empty"><p>图表库加载失败，请检查网络</p></div>';
+    return;
+  }
+  // 趋势图
+  const trendDates = d.trend.map(r => r.d.slice(5));
+  const trendTotal = d.trend.map(r => r.total);
+  const trendRate = d.trend.map(r => r.total ? Math.round(r.ok / r.total * 100) : 0);
+  _anaChart('chartTrend', {
+    tooltip: { trigger: 'axis' },
+    legend: { data: ['答题量', '正确率%'], top: 0 },
+    grid: { left: 44, right: 44, top: 36, bottom: 24 },
+    xAxis: { type: 'category', data: trendDates },
+    yAxis: [
+      { type: 'value', name: '答题量', minInterval: 1 },
+      { type: 'value', name: '正确率%', max: 100 },
+    ],
+    series: [
+      { name: '答题量', type: 'bar', data: trendTotal, itemStyle: { color: '#74c0fc', borderRadius: [6,6,0,0] } },
+      { name: '正确率%', type: 'line', yAxisIndex: 1, data: trendRate, itemStyle: { color: '#ffa94d' }, smooth: true },
+    ],
+  });
+  // 科目正确率
+  const subjNames = d.by_subject.map(r => r.subject);
+  const subjRates = d.by_subject.map(r => r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0);
+  _anaChart('chartSubject', {
+    tooltip: { trigger: 'axis', formatter: p => `${p[0].name}：${p[0].value}%` },
+    grid: { left: 40, right: 20, top: 20, bottom: 60 },
+    xAxis: { type: 'category', data: subjNames, axisLabel: { rotate: 20, fontSize: 11 } },
+    yAxis: { type: 'value', max: 100, name: '%' },
+    series: [{ type: 'bar', data: subjRates, itemStyle: { color: '#69db7c', borderRadius: [6,6,0,0] }, barMaxWidth: 40 }],
+  });
+  // 题型正确率
+  const typeNames = d.by_type.map(r => TYPE_NAME[r.type] || r.type);
+  const typeRates = d.by_type.map(r => r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0);
+  _anaChart('chartType', {
+    tooltip: { trigger: 'axis', formatter: p => `${p[0].name}：${p[0].value}%` },
+    grid: { left: 40, right: 20, top: 20, bottom: 40 },
+    xAxis: { type: 'category', data: typeNames },
+    yAxis: { type: 'value', max: 100, name: '%' },
+    series: [{ type: 'bar', data: typeRates, itemStyle: { color: '#b197fc', borderRadius: [6,6,0,0] }, barMaxWidth: 40 }],
+  });
+}
+
+function _anaChart(domId, option) {
+  const el = document.getElementById(domId);
+  if (!anaCharts[domId]) anaCharts[domId] = echarts.init(el);
+  anaCharts[domId].setOption(option, true);
+}
+window.addEventListener('resize', () => Object.values(anaCharts).forEach(c => c.resize()));
+
+// --- 学员档案 ---
+let anaStudentsCache = null;
+async function loadAnaStudentList() {
+  if (!anaStudentsCache) {
+    try { anaStudentsCache = await API.get('/api/admin/students'); } catch (e) { toast(e.message, 'error'); return; }
+  }
+  const sel = document.getElementById('anaStuSelect');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">请选择学员...</option>' +
+    anaStudentsCache.filter(s => s.exam_count > 0).map(s => `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)} · ${s.exam_count}次）</option>`).join('');
+  if (cur) { sel.value = cur; }
+}
+
+async function loadAnaStudent() {
+  const uid = document.getElementById('anaStuSelect').value;
+  const body = document.getElementById('anaStudentBody');
+  if (!uid) { body.innerHTML = '<div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div>'; return; }
+  try {
+    const d = await API.get(`/api/admin/analytics/student/${uid}`);
+    let html = '';
+    // 成绩趋势
+    if (d.score_trend.length) {
+      html += `<div class="section-box" style="box-shadow:none;background:#f8f9fc;"><h3>📈 成绩趋势（共 ${d.score_trend.length} 次考试）</h3><div id="chartScoreTrend" class="chart-box"></div></div>`;
+    }
+    // 科目正确率
+    if (d.by_subject.length) {
+      html += `<h3 style="margin:16px 0 8px;">📚 各科目正确率</h3><table class="ana-table"><thead><tr><th>科目</th><th>作答数</th><th>正确率</th></tr></thead><tbody>` +
+        d.by_subject.map(r => {
+          const rate = r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0;
+          return `<tr><td>${esc(r.subject)}</td><td>${r.total}</td><td>${rateBadge(rate)}</td></tr>`;
+        }).join('') + `</tbody></table>`;
+    }
+    // 薄弱知识点
+    if (d.by_topic.length) {
+      html += `<h3 style="margin:16px 0 8px;">🎯 薄弱知识点（作答≥2次，正确率最低）</h3><table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
+        d.by_topic.map(r => {
+          const rate = r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0;
+          return `<tr><td>${esc(r.subject)}</td><td>${esc(r.topic)}</td><td>${r.total}</td><td>${rateBadge(rate)}</td></tr>`;
+        }).join('') + `</tbody></table>`;
+    }
+    // 高频错题
+    if (d.top_wrong.length) {
+      html += `<h3 style="margin:16px 0 8px;">❌ 高频错题 TOP${d.top_wrong.length}</h3><table class="ana-table"><thead><tr><th>题目</th><th>科目/知识点</th><th>错次</th></tr></thead><tbody>` +
+        d.top_wrong.map(r => `<tr><td style="max-width:380px;">${esc(r.content)}</td><td style="font-size:13px;color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</td><td><b style="color:#c92a2a;">${r.wrong_times}</b></td></tr>`).join('') +
+        `</tbody></table>`;
+    }
+    // 最近动态
+    if (d.recent.length) {
+      html += `<h3 style="margin:16px 0 8px;">🕐 最近学习动态</h3><table class="ana-table"><thead><tr><th>时间</th><th>科目</th><th>得分</th><th>对/总</th></tr></thead><tbody>` +
+        d.recent.map(r => `<tr><td style="font-size:13px;color:#7a6c8c;">${r.started_at.slice(0,16).replace('T',' ')}</td><td>${esc(r.subject)}</td><td>${rateBadge(r.score)}</td><td>${r.correct}/${r.total}</td></tr>`).join('') +
+        `</tbody></table>`;
+    }
+    if (!html) html = '<div class="empty"><div class="icon">📭</div><p>该学员暂无答题数据</p></div>';
+    body.innerHTML = html;
+    // 渲染成绩趋势图
+    if (d.score_trend.length && typeof echarts !== 'undefined') {
+      _anaChart('chartScoreTrend', {
+        tooltip: { trigger: 'axis', formatter: p => `${p[0].name}<br/>得分：${p[0].value}` },
+        grid: { left: 40, right: 20, top: 20, bottom: 60 },
+        xAxis: { type: 'category', data: d.score_trend.map(r => r.started_at.slice(5,16).replace('T',' ')), axisLabel: { rotate: 40, fontSize: 10 } },
+        yAxis: { type: 'value', max: 100, name: '分' },
+        series: [{ type: 'line', data: d.score_trend.map(r => r.score), itemStyle: { color: '#ffa94d' }, areaStyle: { color: 'rgba(255,169,77,0.15)' }, smooth: true }],
+      });
+    }
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// --- 薄弱分析 ---
+async function loadAnaWeakness() {
+  try {
+    const d = await API.get('/api/admin/analytics/weakness');
+    const wt = document.getElementById('weakTopicsBox');
+    wt.innerHTML = d.weak_topics.length
+      ? `<table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
+        d.weak_topics.map(r => `<tr><td>${esc(r.subject)}</td><td>${esc(r.topic)}</td><td>${r.total}</td><td>${rateBadge(r.rate)}</td></tr>`).join('') + `</tbody></table>`
+      : '<div class="empty"><p>数据不足（需某知识点作答≥5次）</p></div>';
+    const rw = document.getElementById('repeatWrongBox');
+    rw.innerHTML = d.repeat_wrong.length
+      ? `<table class="ana-table"><thead><tr><th>题目</th><th>科目/知识点</th><th>涉及学员</th><th>累计错次</th></tr></thead><tbody>` +
+        d.repeat_wrong.map(r => `<tr><td style="max-width:380px;">${esc(r.content)}</td><td style="font-size:13px;color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</td><td>${r.students}人</td><td><b style="color:#c92a2a;">${r.times}</b></td></tr>`).join('') + `</tbody></table>`
+      : '<div class="empty"><p>暂无反复错题</p></div>';
+    const hq = document.getElementById('hardQuestionsBox');
+    hq.innerHTML = d.hard_questions.length
+      ? `<table class="ana-table"><thead><tr><th>题目</th><th>题型</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
+        d.hard_questions.map(r => `<tr><td style="max-width:380px;">${esc(r.content)}</td><td>${TYPE_NAME[r.type]||r.type}</td><td>${r.total}</td><td>${rateBadge(r.rate)}</td></tr>`).join('') + `</tbody></table>`
+      : '<div class="empty"><p>数据不足（需某题作答≥3次）</p></div>';
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// --- AI 周报 ---
+async function loadAnaReportStudents() {
+  const sel = document.getElementById('anaReportSelect');
+  if (sel.options.length > 1) return;  // 已加载
+  try {
+    const students = await API.get('/api/admin/students');
+    sel.innerHTML = '<option value="">请选择学员...</option>' +
+      students.filter(s => s.exam_count > 0).map(s => `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)} · ${s.exam_count}次）</option>`).join('');
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function genAIReport() {
+  const uid = document.getElementById('anaReportSelect').value;
+  const body = document.getElementById('reportBody');
+  if (!uid) { toast('请先选择学员', 'error'); return; }
+  const btn = document.getElementById('genReportBtn');
+  btn.disabled = true; btn.textContent = '⏳ 生成中(约10-20秒)...';
+  body.innerHTML = '<div class="empty"><div class="icon">⏳</div><p>AI 正在分析学习数据，请稍候...</p></div>';
+  try {
+    const d = await API.post('/api/admin/analytics/report', { student_id: parseInt(uid) });
+    const s = d.data_summary;
+    body.innerHTML =
+      `<div class="kpi-grid" style="margin:8px 0 14px;">
+        <div class="kpi-card"><div class="num">${s.exams}</div><div class="lbl">考试次数</div></div>
+        <div class="kpi-card"><div class="num">${s.avg_score}</div><div class="lbl">平均分</div></div>
+        <div class="kpi-card"><div class="num">${s.best_score}</div><div class="lbl">最高分</div></div>
+        <div class="kpi-card"><div class="num">${s.unmastered_wrong}</div><div class="lbl">未掌握错题</div></div>
+      </div>
+      <div class="report-text">${esc(d.report)}</div>`;
+  } catch (e) {
+    body.innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>${esc(e.message)}</p></div>`;
+    toast(e.message, 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '✨ 生成周报';
+  }
 }
 
 // ============ 启动 ============
