@@ -161,6 +161,17 @@
   .match-left-item.matched .match-dot, .match-right-item.matched .match-dot { background: #2f9e44; }
   .match-label { font-size: 14px; line-height: 1.5; }
   .match-hint { text-align: center; color: #888; font-size: 12px; margin-top: 12px; position: relative; z-index: 1; }
+  /* 阅读理解题样式 */
+  .reading-passage {
+    max-height: 260px; overflow-y: auto;
+    background: #fffdf5; border: 2px solid #f5e6b8; border-radius: 12px;
+    padding: 14px 16px; margin: 12px 0;
+    font-size: 15px; line-height: 1.9; color: #3a3a55;
+    white-space: pre-wrap;
+  }
+  .reading-sub { margin: 14px 0 4px; padding-top: 10px; border-top: 1px dashed #e0d8ef; }
+  .reading-sub-title { font-size: 15px; font-weight: bold; color: #5a4a7a; margin-bottom: 8px; }
+  .reading-sub .options { margin-top: 0; }
   /* 排序题样式 */
   .sort-wrap { margin: 16px 0; }
   .sort-list { display: flex; flex-direction: column; gap: 6px; max-width: 400px; margin: 0 auto; }
@@ -410,7 +421,33 @@ ${esc(val)}</textarea>
       <div class="sort-list" id="sortList">${itemsHtml}</div>
       <div class="sort-hint">💡 按住 ⠿ 拖动调整顺序（也可用 ↑↓ 按钮）</div>
     </div>`;
+  } else if (q.type === 'reading') {
+    // 阅读理解：上方文章（可滚动），下方逐子题作答（当前版本子题均为选择题）
+    const items = q.reading_items || [];
+    const saved = (userAnswers[curIdx] != null && userAnswers[curIdx] !== '')
+      ? String(userAnswers[curIdx]).split(',') : [];
+    let subsHtml = items.map((it, si) => {
+      const sel = saved[si] != null && saved[si] !== '' ? parseInt(saved[si]) : -1;
+      const optsHtml = (it.options || []).map((opt, oi) => {
+        const selected = sel === oi ? 'selected' : '';
+        return `<div class="opt ${selected}" onclick="pickReading(${si}, ${oi})">
+          <div class="letter">${letters[oi] || (oi + 1)}</div>
+          <div class="opt-text">${esc(opt)}</div>
+        </div>`;
+      }).join('');
+      return `<div class="reading-sub">
+        <div class="reading-sub-title">第 ${si + 1} 小题：${esc(it.q || '')}</div>
+        <div class="options">${optsHtml}</div>
+      </div>`;
+    }).join('');
+    optsHtml = `<div class="reading-passage">${nl2br(esc(q.content))}</div>${subsHtml}
+      <div class="calc-hint">💡 先读文章，再逐题作答（可滚动查看文章）</div>`;
   }
+
+  // 阅读理解：题干位置显示作答提示，文章在 reading-passage 里展示，避免重复
+  const titleHtml = q.type === 'reading'
+    ? '请阅读下面的短文，完成后面的小题。'
+    : nl2br(esc(q.content));
 
   document.getElementById('qContainer').innerHTML = `
     <div class="q-card">
@@ -419,7 +456,7 @@ ${esc(val)}</textarea>
         <span class="${cls}">${label}</span>
         ${q.topic_name ? `<span class="q-topic">${esc(q.topic_name)}</span>` : ''}
       </div>
-      <div class="q-title">${nl2br(esc(q.content))}</div>
+      <div class="q-title">${titleHtml}</div>
       ${optsHtml}
     </div>`;
 
@@ -441,6 +478,19 @@ ${esc(val)}</textarea>
 
 function pickOption(oi) {
   userAnswers[curIdx] = oi;
+  renderQuestion();
+  updateDots();
+}
+
+// 阅读理解：选择某子题的选项，答案存为逗号分隔索引串（未答的子题留空，如 "1,,2"）
+function pickReading(subIdx, optIdx) {
+  const q = questions[curIdx];
+  const total = (q.reading_items || []).length;
+  const parts = (userAnswers[curIdx] != null && userAnswers[curIdx] !== '')
+    ? String(userAnswers[curIdx]).split(',') : [];
+  while (parts.length < total) parts.push('');
+  parts[subIdx] = String(optIdx);
+  userAnswers[curIdx] = parts.join(',');
   renderQuestion();
   updateDots();
 }
@@ -1134,8 +1184,8 @@ function showResult(record) {
         ? '<span class="status status-right">✅ 答对</span>'
         : '<span class="status status-wrong">❌ 答错</span>';
       let body;
-      if (q.type === 'code' || q.type === 'sort' || q.type === 'match') {
-        // 编程/排序/连线题用专用渲染（排序/连线显示完整内容而非索引数字）
+      if (q.type === 'code' || q.type === 'sort' || q.type === 'match' || q.type === 'reading') {
+        // 编程/排序/连线/阅读理解用专用渲染（排序/连线显示完整内容而非索引数字）
         body = renderAnswerCard(q, ar, { skipQuestion: true });
       } else {
         const yourAns = answerText(q, ar.user_answer);

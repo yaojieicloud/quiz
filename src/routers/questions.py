@@ -36,6 +36,14 @@ def list_questions(
         # 编程题参考代码对非管理员隐藏（防止学生直接拉接口抄答案）
         if it.type == "code" and not is_admin:
             out.answer = None
+        # 阅读理解子题答案/讲解对非管理员隐藏
+        if it.type == "reading" and not is_admin:
+            out.answer = None
+            if out.reading_items:
+                out.reading_items = [
+                    {"q": x.get("q"), "options": x.get("options")}
+                    for x in out.reading_items
+                ]
         result.append(out)
     return result
 
@@ -49,6 +57,7 @@ def create_question(data: QuestionCreate, db: Session = Depends(get_db), _=Depen
         content=data.content,
         options=data.options,
         match_options=data.match_options,
+        reading_items=data.reading_items,
         answer=str(data.answer),
         explanation=data.explanation,
         difficulty=data.difficulty,
@@ -77,6 +86,7 @@ def batch_import(items: list[QuestionCreate], db: Session = Depends(get_db), _=D
             content=it.content,
             options=it.options,
             match_options=it.match_options,
+            reading_items=it.reading_items,
             answer=str(it.answer),
             explanation=it.explanation,
             difficulty=it.difficulty,

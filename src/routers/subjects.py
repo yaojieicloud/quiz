@@ -22,6 +22,10 @@ def list_subjects(db: Session = Depends(get_db), _=Depends(get_current_user)):
             .filter(Question.subject_id == s.id)
             .distinct().all()
         ]
+        # 有效题型 = allowed_types ∩ available_types（未配置时不限制）
+        if s.allowed_types:
+            allowed = set(s.allowed_types)
+            out.available_types = [t for t in out.available_types if t in allowed]
         result.append(out)
     return result
 
@@ -88,6 +92,9 @@ def update_subject(subject_id: int, data: SubjectUpdate, db: Session = Depends(g
     if not s:
         raise HTTPException(status_code=404, detail="科目不存在")
     for k, v in data.model_dump(exclude_unset=True).items():
+        if k == "allowed_types" and v is not None:
+            # 空数组 = 不限制（存 NULL）
+            v = v if len(v) else None
         setattr(s, k, v)
     db.commit()
     db.refresh(s)

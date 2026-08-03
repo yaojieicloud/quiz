@@ -112,7 +112,7 @@ function nl2br(s) {
 
 // 题型标签
 function typeTag(type) {
-  const map = { choice: ['tag tag-choice','🔵 选择题'], judge: ['tag tag-judge','🟢 判断题'], calc: ['tag tag-calc','🟠 计算题'], code: ['tag tag-code','💻 编程题'], fill: ['tag tag-calc','✏️ 填空题'], essay: ['tag tag-calc','📝 应用题'], match: ['tag tag-blue','🔗 连线题'], sort: ['tag tag-blue','📋 排序题'] };
+  const map = { choice: ['tag tag-choice','🔵 选择题'], judge: ['tag tag-judge','🟢 判断题'], calc: ['tag tag-calc','🟠 计算题'], code: ['tag tag-code','💻 编程题'], fill: ['tag tag-calc','✏️ 填空题'], essay: ['tag tag-calc','📝 应用题'], match: ['tag tag-blue','🔗 连线题'], sort: ['tag tag-blue','📋 排序题'], reading: ['tag tag-blue','📖 阅读理解'] };
   return map[type] || ['tag tag-gray', type];
 }
 
@@ -129,6 +129,14 @@ function answerText(question, answer) {
   }
   if (question && question.type === 'fill' && (question.blank_count || 1) > 1) {
     return answer.split('|').map((a, i) => `空${i+1}: ${a}`).join('；');
+  }
+  if (question && question.type === 'reading' && question.reading_items) {
+    // 索引串 "1,0,2" → 逐子题显示所选选项文字
+    return answer.split(',').map((idx, i) => {
+      const it = question.reading_items[i];
+      const opt = it && it.options ? it.options[parseInt(idx)] : null;
+      return `题${i+1}:${opt != null ? opt : idx}`;
+    }).join('；');
   }
   return answer;
 }
@@ -289,6 +297,31 @@ function renderAnswerCard(q, ar, opts) {
     }
     html += `</div></div>`;
     if (q.explanation) html += `<div class="explain-text">💡 ${nl2br(esc(q.explanation))}</div>`;
+  } else if (q.type === 'reading') {
+    // 阅读理解：逐子题显示作答对错与正确答案
+    const items = q.reading_items || [];
+    const userAns = (ar.user_answer || '').split(',');
+    const correctAns = (q.answer || '').split(',');
+    html += `<div style="margin:10px 0;">`;
+    items.forEach((it, i) => {
+      const uIdx = userAns[i] != null && userAns[i] !== '' ? parseInt(userAns[i]) : -1;
+      const cIdx = correctAns[i] != null ? parseInt(correctAns[i]) : -1;
+      const ok = uIdx === cIdx;
+      html += `<div style="margin:10px 0;padding:10px 12px;border-radius:10px;background:${ok ? '#f4fce3' : '#fff5f5'};border:1px solid ${ok ? '#c0eb75' : '#ffc9c9'};">`;
+      html += `<div style="font-size:14px;font-weight:bold;margin-bottom:6px;">${ok ? '✅' : '❌'} 第${i+1}小题：${esc(it.q || '')}</div>`;
+      html += `<div class="opts-list">` + (it.options || []).map((opt, oi) => {
+        const isCorrect = oi === cIdx;
+        const isUser = oi === uIdx;
+        let cls = 'opt-row';
+        let tag = '';
+        if (isCorrect) { cls += ' opt-correct'; tag = '<span class="opt-tag opt-tag-correct">✓ 正确答案</span>'; }
+        if (isUser) { cls += ok ? ' opt-user-correct' : ' opt-user-wrong'; tag += ` <span class="opt-tag opt-tag-user">${ok ? '✓' : '✗'} 你的选择</span>`; }
+        return `<div class="${cls}"><span class="opt-letter">${letters[oi] || (oi+1)}</span><span class="opt-text">${esc(opt)}</span>${tag}</div>`;
+      }).join('') + `</div>`;
+      if (it.explanation) html += `<div class="explain-text" style="margin-top:6px;">💡 ${nl2br(esc(it.explanation))}</div>`;
+      html += `</div>`;
+    });
+    html += `</div>`;
   }
   return html;
 }

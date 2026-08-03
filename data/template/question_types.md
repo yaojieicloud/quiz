@@ -1,6 +1,6 @@
 # 题型字段规范（通用）
 
-> 所有科目共用的 7+1 种题型字段定义。生成任何科目的题目时，先按此规范确认字段格式。
+> 所有科目共用的 8+1 种题型字段定义。生成任何科目的题目时，先按此规范确认字段格式。
 
 ---
 
@@ -8,12 +8,13 @@
 
 | 字段 | 类型 | 必填 | 说明 |
 |---|---|---|---|
-| `type` | string | ✅ | 题型：`choice`/`judge`/`calc`/`fill`/`essay`/`match`/`sort`/`code` |
+| `type` | string | ✅ | 题型：`choice`/`judge`/`calc`/`fill`/`essay`/`match`/`sort`/`code`/`reading` |
 | `topic_name` | string | ✅ | 课时名称。导入时如不存在会自动创建 |
 | `unit` | string | 文化类必填 | 所属单元（如 `"上册-第一单元"`）。编程类科目不填或填 null |
-| `content` | string | ✅ | 题干。可用 `\n` 换行 |
+| `content` | string | ✅ | 题干。可用 `\n` 换行。**reading 题为文章正文** |
 | `options` | array\|null | 视题型 | 选项数组（见各题型说明） |
 | `match_options` | array\|null | 连线题必填 | 连线题右侧选项数组 |
+| `reading_items` | array\|null | reading 必填 | 阅读理解子题数组（见下方说明） |
 | `answer` | string | ✅ | 答案（**必须是字符串**）。格式因题型而异 |
 | `is_multiple` | bool | 多选时填 | 仅 choice 用，true=多选题 |
 | `blank_count` | int | 填空可选 | 填空数量，默认 1 |
@@ -23,6 +24,18 @@
 | `sample_input` | string | code 可选 | 参考代码 input() 需要的 stdin 样例 |
 | `explanation` | string | 建议填 | 错题讲解，支持 HTML 标签 |
 | `difficulty` | int | 建议填 | 难度 1-5，默认 1 |
+
+### reading_items 子题结构（仅 reading 题用）
+
+```json
+[
+  { "type": "choice", "q": "问题", "options": ["A","B","C","D"], "answer": "1", "explanation": "讲解" }
+]
+```
+
+- `type`：子题题型，**当前版本只支持 `choice`**（预留 `judge`/`fill`/`essay` 扩展，勿提前使用）
+- `q`：子题题干；`options`：选项；`answer`：正确选项索引（字符串）；`explanation`：子题讲解
+- 题目顶层 `answer` 填各子题正确索引的逗号串（如 `"0,1"`）；管理后台/导入脚本可自动从子题生成
 
 ---
 
@@ -40,6 +53,7 @@
 | match | `"左索引:右索引,..."` | `"0:1,1:3,2:2,3:0"` |
 | sort | 正确顺序的索引串 | `"0,2,3,1"` |
 | code | 参考代码（学生端隐藏） | `"print('hello')"` |
+| reading | 各子题正确索引的逗号串（可与子题自动生成） | `"0,1,2"` |
 
 ---
 
@@ -52,6 +66,7 @@
 | essay | 降级判分：作答≥10字=60分(3星)通过 |
 | match/sort | 全对=100(5星)，否则=0，不调 LLM |
 | code | 沙箱实跑 + LLM 评星，LLM 不可用时降级为 stdout 匹配 |
+| reading | 按子题正确比例给分（对2/3≈67分），≥60分算通过；整篇进错题本 |
 
 ---
 
@@ -76,3 +91,6 @@
 | 排序题 answer 索引越界 | 索引必须在 0~options长度-1 范围内 |
 | 上下册 unit 都写 `"第一单元"` | 加前缀：`"上册-第一单元"` / `"下册-第一单元"` |
 | code 题 expected_output 未实跑验证 | 必须实际运行参考代码确认输出 |
+| reading 题漏写 reading_items 或子题 answer 越界 | 每个子题必须有 q/options/answer，索引须在选项范围内 |
+| reading 题文章和子题拆成多道独立题 | 一篇文章必须是一道 reading 题（子题在 reading_items 里） |
+| 给数学/Python 科目出 reading 题 | reading 仅用于语文/英语（科目题型配置也会拦截） |

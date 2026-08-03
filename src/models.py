@@ -58,6 +58,10 @@ class Subject(Base):
     grade = Column(String(20))  # 学段，如"三年级"、"入门"
     category = Column(String(20), default="culture", nullable=False)  # culture / programming
     sort_order = Column(Integer, default=0)
+    # 该科目允许参与组卷/显示的题型列表（JSON 数组）。
+    # NULL 或空 = 不限制（该科目实际有的题型都参与）。
+    # 例如语文/英语可配置关闭 essay，数学保留 essay。
+    allowed_types = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     topics = relationship("Topic", back_populates="subject", cascade="all, delete-orphan")
@@ -95,17 +99,22 @@ class Question(Base):
       - code:   编程题，沙箱实跑 + LLM 评星
       - match:  连线题，options 为左侧项目，answer 存 "左索引:右索引,左索引:右索引"
       - sort:   排序题，options 为打乱的项目，answer 存正确顺序索引如 "1,0,2,3"
+      - reading: 阅读理解题，content 为文章正文，reading_items 存子题数组（JSON）
+                 answer 存子题答案索引串如 "1,0,2"，判分按子题比例给分
     """
     __tablename__ = "questions"
 
     id = Column(Integer, primary_key=True, index=True)
     subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False, index=True)
     topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False, index=True)
-    type = Column(String(20), nullable=False)  # choice / judge / fill / essay / code
-    content = Column(Text, nullable=False)  # 题干（可含 HTML）
-    options = Column(JSON)  # 选择/判断题的选项数组；fill/essay/code 为 null
+    type = Column(String(20), nullable=False)  # choice / judge / fill / essay / code / match / sort / reading
+    content = Column(Text, nullable=False)  # 题干（可含 HTML）；reading 题为文章正文
+    options = Column(JSON)  # 选择/判断题的选项数组；fill/essay/code/reading 为 null
     match_options = Column(JSON)  # 连线题右侧选项数组（仅 match 类型用）
-    answer = Column(String(500), nullable=False)  # 索引或字符串答案
+    reading_items = Column(JSON)  # 阅读理解子题数组（仅 reading 类型用）
+    # 子题格式: [{"type":"choice","q":"问题","options":[...],"answer":"1","explanation":"讲解"}, ...]
+    # 当前版本子题仅支持 choice；type 字段预留 judge/fill/essay 扩展
+    answer = Column(String(500), nullable=False)  # 索引或字符串答案；reading 为子题答案索引串
     explanation = Column(Text)  # 讲解（可含 HTML）
     difficulty = Column(Integer, default=1)  # 1简单 2中等 3较难
     # 多选题标记（仅 choice 类型用）

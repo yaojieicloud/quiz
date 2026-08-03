@@ -84,6 +84,7 @@ def import_one(base, token, subject_id, json_path, label, unit_prefix=""):
             "content": q["content"],
             "options": q.get("options"),
             "match_options": q.get("match_options"),
+            "reading_items": q.get("reading_items"),
             "answer": str(q["answer"]),
             "explanation": q.get("explanation", ""),
             "difficulty": q.get("difficulty", 1),

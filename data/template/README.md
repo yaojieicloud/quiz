@@ -10,9 +10,9 @@
 
 | 科目 | id | category | 文件格式 | 支持题型 | 模板文件 |
 |---|---|---|---|---|---|
-| 语文 | 4 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort | [culture_subject.md](culture_subject.md) |
+| 语文 | 4 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort/reading | [culture_subject.md](culture_subject.md) |
 | 数学(三年级) | 2 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort | [culture_subject.md](culture_subject.md) |
-| 英语 | 5 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort | [culture_subject.md](culture_subject.md) |
+| 英语 | 5 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort/reading | [culture_subject.md](culture_subject.md) |
 | Python基础理论 | 1 | programming | 嵌套 `{subject, questions}` | choice/judge/calc | [python_theory.md](python_theory.md) |
 | Python基础实操 | 3 | programming | 嵌套 `{subject, questions}` | **code** | [python_practical.md](python_practical.md) |
 
@@ -36,6 +36,7 @@
 | 应用题 | `essay` | answer="待老师点评" | — |
 | 连线题 | `match` | options(左侧), match_options(右侧), answer("左:右,...") | — |
 | 排序题 | `sort` | options(打乱项), answer("索引,...") | — |
+| 阅读理解 | `reading` | content(文章), reading_items(子题数组), answer("子题索引,...") | 仅语文/英语 |
 | 编程题 | `code` | answer(参考代码), expected_output, sample_input | — |
 
 ---

@@ -39,6 +39,7 @@ def _judge(question: Question, user_answer):
     - code（编程题）：先沙箱实跑，再调 LLM 评星反馈；LLM 不可用时降级回 stdout 匹配。
     - match（连线题）：比对左右索引匹配，全对=100(5星)。
     - sort（排序题）：比对顺序索引，全对=100(5星)。
+    - reading（阅读理解）：按子题比例给分，≥60分算通过。
     """
     if question.type == "code":
         return _judge_code(question, user_answer)
@@ -50,6 +51,8 @@ def _judge(question: Question, user_answer):
         return _judge_match(question, user_answer)
     if question.type == "sort":
         return _judge_sort(question, user_answer)
+    if question.type == "reading":
+        return _judge_reading(question, user_answer)
     if user_answer is None or str(user_answer).strip() == "":
         return False, "", {"stars": 0, "score": 0, "feedback": ""}
     # choice / judge
@@ -146,6 +149,27 @@ def _judge_sort(question: Question, user_answer):
     answer_normalized = _normalize(str(question.answer).replace(" ", ""))
     ok = user_normalized == answer_normalized
     return ok, "", {"stars": 5 if ok else 0, "score": 100 if ok else 0, "feedback": ""}
+
+
+def _judge_reading(question: Question, user_answer):
+    """阅读理解判分：逐子题比对，按正确比例给分。
+
+    answer 格式: "1,0,2" 依次是各子题的正确选项索引。
+    user_answer 格式相同；未作答的子题按错处理。
+    得分 = round(正确数/子题数 * 100)，≥60 算通过；星级 = round(比例*5)。
+    """
+    if user_answer is None or str(user_answer).strip() == "":
+        return False, "", {"stars": 0, "score": 0, "feedback": ""}
+
+    std = _normalize(question.answer).split(",")
+    usr = _normalize(str(user_answer)).split(",")
+    total = len(std)
+    if total == 0:
+        return False, "", {"stars": 0, "score": 0, "feedback": ""}
+    correct = sum(1 for i in range(total) if i < len(usr) and usr[i] == std[i])
+    score = round(correct / total * 100)
+    stars = round(correct / total * 5)
+    return score >= 60, "", {"stars": stars, "score": score, "feedback": ""}
 
 
 def _judge_code(question: Question, user_code):
@@ -250,12 +274,27 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
         pool = db.query(Question).filter(
             Question.id.in_(q_ids), Question.subject_id == data.subject_id
         ).all() if q_ids else []
+        # 错题重做同样受科目题型配置约束（被禁用的题型不参与组卷）
+        if subject.allowed_types:
+            pool = [q for q in pool if q.type in subject.allowed_types]
     else:
         q = db.query(Question).filter(Question.subject_id == data.subject_id)
         if data.topic_ids:
             q = q.filter(Question.topic_id.in_(data.topic_ids))
-        if data.types:
-            q = q.filter(Question.type.in_(data.types))
+        # 题型过滤：请求 types 与科目配置 allowed_types 取交集（科目配置是权威闸门，
+        # 防止前端隐藏后仍被 API 绕过）；两者都不设则不限制
+        if data.types and subject.allowed_types:
+            allowed = [t for t in data.types if t in subject.allowed_types]
+            if not allowed:
+                return ExamStartResponse(questions=[])  # 交集为空，无可抽题目
+        elif data.types:
+            allowed = data.types
+        elif subject.allowed_types:
+            allowed = subject.allowed_types
+        else:
+            allowed = None
+        if allowed:
+            q = q.filter(Question.type.in_(allowed))
         pool = q.all()
 
     random.shuffle(pool)
@@ -264,9 +303,17 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
     questions = []
     for q in selected:
         topic_name = q.topic.name if q.topic else None
+        # 阅读理解：子题下发时去掉 answer/explanation（防泄题）
+        reading_items = None
+        if q.type == "reading" and q.reading_items:
+            reading_items = [
+                {"q": it.get("q"), "options": it.get("options")}
+                for it in q.reading_items
+            ]
         questions.append(QuestionForExam(
             id=q.id, type=q.type, content=q.content, options=q.options,
             match_options=q.match_options,
+            reading_items=reading_items,
             topic_name=topic_name, difficulty=q.difficulty,
             explanation=q.explanation if q.type == "code" else None
         ))

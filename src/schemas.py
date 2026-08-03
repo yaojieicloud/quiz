@@ -49,6 +49,7 @@ class SubjectOut(BaseModel):
     sort_order: int = 0
     question_count: int = 0
     available_types: List[str] = []  # 该科目实际包含的题型（去重），供前端动态显示/隐藏题型
+    allowed_types: Optional[List[str]] = None  # 允许参与组卷/显示的题型（null/空=不限制）
     class Config:
         from_attributes = True
 
@@ -78,6 +79,7 @@ class SubjectUpdate(BaseModel):
     icon: Optional[str] = None
     grade: Optional[str] = None
     category: Optional[str] = Field(None, pattern="^(culture|programming)$")
+    allowed_types: Optional[List[str]] = None  # 允许参与组卷的题型；传空数组或 null 表示不限制
 
 
 class TopicCreate(BaseModel):
@@ -116,6 +118,7 @@ class QuestionOut(BaseModel):
     blank_answers: Optional[List[str]] = None
     tolerance: float = 0.01
     topic_name: Optional[str] = None
+    reading_items: Optional[List[Any]] = None  # 阅读理解子题数组
     class Config:
         from_attributes = True
 
@@ -132,15 +135,17 @@ class QuestionForExam(BaseModel):
     explanation: Optional[str] = None  # code 题在答题时下发思路提示
     is_multiple: bool = False
     blank_count: int = 1
+    reading_items: Optional[List[Any]] = None  # 阅读理解子题数组（不含子题 answer/explanation）
 
 
 class QuestionCreate(BaseModel):
     subject_id: int
     topic_id: int
-    type: str = Field(..., pattern="^(choice|judge|fill|essay|code|match|sort)$")
+    type: str = Field(..., pattern="^(choice|judge|fill|essay|code|match|sort|reading)$")
     content: str
     options: Optional[List[Any]] = None
     match_options: Optional[List[str]] = None  # 连线题右侧选项
+    reading_items: Optional[List[Any]] = None  # 阅读理解子题数组
     answer: str
     explanation: Optional[str] = None
     difficulty: int = 1
@@ -154,10 +159,11 @@ class QuestionCreate(BaseModel):
 
 class QuestionUpdate(BaseModel):
     topic_id: Optional[int] = None
-    type: Optional[str] = Field(None, pattern="^(choice|judge|fill|essay|code|match|sort)$")
+    type: Optional[str] = Field(None, pattern="^(choice|judge|fill|essay|code|match|sort|reading)$")
     content: Optional[str] = None
     options: Optional[List[Any]] = None
     match_options: Optional[List[str]] = None  # 连线题右侧选项
+    reading_items: Optional[List[Any]] = None  # 阅读理解子题数组
     answer: Optional[str] = None
     explanation: Optional[str] = None
     difficulty: Optional[int] = None

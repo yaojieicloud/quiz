@@ -106,7 +106,7 @@
         </div>
 
         <div class="config-section" id="typeSection">
-          <div class="label">🏷️ 题型（可多选，不选=全部）</div>
+          <div class="label">🏷️ 题型（可多选，默认全选；全选=不限题型）</div>
           <div class="chip-group">
             <span class="chip" data-type="choice" onclick="toggleChip(this)">🔵 选择题</span>
             <span class="chip" data-type="judge" onclick="toggleChip(this)">🟢 判断题</span>
@@ -115,6 +115,7 @@
             <span class="chip" data-type="essay" onclick="toggleChip(this)">📝 应用题</span>
             <span class="chip" data-type="match" onclick="toggleChip(this)">🔗 连线题</span>
             <span class="chip" data-type="sort" onclick="toggleChip(this)">📋 排序题</span>
+            <span class="chip" data-type="reading" onclick="toggleChip(this)">📖 阅读理解</span>
           </div>
         </div>
 
@@ -264,8 +265,8 @@ async function openConfig(subjectId) {
   const isProg = currentSubject.category === 'programming';
   const isCulture = currentSubject.category === 'culture';
 
-  // 需求1：不让选"题型"，只选题数随机抽 → 题型区对所有非实操科目隐藏
-  document.getElementById('typeSection').style.display = 'none';
+  // 题型区：显示，并默认选中全部题型
+  document.getElementById('typeSection').style.display = '';
   // 章节/课程清单始终显示（需求8：文化类进去默认全选）
   document.getElementById('topicSection').style.display = '';
   document.getElementById('topicSectionLabel').textContent = isProg
@@ -279,6 +280,13 @@ async function openConfig(subjectId) {
   selectedMode = 'custom';
   // 重置 chip
   document.querySelectorAll('#configModal .chip').forEach(c => c.classList.remove('active'));
+  // 题型显隐：只显示该科目实际可用题型（available_types 已由后端按 allowed_types 配置过滤）
+  const available = new Set(currentSubject.available_types || []);
+  document.querySelectorAll('.chip[data-type]').forEach(c => {
+    const show = available.has(c.dataset.type);
+    c.style.display = show ? '' : 'none';
+    if (show) c.classList.add('active');  // 可见题型默认全选
+  });
   document.querySelector(`.chip[data-count="${selectedCount}"]`).classList.add('active');
   document.querySelector('.chip[data-mode="custom"]').classList.add('active');
 
@@ -377,12 +385,15 @@ function pickMode(el) {
 async function startExam() {
   selectedTopics = new Set([...document.querySelectorAll('.chip[data-tid].active')].map(c => parseInt(c.dataset.tid)));
   selectedTypes = new Set([...document.querySelectorAll('.chip[data-type].active')].map(c => c.dataset.type));
+  // 题型全选（相对可见题型）时传空数组＝不过滤，服务端会按科目 allowed_types 配置兵底
+  const visibleTypeChips = document.querySelectorAll('.chip[data-type]:not([style*="none"])');
+  const typesToSend = selectedTypes.size === visibleTypeChips.length ? [] : [...selectedTypes];
 
   try {
     const res = await API.post('/api/exam/start', {
       subject_id: currentSubject.id,
       topic_ids: [...selectedTopics],
-      types: [...selectedTypes],
+      types: typesToSend,
       count: selectedCount,
       mode: selectedMode,
     });

@@ -167,6 +167,32 @@
 - `answer`：正确顺序的索引串，`"0,2,3,1"` 表示第1位=options[0]，第2位=options[2]...
 - 判分：全对=100，否则=0
 
+### 7. 阅读理解题（reading）—— 语文/英语专用
+
+```json
+{
+  "type": "reading",
+  "topic_name": "阅读理解",
+  "unit": "上册-第一单元",
+  "content": "春天来了，小明和小红去公园放风筝。\n风筝飞得很高，他们非常开心。",
+  "options": null,
+  "reading_items": [
+    { "type": "choice", "q": "他们去公园做什么？", "options": ["放风筝", "游泳", "爬山", "钓鱼"], "answer": "0", "explanation": "文中说去公园放风筝。" },
+    { "type": "choice", "q": "风筝飞得怎么样？", "options": ["很低", "很高", "飞走了", "掉下来了"], "answer": "1", "explanation": "文中说风筝飞得很高。" }
+  ],
+  "answer": "0,1",
+  "explanation": "",
+  "difficulty": 2
+}
+```
+
+- `content`：文章正文（可用 `\n` 分段）
+- `reading_items`：子题数组，当前版本子题**只支持选择题**（`type:"choice"`）；
+  `type` 字段预留，后续可扩展 judge（英语T/F）、fill、essay 子题
+- 子题字段：`q`（问题）、`options`（选项）、`answer`（正确选项索引字符串）、`explanation`（讲解）
+- `answer`：各子题正确索引的逗号串，如 `"0,1"`（可用管理后台/导入脚本自动从子题生成）
+- 判分：按子题正确比例给分（对2/3≈67分），≥60分算通过；整篇进错题本
+
 ---
 
 ## 四、导入命令
