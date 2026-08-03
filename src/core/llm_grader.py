@@ -1,4 +1,4 @@
-"""LLM 代码评分模块：调用 DeepSeek API 对编程题做星级评分与个性化反馈。
+"""LLM 代码评分模块：调用 LLM API（阿里云百炼兼容模式，qwen3.7-max）对编程题做星级评分与个性化反馈。
 
 降级策略：若 openai 库不可用 / API Key 未配置 / API 超时 / 返回格式异常，
 自动返回 fallback 标记，由调用方（exam.py）回退到 stdout 精确匹配的二元判分。
@@ -9,19 +9,22 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# ── API Key：优先环境变量，其次数据卷文件 ──
-DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
-if not DEEPSEEK_API_KEY:
-    _key_file = "/app/data/deepseek_key.txt"
-    try:
-        if os.path.exists(_key_file):
-            with open(_key_file, "r", encoding="utf-8") as f:
-                DEEPSEEK_API_KEY = f.read().strip()
-    except Exception:
-        pass
+# ── API Key：优先环境变量（LLM_API_KEY，兼容旧名 DEEPSEEK_API_KEY），其次数据卷文件 ──
+LLM_API_KEY = os.getenv("LLM_API_KEY", "") or os.getenv("DEEPSEEK_API_KEY", "")
+if not LLM_API_KEY:
+    for _key_file in ("/app/data/llm_key.txt", "/app/data/deepseek_key.txt"):
+        try:
+            if os.path.exists(_key_file):
+                with open(_key_file, "r", encoding="utf-8") as f:
+                    LLM_API_KEY = f.read().strip()
+                if LLM_API_KEY:
+                    break
+        except Exception:
+            pass
 
-DEEPSEEK_BASE_URL = "https://api.deepseek.com"
-DEEPSEEK_MODEL = "deepseek-v4-flash"
+# ── 端点与模型（2026-08-03 切换为阿里云百炼兼容模式 qwen3.7-max）──
+LLM_BASE_URL = "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+LLM_MODEL = "qwen3.7-max"
 
 # ── 系统提示词 ──
 SYSTEM_PROMPT = """你是一位 Python 编程老师，正在批改一位 10 岁小学生的 Python 练习题。
@@ -60,7 +63,7 @@ def grade_code(
     user_code: str,
     run_result: str,
 ) -> dict:
-    """调用 DeepSeek API 对编程题作答进行评分。
+    """调用 LLM API 对编程题作答进行评分。
 
     Args:
         question_content: 题目要求（题干）
@@ -72,8 +75,8 @@ def grade_code(
         {"stars": int, "score": int, "feedback": str}
         若 LLM 不可用，返回 {"stars": -1, "score": -1, "feedback": ""} 表示需降级
     """
-    if not DEEPSEEK_API_KEY:
-        logger.warning("DEEPSEEK_API_KEY 未配置，跳过 LLM 评分")
+    if not LLM_API_KEY:
+        logger.warning("LLM_API_KEY 未配置，跳过 LLM 评分")
         return _fallback()
 
     try:
@@ -100,18 +103,18 @@ def grade_code(
 
     try:
         client = OpenAI(
-            api_key=DEEPSEEK_API_KEY,
-            base_url=DEEPSEEK_BASE_URL,
+            api_key=LLM_API_KEY,
+            base_url=LLM_BASE_URL,
         )
         response = client.chat.completions.create(
-            model=DEEPSEEK_MODEL,
+            model=LLM_MODEL,
             messages=[
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
             temperature=0,
             max_tokens=300,
-            timeout=15,
+            timeout=60,
         )
         raw = response.choices[0].message.content.strip()
 
