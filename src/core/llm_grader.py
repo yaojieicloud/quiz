@@ -22,9 +22,9 @@ if not LLM_API_KEY:
         except Exception:
             pass
 
-# ── 端点与模型（2026-08-03 切换为阿里云百炼兼容模式 qwen3.7-max）──
+# ── 端点与模型（2026-08-03 切换为阿里云百炼兼容模式；max→plus，速度更快）──
 LLM_BASE_URL = "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
-LLM_MODEL = "qwen3.7-max"
+LLM_MODEL = "qwen3.7-plus"
 
 # ── 系统提示词 ──
 SYSTEM_PROMPT = """你是一位 Python 编程老师，正在批改一位 10 岁小学生的 Python 练习题。
@@ -114,7 +114,7 @@ def grade_code(
             ],
             temperature=0,
             max_tokens=300,
-            timeout=60,
+            timeout=90,
         )
         raw = response.choices[0].message.content.strip()
 
