@@ -1730,7 +1730,9 @@ function renderOverviewCharts(d) {
 
 function _anaChart(domId, option) {
   const el = document.getElementById(domId);
+  if (!el) return;
   if (!anaCharts[domId]) anaCharts[domId] = echarts.init(el);
+  // setOption(option, true) 本身会替换全部 option，无需 clear()
   anaCharts[domId].setOption(option, true);
 }
 window.addEventListener('resize', () => Object.values(anaCharts).forEach(c => c.resize()));
@@ -1808,6 +1810,8 @@ async function loadAnaStudent() {
         `</tbody></table>`;
     }
     if (!html) html = '<div class="empty"><div class="icon">📭</div><p>该学员暂无答题数据</p></div>';
+    // innerHTML 会销毁旧 DOM，必须清理对应的 ECharts 缓存实例
+    if (anaCharts['chartScoreTrend']) { anaCharts['chartScoreTrend'].dispose(); delete anaCharts['chartScoreTrend']; }
     body.innerHTML = html;
     // 渲染成绩趋势图：按科目分线，时间轴为各次考试时间
     if (d.score_trend.length && typeof echarts !== 'undefined') {
