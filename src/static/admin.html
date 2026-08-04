@@ -92,6 +92,7 @@ textarea.form-input.lg { min-height:120px; }
     <span class="chip" id="tabSql" onclick="switchTab('sql')">🛠 SQL 运维</span>
     <span class="chip" id="tabBackup" onclick="switchTab('backup')">🗄 数据备份</span>
     <span class="chip" id="tabAnalytics" onclick="switchTab('analytics')">📊 学情分析</span>
+    <span class="chip" id="tabReport" onclick="switchTab('report')">📝 AI周报</span>
   </div>
 
   <!-- ===== 科目与章节 ===== -->
@@ -257,7 +258,6 @@ textarea.form-input.lg { min-height:120px; }
       <span class="ana-subtab active" id="anaTabOverview" onclick="switchAnaPane('overview')">📈 学习总览</span>
       <span class="ana-subtab" id="anaTabStudent" onclick="switchAnaPane('student')">🎒 学员档案</span>
       <span class="ana-subtab" id="anaTabWeakness" onclick="switchAnaPane('weakness')">🎯 薄弱分析</span>
-      <span class="ana-subtab" id="anaTabReport" onclick="switchAnaPane('report')">🤖 AI 周报</span>
     </div>
 
     <!-- 1. 学习总览 -->
@@ -343,21 +343,41 @@ textarea.form-input.lg { min-height:120px; }
         <div id="hardQuestionsBox"></div>
       </div>
     </div>
+  </div>
 
-    <!-- 4. AI 周报 -->
-    <div id="anaPaneReport" style="display:none;">
+  <!-- ===== AI 周报（独立顶级面板） ===== -->
+  <div id="paneReport" style="display:none;">
+    <!-- 列表视图 -->
+    <div id="reportListView">
       <div class="section-box">
-        <h3>🤖 AI 学情周报 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">基于答题数据，由 LLM 生成家长可读的评语</span></h3>
-        <div class="filter-bar">
+        <h3>📝 AI 周报管理 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">查看历史周报、生成新周报</span></h3>
+        
+        <!-- 筛选与生成 -->
+        <div class="filter-bar" style="margin-bottom:16px;">
           <div class="form-group" style="flex:2;">
-            <label>选择学员</label>
-            <select class="form-select" id="anaReportSelect">
+            <label>选择学员生成新周报</label>
+            <select class="form-select" id="reportGenSelect">
               <option value="">请选择学员...</option>
             </select>
           </div>
-          <button class="btn btn-primary" id="genReportBtn" onclick="genAIReport()">✨ 生成周报</button>
+          <button class="btn btn-primary" onclick="generateReport(false)">✨ 生成周报</button>
+          <button class="btn btn-sm" onclick="generateReport(true)" style="margin-left:8px;" title="忽略缓存强制重新生成">🔄 强制重生成</button>
         </div>
-        <div id="reportBody"><div class="empty"><div class="icon">🤖</div><p>选择学员后点击「生成周报」</p></div></div>
+        
+        <!-- 周报列表 -->
+        <div id="reportListTable"></div>
+      </div>
+    </div>
+    
+    <!-- 详情视图（默认隐藏） -->
+    <div id="reportDetailView" style="display:none;">
+      <div class="section-box">
+        <div class="filter-bar">
+          <button class="btn btn-sm" onclick="showReportList()">← 返回列表</button>
+          <button class="btn btn-danger btn-sm" id="deleteReportBtn" style="margin-left:auto;">🗑 删除</button>
+        </div>
+        
+        <div id="reportDetailContent"></div>
       </div>
     </div>
   </div>
@@ -402,7 +422,7 @@ let qPage = 1, qPageSize = 15, qTotal = 0;
 // ============ Tab 切换 ============
 function switchTab(tab) {
   currentTab = tab;
-  ['Subjects','Questions','Students','Import','Sql','Backup','Analytics'].forEach(t => {
+  ['Subjects','Questions','Students','Import','Sql','Backup','Analytics','Report'].forEach(t => {
     const id = t.toLowerCase();
     const tabEl = document.getElementById('tab'+t);
     const paneEl = document.getElementById('pane'+t);
@@ -415,6 +435,7 @@ function switchTab(tab) {
   if (tab === 'import') initImportSubject();
   if (tab === 'backup') loadBackups();
   if (tab === 'analytics') initAnalytics();
+  if (tab === 'report') initReportManagement();
 }
 
 // ============ 科目与章节 ============
@@ -1610,14 +1631,13 @@ const anaCharts = {};  // 缓存 echarts 实例
 const TYPE_NAME = { choice:'选择', judge:'判断', calc:'计算', fill:'填空', essay:'应用', match:'连线', sort:'排序', code:'编程', reading:'阅读' };
 
 function switchAnaPane(pane) {
-  ['overview','student','weakness','report'].forEach(p => {
+  ['overview','student','weakness'].forEach(p => {
     document.getElementById('anaTab' + p.charAt(0).toUpperCase() + p.slice(1)).classList.toggle('active', p === pane);
     document.getElementById('anaPane' + p.charAt(0).toUpperCase() + p.slice(1)).style.display = p === pane ? 'block' : 'none';
   });
   if (pane === 'overview') loadAnaOverview();
   if (pane === 'student') loadAnaStudentList();
   if (pane === 'weakness') initWkFilters();
-  if (pane === 'report') loadAnaReportStudents();
 }
 
 let anaInited = false;
@@ -1886,40 +1906,335 @@ async function loadAnaWeakness() {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// --- AI 周报 ---
-async function loadAnaReportStudents() {
-  const sel = document.getElementById('anaReportSelect');
-  if (sel.options.length > 1) return;  // 已加载
+// ============ AI 周报管理 ============
+async function initReportManagement() {
+  // 加载学员列表到生成选择器
   try {
     const students = await API.get('/api/admin/students');
+    const sel = document.getElementById('reportGenSelect');
     sel.innerHTML = '<option value="">请选择学员...</option>' +
       students.filter(s => s.exam_count > 0).map(s => `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)} · ${s.exam_count}次）</option>`).join('');
   } catch (e) { toast(e.message, 'error'); }
+  
+  // 加载周报列表
+  loadReportList();
 }
 
-async function genAIReport() {
-  const uid = document.getElementById('anaReportSelect').value;
-  const body = document.getElementById('reportBody');
-  if (!uid) { toast('请先选择学员', 'error'); return; }
-  const btn = document.getElementById('genReportBtn');
-  btn.disabled = true; btn.textContent = '⏳ 生成中(约10-20秒)...';
-  body.innerHTML = '<div class="empty"><div class="icon">⏳</div><p>AI 正在分析学习数据，请稍候...</p></div>';
+async function loadReportList() {
   try {
-    const d = await API.post('/api/admin/analytics/report', { student_id: parseInt(uid) });
-    const s = d.data_summary;
-    body.innerHTML =
-      `<div class="kpi-grid" style="margin:8px 0 14px;">
-        <div class="kpi-card"><div class="num">${s.exams}</div><div class="lbl">考试次数</div></div>
-        <div class="kpi-card"><div class="num">${s.avg_score}</div><div class="lbl">平均分</div></div>
-        <div class="kpi-card"><div class="num">${s.best_score}</div><div class="lbl">最高分</div></div>
-        <div class="kpi-card"><div class="num">${s.unmastered_wrong}</div><div class="lbl">未掌握错题</div></div>
-      </div>
-      <div class="report-text">${esc(d.report)}</div>`;
+    const res = await API.get('/api/admin/ai-reports');
+    const container = document.getElementById('reportListTable');
+    
+    if (!res || res.length === 0) {
+      container.innerHTML = '<div class="empty">暂无周报记录</div>';
+      return;
+    }
+    
+    let html = `
+      <table class="ana-table">
+        <thead>
+          <tr>
+            <th>学员</th>
+            <th>生成时间</th>
+            <th>周报摘要</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+    
+    res.forEach(report => {
+      const preview = report.report_preview || '';
+      const date = new Date(report.created_at).toLocaleString('zh-CN');
+      html += `
+        <tr>
+          <td>${esc(report.student_name)}</td>
+          <td style="font-size:13px;color:#7a6c8c;">${date}</td>
+          <td style="font-size:13px;color:#7a6c8c;max-width:400px;">${esc(preview)}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="viewReportDetail(${report.id})">查看详情</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteReport(${report.id})">删除</button>
+          </td>
+        </tr>
+      `;
+    });
+    
+    html += '</tbody></table>';
+    container.innerHTML = html;
   } catch (e) {
-    body.innerHTML = `<div class="empty"><div class="icon">⚠️</div><p>${esc(e.message)}</p></div>`;
-    toast(e.message, 'error');
-  } finally {
-    btn.disabled = false; btn.textContent = '✨ 生成周报';
+    toast('加载周报列表失败：' + e.message, 'error');
+  }
+}
+
+async function generateReport(force = false) {
+  const select = document.getElementById('reportGenSelect');
+  const studentId = parseInt(select.value);
+  
+  if (!studentId) {
+    toast('请先选择学员', 'warning');
+    return;
+  }
+  
+  if (force) {
+    if (!confirm('确定要强制重新生成周报吗？这将覆盖缓存数据。')) {
+      return;
+    }
+  }
+  
+  toast('正在生成周报，请稍候...', 'info');
+  
+  try {
+    const res = await API.post('/api/admin/analytics/report', {
+      student_id: studentId,
+      force: force
+    });
+    
+    if (res.cached) {
+      toast('该学员已有周报（7天内），点击"强制重生成"可重新生成', 'info');
+    } else {
+      toast('周报生成成功！', 'success');
+    }
+    
+    // 刷新列表
+    loadReportList();
+  } catch (e) {
+    toast('生成周报失败：' + (e.message || '未知错误'), 'error');
+  }
+}
+
+async function viewReportDetail(reportId) {
+  try {
+    const report = await API.get(`/api/admin/ai-reports/${reportId}`);
+    
+    // 切换到详情视图
+    document.getElementById('reportListView').style.display = 'none';
+    document.getElementById('reportDetailView').style.display = 'block';
+    
+    // 渲染详情内容
+    const container = document.getElementById('reportDetailContent');
+    const summary = report.data_summary || {};
+    const date = new Date(report.created_at).toLocaleString('zh-CN');
+    
+    let html = `
+      <div style="margin-bottom:24px;">
+        <h2 style="margin:0 0 8px 0;font-size:20px;color:#2d3436;">📝 ${esc(report.student_name)} 的学习周报</h2>
+        <div style="color:#7a6c8c;font-size:13px;">生成时间：${date}</div>
+      </div>
+      
+      <div style="background:#f8f9fa;border-left:4px solid #667eea;padding:16px;border-radius:6px;margin-bottom:24px;">
+        <div style="font-size:15px;line-height:1.8;white-space:pre-wrap;">${esc(report.report_text)}</div>
+      </div>
+    `;
+    
+    // KPI 卡片
+    if (summary.exams || summary.avg_score || summary.best_score) {
+      html += `
+        <h3 style="margin:24px 0 12px 0;font-size:16px;color:#2d3436;">📊 关键指标</h3>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+      `;
+      
+      if (summary.exams !== undefined) {
+        html += `
+          <div style="background:#f8f9fa;padding:16px;border-radius:6px;border:1px solid #e0e0e0;">
+            <div style="font-size:13px;color:#7a6c8c;margin-bottom:4px;">考试次数</div>
+            <div style="font-size:24px;font-weight:bold;color:#2d3436;">${summary.exams}</div>
+          </div>
+        `;
+      }
+      
+      if (summary.avg_score !== undefined) {
+        html += `
+          <div style="background:#f8f9fa;padding:16px;border-radius:6px;border:1px solid #e0e0e0;">
+            <div style="font-size:13px;color:#7a6c8c;margin-bottom:4px;">平均分</div>
+            <div style="font-size:24px;font-weight:bold;color:#667eea;">${summary.avg_score}</div>
+          </div>
+        `;
+      }
+      
+      if (summary.best_score !== undefined) {
+        html += `
+          <div style="background:#f8f9fa;padding:16px;border-radius:6px;border:1px solid #e0e0e0;">
+            <div style="font-size:13px;color:#7a6c8c;margin-bottom:4px;">最高分</div>
+            <div style="font-size:24px;font-weight:bold;color:#51cf66;">${summary.best_score}</div>
+          </div>
+        `;
+      }
+      
+      if (summary.unmastered_wrong !== undefined) {
+        html += `
+          <div style="background:#f8f9fa;padding:16px;border-radius:6px;border:1px solid #e0e0e0;">
+            <div style="font-size:13px;color:#7a6c8c;margin-bottom:4px;">未掌握错题</div>
+            <div style="font-size:24px;font-weight:bold;color:#ff6b6b;">${summary.unmastered_wrong}</div>
+          </div>
+        `;
+      }
+      
+      html += '</div>';
+    }
+    
+    // 图表区域
+    if (summary.score_trend || summary.by_subject || summary.weak_topics) {
+      html += '<h3 style="margin:24px 0 12px 0;font-size:16px;color:#2d3436;">📈 详细数据</h3>';
+      html += '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:16px;">';
+      
+      // 成绩趋势图
+      if (summary.score_trend && summary.score_trend.length > 0) {
+        html += `
+          <div style="background:#fff;padding:16px;border-radius:6px;border:1px solid #e0e0e0;">
+            <h4 style="margin:0 0 12px 0;font-size:14px;color:#2d3436;">成绩趋势</h4>
+            <div id="chartScoreTrend_${report.id}" style="width:100%;height:250px;"></div>
+          </div>
+        `;
+      }
+      
+      // 科目正确率饼图
+      if (summary.by_subject && summary.by_subject.length > 0) {
+        html += `
+          <div style="background:#fff;padding:16px;border-radius:6px;border:1px solid #e0e0e0;">
+            <h4 style="margin:0 0 12px 0;font-size:14px;color:#2d3436;">科目答题占比</h4>
+            <div id="chartSubjectPie_${report.id}" style="width:100%;height:250px;"></div>
+          </div>
+        `;
+      }
+      
+      html += '</div>';
+      
+      // 薄弱知识点柱状图（全宽）
+      if (summary.weak_topics && summary.weak_topics.length > 0) {
+        html += `
+          <div style="background:#fff;padding:16px;border-radius:6px;border:1px solid #e0e0e0;margin-top:16px;">
+            <h4 style="margin:0 0 12px 0;font-size:14px;color:#2d3436;">薄弱知识点 TOP5</h4>
+            <div id="chartWeakTopics_${report.id}" style="width:100%;height:300px;"></div>
+          </div>
+        `;
+      }
+    }
+    
+    container.innerHTML = html;
+    
+    // 渲染图表
+    if (typeof echarts !== 'undefined') {
+      // 成绩趋势图
+      if (summary.score_trend && summary.score_trend.length > 0) {
+        const chartDom = document.getElementById(`chartScoreTrend_${report.id}`);
+        if (chartDom) {
+          const chart = echarts.init(chartDom);
+          chart.setOption({
+            tooltip: { trigger: 'axis' },
+            grid: { left: 40, right: 20, top: 20, bottom: 40 },
+            xAxis: { 
+              type: 'category',
+              data: summary.score_trend.map(d => d.date),
+              axisLabel: { fontSize: 11, rotate: 30 }
+            },
+            yAxis: { 
+              type: 'value',
+              min: 0,
+              max: 100,
+              axisLabel: { fontSize: 11 }
+            },
+            series: [{
+              type: 'line',
+              data: summary.score_trend.map(d => d.score),
+              smooth: true,
+              itemStyle: { color: '#667eea' },
+              areaStyle: { color: 'rgba(102,126,234,0.1)' }
+            }]
+          });
+        }
+      }
+      
+      // 科目正确率饼图
+      if (summary.by_subject && summary.by_subject.length > 0) {
+        const chartDom = document.getElementById(`chartSubjectPie_${report.id}`);
+        if (chartDom) {
+          const chart = echarts.init(chartDom);
+          chart.setOption({
+            tooltip: { 
+              trigger: 'item',
+              formatter: '{b}: {c}次 ({d}%)'
+            },
+            series: [{
+              type: 'pie',
+              radius: ['40%', '70%'],
+              center: ['50%', '55%'],
+              data: summary.by_subject.map(s => ({
+                name: s.subject,
+                value: s.total
+              })),
+              itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+              label: { show: true, fontSize: 11 }
+            }]
+          });
+        }
+      }
+      
+      // 薄弱知识点柱状图
+      if (summary.weak_topics && summary.weak_topics.length > 0) {
+        const chartDom = document.getElementById(`chartWeakTopics_${report.id}`);
+        if (chartDom) {
+          const chart = echarts.init(chartDom);
+          const top5 = summary.weak_topics.slice(0, 5).reverse();
+          chart.setOption({
+            tooltip: { 
+              trigger: 'axis',
+              formatter: function(params) {
+                const d = top5[params[0].dataIndex];
+                return `<b>${d.subject} - ${d.topic}</b><br/>作答：${d.total}次<br/>正确率：${d.rate}%`;
+              }
+            },
+            grid: { left: 120, right: 40, top: 20, bottom: 30 },
+            xAxis: { 
+              type: 'value',
+              max: 100,
+              axisLabel: { formatter: '{value}%', fontSize: 11 }
+            },
+            yAxis: { 
+              type: 'category',
+              data: top5.map(t => t.topic),
+              axisLabel: { fontSize: 11 }
+            },
+            series: [{
+              type: 'bar',
+              data: top5.map(t => t.rate),
+              itemStyle: { color: '#ff6b6b' },
+              label: { show: true, position: 'right', formatter: '{c}%', fontSize: 11 }
+            }]
+          });
+        }
+      }
+    }
+    
+    // 绑定删除按钮
+    document.getElementById('deleteReportBtn').onclick = () => deleteReport(report.id, true);
+    
+  } catch (e) {
+    toast('加载周报详情失败：' + e.message, 'error');
+  }
+}
+
+function showReportList() {
+  document.getElementById('reportListView').style.display = 'block';
+  document.getElementById('reportDetailView').style.display = 'none';
+  loadReportList();
+}
+
+async function deleteReport(reportId, fromDetail = false) {
+  if (!confirm('确定要删除这份周报吗？')) {
+    return;
+  }
+  
+  try {
+    await API.delete(`/api/admin/ai-reports/${reportId}`);
+    toast('周报已删除', 'success');
+    
+    if (fromDetail) {
+      showReportList();
+    } else {
+      loadReportList();
+    }
+  } catch (e) {
+    toast('删除失败：' + e.message, 'error');
   }
 }
 

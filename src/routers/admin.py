@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from database import engine, get_db
-from models import User, ExamRecord, AnswerRecord
+from models import User, ExamRecord, AnswerRecord, AIReport
 from schemas import ExamRecordOut, AnswerRecordOut, QuestionOut
 from core.deps import require_role
 
@@ -731,6 +731,7 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
 
 class ReportRequest(BaseModel):
     student_id: int
+    force: bool = False  # True 时强制重新生成，忽略 7 天缓存
 
 
 @router.post("/analytics/report")
@@ -744,6 +745,22 @@ def analytics_report(data: ReportRequest, _=Depends(require_role("admin")), db: 
         raise HTTPException(status_code=404, detail="学员不存在")
     if not llm_grader.LLM_API_KEY:
         raise HTTPException(status_code=502, detail="LLM_API_KEY 未配置，无法生成 AI 报告")
+
+    # 检查7天内是否有缓存的周报（除非强制重新生成）
+    if not data.force:
+        cached_report = db.query(AIReport).filter(
+            AIReport.student_id == data.student_id,
+            AIReport.created_at >= text("datetime('now', '-7 days')")
+        ).order_by(AIReport.created_at.desc()).first()
+        
+        if cached_report:
+            return {
+                "student": {"id": student.id, "nickname": student.nickname},
+                "report": cached_report.report_text,
+                "data_summary": cached_report.data_summary,
+                "cached": True,  # 标记为缓存返回
+                "report_id": cached_report.id
+            }
 
     by_subject = _fetch_all(db, """
         SELECT s.name subject, COUNT(*) total,
@@ -821,13 +838,114 @@ def analytics_report(data: ReportRequest, _=Depends(require_role("admin")), db: 
     except Exception as e:  # noqa: BLE001
         raise HTTPException(status_code=502, detail=f"AI 报告生成失败：{e}")
 
+    # 构建完整的图表数据
+    score_trend = []
+    for i, exam in enumerate(exams):
+        score_trend.append({
+            "index": i + 1,
+            "score": exam["score"],
+            "date": exam["started_at"].strftime("%Y-%m-%d") if hasattr(exam["started_at"], "strftime") else str(exam["started_at"])[:10]
+        })
+
+    # 保存报告到数据库
+    data_summary = {
+        "exams": len(exams),
+        "unmastered_wrong": wrong_cnt,
+        "avg_score": round(sum(scores) / len(scores), 1),
+        "best_score": max(scores),
+        "score_trend": score_trend,
+        "by_subject": [{"subject": r["subject"], "total": r["total"], "ok": r["ok"], 
+                        "rate": round(r["ok"] / r["total"] * 100, 1) if r["total"] > 0 else 0} 
+                       for r in by_subject],
+        "weak_topics": [{"topic": r["topic"], "subject": r["subject"], "total": r["total"], "ok": r["ok"],
+                         "rate": round(r["ok"] / r["total"] * 100, 1) if r["total"] > 0 else 0}
+                        for r in by_topic]
+    }
+
+    new_report = AIReport(
+        student_id=student.id,
+        student_name=student.nickname,
+        report_text=report_text,
+        data_summary=data_summary
+    )
+    db.add(new_report)
+    db.commit()
+    db.refresh(new_report)
+
     return {
         "student": {"id": student.id, "nickname": student.nickname},
         "report": report_text,
-        "data_summary": {
-            "exams": len(exams),
-            "unmastered_wrong": wrong_cnt,
-            "avg_score": round(sum(scores) / len(scores), 1),
-            "best_score": max(scores),
-        },
+        "data_summary": data_summary,
+        "cached": False,  # 新生成的报告
+        "report_id": new_report.id
     }
+
+
+# ============ AI 周报管理 ============
+from fastapi import Query
+from datetime import datetime, timedelta
+
+@router.get("/ai-reports")
+def list_reports(
+    student_id: Optional[int] = None,
+    _=Depends(require_role("admin")),
+    db: Session = Depends(get_db)
+):
+    """获取AI周报列表"""
+    query = db.query(AIReport)
+    
+    if student_id:
+        query = query.filter(AIReport.student_id == student_id)
+    
+    reports = query.order_by(AIReport.created_at.desc()).all()
+    
+    return [{
+        "id": r.id,
+        "student_id": r.student_id,
+        "student_name": r.student_name,
+        "report_preview": r.report_text[:100] + "..." if len(r.report_text) > 100 else r.report_text,
+        "data_summary": r.data_summary,
+        "created_at": r.created_at
+    } for r in reports]
+
+
+@router.get("/ai-reports/{report_id}")
+def get_report(
+    report_id: int,
+    _=Depends(require_role("admin")),
+    db: Session = Depends(get_db)
+):
+    """获取单个AI报告详情"""
+    report = db.query(AIReport).filter(AIReport.id == report_id).first()
+    
+    if not report:
+        raise HTTPException(status_code=404, detail="报告不存在")
+    
+    student = db.query(User).filter(User.id == report.student_id).first()
+    
+    return {
+        "id": report.id,
+        "student_id": report.student_id,
+        "student_name": report.student_name,
+        "report": report.report_text,
+        "data_summary": report.data_summary,
+        "created_at": report.created_at
+    }
+
+
+@router.delete("/ai-reports/{report_id}")
+def delete_report(
+    report_id: int,
+    _=Depends(require_role("admin")),
+    db: Session = Depends(get_db)
+):
+    """删除AI报告"""
+    report = db.query(AIReport).filter(AIReport.id == report_id).first()
+    
+    if not report:
+        raise HTTPException(status_code=404, detail="报告不存在")
+    
+    db.delete(report)
+    db.commit()
+    
+    return {"message": "报告已删除"}

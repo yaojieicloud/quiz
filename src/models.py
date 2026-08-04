@@ -189,3 +189,15 @@ class WrongQuestion(Base):
     user = relationship("User", back_populates="wrong_questions")
     question = relationship("Question", back_populates="wrong_records")
     __table_args__ = (UniqueConstraint("user_id", "question_id", name="uq_user_question"),)
+
+
+class AIReport(Base):
+    """AI 周报：存储 LLM 生成的学习报告"""
+    __tablename__ = "ai_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    student_name = Column(String(50), nullable=False)  # 冗余存储，避免学员改名影响历史
+    report_text = Column(Text, nullable=False)  # LLM 生成的周报正文
+    data_summary = Column(JSON, nullable=False)  # 生成时的数据快照（图表渲染用）
+    created_at = Column(DateTime, default=datetime.utcnow)
