@@ -1,0 +1,10 @@
+{
+  "interval": 5,
+  "thresholds": {"cpu_temp": 85, "gpu_temp": 85, "cpu_percent": 90, "mem_percent": 90, "disk_percent": 90},
+  "alert_sustain_minutes": 30,
+  "recover_debounce_samples": 6,
+  "log_retention_days": 30,
+  "snapshot_window": 200,
+  "pushplus_token": "",
+  "temp_reader_timeout": 20
+}

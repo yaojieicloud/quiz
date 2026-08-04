@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <AssemblyName>TaskRegistrar</AssemblyName>
+    <Nullable>disable</Nullable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Management" Version="10.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Win32.TaskScheduler">
+      <HintPath>..\..\vendor\LibreHardwareMonitor\Microsoft.Win32.TaskScheduler.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
