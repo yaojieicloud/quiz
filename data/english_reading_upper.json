@@ -1,0 +1,4322 @@
+[
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Hello! My name is Mike. I am a boy. I am nine. I like to make friends. Nice to meet you!",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is the boy's name?",
+        "options": [
+          "Tom",
+          "Mike",
+          "John",
+          "Sam"
+        ],
+        "answer": "1",
+        "explanation": "文中说 My name is Mike。"
+      },
+      {
+        "type": "choice",
+        "q": "How old is Mike?",
+        "options": [
+          "Eight",
+          "Ten",
+          "Nine",
+          "Seven"
+        ],
+        "answer": "2",
+        "explanation": "文中说 I am nine。"
+      }
+    ],
+    "answer": "1,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "This is my new friend. Her name is Lily. She is a girl. She is nice. We play together.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is the girl's name?",
+        "options": [
+          "Lily",
+          "Lucy",
+          "Amy",
+          "Ann"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Her name is Lily。"
+      },
+      {
+        "type": "choice",
+        "q": "Is Lily nice?",
+        "options": [
+          "Yes",
+          "No",
+          "I don't know",
+          "Maybe"
+        ],
+        "answer": "0",
+        "explanation": "文中说 She is nice。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Good morning! I am Zhang Peng. This is my friend Li Ming. We are in Class One.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Who is Zhang Peng's friend?",
+        "options": [
+          "Li Ming",
+          "Wang Lei",
+          "Chen Jie",
+          "Mike"
+        ],
+        "answer": "0",
+        "explanation": "文中说 This is my friend Li Ming。"
+      },
+      {
+        "type": "choice",
+        "q": "When does the story happen?",
+        "options": [
+          "Evening",
+          "Morning",
+          "Night",
+          "Noon"
+        ],
+        "answer": "1",
+        "explanation": "开头说 Good morning。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "A: What's your name? B: My name is Sarah. A: Nice to meet you. B: Nice to meet you, too.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is B's name?",
+        "options": [
+          "Sarah",
+          "Emma",
+          "Lisa",
+          "Kate"
+        ],
+        "answer": "0",
+        "explanation": "B 说 My name is Sarah。"
+      },
+      {
+        "type": "choice",
+        "q": "What do they say to each other?",
+        "options": [
+          "Goodbye",
+          "Nice to meet you",
+          "See you",
+          "Good night"
+        ],
+        "answer": "1",
+        "explanation": "他们都说了 Nice to meet you。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Are you a boy or a girl? I am a girl. My friend is a boy. We are good friends.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is the speaker?",
+        "options": [
+          "A boy",
+          "A girl",
+          "A teacher",
+          "A baby"
+        ],
+        "answer": "1",
+        "explanation": "文中说 I am a girl。"
+      },
+      {
+        "type": "choice",
+        "q": "What is the speaker's friend?",
+        "options": [
+          "A girl",
+          "A dog",
+          "A boy",
+          "A cat"
+        ],
+        "answer": "2",
+        "explanation": "文中说 My friend is a boy。"
+      }
+    ],
+    "answer": "1,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Mike: Hello, I'm Mike. What's your name? Lily: I'm Lily. Mike: Let's be friends! Lily: Great!",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does Mike want?",
+        "options": [
+          "Food",
+          "To be friends",
+          "A toy",
+          "Water"
+        ],
+        "answer": "1",
+        "explanation": "Mike 说 Let's be friends。"
+      },
+      {
+        "type": "choice",
+        "q": "How does Lily feel?",
+        "options": [
+          "Great",
+          "Sad",
+          "Angry",
+          "Tired"
+        ],
+        "answer": "0",
+        "explanation": "Lily 说 Great。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Tom: Hi! My name is Tom. Sam: Hi, I'm Sam. Tom: How are you? Sam: I'm fine, thank you.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What are the two boys?",
+        "options": [
+          "Brothers",
+          "Friends meeting",
+          "Teacher and student",
+          "Father and son"
+        ],
+        "answer": "1",
+        "explanation": "两个男孩在互相问好、交朋友。"
+      },
+      {
+        "type": "choice",
+        "q": "How is Sam?",
+        "options": [
+          "Fine",
+          "Sad",
+          "Sick",
+          "Hungry"
+        ],
+        "answer": "0",
+        "explanation": "Sam 说 I'm fine。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "M m is for make. N n is for name. We say hello. We say hi. We make new friends.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What letter is for 'make'?",
+        "options": [
+          "M m",
+          "N n",
+          "A a",
+          "B b"
+        ],
+        "answer": "0",
+        "explanation": "文中说 M m is for make。"
+      },
+      {
+        "type": "choice",
+        "q": "What letter is for 'name'?",
+        "options": [
+          "M m",
+          "N n",
+          "O o",
+          "P p"
+        ],
+        "answer": "1",
+        "explanation": "文中说 N n is for name。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Look at the big letter M m. Now look at the small letter n. M is big, n is small. We learn letters.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Which letter is big?",
+        "options": [
+          "M",
+          "n",
+          "o",
+          "p"
+        ],
+        "answer": "0",
+        "explanation": "文中说 M is big。"
+      },
+      {
+        "type": "choice",
+        "q": "Which letter is small?",
+        "options": [
+          "M",
+          "n",
+          "m",
+          "N"
+        ],
+        "answer": "1",
+        "explanation": "文中说 n is small。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "I have two friends. One is a boy. One is a girl. The boy is tall. The girl is short. We are happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many friends does the writer have?",
+        "options": [
+          "One",
+          "Two",
+          "Three",
+          "Four"
+        ],
+        "answer": "1",
+        "explanation": "文中说 I have two friends。"
+      },
+      {
+        "type": "choice",
+        "q": "What is the girl like?",
+        "options": [
+          "Tall",
+          "Short",
+          "Big",
+          "Fat"
+        ],
+        "answer": "1",
+        "explanation": "文中说 The girl is short。"
+      }
+    ],
+    "answer": "1,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "This is my friend. He is from China. His name is Chen Jie. I am from China, too.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Where is Chen Jie from?",
+        "options": [
+          "China",
+          "USA",
+          "UK",
+          "Canada"
+        ],
+        "answer": "0",
+        "explanation": "文中说 He is from China。"
+      },
+      {
+        "type": "choice",
+        "q": "What is the boy's name?",
+        "options": [
+          "Chen Jie",
+          "Mike",
+          "Tom",
+          "Jack"
+        ],
+        "answer": "0",
+        "explanation": "文中说 His name is Chen Jie。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "At school, I meet a new girl. She says hi to me. I say hi back. Now we talk and laugh together.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Where does the writer meet the girl?",
+        "options": [
+          "At school",
+          "At home",
+          "In the park",
+          "In the zoo"
+        ],
+        "answer": "0",
+        "explanation": "文中说 At school。"
+      },
+      {
+        "type": "choice",
+        "q": "What do they do together?",
+        "options": [
+          "Talk and laugh",
+          "Sleep",
+          "Cry",
+          "Fight"
+        ],
+        "answer": "0",
+        "explanation": "文中说 we talk and laugh together。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "The letter A a says /a/. Apple starts with A. The letter B b says /b/. Boy starts with B.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with A?",
+        "options": [
+          "Apple",
+          "Banana",
+          "Cat",
+          "Dog"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Apple starts with A。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with B?",
+        "options": [
+          "Apple",
+          "Boy",
+          "Ant",
+          "Egg"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Boy starts with B。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 2 Different families",
+    "content": "This is my family. I have a father and a mother. My father is tall. My mother is kind. I love my family.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many parents does the writer have?",
+        "options": [
+          "One",
+          "Two",
+          "Three",
+          "Four"
+        ],
+        "answer": "1",
+        "explanation": "文中说有 father 和 mother 两位。"
+      },
+      {
+        "type": "choice",
+        "q": "What is the mother like?",
+        "options": [
+          "Kind",
+          "Angry",
+          "Sad",
+          "Small"
+        ],
+        "answer": "0",
+        "explanation": "文中说 My mother is kind。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 2 Different families",
+    "content": "This is my brother. He is ten. This is my sister. She is six. We are a happy family.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How old is the brother?",
+        "options": [
+          "Six",
+          "Ten",
+          "Eight",
+          "Nine"
+        ],
+        "answer": "1",
+        "explanation": "文中说 He is ten。"
+      },
+      {
+        "type": "choice",
+        "q": "How old is the sister?",
+        "options": [
+          "Ten",
+          "Seven",
+          "Six",
+          "Five"
+        ],
+        "answer": "2",
+        "explanation": "文中说 She is six。"
+      }
+    ],
+    "answer": "1,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 2 Different families",
+    "content": "I have a big family. There is my grandpa, my grandma, my father, my mother and me.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Is the family big or small?",
+        "options": [
+          "Big",
+          "Small",
+          "One",
+          "Empty"
+        ],
+        "answer": "0",
+        "explanation": "文中说 I have a big family。"
+      },
+      {
+        "type": "choice",
+        "q": "Who is NOT in the family?",
+        "options": [
+          "Grandpa",
+          "Grandma",
+          "Uncle",
+          "Mother"
+        ],
+        "answer": "2",
+        "explanation": "文中没有提到 uncle。"
+      }
+    ],
+    "answer": "0,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 2 Different families",
+    "content": "A: Who is he? B: He is my father. A: Who is she? B: She is my mother.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Who is 'he'?",
+        "options": [
+          "Mother",
+          "Father",
+          "Sister",
+          "Friend"
+        ],
+        "answer": "1",
+        "explanation": "B 说 He is my father。"
+      },
+      {
+        "type": "choice",
+        "q": "Who is 'she'?",
+        "options": [
+          "Father",
+          "Brother",
+          "Mother",
+          "Aunt"
+        ],
+        "answer": "2",
+        "explanation": "B 说 She is my mother。"
+      }
+    ],
+    "answer": "1,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Is this your sister? No, it is not. This is my cousin. My sister is over there.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Is it the writer's sister?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "I don't know"
+        ],
+        "answer": "1",
+        "explanation": "文中说 No, it is not。"
+      },
+      {
+        "type": "choice",
+        "q": "Who is it?",
+        "options": [
+          "Cousin",
+          "Sister",
+          "Mother",
+          "Aunt"
+        ],
+        "answer": "0",
+        "explanation": "文中说 This is my cousin。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Amy: Look, this is my family photo. Mike: Who is the man? Amy: He is my grandpa.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does Amy show?",
+        "options": [
+          "A photo",
+          "A book",
+          "A toy",
+          "A bag"
+        ],
+        "answer": "0",
+        "explanation": "Amy 说 this is my family photo。"
+      },
+      {
+        "type": "choice",
+        "q": "Who is the man?",
+        "options": [
+          "Grandpa",
+          "Father",
+          "Brother",
+          "Uncle"
+        ],
+        "answer": "0",
+        "explanation": "Amy 说 He is my grandpa。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Sam shows his family to Lily. The woman is his mother. The girl is his sister. Lily says they are nice.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Who is the woman?",
+        "options": [
+          "Sister",
+          "Mother",
+          "Aunt",
+          "Grandma"
+        ],
+        "answer": "1",
+        "explanation": "文中说 The woman is his mother。"
+      },
+      {
+        "type": "choice",
+        "q": "What does Lily say?",
+        "options": [
+          "They are nice",
+          "They are sad",
+          "They are tall",
+          "They are old"
+        ],
+        "answer": "0",
+        "explanation": "Lily 说 they are nice。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 2 Different families",
+    "content": "F f is for father. M m is for mother. Father, mother, I love you. Family is happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What letter is for father?",
+        "options": [
+          "F f",
+          "M m",
+          "D d",
+          "S s"
+        ],
+        "answer": "0",
+        "explanation": "文中说 F f is for father。"
+      },
+      {
+        "type": "choice",
+        "q": "What letter is for mother?",
+        "options": [
+          "F f",
+          "M m",
+          "B b",
+          "G g"
+        ],
+        "answer": "1",
+        "explanation": "文中说 M m is for mother。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Look at letter G g. It says /g/. Girl starts with G. Look at letter H h. It says /h/. Home starts with H.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with G?",
+        "options": [
+          "Girl",
+          "Home",
+          "Hat",
+          "Hand"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Girl starts with G。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with H?",
+        "options": [
+          "Girl",
+          "Goat",
+          "Home",
+          "Game"
+        ],
+        "answer": "2",
+        "explanation": "文中说 Home starts with H。"
+      }
+    ],
+    "answer": "0,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 2 Different families",
+    "content": "My family has five people. Father, mother, brother, sister and me. We eat dinner together.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many people are in the family?",
+        "options": [
+          "Three",
+          "Four",
+          "Five",
+          "Six"
+        ],
+        "answer": "2",
+        "explanation": "文中说 five people。"
+      },
+      {
+        "type": "choice",
+        "q": "What do they do together?",
+        "options": [
+          "Eat dinner",
+          "Play ball",
+          "Swim",
+          "Sing"
+        ],
+        "answer": "0",
+        "explanation": "文中说 We eat dinner together。"
+      }
+    ],
+    "answer": "2,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 2 Different families",
+    "content": "This is my mother. She is a teacher. This is my father. He is a doctor. I love them.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is the mother's job?",
+        "options": [
+          "Doctor",
+          "Teacher",
+          "Nurse",
+          "Farmer"
+        ],
+        "answer": "1",
+        "explanation": "文中说 She is a teacher。"
+      },
+      {
+        "type": "choice",
+        "q": "What is the father's job?",
+        "options": [
+          "Teacher",
+          "Doctor",
+          "Driver",
+          "Cook"
+        ],
+        "answer": "1",
+        "explanation": "文中说 He is a doctor。"
+      }
+    ],
+    "answer": "1,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 2 Different families",
+    "content": "On Sunday, my family goes to the park. Father plays ball. Mother reads a book. I run and jump.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "When do they go to the park?",
+        "options": [
+          "Sunday",
+          "Monday",
+          "Friday",
+          "Night"
+        ],
+        "answer": "0",
+        "explanation": "文中说 On Sunday。"
+      },
+      {
+        "type": "choice",
+        "q": "What does mother do?",
+        "options": [
+          "Plays ball",
+          "Reads a book",
+          "Runs",
+          "Swims"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Mother reads a book。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "I like animals. This is a dog. It is friendly. This is a cat. It is cute. They are my pets.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is friendly?",
+        "options": [
+          "Cat",
+          "Dog",
+          "Bird",
+          "Fish"
+        ],
+        "answer": "1",
+        "explanation": "文中说 dog is friendly。"
+      },
+      {
+        "type": "choice",
+        "q": "What is cute?",
+        "options": [
+          "Dog",
+          "Cat",
+          "Pig",
+          "Cow"
+        ],
+        "answer": "1",
+        "explanation": "文中说 cat is cute。"
+      }
+    ],
+    "answer": "1,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Look at the panda. It is black and white. It eats bamboo. Look at the monkey. It likes bananas.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is the panda?",
+        "options": [
+          "Black and white",
+          "Red",
+          "Blue",
+          "Green"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It is black and white。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the monkey like?",
+        "options": [
+          "Bamboo",
+          "Bananas",
+          "Grass",
+          "Fish"
+        ],
+        "answer": "1",
+        "explanation": "文中说 It likes bananas。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "The bird can fly. The fish can swim. The rabbit can jump. Animals are amazing.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What can the bird do?",
+        "options": [
+          "Swim",
+          "Fly",
+          "Jump",
+          "Run"
+        ],
+        "answer": "1",
+        "explanation": "文中说 The bird can fly。"
+      },
+      {
+        "type": "choice",
+        "q": "What can the fish do?",
+        "options": [
+          "Fly",
+          "Jump",
+          "Swim",
+          "Climb"
+        ],
+        "answer": "2",
+        "explanation": "文中说 The fish can swim。"
+      }
+    ],
+    "answer": "1,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "A: What's this? B: It's an elephant. A: Wow, it's so big! B: Yes, it has a long nose.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What animal is it?",
+        "options": [
+          "Elephant",
+          "Tiger",
+          "Horse",
+          "Bear"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's an elephant。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the elephant have?",
+        "options": [
+          "Long nose",
+          "Short tail",
+          "Small eyes",
+          "Big ears only"
+        ],
+        "answer": "0",
+        "explanation": "文中说 it has a long nose。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Do you like ducks? Yes, I do. They can swim. Do you like pigs? No, I don't.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Does the writer like ducks?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "I don't know"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Yes, I do。"
+      },
+      {
+        "type": "choice",
+        "q": "What can ducks do?",
+        "options": [
+          "Fly high",
+          "Swim",
+          "Climb",
+          "Sing"
+        ],
+        "answer": "1",
+        "explanation": "文中说 They can swim。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Tom goes to the zoo. He sees a tiger. The tiger is strong. He sees a giraffe. It is very tall.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Where does Tom go?",
+        "options": [
+          "Zoo",
+          "School",
+          "Home",
+          "Shop"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Tom goes to the zoo。"
+      },
+      {
+        "type": "choice",
+        "q": "What is the giraffe like?",
+        "options": [
+          "Very tall",
+          "Small",
+          "Short",
+          "Fat"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It is very tall。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Lily has a little dog. It is white. It can run fast. Lily plays with it every day. They are good friends.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is the dog?",
+        "options": [
+          "White",
+          "Black",
+          "Brown",
+          "Red"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It is white。"
+      },
+      {
+        "type": "choice",
+        "q": "When does Lily play with it?",
+        "options": [
+          "Every day",
+          "Never",
+          "Once a year",
+          "Only Sunday"
+        ],
+        "answer": "0",
+        "explanation": "文中说 every day。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "D d is for dog. C c is for cat. The letter D says /d/. The letter C says /k/.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What letter is for dog?",
+        "options": [
+          "D d",
+          "C c",
+          "B b",
+          "P p"
+        ],
+        "answer": "0",
+        "explanation": "文中说 D d is for dog。"
+      },
+      {
+        "type": "choice",
+        "q": "What letter is for cat?",
+        "options": [
+          "D d",
+          "C c",
+          "T t",
+          "K k"
+        ],
+        "answer": "1",
+        "explanation": "文中说 C c is for cat。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Look at letter I i. It says /i/. Pig starts with I. Look at letter J j. It says /dʒ/. Juice starts with J.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with I?",
+        "options": [
+          "Pig",
+          "Juice",
+          "Jam",
+          "Jet"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Pig starts with I。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with J?",
+        "options": [
+          "Pig",
+          "Ice",
+          "Juice",
+          "Ink"
+        ],
+        "answer": "2",
+        "explanation": "文中说 Juice starts with J。"
+      }
+    ],
+    "answer": "0,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "At the farm, I see many animals. There are cows, sheep and horses. The horses can run very fast.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Where is the writer?",
+        "options": [
+          "Zoo",
+          "Farm",
+          "Park",
+          "School"
+        ],
+        "answer": "1",
+        "explanation": "文中说 At the farm。"
+      },
+      {
+        "type": "choice",
+        "q": "What can the horses do?",
+        "options": [
+          "Swim",
+          "Fly",
+          "Run fast",
+          "Climb"
+        ],
+        "answer": "2",
+        "explanation": "文中说 The horses can run very fast。"
+      }
+    ],
+    "answer": "1,2",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "A bird is in the tree. A fish is in the water. A rabbit is on the grass. Where is the cat? It is on the sofa.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Where is the bird?",
+        "options": [
+          "Water",
+          "Tree",
+          "Grass",
+          "Sofa"
+        ],
+        "answer": "1",
+        "explanation": "文中说 A bird is in the tree。"
+      },
+      {
+        "type": "choice",
+        "q": "Where is the cat?",
+        "options": [
+          "Sofa",
+          "Tree",
+          "Water",
+          "Grass"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It is on the sofa。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Mike wants a pet. He likes dogs. Dogs are friendly and smart. His mother says yes. Mike is very happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What pet does Mike want?",
+        "options": [
+          "Cat",
+          "Dog",
+          "Bird",
+          "Fish"
+        ],
+        "answer": "1",
+        "explanation": "文中说 He likes dogs。"
+      },
+      {
+        "type": "choice",
+        "q": "How does Mike feel?",
+        "options": [
+          "Very happy",
+          "Sad",
+          "Angry",
+          "Tired"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Mike is very happy。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "I like plants. This is a tree. It is tall. This is a flower. It is beautiful. Plants make our world green.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is tall?",
+        "options": [
+          "Flower",
+          "Tree",
+          "Grass",
+          "Leaf"
+        ],
+        "answer": "1",
+        "explanation": "文中说 tree is tall。"
+      },
+      {
+        "type": "choice",
+        "q": "What is beautiful?",
+        "options": [
+          "Tree",
+          "Flower",
+          "Stone",
+          "Rock"
+        ],
+        "answer": "1",
+        "explanation": "文中说 flower is beautiful。"
+      }
+    ],
+    "answer": "1,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Look at the apple tree. It has many apples. Look at the leaf. It is green. The plants are nice.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does the tree have?",
+        "options": [
+          "Apples",
+          "Birds",
+          "Cats",
+          "Books"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It has many apples。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is the leaf?",
+        "options": [
+          "Red",
+          "Green",
+          "Blue",
+          "Yellow"
+        ],
+        "answer": "1",
+        "explanation": "文中说 It is green。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "The seed grows into a plant. The plant needs water and sun. Then it has leaves and flowers.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does the plant need?",
+        "options": [
+          "Water and sun",
+          "Meat",
+          "Milk",
+          "Candy"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The plant needs water and sun。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the seed become?",
+        "options": [
+          "A plant",
+          "A stone",
+          "A toy",
+          "A ball"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The seed grows into a plant。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "A: What's this? B: It's a flower. A: What colour is it? B: It's red.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is it?",
+        "options": [
+          "A flower",
+          "A tree",
+          "A leaf",
+          "A fruit"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's a flower。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is it?",
+        "options": [
+          "Red",
+          "Blue",
+          "Green",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's red。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Do you like plants? Yes, I do. I water the flowers every day. They grow very well.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Does the writer like plants?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Yes, I do。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the writer do every day?",
+        "options": [
+          "Waters the flowers",
+          "Cuts the tree",
+          "Eats fruit",
+          "Plays ball"
+        ],
+        "answer": "0",
+        "explanation": "文中说 I water the flowers every day。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "In spring, the trees turn green. The flowers start to open. The birds sing in the trees. Spring is beautiful.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour do trees turn in spring?",
+        "options": [
+          "Green",
+          "White",
+          "Black",
+          "Brown"
+        ],
+        "answer": "0",
+        "explanation": "文中说 the trees turn green。"
+      },
+      {
+        "type": "choice",
+        "q": "What do the birds do?",
+        "options": [
+          "Sing",
+          "Sleep",
+          "Swim",
+          "Cry"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The birds sing。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Lily plants a seed in the garden. She waters it every day. Soon a small plant grows. Lily is so happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Where does Lily plant the seed?",
+        "options": [
+          "Garden",
+          "Room",
+          "Kitchen",
+          "Zoo"
+        ],
+        "answer": "0",
+        "explanation": "文中说 in the garden。"
+      },
+      {
+        "type": "choice",
+        "q": "What grows soon?",
+        "options": [
+          "A small plant",
+          "A big tree",
+          "A dog",
+          "A rock"
+        ],
+        "answer": "0",
+        "explanation": "文中说 a small plant grows。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "K k is for kite. L l is for leaf. The letter K says /k/. The letter L says /l/.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What letter is for kite?",
+        "options": [
+          "K k",
+          "L l",
+          "M m",
+          "N n"
+        ],
+        "answer": "0",
+        "explanation": "文中说 K k is for kite。"
+      },
+      {
+        "type": "choice",
+        "q": "What letter is for leaf?",
+        "options": [
+          "K k",
+          "L l",
+          "P p",
+          "Q q"
+        ],
+        "answer": "1",
+        "explanation": "文中说 L l is for leaf。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Look at letter O o. It says /ɒ/. Orange starts with O. Look at letter P p. It says /p/. Pen starts with P.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with O?",
+        "options": [
+          "Orange",
+          "Pen",
+          "Pig",
+          "Pot"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Orange starts with O。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with P?",
+        "options": [
+          "Orange",
+          "Pen",
+          "Octopus",
+          "Owl"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Pen starts with P。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "There are many plants in the park. Trees, flowers and grass. The grass is soft. The flowers smell nice.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is soft?",
+        "options": [
+          "Tree",
+          "Grass",
+          "Stone",
+          "Flower"
+        ],
+        "answer": "1",
+        "explanation": "文中说 The grass is soft。"
+      },
+      {
+        "type": "choice",
+        "q": "How do the flowers smell?",
+        "options": [
+          "Nice",
+          "Bad",
+          "Cold",
+          "Hot"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The flowers smell nice。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "This is a big tree. It has green leaves. This is a small flower. It has red petals. I like them both.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does the tree have?",
+        "options": [
+          "Green leaves",
+          "Red petals",
+          "Blue fruit",
+          "Yellow flowers"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It has green leaves。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the flower have?",
+        "options": [
+          "Red petals",
+          "Green leaves",
+          "Long roots",
+          "Big seeds"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It has red petals。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Tom and his father go to the garden. They plant flowers together. Tom learns to water them. He loves plants now.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Who goes to the garden with Tom?",
+        "options": [
+          "Mother",
+          "Father",
+          "Sister",
+          "Friend"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Tom and his father。"
+      },
+      {
+        "type": "choice",
+        "q": "What does Tom learn to do?",
+        "options": [
+          "Water them",
+          "Cut them",
+          "Eat them",
+          "Sell them"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Tom learns to water them。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "The world is colourful. The sky is blue. The grass is green. The sun is yellow. I love colours.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is the sky?",
+        "options": [
+          "Blue",
+          "Red",
+          "Green",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The sky is blue。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is the sun?",
+        "options": [
+          "Yellow",
+          "Blue",
+          "Purple",
+          "White"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The sun is yellow。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "I see many colours. Red, blue, green, yellow, orange and purple. The rainbow has all these colours.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What has all these colours?",
+        "options": [
+          "Rainbow",
+          "Book",
+          "Car",
+          "House"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The rainbow has all these colours。"
+      },
+      {
+        "type": "choice",
+        "q": "Is blue one of the colours?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "文中列出了 blue。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "My favourite colour is red. My bag is red. My pen is red, too. Red is a warm colour.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is the favourite colour?",
+        "options": [
+          "Red",
+          "Blue",
+          "Green",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "文中说 My favourite colour is red。"
+      },
+      {
+        "type": "choice",
+        "q": "What is red too?",
+        "options": [
+          "Bag and pen",
+          "Shoe and hat",
+          "Book and desk",
+          "Chair and door"
+        ],
+        "answer": "0",
+        "explanation": "文中说 bag 和 pen 都是红色。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "A: What colour is the apple? B: It's red. A: What colour is the banana? B: It's yellow.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is the apple?",
+        "options": [
+          "Red",
+          "Blue",
+          "Green",
+          "Purple"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's red。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is the banana?",
+        "options": [
+          "Yellow",
+          "Red",
+          "Black",
+          "White"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's yellow。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Do you like blue? Yes, I do. The sea is blue. Do you like green? Yes, the trees are green.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is blue?",
+        "options": [
+          "Sea",
+          "Tree",
+          "Sun",
+          "Apple"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The sea is blue。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour are the trees?",
+        "options": [
+          "Green",
+          "Red",
+          "Blue",
+          "Yellow"
+        ],
+        "answer": "0",
+        "explanation": "文中说 the trees are green。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Lily draws a picture. She uses red, blue and yellow. Her picture is a garden. It is very beautiful.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does Lily draw?",
+        "options": [
+          "A garden",
+          "A dog",
+          "A car",
+          "A house"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Her picture is a garden。"
+      },
+      {
+        "type": "choice",
+        "q": "How is her picture?",
+        "options": [
+          "Beautiful",
+          "Ugly",
+          "Small",
+          "Dark"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It is very beautiful。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "After the rain, Mike sees a rainbow. It has many colours. Red, orange, yellow, green, blue and purple. He is so happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does Mike see after the rain?",
+        "options": [
+          "Rainbow",
+          "Cloud",
+          "Storm",
+          "Snow"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Mike sees a rainbow。"
+      },
+      {
+        "type": "choice",
+        "q": "How does Mike feel?",
+        "options": [
+          "So happy",
+          "Sad",
+          "Angry",
+          "Scared"
+        ],
+        "answer": "0",
+        "explanation": "文中说 He is so happy。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "R r is for red. G g is for green. The letter R says /r/. The letter G says /g/.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What letter is for red?",
+        "options": [
+          "R r",
+          "G g",
+          "B b",
+          "Y y"
+        ],
+        "answer": "0",
+        "explanation": "文中说 R r is for red。"
+      },
+      {
+        "type": "choice",
+        "q": "What letter is for green?",
+        "options": [
+          "R r",
+          "G g",
+          "P p",
+          "O o"
+        ],
+        "answer": "1",
+        "explanation": "文中说 G g is for green。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Look at letter S s. It says /s/. Sun starts with S. Look at letter T t. It says /t/. Tree starts with T.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with S?",
+        "options": [
+          "Sun",
+          "Tree",
+          "Top",
+          "Ten"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Sun starts with S。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with T?",
+        "options": [
+          "Sun",
+          "Tree",
+          "See",
+          "Sit"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Tree starts with T。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "I have a box of crayons. There are twelve colours. I draw a blue sea and a yellow sun. My picture is nice.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many colours are there?",
+        "options": [
+          "Ten",
+          "Twelve",
+          "Five",
+          "Eight"
+        ],
+        "answer": "1",
+        "explanation": "文中说 twelve colours。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is the sea in the picture?",
+        "options": [
+          "Blue",
+          "Red",
+          "Green",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "文中说 a blue sea。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "The traffic light has three colours. Red means stop. Green means go. Yellow means wait. We must follow it.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does red mean?",
+        "options": [
+          "Go",
+          "Stop",
+          "Wait",
+          "Run"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Red means stop。"
+      },
+      {
+        "type": "choice",
+        "q": "What does green mean?",
+        "options": [
+          "Stop",
+          "Go",
+          "Wait",
+          "Sleep"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Green means go。"
+      }
+    ],
+    "answer": "1,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Amy and Lily colour a picture together. Amy uses pink. Lily uses blue. They show it to their teacher. The teacher says well done.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour does Amy use?",
+        "options": [
+          "Pink",
+          "Blue",
+          "Green",
+          "Red"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Amy uses pink。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the teacher say?",
+        "options": [
+          "Well done",
+          "Bad",
+          "Stop",
+          "Go away"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The teacher says well done。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "I can count. One, two, three, four, five. Numbers are useful. We use numbers every day.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What can the writer do?",
+        "options": [
+          "Count",
+          "Swim",
+          "Fly",
+          "Cook"
+        ],
+        "answer": "0",
+        "explanation": "文中说 I can count。"
+      },
+      {
+        "type": "choice",
+        "q": "When do we use numbers?",
+        "options": [
+          "Every day",
+          "Never",
+          "Once a year",
+          "Only Sunday"
+        ],
+        "answer": "0",
+        "explanation": "文中说 We use numbers every day。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "There are six apples on the tree. I pick two. Now there are four apples left. Numbers help me count them.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many apples are left?",
+        "options": [
+          "Two",
+          "Four",
+          "Six",
+          "Eight"
+        ],
+        "answer": "1",
+        "explanation": "文中说 there are four apples left。"
+      },
+      {
+        "type": "choice",
+        "q": "How many apples does the writer pick?",
+        "options": [
+          "Two",
+          "Four",
+          "Three",
+          "One"
+        ],
+        "answer": "0",
+        "explanation": "文中说 I pick two。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "I have ten fingers. I have two hands. Each hand has five fingers. I use my fingers to count.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many fingers does the writer have?",
+        "options": [
+          "Five",
+          "Ten",
+          "Two",
+          "Eight"
+        ],
+        "answer": "1",
+        "explanation": "文中说 I have ten fingers。"
+      },
+      {
+        "type": "choice",
+        "q": "How many fingers does each hand have?",
+        "options": [
+          "Five",
+          "Ten",
+          "Three",
+          "Four"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Each hand has five fingers。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "A: How many books? B: I have three books. A: How many pens? B: I have two pens.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many books does B have?",
+        "options": [
+          "Three",
+          "Two",
+          "Four",
+          "One"
+        ],
+        "answer": "0",
+        "explanation": "B 说 I have three books。"
+      },
+      {
+        "type": "choice",
+        "q": "How many pens does B have?",
+        "options": [
+          "Two",
+          "Three",
+          "Five",
+          "Six"
+        ],
+        "answer": "0",
+        "explanation": "B 说 I have two pens。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "A: What's this number? B: It's seven. A: What's one and two? B: It's three.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is the number?",
+        "options": [
+          "Seven",
+          "Five",
+          "Nine",
+          "Four"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's seven。"
+      },
+      {
+        "type": "choice",
+        "q": "What is one and two?",
+        "options": [
+          "Three",
+          "Four",
+          "Two",
+          "Five"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's three。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "Mike has five toy cars. Tom gives him two more. Now Mike has seven cars. He is very happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many cars does Mike have at last?",
+        "options": [
+          "Five",
+          "Seven",
+          "Two",
+          "Three"
+        ],
+        "answer": "1",
+        "explanation": "5+2=7，文中说 seven cars。"
+      },
+      {
+        "type": "choice",
+        "q": "Who gives Mike more cars?",
+        "options": [
+          "Tom",
+          "Lily",
+          "Amy",
+          "Sam"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Tom gives him two more。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "There are eight birds in the tree. Three fly away. Now there are five birds left. We count them together.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many birds are left?",
+        "options": [
+          "Five",
+          "Eight",
+          "Three",
+          "Two"
+        ],
+        "answer": "0",
+        "explanation": "8-3=5，文中说 five birds left。"
+      },
+      {
+        "type": "choice",
+        "q": "How many birds fly away?",
+        "options": [
+          "Three",
+          "Five",
+          "Eight",
+          "One"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Three fly away。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "The number 1 looks like a stick. The number 2 looks like a duck. We learn to write numbers.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does 1 look like?",
+        "options": [
+          "A stick",
+          "A duck",
+          "A ball",
+          "A cat"
+        ],
+        "answer": "0",
+        "explanation": "文中说 1 looks like a stick。"
+      },
+      {
+        "type": "choice",
+        "q": "What does 2 look like?",
+        "options": [
+          "A stick",
+          "A duck",
+          "A tree",
+          "A sun"
+        ],
+        "answer": "1",
+        "explanation": "文中说 2 looks like a duck。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "Let's write number 3 and 4. Number 3 has two curves. Number 4 has straight lines. Writing numbers is fun.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many curves does 3 have?",
+        "options": [
+          "Two",
+          "One",
+          "Three",
+          "Four"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Number 3 has two curves。"
+      },
+      {
+        "type": "choice",
+        "q": "What does number 4 have?",
+        "options": [
+          "Straight lines",
+          "Circles",
+          "Curves only",
+          "Dots"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Number 4 has straight lines。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "I see four birds and two cats. That is six animals in all. I can add them up. Numbers are fun.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many animals in all?",
+        "options": [
+          "Four",
+          "Six",
+          "Two",
+          "Eight"
+        ],
+        "answer": "1",
+        "explanation": "4+2=6，文中说 six animals。"
+      },
+      {
+        "type": "choice",
+        "q": "How many cats are there?",
+        "options": [
+          "Two",
+          "Four",
+          "Six",
+          "Three"
+        ],
+        "answer": "0",
+        "explanation": "文中说 two cats。"
+      }
+    ],
+    "answer": "1,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "A: How old are you? B: I'm nine. A: How many candles? B: There are nine candles on my cake.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How old is B?",
+        "options": [
+          "Nine",
+          "Eight",
+          "Ten",
+          "Seven"
+        ],
+        "answer": "0",
+        "explanation": "B 说 I'm nine。"
+      },
+      {
+        "type": "choice",
+        "q": "How many candles are on the cake?",
+        "options": [
+          "Nine",
+          "Eight",
+          "Six",
+          "Five"
+        ],
+        "answer": "0",
+        "explanation": "B 说 nine candles。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "Sam buys three apples and four oranges. He puts them in his bag. He has seven fruits now. He shares them with friends.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many fruits does Sam have?",
+        "options": [
+          "Three",
+          "Four",
+          "Seven",
+          "Ten"
+        ],
+        "answer": "2",
+        "explanation": "3+4=7，文中说 seven fruits。"
+      },
+      {
+        "type": "choice",
+        "q": "What does Sam do with the fruits?",
+        "options": [
+          "Shares with friends",
+          "Throws away",
+          "Sells them",
+          "Hides them"
+        ],
+        "answer": "0",
+        "explanation": "文中说 He shares them with friends。"
+      }
+    ],
+    "answer": "2,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "My friend has a red bag. He has a blue pen. We go to school together every morning.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is the bag?",
+        "options": [
+          "Red",
+          "Blue",
+          "Green",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "文中说 a red bag。"
+      },
+      {
+        "type": "choice",
+        "q": "When do they go to school?",
+        "options": [
+          "Every morning",
+          "At night",
+          "Never",
+          "Only Friday"
+        ],
+        "answer": "0",
+        "explanation": "文中说 every morning。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "A: How are you? B: I'm fine, thank you. A: Let's play together. B: OK, great!",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How is B?",
+        "options": [
+          "Fine",
+          "Sad",
+          "Sick",
+          "Tired"
+        ],
+        "answer": "0",
+        "explanation": "B 说 I'm fine。"
+      },
+      {
+        "type": "choice",
+        "q": "What do they want to do?",
+        "options": [
+          "Play together",
+          "Sleep",
+          "Eat",
+          "Read"
+        ],
+        "answer": "0",
+        "explanation": "A 说 Let's play together。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Is he your friend? Yes, he is. His name is Jack. We often play ball after school.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Is he the writer's friend?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Yes, he is。"
+      },
+      {
+        "type": "choice",
+        "q": "When do they play ball?",
+        "options": [
+          "After school",
+          "Before school",
+          "At night",
+          "In class"
+        ],
+        "answer": "0",
+        "explanation": "文中说 after school。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "A new student comes to our class. We say welcome to her. She smiles and says thank you. Soon we become friends.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Who comes to the class?",
+        "options": [
+          "A new student",
+          "A teacher",
+          "A doctor",
+          "A cook"
+        ],
+        "answer": "0",
+        "explanation": "文中说 A new student comes。"
+      },
+      {
+        "type": "choice",
+        "q": "What does she say?",
+        "options": [
+          "Thank you",
+          "Goodbye",
+          "Sorry",
+          "No"
+        ],
+        "answer": "0",
+        "explanation": "文中说 she says thank you。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Mike and Lily sit together. They read books together. They help each other. They are best friends.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What do they do together?",
+        "options": [
+          "Read books",
+          "Play ball",
+          "Swim",
+          "Sing"
+        ],
+        "answer": "0",
+        "explanation": "文中说 They read books together。"
+      },
+      {
+        "type": "choice",
+        "q": "What are they?",
+        "options": [
+          "Best friends",
+          "Brothers",
+          "Strangers",
+          "Enemies"
+        ],
+        "answer": "0",
+        "explanation": "文中说 They are best friends。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "Letter O o says /ɒ/. Octopus starts with O. Letter P p says /p/. Panda starts with P.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with O?",
+        "options": [
+          "Octopus",
+          "Panda",
+          "Pig",
+          "Pen"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Octopus starts with O。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with P?",
+        "options": [
+          "Octopus",
+          "Panda",
+          "Owl",
+          "Orange"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Panda starts with P。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 1 Making friends",
+    "content": "We sing the alphabet song. A B C D E F G. Letters are our friends. We love learning letters.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What do they sing?",
+        "options": [
+          "Alphabet song",
+          "Birthday song",
+          "Sleep song",
+          "Rain song"
+        ],
+        "answer": "0",
+        "explanation": "文中说 the alphabet song。"
+      },
+      {
+        "type": "choice",
+        "q": "What are letters to them?",
+        "options": [
+          "Friends",
+          "Enemies",
+          "Food",
+          "Toys"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Letters are our friends。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 2 Different families",
+    "content": "This is my family photo. My father is reading. My mother is cooking. I am playing with my brother.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is father doing?",
+        "options": [
+          "Reading",
+          "Cooking",
+          "Sleeping",
+          "Running"
+        ],
+        "answer": "0",
+        "explanation": "文中说 My father is reading。"
+      },
+      {
+        "type": "choice",
+        "q": "What is mother doing?",
+        "options": [
+          "Cooking",
+          "Reading",
+          "Swimming",
+          "Singing"
+        ],
+        "answer": "0",
+        "explanation": "文中说 My mother is cooking。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 2 Different families",
+    "content": "A: Is this your brother? B: Yes, it is. A: How old is he? B: He is eight.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Is it B's brother?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "B 说 Yes, it is。"
+      },
+      {
+        "type": "choice",
+        "q": "How old is the brother?",
+        "options": [
+          "Eight",
+          "Six",
+          "Ten",
+          "Nine"
+        ],
+        "answer": "0",
+        "explanation": "B 说 He is eight。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Who is the man in the photo? He is my grandpa. He is old but strong. He often plays with me.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Who is the man?",
+        "options": [
+          "Grandpa",
+          "Father",
+          "Uncle",
+          "Brother"
+        ],
+        "answer": "0",
+        "explanation": "文中说 He is my grandpa。"
+      },
+      {
+        "type": "choice",
+        "q": "What does grandpa often do?",
+        "options": [
+          "Plays with me",
+          "Sleeps all day",
+          "Goes away",
+          "Reads only"
+        ],
+        "answer": "0",
+        "explanation": "文中说 He often plays with me。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 2 Different families",
+    "content": "On Mother's Day, Lily makes a card. She draws a heart on it. She says, I love you, Mum. Her mother is very happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does Lily make?",
+        "options": [
+          "A card",
+          "A cake",
+          "A toy",
+          "A dress"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Lily makes a card。"
+      },
+      {
+        "type": "choice",
+        "q": "How does her mother feel?",
+        "options": [
+          "Very happy",
+          "Sad",
+          "Angry",
+          "Tired"
+        ],
+        "answer": "0",
+        "explanation": "文中说 very happy。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Sam's family eats dinner together. They talk and laugh. After dinner, they watch TV. Family time is warm.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What do they do after dinner?",
+        "options": [
+          "Watch TV",
+          "Go to school",
+          "Swim",
+          "Work"
+        ],
+        "answer": "0",
+        "explanation": "文中说 they watch TV。"
+      },
+      {
+        "type": "choice",
+        "q": "How is family time?",
+        "options": [
+          "Warm",
+          "Cold",
+          "Sad",
+          "Boring"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Family time is warm。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Letter I i says /ɪ/. It starts with I. Letter J j says /dʒ/. Jam starts with J.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with I?",
+        "options": [
+          "It",
+          "Jam",
+          "Jet",
+          "Jam"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It starts with I。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with J?",
+        "options": [
+          "It",
+          "Jam",
+          "In",
+          "Ice"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Jam starts with J。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Look at the letter K k. Kite starts with K. Look at the letter L l. Lion starts with L.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with K?",
+        "options": [
+          "Kite",
+          "Lion",
+          "Leg",
+          "Lamp"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Kite starts with K。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with L?",
+        "options": [
+          "Kite",
+          "Lion",
+          "Key",
+          "Kid"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Lion starts with L。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "The tiger is strong. The bear is big. The fox is clever. The animals in the forest are amazing.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is strong?",
+        "options": [
+          "Tiger",
+          "Fox",
+          "Rabbit",
+          "Bird"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The tiger is strong。"
+      },
+      {
+        "type": "choice",
+        "q": "What is clever?",
+        "options": [
+          "Fox",
+          "Bear",
+          "Cow",
+          "Pig"
+        ],
+        "answer": "0",
+        "explanation": "文中说 The fox is clever。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "A: Can birds fly? B: Yes, they can. A: Can fish fly? B: No, they can't. They swim.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Can birds fly?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "B 说 Yes, they can。"
+      },
+      {
+        "type": "choice",
+        "q": "What do fish do?",
+        "options": [
+          "Swim",
+          "Fly",
+          "Run",
+          "Climb"
+        ],
+        "answer": "0",
+        "explanation": "B 说 They swim。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Does the cat like fish? Yes, it does. Does the rabbit like carrots? Yes, it does. Animals like their food.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Does the cat like fish?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Yes, it does。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the rabbit like?",
+        "options": [
+          "Carrots",
+          "Fish",
+          "Meat",
+          "Grass only"
+        ],
+        "answer": "0",
+        "explanation": "文中说 carrots。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Amy feeds the fish in the pond. The fish are red and gold. They swim to her quickly. Amy laughs happily.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does Amy feed?",
+        "options": [
+          "Fish",
+          "Birds",
+          "Cats",
+          "Dogs"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Amy feeds the fish。"
+      },
+      {
+        "type": "choice",
+        "q": "How does Amy feel?",
+        "options": [
+          "Happily",
+          "Sadly",
+          "Angrily",
+          "Sleepily"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Amy laughs happily。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Tom draws his favourite animal. It is a panda. It eats bamboo and climbs trees. Tom likes pandas very much.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is Tom's favourite animal?",
+        "options": [
+          "Panda",
+          "Tiger",
+          "Monkey",
+          "Dog"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It is a panda。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the panda eat?",
+        "options": [
+          "Bamboo",
+          "Fish",
+          "Meat",
+          "Grass"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It eats bamboo。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Letter Q q says /kw/. Queen starts with Q. Letter R r says /r/. Rabbit starts with R.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with Q?",
+        "options": [
+          "Queen",
+          "Rabbit",
+          "Quilt",
+          "Quick"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Queen starts with Q。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with R?",
+        "options": [
+          "Queen",
+          "Rabbit",
+          "Queen",
+          "Quiet"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Rabbit starts with R。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "We write letters in the sand. Big C and small c. Big D and small d. Writing letters is fun.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Where do they write letters?",
+        "options": [
+          "Sand",
+          "Water",
+          "Sky",
+          "Book"
+        ],
+        "answer": "0",
+        "explanation": "文中说 in the sand。"
+      },
+      {
+        "type": "choice",
+        "q": "How is writing letters?",
+        "options": [
+          "Fun",
+          "Boring",
+          "Sad",
+          "Hard only"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Writing letters is fun。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "The garden has many flowers. Some are red. Some are yellow. Bees fly to the flowers. They are busy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What flies to the flowers?",
+        "options": [
+          "Bees",
+          "Fish",
+          "Cats",
+          "Dogs"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Bees fly to the flowers。"
+      },
+      {
+        "type": "choice",
+        "q": "How are the bees?",
+        "options": [
+          "Busy",
+          "Lazy",
+          "Sad",
+          "Slow"
+        ],
+        "answer": "0",
+        "explanation": "文中说 They are busy。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "A: Is this a leaf? B: Yes, it is. A: What colour is it? B: It's green.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Is it a leaf?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "B 说 Yes, it is。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is it?",
+        "options": [
+          "Green",
+          "Red",
+          "Blue",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's green。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Do plants need water? Yes, they do. Do plants need sun? Yes, they do. Water and sun help plants grow.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Do plants need water?",
+        "options": [
+          "Yes",
+          "No",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Yes, they do。"
+      },
+      {
+        "type": "choice",
+        "q": "What helps plants grow?",
+        "options": [
+          "Water and sun",
+          "Candy",
+          "Toys",
+          "Books"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Water and sun。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "In autumn, the leaves turn yellow. They fall from the trees. Lily picks up the leaves. She makes a leaf picture.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour do leaves turn in autumn?",
+        "options": [
+          "Yellow",
+          "Green",
+          "Blue",
+          "Pink"
+        ],
+        "answer": "0",
+        "explanation": "文中说 the leaves turn yellow。"
+      },
+      {
+        "type": "choice",
+        "q": "What does Lily make?",
+        "options": [
+          "A leaf picture",
+          "A flower",
+          "A tree",
+          "A song"
+        ],
+        "answer": "0",
+        "explanation": "文中说 She makes a leaf picture。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Mike waters the flowers in the morning. The flowers drink the water. They open their petals. Mike says good morning to them.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "When does Mike water the flowers?",
+        "options": [
+          "Morning",
+          "Night",
+          "Noon",
+          "Evening"
+        ],
+        "answer": "0",
+        "explanation": "文中说 in the morning。"
+      },
+      {
+        "type": "choice",
+        "q": "What do the flowers open?",
+        "options": [
+          "Petals",
+          "Doors",
+          "Books",
+          "Bags"
+        ],
+        "answer": "0",
+        "explanation": "文中说 They open their petals。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Letter U u says /ʌ/. Umbrella starts with U. Letter V v says /v/. Van starts with V.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with U?",
+        "options": [
+          "Umbrella",
+          "Van",
+          "Up",
+          "Us"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Umbrella starts with U。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with V?",
+        "options": [
+          "Umbrella",
+          "Van",
+          "Vet",
+          "Very"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Van starts with V。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Look at letter W w. It says /w/. Water starts with W. Look at letter X x. It says /ks/. Box starts with X.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with W?",
+        "options": [
+          "Water",
+          "Box",
+          "Wet",
+          "Win"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Water starts with W。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with X?",
+        "options": [
+          "Water",
+          "Box",
+          "Wet",
+          "Wall"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Box starts with X。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "My schoolbag is blue. My pencil case is white. My ruler is yellow. I like my colourful things.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is the schoolbag?",
+        "options": [
+          "Blue",
+          "Red",
+          "Green",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "文中说 My schoolbag is blue。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is the ruler?",
+        "options": [
+          "Yellow",
+          "Blue",
+          "White",
+          "Purple"
+        ],
+        "answer": "0",
+        "explanation": "文中说 My ruler is yellow。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "A: Is the flower pink? B: No, it isn't. It's purple. A: Oh, purple is nice.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "Is the flower pink?",
+        "options": [
+          "No",
+          "Yes",
+          "Maybe",
+          "Never"
+        ],
+        "answer": "0",
+        "explanation": "B 说 No, it isn't。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour is it?",
+        "options": [
+          "Purple",
+          "Pink",
+          "Red",
+          "Blue"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's purple。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "What colour is the night sky? It is dark blue. What colour are the stars? They are bright yellow.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is the night sky?",
+        "options": [
+          "Dark blue",
+          "Red",
+          "Green",
+          "White"
+        ],
+        "answer": "0",
+        "explanation": "文中说 It is dark blue。"
+      },
+      {
+        "type": "choice",
+        "q": "What colour are the stars?",
+        "options": [
+          "Bright yellow",
+          "Blue",
+          "Black",
+          "Green"
+        ],
+        "answer": "0",
+        "explanation": "文中说 bright yellow。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Lily has a red dress. She wears it to the party. Everyone says she looks nice. Lily is so happy.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour is Lily's dress?",
+        "options": [
+          "Red",
+          "Blue",
+          "Green",
+          "Yellow"
+        ],
+        "answer": "0",
+        "explanation": "文中说 a red dress。"
+      },
+      {
+        "type": "choice",
+        "q": "Where does she wear it?",
+        "options": [
+          "Party",
+          "School",
+          "Farm",
+          "Zoo"
+        ],
+        "answer": "0",
+        "explanation": "文中说 to the party。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Tom and Sam paint a wall. Tom uses blue. Sam uses green. The wall looks like a forest. They are proud.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What colour does Tom use?",
+        "options": [
+          "Blue",
+          "Green",
+          "Red",
+          "Black"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Tom uses blue。"
+      },
+      {
+        "type": "choice",
+        "q": "What does the wall look like?",
+        "options": [
+          "A forest",
+          "A sea",
+          "A sky",
+          "A house"
+        ],
+        "answer": "0",
+        "explanation": "文中说 like a forest。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Letter Y y says /j/. Yellow starts with Y. Letter Z z says /z/. Zoo starts with Z.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with Y?",
+        "options": [
+          "Yellow",
+          "Zoo",
+          "Yes",
+          "You"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Yellow starts with Y。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with Z?",
+        "options": [
+          "Yellow",
+          "Zoo",
+          "Yam",
+          "Yak"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Zoo starts with Z。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "We learn all the letters now. From A to Z. We can read simple words. Letters are magic keys.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What can they do now?",
+        "options": [
+          "Read simple words",
+          "Fly",
+          "Swim fast",
+          "Cook"
+        ],
+        "answer": "0",
+        "explanation": "文中说 We can read simple words。"
+      },
+      {
+        "type": "choice",
+        "q": "What are letters like?",
+        "options": [
+          "Magic keys",
+          "Heavy stones",
+          "Cold ice",
+          "Old shoes"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Letters are magic keys。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part A 词汇",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "There are seven days in a week. I go to school for five days. I rest for two days. I love weekends.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many days in a week?",
+        "options": [
+          "Seven",
+          "Five",
+          "Two",
+          "Ten"
+        ],
+        "answer": "0",
+        "explanation": "文中说 seven days。"
+      },
+      {
+        "type": "choice",
+        "q": "How many days does the writer rest?",
+        "options": [
+          "Two",
+          "Five",
+          "Seven",
+          "One"
+        ],
+        "answer": "0",
+        "explanation": "文中说 rest for two days。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "A: How many legs does a dog have? B: It has four legs. A: How many legs does a bird have? B: It has two legs.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many legs does a dog have?",
+        "options": [
+          "Four",
+          "Two",
+          "Six",
+          "Eight"
+        ],
+        "answer": "0",
+        "explanation": "B 说 four legs。"
+      },
+      {
+        "type": "choice",
+        "q": "How many legs does a bird have?",
+        "options": [
+          "Two",
+          "Four",
+          "Three",
+          "One"
+        ],
+        "answer": "0",
+        "explanation": "B 说 two legs。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part B 句型",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "A: What's five and five? B: It's ten. A: What's ten and zero? B: It's still ten.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What is five and five?",
+        "options": [
+          "Ten",
+          "Eight",
+          "Nine",
+          "Eleven"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's ten。"
+      },
+      {
+        "type": "choice",
+        "q": "What is ten and zero?",
+        "options": [
+          "Ten",
+          "Zero",
+          "One",
+          "Eleven"
+        ],
+        "answer": "0",
+        "explanation": "B 说 It's still ten。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "Mum buys six eggs. Lily helps count them. One, two, three, four, five, six. They make a cake with the eggs.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many eggs does Mum buy?",
+        "options": [
+          "Six",
+          "Four",
+          "Eight",
+          "Ten"
+        ],
+        "answer": "0",
+        "explanation": "文中说 six eggs。"
+      },
+      {
+        "type": "choice",
+        "q": "What do they make?",
+        "options": [
+          "A cake",
+          "Bread",
+          "Soup",
+          "Rice"
+        ],
+        "answer": "0",
+        "explanation": "文中说 make a cake。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "Part C 对话",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "There are nine players on the team. Three are girls. Six are boys. They play together and win the game.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "How many players in the team?",
+        "options": [
+          "Nine",
+          "Six",
+          "Three",
+          "Twelve"
+        ],
+        "answer": "0",
+        "explanation": "文中说 nine players。"
+      },
+      {
+        "type": "choice",
+        "q": "What do they do at last?",
+        "options": [
+          "Win the game",
+          "Lose the game",
+          "Go home",
+          "Sleep"
+        ],
+        "answer": "0",
+        "explanation": "文中说 win the game。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "Number 5 looks like a hook. Number 6 looks like a whistle. We draw numbers in the air.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does 5 look like?",
+        "options": [
+          "A hook",
+          "A whistle",
+          "A ball",
+          "A cup"
+        ],
+        "answer": "0",
+        "explanation": "文中说 5 looks like a hook。"
+      },
+      {
+        "type": "choice",
+        "q": "What does 6 look like?",
+        "options": [
+          "A whistle",
+          "A hook",
+          "A stick",
+          "A ring"
+        ],
+        "answer": "0",
+        "explanation": "文中说 6 looks like a whistle。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "We count with our fingers. One to ten. Then we clap our hands. Counting and clapping is fun.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What do they count with?",
+        "options": [
+          "Fingers",
+          "Toes",
+          "Books",
+          "Pens"
+        ],
+        "answer": "0",
+        "explanation": "文中说 with our fingers。"
+      },
+      {
+        "type": "choice",
+        "q": "What do they do then?",
+        "options": [
+          "Clap hands",
+          "Sleep",
+          "Eat",
+          "Cry"
+        ],
+        "answer": "0",
+        "explanation": "文中说 we clap our hands。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 2 Different families",
+    "content": "Letter Q q says /kw/. Queen starts with Q. Letter R r says /r/. Rose starts with R.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with Q?",
+        "options": [
+          "Queen",
+          "Rose",
+          "Quilt",
+          "Quick"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Queen starts with Q。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with R?",
+        "options": [
+          "Queen",
+          "Rose",
+          "Rain",
+          "Red"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Rose starts with R。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 3 Amazing animals",
+    "content": "Letter S s says /s/. Snake starts with S. Letter T t says /t/. Tiger starts with T.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with S?",
+        "options": [
+          "Snake",
+          "Tiger",
+          "Sun",
+          "Sit"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Snake starts with S。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with T?",
+        "options": [
+          "Snake",
+          "Tiger",
+          "Top",
+          "Ten"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Tiger starts with T。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 4 Plants around us",
+    "content": "Letter U u says /ʌ/. Under starts with U. Letter V v says /v/. Vest starts with V.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with U?",
+        "options": [
+          "Under",
+          "Vest",
+          "Up",
+          "Us"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Under starts with U。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with V?",
+        "options": [
+          "Under",
+          "Vest",
+          "Van",
+          "Very"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Vest starts with V。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 5 The colourful world",
+    "content": "Letter W w says /w/. Wind starts with W. Letter X x says /ks/. Fox starts with X.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What starts with W?",
+        "options": [
+          "Wind",
+          "Fox",
+          "Wet",
+          "Win"
+        ],
+        "answer": "0",
+        "explanation": "文中说 Wind starts with W。"
+      },
+      {
+        "type": "choice",
+        "q": "What starts with X?",
+        "options": [
+          "Wind",
+          "Fox",
+          "Wax",
+          "Well"
+        ],
+        "answer": "1",
+        "explanation": "文中说 Fox starts with X。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "",
+    "difficulty": 1
+  },
+  {
+    "type": "reading",
+    "topic_name": "字母与语音",
+    "unit": "上册-Unit 6 Useful numbers",
+    "content": "Number 7 looks like a walking stick. Number 8 looks like a pair of glasses. Numbers are everywhere.",
+    "options": null,
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "What does 7 look like?",
+        "options": [
+          "A walking stick",
+          "Glasses",
+          "A ball",
+          "A cup"
+        ],
+        "answer": "0",
+        "explanation": "文中说 7 looks like a walking stick。"
+      },
+      {
+        "type": "choice",
+        "q": "What does 8 look like?",
+        "options": [
+          "Glasses",
+          "A stick",
+          "A ring",
+          "A hook"
+        ],
+        "answer": "0",
+        "explanation": "文中说 8 looks like a pair of glasses。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "",
+    "difficulty": 1
+  }
+]
