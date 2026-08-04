@@ -486,8 +486,23 @@ def _fetch_all(db: Session, sql: str, params: dict = None) -> list:
 
 
 @router.get("/analytics/overview")
-def analytics_overview(_=Depends(require_role("admin")), db: Session = Depends(get_db)):
-    """总览仪表盘：核心指标 + 近14天趋势 + 科目/题型正确率 + 活跃榜"""
+def analytics_overview(grade: Optional[str] = None, subject_id: Optional[int] = None,
+                       _=Depends(require_role("admin")), db: Session = Depends(get_db)):
+    """总览仪表盘：核心指标 + 近14天趋势(按科目) + 科目/题型正确率 + 活跃榜
+
+    可选过滤: grade(年级, 精确匹配 subjects.grade) / subject_id(科目)。
+    顶部 KPI 始终为全局总量；趋势/正确率/活跃榜受过滤影响。
+    """
+    # 过滤条件（基于 exam_records.subject_id -> subjects）
+    conds, params = [], {}
+    if subject_id is not None:
+        conds.append("er.subject_id = :sid")
+        params["sid"] = subject_id
+    if grade:
+        conds.append("s.grade = :grade")
+        params["grade"] = grade
+    where = ("WHERE " + " AND ".join(conds)) if conds else ""
+
     total_ar = db.execute(text(
         "SELECT COUNT(*) c, SUM(CASE WHEN is_correct=1 THEN 1 ELSE 0 END) ok FROM answer_records")).fetchone()
     total_exams = db.execute(text("SELECT COUNT(*) c FROM exam_records")).fetchone().c
@@ -501,37 +516,62 @@ def analytics_overview(_=Depends(require_role("admin")), db: Session = Depends(g
         "SELECT COUNT(*) c FROM answer_records ar JOIN exam_records er ON er.id=ar.exam_record_id "
         "WHERE julianday('now') - julianday(er.started_at) <= 7")).fetchone().c
 
-    trend = _fetch_all(db, """
+    # 全局聚合趋势（向后兼容）
+    _trend_where = ("WHERE julianday('now') - julianday(er.started_at) <= 14"
+                    + ((" AND " + " AND ".join(conds)) if conds else ""))
+    trend = _fetch_all(db, f"""
         SELECT date(er.started_at) d,
                COUNT(*) total,
-               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
-        FROM answer_records ar JOIN exam_records er ON er.id=ar.exam_record_id
-        WHERE julianday('now') - julianday(er.started_at) <= 14
-        GROUP BY date(er.started_at) ORDER BY d
-    """)
-
-    by_subject = _fetch_all(db, """
-        SELECT s.name subject, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
         FROM answer_records ar
         JOIN exam_records er ON er.id=ar.exam_record_id
         JOIN subjects s ON s.id=er.subject_id
-        GROUP BY s.id ORDER BY total DESC
-    """)
+        {_trend_where}
+        GROUP BY date(er.started_at) ORDER BY d
+    """, params)
 
-    by_type = _fetch_all(db, """
+    # 按科目分组趋势（前端画多线用）
+    trend_by_subject = _fetch_all(db, f"""
+        SELECT date(er.started_at) d, er.subject_id, s.name subject,
+               COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN subjects s ON s.id=er.subject_id
+        {_trend_where}
+        GROUP BY date(er.started_at), er.subject_id ORDER BY d, er.subject_id
+    """, params)
+
+    by_subject = _fetch_all(db, f"""
+        SELECT s.id subject_id, s.name subject, s.grade, COUNT(*) total,
+               SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
+        FROM answer_records ar
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN subjects s ON s.id=er.subject_id
+        {where}
+        GROUP BY s.id ORDER BY total DESC
+    """, params)
+
+    by_type = _fetch_all(db, f"""
         SELECT q.type, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
-        FROM answer_records ar JOIN questions q ON q.id=ar.question_id
+        FROM answer_records ar
+        JOIN questions q ON q.id=ar.question_id
+        JOIN exam_records er ON er.id=ar.exam_record_id
+        JOIN subjects s ON s.id=er.subject_id
+        {where}
         GROUP BY q.type ORDER BY total DESC
-    """)
+    """, params)
 
-    top_students = _fetch_all(db, """
+    top_students = _fetch_all(db, f"""
         SELECT u.nickname, u.username, COUNT(er.id) exams,
                MAX(er.started_at) last_at
-        FROM exam_records er JOIN users u ON u.id=er.user_id
+        FROM exam_records er
+        JOIN users u ON u.id=er.user_id
+        JOIN subjects s ON s.id=er.subject_id
+        {where}
         GROUP BY er.user_id ORDER BY exams DESC LIMIT 10
-    """)
+    """, params)
 
     total_cnt = total_ar.c or 0
     ok_cnt = total_ar.ok or 0
@@ -545,6 +585,7 @@ def analytics_overview(_=Depends(require_role("admin")), db: Session = Depends(g
             "week_answers": week_ar,
         },
         "trend": trend,
+        "trend_by_subject": trend_by_subject,
         "by_subject": by_subject,
         "by_type": by_type,
         "top_students": top_students,
@@ -552,8 +593,12 @@ def analytics_overview(_=Depends(require_role("admin")), db: Session = Depends(g
 
 
 @router.get("/analytics/student/{student_id}")
-def analytics_student(student_id: int, _=Depends(require_role("admin")), db: Session = Depends(get_db)):
-    """学员深度档案：成绩趋势 + 科目/知识点正确率 + 高频错题 + 最近动态"""
+def analytics_student(student_id: int, subject_id: Optional[int] = None,
+                      _=Depends(require_role("admin")), db: Session = Depends(get_db)):
+    """学员深度档案：成绩趋势 + 科目/知识点正确率 + 高频错题 + 最近动态
+
+    可选 subject_id 过滤 by_topic / top_wrong（知识点正确率与高频错题）。
+    """
     student = db.query(User).filter(User.id == student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="学员不存在")
@@ -574,7 +619,9 @@ def analytics_student(student_id: int, _=Depends(require_role("admin")), db: Ses
     """, {"uid": student_id})
 
     # 各知识点正确率（作答>=2次才统计；SQLite 的 ok/total 是整数除法，需 *1.0）
-    by_topic = _fetch_all(db, """
+    _subj_cond = "AND er.subject_id = :sid" if subject_id else ""
+    _subj_params = {"uid": student_id, **({"sid": subject_id} if subject_id else {})}
+    by_topic = _fetch_all(db, f"""
         SELECT t.name topic, s.name subject, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
         FROM answer_records ar
@@ -582,11 +629,11 @@ def analytics_student(student_id: int, _=Depends(require_role("admin")), db: Ses
         JOIN questions q ON q.id=ar.question_id
         JOIN topics t ON t.id=q.topic_id
         JOIN subjects s ON s.id=q.subject_id
-        WHERE er.user_id=:uid GROUP BY q.topic_id HAVING COUNT(*)>=2
+        WHERE er.user_id=:uid {_subj_cond} GROUP BY q.topic_id HAVING COUNT(*)>=2
         ORDER BY (ok*1.0/total) ASC LIMIT 20
-    """, {"uid": student_id})
+    """, _subj_params)
 
-    top_wrong = _fetch_all(db, """
+    top_wrong = _fetch_all(db, f"""
         SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
                COUNT(*) wrong_times
         FROM answer_records ar
@@ -594,9 +641,9 @@ def analytics_student(student_id: int, _=Depends(require_role("admin")), db: Ses
         JOIN questions q ON q.id=ar.question_id
         LEFT JOIN topics t ON t.id=q.topic_id
         LEFT JOIN subjects s ON s.id=q.subject_id
-        WHERE er.user_id=:uid AND ar.is_correct=0
+        WHERE er.user_id=:uid AND ar.is_correct=0 {_subj_cond}
         GROUP BY q.id ORDER BY wrong_times DESC LIMIT 10
-    """, {"uid": student_id})
+    """, _subj_params)
 
     recent = _fetch_all(db, """
         SELECT er.id, er.started_at, er.score, er.total, er.correct, s.name subject
@@ -615,9 +662,22 @@ def analytics_student(student_id: int, _=Depends(require_role("admin")), db: Ses
 
 
 @router.get("/analytics/weakness")
-def analytics_weakness(_=Depends(require_role("admin")), db: Session = Depends(get_db)):
-    """知识点薄弱分析：薄弱知识点TOP10 + 反复错题榜 + 低正确率题目"""
-    weak_topics = _fetch_all(db, """
+def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = None,
+                      _=Depends(require_role("admin")), db: Session = Depends(get_db)):
+    """知识点薄弱分析：薄弱知识点TOP10 + 反复错题榜 + 低正确率题目
+
+    可选过滤: subject_id(科目) / grade(年级, 精确匹配 subjects.grade)。
+    """
+    conds, params = [], {}
+    if subject_id is not None:
+        conds.append("q.subject_id = :sid")
+        params["sid"] = subject_id
+    if grade:
+        conds.append("s.grade = :grade")
+        params["grade"] = grade
+    where = ("WHERE " + " AND ".join(conds)) if conds else ""
+
+    weak_topics = _fetch_all(db, f"""
         SELECT t.name topic, s.name subject, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok,
                ROUND(SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END)*100.0/COUNT(*),1) rate
@@ -625,23 +685,30 @@ def analytics_weakness(_=Depends(require_role("admin")), db: Session = Depends(g
         JOIN questions q ON q.id=ar.question_id
         JOIN topics t ON t.id=q.topic_id
         JOIN subjects s ON s.id=q.subject_id
+        {where}
         GROUP BY q.topic_id HAVING COUNT(*)>=5
         ORDER BY rate ASC LIMIT 10
-    """)
+    """, params)
 
-    repeat_wrong = _fetch_all(db, """
+    # wrong_questions 无直连 subjects，需经 questions 关联
+    weak_conds = ["w.mastered=0"]
+    if subject_id is not None:
+        weak_conds.append("q.subject_id = :sid")
+    if grade:
+        weak_conds.append("s.grade = :grade")
+    repeat_wrong = _fetch_all(db, f"""
         SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
                COUNT(DISTINCT w.user_id) students, SUM(w.wrong_count) times
         FROM wrong_questions w
         JOIN questions q ON q.id=w.question_id
         LEFT JOIN topics t ON t.id=q.topic_id
         LEFT JOIN subjects s ON s.id=q.subject_id
-        WHERE w.mastered=0
+        WHERE {' AND '.join(weak_conds)}
         GROUP BY q.id HAVING SUM(w.wrong_count)>=2
         ORDER BY times DESC LIMIT 15
-    """)
+    """, params)
 
-    hard_questions = _fetch_all(db, """
+    hard_questions = _fetch_all(db, f"""
         SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
                COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok,
@@ -650,9 +717,10 @@ def analytics_weakness(_=Depends(require_role("admin")), db: Session = Depends(g
         JOIN questions q ON q.id=ar.question_id
         LEFT JOIN topics t ON t.id=q.topic_id
         LEFT JOIN subjects s ON s.id=q.subject_id
+        {where}
         GROUP BY q.id HAVING COUNT(*)>=3
         ORDER BY rate ASC LIMIT 15
-    """)
+    """, params)
 
     return {
         "weak_topics": weak_topics,

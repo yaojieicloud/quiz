@@ -25,6 +25,7 @@ FILES = [
     ("routers/admin.py", "/app/routers/admin.py"),
     ("core/code_runner.py", "/app/core/code_runner.py"),
     ("core/llm_grader.py", "/app/core/llm_grader.py"),
+    ("static/vendor/echarts.min.js", "/app/static/vendor/echarts.min.js"),
     ("static/admin.html", "/app/static/admin.html"),
     ("static/js/common.js", "/app/static/js/common.js"),
     ("static/quiz.html", "/app/static/quiz.html"),

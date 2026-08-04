@@ -41,13 +41,34 @@ async function loadSubjects() {
 
 function renderFilter() {
   if (!allSubjects.length) { document.getElementById('filterBox').innerHTML = ''; return; }
+  // 年级行：点击年级 = 一键勾选/取消该年级下全部科目
+  const grades = [...new Set(allSubjects.map(s => s.grade).filter(Boolean))];
+  const gradeChips = grades.map(g => {
+    const subs = allSubjects.filter(s => s.grade === g);
+    const allOn = subs.length && subs.every(s => selectedSubjects.has(s.id));
+    return `<span class="chip ${allOn ? 'active' : ''}" style="font-weight:bold;" onclick="toggleGrade('${esc(g)}')">🎓 ${esc(g)}</span>`;
+  }).join('');
+  // 科目行（标注所属年级）
   const chips = allSubjects.map(s => {
     const active = selectedSubjects.has(s.id) ? 'active' : '';
-    return `<span class="chip ${active}" data-sid="${s.id}" onclick="toggleSubject(${s.id})">${esc(s.icon||'📚')} ${esc(s.name)}</span>`;
+    const tag = s.grade ? ` <span style="opacity:.6;font-size:11px;">${esc(s.grade)}</span>` : '';
+    return `<span class="chip ${active}" data-sid="${s.id}" onclick="toggleSubject(${s.id})">${esc(s.icon||'📚')} ${esc(s.name)}${tag}</span>`;
   }).join('');
   const clearBtn = selectedSubjects.size ? '<span class="chip" style="border-style:dashed;" onclick="clearSubjects()">✕ 清除筛选</span>' : '';
-  document.getElementById('filterBox').innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+  document.getElementById('filterBox').innerHTML =
+    (grades.length ? `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px;">
+    <span style="font-size:13px;color:#9c8bb5;margin-right:4px;">🎓 按年级选：</span>${gradeChips}</div>` : '') +
+    `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
     <span style="font-size:13px;color:#9c8bb5;margin-right:4px;">📚 筛选科目（可多选，不选=全部）：</span>${chips}${clearBtn}</div>`;
+}
+
+function toggleGrade(g) {
+  const subs = allSubjects.filter(s => s.grade === g);
+  const allOn = subs.length && subs.every(s => selectedSubjects.has(s.id));
+  subs.forEach(s => { if (allOn) selectedSubjects.delete(s.id); else selectedSubjects.add(s.id); });
+  expandedRecordId = null;
+  renderFilter();
+  renderList();
 }
 
 function toggleSubject(sid) {

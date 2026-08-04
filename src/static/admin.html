@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>管理后台 - 题库闯关系统</title>
 <link rel="stylesheet" href="css/common.css">
-<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script src="vendor/echarts.min.js"></script>
 <style>
 /* 管理后台特有样式 */
 .admin-main { max-width: 960px; }
@@ -262,6 +262,14 @@ textarea.form-input.lg { min-height:120px; }
 
     <!-- 1. 学习总览 -->
     <div id="anaPaneOverview">
+      <div class="filter-bar" style="margin-bottom:12px;">
+        <div class="form-group" style="flex:1;max-width:220px;">
+          <label>年级筛选</label>
+          <select class="form-select" id="ovGradeSelect" onchange="onOvGradeChange()">
+            <option value="">全部年级</option>
+          </select>
+        </div>
+      </div>
       <div class="kpi-grid" id="kpiGrid"></div>
       <div class="section-box">
         <h3>📅 近 14 天答题趋势</h3>
@@ -293,6 +301,12 @@ textarea.form-input.lg { min-height:120px; }
               <option value="">请选择学员...</option>
             </select>
           </div>
+          <div class="form-group" style="flex:2;">
+            <label>科目筛选（知识点/错题）</label>
+            <select class="form-select" id="anaStuSubjSelect" onchange="loadAnaStudent()">
+              <option value="">全部科目</option>
+            </select>
+          </div>
         </div>
         <div id="anaStudentBody"><div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div></div>
       </div>
@@ -300,6 +314,22 @@ textarea.form-input.lg { min-height:120px; }
 
     <!-- 3. 薄弱分析 -->
     <div id="anaPaneWeakness" style="display:none;">
+      <div class="section-box" style="padding-bottom:8px;">
+        <div class="filter-bar">
+          <div class="form-group" style="flex:1;max-width:200px;">
+            <label>年级</label>
+            <select class="form-select" id="wkGradeSelect" onchange="onWkGradeChange()">
+              <option value="">全部年级</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;max-width:260px;">
+            <label>学科</label>
+            <select class="form-select" id="wkSubjSelect" onchange="loadAnaWeakness()">
+              <option value="">全部学科</option>
+            </select>
+          </div>
+        </div>
+      </div>
       <div class="section-box">
         <h3>🎯 薄弱知识点 TOP10 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">全体学员，作答≥5次的知识点，按正确率升序</span></h3>
         <div id="weakTopicsBox"></div>
@@ -1586,7 +1616,7 @@ function switchAnaPane(pane) {
   });
   if (pane === 'overview') loadAnaOverview();
   if (pane === 'student') loadAnaStudentList();
-  if (pane === 'weakness') loadAnaWeakness();
+  if (pane === 'weakness') initWkFilters();
   if (pane === 'report') loadAnaReportStudents();
 }
 
@@ -1600,10 +1630,32 @@ function rateBadge(rate) {
   return `<span class="rate-badge ${cls}">${rate}%</span>`;
 }
 
+// --- 学情分析：科目/年级缓存与筛选 ---
+let anaSubjectsCache = null;
+async function loadAnaSubjects() {
+  if (!anaSubjectsCache) {
+    try { anaSubjectsCache = await API.get('/api/subjects'); } catch (e) { anaSubjectsCache = []; }
+  }
+  return anaSubjectsCache;
+}
+function anaGrades(subs) {
+  return [...new Set(subs.map(s => s.grade).filter(Boolean))];
+}
+const ANA_PALETTE = ['#74c0fc','#ffa94d','#69db7c','#b197fc','#ff8787','#ffd43b','#63e6be','#a5d8ff'];
+
 async function loadAnaOverview() {
   try {
-    const d = await API.get('/api/admin/analytics/overview');
-    // KPI
+    // 年级筛选下拉（仅首次/数据变化时重建）
+    const subs = await loadAnaSubjects();
+    const gsel = document.getElementById('ovGradeSelect');
+    if (gsel.options.length <= 1) {
+      gsel.innerHTML = '<option value="">全部年级</option>' +
+        anaGrades(subs).map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+    }
+    const grade = gsel.value;
+    const qs = grade ? `?grade=${encodeURIComponent(grade)}` : '';
+    const d = await API.get('/api/admin/analytics/overview' + qs);
+    // KPI（始终为全局总量）
     const t = d.totals;
     document.getElementById('kpiGrid').innerHTML = [
       { num: t.answers, lbl: '📝 总答题数' },
@@ -1625,31 +1677,36 @@ async function loadAnaOverview() {
     }
   } catch (e) { toast(e.message, 'error'); }
 }
+function onOvGradeChange() { loadAnaOverview(); }
 
 function renderOverviewCharts(d) {
   if (typeof echarts === 'undefined') {
     document.getElementById('chartTrend').innerHTML = '<div class="empty"><p>图表库加载失败，请检查网络</p></div>';
     return;
   }
-  // 趋势图
-  const trendDates = d.trend.map(r => r.d.slice(5));
-  const trendTotal = d.trend.map(r => r.total);
-  const trendRate = d.trend.map(r => r.total ? Math.round(r.ok / r.total * 100) : 0);
+  // 趋势图：按科目分线（不同颜色），X 轴为日期
+  const tbs = d.trend_by_subject || [];
+  const dates = [...new Set(tbs.map(r => r.d))].sort();
+  const subjMap = new Map();
+  tbs.forEach(r => { if (!subjMap.has(r.subject_id)) subjMap.set(r.subject_id, r.subject); });
+  const trendSeries = [...subjMap.entries()].map(([sid, name], i) => ({
+    name, type: 'line', smooth: true, connectNulls: true,
+    itemStyle: { color: ANA_PALETTE[i % ANA_PALETTE.length] },
+    data: dates.map(dt => {
+      const row = tbs.find(r => r.d === dt && r.subject_id === sid);
+      return row ? row.total : null;
+    }),
+  }));
   _anaChart('chartTrend', {
     tooltip: { trigger: 'axis' },
-    legend: { data: ['答题量', '正确率%'], top: 0 },
-    grid: { left: 44, right: 44, top: 36, bottom: 24 },
-    xAxis: { type: 'category', data: trendDates },
-    yAxis: [
-      { type: 'value', name: '答题量', minInterval: 1 },
-      { type: 'value', name: '正确率%', max: 100 },
-    ],
-    series: [
-      { name: '答题量', type: 'bar', data: trendTotal, itemStyle: { color: '#74c0fc', borderRadius: [6,6,0,0] } },
-      { name: '正确率%', type: 'line', yAxisIndex: 1, data: trendRate, itemStyle: { color: '#ffa94d' }, smooth: true },
-    ],
+    legend: { top: 0, type: 'scroll' },
+    grid: { left: 44, right: 20, top: 36, bottom: 24 },
+    xAxis: { type: 'category', data: dates.map(x => x.slice(5)) },
+    yAxis: { type: 'value', name: '答题量', minInterval: 1 },
+    series: trendSeries.length ? trendSeries
+      : [{ type: 'line', data: dates.map(() => null) }],
   });
-  // 科目正确率
+  // 科目正确率（保持原有样式）
   const subjNames = d.by_subject.map(r => r.subject);
   const subjRates = d.by_subject.map(r => r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0);
   _anaChart('chartSubject', {
@@ -1691,12 +1748,32 @@ async function loadAnaStudentList() {
   if (cur) { sel.value = cur; }
 }
 
+async function loadAnaStudentList() {
+  if (!anaStudentsCache) {
+    try { anaStudentsCache = await API.get('/api/admin/students'); } catch (e) { toast(e.message, 'error'); return; }
+  }
+  const sel = document.getElementById('anaStuSelect');
+  const cur = sel.value;
+  sel.innerHTML = '<option value="">请选择学员...</option>' +
+    anaStudentsCache.filter(s => s.exam_count > 0).map(s => `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)} · ${s.exam_count}次）</option>`).join('');
+  if (cur) { sel.value = cur; }
+  // 科目筛选下拉
+  const ssel = document.getElementById('anaStuSubjSelect');
+  const scur = ssel.value;
+  const subs = await loadAnaSubjects();
+  ssel.innerHTML = '<option value="">全部科目</option>' +
+    subs.map(s => `<option value="${s.id}">${esc(s.icon||'📚')} ${esc(s.name)}${s.grade ? '（'+esc(s.grade)+'）' : ''}</option>`).join('');
+  if (scur) { ssel.value = scur; }
+}
+
 async function loadAnaStudent() {
   const uid = document.getElementById('anaStuSelect').value;
+  const sid = document.getElementById('anaStuSubjSelect').value;
   const body = document.getElementById('anaStudentBody');
   if (!uid) { body.innerHTML = '<div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div>'; return; }
   try {
-    const d = await API.get(`/api/admin/analytics/student/${uid}`);
+    const qs = sid ? `?subject_id=${sid}` : '';
+    const d = await API.get(`/api/admin/analytics/student/${uid}${qs}`);
     let html = '';
     // 成绩趋势
     if (d.score_trend.length) {
@@ -1732,23 +1809,61 @@ async function loadAnaStudent() {
     }
     if (!html) html = '<div class="empty"><div class="icon">📭</div><p>该学员暂无答题数据</p></div>';
     body.innerHTML = html;
-    // 渲染成绩趋势图
+    // 渲染成绩趋势图：按科目分线，时间轴为各次考试时间
     if (d.score_trend.length && typeof echarts !== 'undefined') {
+      // 按科目分组
+      const groups = new Map();
+      d.score_trend.forEach(r => {
+        const key = r.subject || '其他';
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key).push(r);
+      });
+      const series = [...groups.entries()].map(([name, rows], i) => ({
+        name, type: 'line', smooth: true,
+        itemStyle: { color: ANA_PALETTE[i % ANA_PALETTE.length] },
+        data: rows.map(r => [r.started_at.slice(0, 16).replace('T', ' '), r.score]),
+      }));
       _anaChart('chartScoreTrend', {
-        tooltip: { trigger: 'axis', formatter: p => `${p[0].name}<br/>得分：${p[0].value}` },
-        grid: { left: 40, right: 20, top: 20, bottom: 60 },
-        xAxis: { type: 'category', data: d.score_trend.map(r => r.started_at.slice(5,16).replace('T',' ')), axisLabel: { rotate: 40, fontSize: 10 } },
+        tooltip: { trigger: 'axis', formatter: ps => ps.map(p => `${p.marker}${p.seriesName}：${p.value[1]}分`).join('<br/>') },
+        legend: { top: 0, type: 'scroll' },
+        grid: { left: 40, right: 20, top: 36, bottom: 60 },
+        xAxis: { type: 'time' },
         yAxis: { type: 'value', max: 100, name: '分' },
-        series: [{ type: 'line', data: d.score_trend.map(r => r.score), itemStyle: { color: '#ffa94d' }, areaStyle: { color: 'rgba(255,169,77,0.15)' }, smooth: true }],
+        series,
       });
     }
   } catch (e) { toast(e.message, 'error'); }
 }
 
 // --- 薄弱分析 ---
+async function onWkGradeChange() {
+  // 年级变化时重建学科下拉（仅显示该年级的学科）
+  const grade = document.getElementById('wkGradeSelect').value;
+  const subs = await loadAnaSubjects();
+  const ssel = document.getElementById('wkSubjSelect');
+  const list = grade ? subs.filter(s => s.grade === grade) : subs;
+  ssel.innerHTML = '<option value="">全部学科</option>' +
+    list.map(s => `<option value="${s.id}">${esc(s.icon||'📚')} ${esc(s.name)}</option>`).join('');
+  loadAnaWeakness();
+}
+
+async function initWkFilters() {
+  const gsel = document.getElementById('wkGradeSelect');
+  if (gsel.options.length > 1) return; // 已初始化
+  const subs = await loadAnaSubjects();
+  gsel.innerHTML = '<option value="">全部年级</option>' +
+    anaGrades(subs).map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+  await onWkGradeChange();
+}
+
 async function loadAnaWeakness() {
   try {
-    const d = await API.get('/api/admin/analytics/weakness');
+    const grade = document.getElementById('wkGradeSelect').value;
+    const sid = document.getElementById('wkSubjSelect').value;
+    const qs = new URLSearchParams();
+    if (grade) qs.set('grade', grade);
+    if (sid) qs.set('subject_id', sid);
+    const d = await API.get('/api/admin/analytics/weakness' + (qs.toString() ? '?' + qs : ''));
     const wt = document.getElementById('weakTopicsBox');
     wt.innerHTML = d.weak_topics.length
       ? `<table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
