@@ -103,6 +103,18 @@ def batch_import(items: list[QuestionCreate], db: Session = Depends(get_db), _=D
     return {"created": created}
 
 
+@router.get("/{question_id}", response_model=QuestionOut)
+def get_question(question_id: int, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
+    """单题详情（含答案与解析，仅管理员）"""
+    q = db.query(Question).filter(Question.id == question_id).first()
+    if not q:
+        raise HTTPException(status_code=404, detail="题目不存在")
+    out = QuestionOut.model_validate(q)
+    if q.topic:
+        out.topic_name = q.topic.name
+    return out
+
+
 @router.put("/{question_id}", response_model=QuestionOut)
 def update_question(question_id: int, data: QuestionUpdate, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
     q = db.query(Question).filter(Question.id == question_id).first()

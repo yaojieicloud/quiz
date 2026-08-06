@@ -422,13 +422,30 @@ ${esc(val)}</textarea>
       </div>`;
     }).join('');
     
-    let rightHtml = matchOptions.map((opt, i) => {
+    let rightHtml = '';
+    // 右侧选项乱序展示（data-idx 保持原始索引，判分逻辑不受影响）
+    const qid = q.id;
+    if (!_matchRightOrder[qid]) {
+      const idxs = matchOptions.map((_, i) => i);
+      // Fisher-Yates 乱序
+      for (let i = idxs.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [idxs[i], idxs[j]] = [idxs[j], idxs[i]];
+      }
+      // 若乱序后与原始完全相同（恒等映射），强制交换首两项
+      if (idxs.length >= 2 && idxs.every((v, i) => v === i)) {
+        [idxs[0], idxs[1]] = [idxs[1], idxs[0]];
+      }
+      _matchRightOrder[qid] = idxs;
+    }
+    const rightOrder = _matchRightOrder[qid];
+    rightOrder.forEach(i => {
       const matched = Object.values(savedPairs).includes(i);
-      return `<div class="match-right-item ${matched ? 'matched' : ''}" data-side="right" data-idx="${i}" onclick="selectRight(${i})">
+      rightHtml += `<div class="match-right-item ${matched ? 'matched' : ''}" data-side="right" data-idx="${i}" onclick="selectRight(${i})">
         <span class="match-dot"></span>
-        <span class="match-label">${esc(opt)}</span>
+        <span class="match-label">${esc(matchOptions[i])}</span>
       </div>`;
-    }).join('');
+    });
     
     optsHtml = `<div class="match-wrap" id="matchWrap">
       <svg class="match-svg" id="matchSvg"></svg>
@@ -581,6 +598,7 @@ let matchSelectedLeft = null;   // 点击兜底：当前选中的左侧索引
 let _matchDragging = false;     // 拖拽状态
 let _matchDragFrom = null;      // 拖拽起始左侧索引
 let _matchTempLine = null;      // 拖拽中的临时 SVG 线
+const _matchRightOrder = {};    // 连线题右侧选项乱序缓存 {qid: [索引序列]}，避免来回切题顺序抖动
 
 // —— SVG 画线 ——
 function _matchSvg() { return document.getElementById('matchSvg'); }

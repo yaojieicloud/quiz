@@ -594,14 +594,18 @@ def analytics_overview(grade: Optional[str] = None, subject_id: Optional[int] = 
 
 @router.get("/analytics/student/{student_id}")
 def analytics_student(student_id: int, subject_id: Optional[int] = None,
+                      wrong_limit: int = 10,
                       _=Depends(require_role("admin")), db: Session = Depends(get_db)):
     """学员深度档案：成绩趋势 + 科目/知识点正确率 + 高频错题 + 最近动态
 
     可选 subject_id 过滤 by_topic / top_wrong（知识点正确率与高频错题）。
+    wrong_limit: 高频错题条数，仅允许 10/20/30/50。
     """
     student = db.query(User).filter(User.id == student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="学员不存在")
+    if wrong_limit not in (10, 20, 30, 50):
+        wrong_limit = 10
 
     # 科目过滤条件（复用给 score_trend / by_topic / top_wrong）
     _subj_cond = "AND er.subject_id = :sid" if subject_id else ""
@@ -642,7 +646,7 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         LEFT JOIN topics t ON t.id=q.topic_id
         LEFT JOIN subjects s ON s.id=q.subject_id
         WHERE er.user_id=:uid AND ar.is_correct=0 {_subj_cond}
-        GROUP BY q.id ORDER BY wrong_times DESC LIMIT 10
+        GROUP BY q.id ORDER BY wrong_times DESC LIMIT {wrong_limit}
     """, _subj_params)
 
     recent = _fetch_all(db, """
