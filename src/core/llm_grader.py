@@ -116,6 +116,14 @@ def grade_code(
             max_tokens=300,
             timeout=90,
         )
+        
+        # 记录 token 消耗
+        if hasattr(response, 'usage') and response.usage:
+            prompt_tokens = response.usage.prompt_tokens or 0
+            completion_tokens = response.usage.completion_tokens or 0
+            total_tokens = response.usage.total_tokens or 0
+            logger.info(f"[LLM_TOKEN] model={LLM_MODEL} prompt={prompt_tokens} completion={completion_tokens} total={total_tokens}")
+        
         raw = response.choices[0].message.content.strip()
 
         # 提取 JSON（处理可能的 markdown 代码块包裹）
