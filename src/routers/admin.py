@@ -603,24 +603,24 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
     if not student:
         raise HTTPException(status_code=404, detail="学员不存在")
 
-    score_trend = _fetch_all(db, """
+    # 科目过滤条件（复用给 score_trend / by_topic / top_wrong）
+    _subj_cond = "AND er.subject_id = :sid" if subject_id else ""
+    _subj_params = {"uid": student_id, **({"sid": subject_id} if subject_id else {})}
+
+    score_trend = _fetch_all(db, f"""
         SELECT er.id, er.started_at, er.score, er.total, er.correct, s.name subject
         FROM exam_records er JOIN subjects s ON s.id=er.subject_id
-        WHERE er.user_id=:uid ORDER BY er.started_at
-    """, {"uid": student_id})
+        WHERE er.user_id=:uid {_subj_cond} ORDER BY er.started_at
+    """, _subj_params)
 
-    by_subject = _fetch_all(db, """
+    by_subject = _fetch_all(db, f"""
         SELECT s.name subject, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
         FROM answer_records ar
         JOIN exam_records er ON er.id=ar.exam_record_id
         JOIN subjects s ON s.id=er.subject_id
-        WHERE er.user_id=:uid GROUP BY s.id ORDER BY total DESC
-    """, {"uid": student_id})
-
-    # 各知识点正确率（作答>=2次才统计；SQLite 的 ok/total 是整数除法，需 *1.0）
-    _subj_cond = "AND er.subject_id = :sid" if subject_id else ""
-    _subj_params = {"uid": student_id, **({"sid": subject_id} if subject_id else {})}
+        WHERE er.user_id=:uid {_subj_cond} GROUP BY s.id ORDER BY total DESC
+    """, _subj_params)
     by_topic = _fetch_all(db, f"""
         SELECT t.name topic, s.name subject, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
