@@ -119,6 +119,7 @@ class QuestionOut(BaseModel):
     tolerance: float = 0.01
     topic_name: Optional[str] = None
     reading_items: Optional[List[Any]] = None  # 阅读理解子题数组
+    deprecated: bool = False  # 弃用标记（不再出题，历史记录仍展示）
     class Config:
         from_attributes = True
 

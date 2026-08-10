@@ -237,10 +237,19 @@ function renderAnswerCard(q, ar, opts) {
     // 显示用户的匹配
     html += `<div style="margin-top:10px;font-size:14px;">`;
     html += `<span class="ans-label ${isRight ? 'label-correct' : 'label-your'}">${isRight ? '✓ 你的连线' : '✗ 你的连线'}</span><br>`;
+    // 构造正确答案的 (左索引, 右项文本) 集合，消除右侧重复标签歧义，与后端判分一致
+    const correctSet = new Set();
+    correctPairs.forEach(p => {
+      const [l, r] = p.split(':');
+      const ri = Number(r);
+      correctSet.add(matchOptions.length && matchOptions[ri] !== undefined ? (l + ':' + matchOptions[ri]) : p);
+    });
+
     userPairs.forEach(pair => {
       const [left, right] = pair.split(':').map(Number);
-      if (options[left] && matchOptions[right]) {
-        const isCorrectPair = correctPairs.includes(pair);
+      if (options[left] !== undefined && matchOptions[right] !== undefined) {
+        const key = matchOptions.length ? (left + ':' + matchOptions[right]) : pair;
+        const isCorrectPair = correctSet.has(key);
         const color = isCorrectPair ? '#2b8a3e' : '#c92a2a';
         html += `<span style="color:${color};">${esc(options[left])} → ${esc(matchOptions[right])} ${isCorrectPair ? '✓' : '✗'}</span><br>`;
       }

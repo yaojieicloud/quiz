@@ -1177,10 +1177,12 @@ async function doSubmit() {
   const answers = questions.map((q, i) => {
     let answer = userAnswers[i];
     if (q.type === 'match' && answer) {
-      // 前端存的是 JSON object {"0":2,"1":0}, 后端需要 "0:2,1:0"
+      // 前端存的是 JSON object {"0":2,"1":0}（键=左索引, 值=右规范索引 data-idx）
+      // 提交时按左索引升序重排出 "0:2,1:0"，消除连线/插入顺序扰动，保证判分确定性
       try {
         const pairs = JSON.parse(answer);
-        answer = Object.entries(pairs).map(([k, v]) => `${k}:${v}`).join(',');
+        answer = Object.keys(pairs).map(Number).sort((a, b) => a - b)
+          .map(k => `${k}:${pairs[k]}`).join(',');
       } catch (e) {}
     } else if (q.type === 'sort' && answer) {
       // 前端存的是 JSON array [1,0,2,3], 后端需要 "1,0,2,3"

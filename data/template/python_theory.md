@@ -3,7 +3,7 @@
 > 适用科目：Python基础理论(id=1)，category=programming
 > 导入脚本：`src/data/import_via_api.py`
 > 文件格式：**嵌套对象** `{ "subject": {...}, "questions": [...] }`
-> 支持题型：choice / judge / calc（**无** fill/essay/match/sort/code）
+> 支持题型：choice / judge / calc / **match**（**无** fill/essay/sort/code）
 
 ---
 
@@ -111,6 +111,27 @@ if判断与比较逻辑运算 / if-else与嵌套if / while循环与嵌套循环 
 - `options` 填 `null`
 - `answer` 是具体答案字符串
 - 判分时自动去空格、全角转半角
+
+### 3b. 连线题（match，Python 理论科目已支持）
+
+```json
+{
+  "type": "match",
+  "topic_name": "数值类型与字符串",
+  "content": "将数值字面量与类型连线。",
+  "options": ["10", "3.14", "0b101", "0x1A"],
+  "match_options": ["int", "float", "int（二进制）", "int（十六进制）"],
+  "answer": "0:0,1:1,2:2,3:3",
+  "explanation": "10 是整数 int；3.14 是 float；0b 开头是二进制整数；0x 开头是十六进制整数。",
+  "difficulty": 1
+}
+```
+
+- `options`：左侧项目数组（**内部文本必须唯一，不得重复**）
+- `match_options`：右侧选项数组（**不可留 `null`**；**内部文本必须唯一，不得重复**）
+- `answer`：`"左索引:右索引,左索引:右索引"`，索引从 0 开始，逗号分隔
+- 判分按「(左索引, 右项文本) 集合」比对，**忽略连线顺序**
+- ⚠️ **去重约束**：左右两侧选项文本各自唯一，重复文本会让判分产生歧义（见 `question_types.md` 连线题去重约束）。本例 `int / float / int（二进制） / int（十六进制）` 即为唯一文本的规范写法——`int（二进制）` 与 `int（十六进制）` 必须分开写，不可都写 `int`
 
 ---
 

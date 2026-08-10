@@ -120,19 +120,64 @@ def _judge_essay(question: Question, user_answer):
 
 
 def _judge_match(question: Question, user_answer):
-    """连线题判分：比对左右索引匹配，全对=100(5星)。
+    """连线题判分：主判据为 (左索引, 右索引) 索引对集合，顺序无关；全对=100(5星)。
 
-    answer 格式: "0:2,1:0,2:1" 表示 左0→右2, 左1→右0, 左2→右1
-    user_answer 格式相同
+    设计原则（与产品约定一致）：索引对索引本身正确，应作为主判据。
+    仅在「右侧选项存在重复文本」时才回退到"右项文本"判分，
+    以避免"点了第 2 个 True 而非第 0 个 True"这类误判。
+
+    相比旧逻辑（直接比对字符串顺序）修正：
+    1. 判分基于规范索引对集合，忽略学员连线顺序。
+    2. 前端提交的右项索引始终为规范索引（data-idx 锁定），不受右侧乱序显示影响。
+    3. 重复标签场景下按文本容忍不同实例，保留连线互动乐趣。
+
+    answer / user_answer 格式: "0:2,1:0,2:1"（左索引:右索引，逗号分隔）
     """
     if user_answer is None or str(user_answer).strip() == "":
         return False, "", {"stars": 0, "score": 0, "feedback": ""}
 
-    # 标准化后比对
-    user_normalized = _normalize(str(user_answer).replace(" ", ""))
-    answer_normalized = _normalize(str(question.answer).replace(" ", ""))
-    ok = user_normalized == answer_normalized
-    return ok, "", {"stars": 5 if ok else 0, "score": 100 if ok else 0, "feedback": ""}
+    match_options = question.match_options or []
+    # 右侧是否存在重复标签（如多个 True）→ 需要文本回退判分
+    norm_opts = [_normalize(str(o)) for o in match_options]
+    has_dup = len(norm_opts) != len(set(norm_opts))
+
+    def _index_pairs(s):
+        out = set()
+        for part in _normalize(str(s)).split(","):
+            if ":" not in part:
+                continue
+            l, r = part.split(":", 1)
+            try:
+                li, ri = int(l), int(r)
+            except ValueError:
+                continue
+            out.add((li, ri))
+        return out
+
+    def _value_pairs(s):
+        out = set()
+        for part in _normalize(str(s)).split(","):
+            if ":" not in part:
+                continue
+            l, r = part.split(":", 1)
+            try:
+                li, ri = int(l), int(r)
+            except ValueError:
+                continue
+            if match_options and 0 <= ri < len(match_options):
+                out.add((li, norm_opts[ri]))
+            else:
+                out.add((li, ri))
+        return out
+
+    std_idx, usr_idx = _index_pairs(question.answer), _index_pairs(user_answer)
+    # 主判据：索引对集合（顺序无关）
+    if std_idx == usr_idx:
+        return True, "", {"stars": 5, "score": 100, "feedback": ""}
+    # 回退判据：仅当右侧有重复标签时，按"右项文本"容忍不同实例
+    if has_dup and _value_pairs(question.answer) == _value_pairs(user_answer):
+        return True, "", {"stars": 5, "score": 100, "feedback": ""}
+    return False, "", {"stars": 0, "score": 0, "feedback": ""}
 
 
 def _judge_sort(question: Question, user_answer):
@@ -266,19 +311,21 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
         raise HTTPException(status_code=404, detail="科目不存在")
 
     # 抽题（注意：不创建 exam_record，未交卷不会产生空记录，提交时才落库）
+    # 弃用题不再进入出题（组卷与错题重做均排除），但保留于库中以正确展示历史记录
+    _active = (Question.deprecated == None) | (Question.deprecated == False)
     if data.mode == "wrong":
         wrongs = db.query(WrongQuestion).filter(
             WrongQuestion.user_id == user.id, WrongQuestion.mastered == False
         ).all()
         q_ids = [w.question_id for w in wrongs]
         pool = db.query(Question).filter(
-            Question.id.in_(q_ids), Question.subject_id == data.subject_id
+            Question.id.in_(q_ids), Question.subject_id == data.subject_id, _active
         ).all() if q_ids else []
         # 错题重做同样受科目题型配置约束（被禁用的题型不参与组卷）
         if subject.allowed_types:
             pool = [q for q in pool if q.type in subject.allowed_types]
     else:
-        q = db.query(Question).filter(Question.subject_id == data.subject_id)
+        q = db.query(Question).filter(Question.subject_id == data.subject_id, _active)
         if data.topic_ids:
             q = q.filter(Question.topic_id.in_(data.topic_ids))
         # 题型过滤：请求 types 与科目配置 allowed_types 取交集（科目配置是权威闸门，

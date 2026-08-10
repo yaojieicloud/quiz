@@ -126,6 +126,9 @@ class Question(Base):
     # 编程题判分用：参考代码运行的预期输出 + 需要的 stdin 样例
     expected_output = Column(Text)  # 参考代码运行后的预期 stdout（判分比对）
     sample_input = Column(Text, default="")  # 参考代码里 input() 需要的 stdin 样例
+    # 弃用标记：被标记为弃用的题目不再进入任何出题（组卷/错题重做），
+    # 但仍保留在库中以正确展示历史答题记录。用于清理重复选项等质量问题的旧题。
+    deprecated = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     subject = relationship("Subject", back_populates="questions")
