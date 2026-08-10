@@ -213,14 +213,27 @@ class AIReport(Base):
 # ============================================================================
 
 class ScoringRule(Base):
-    """积分换算矩阵（题数 × 得分段 → 积分），可配置"""
+    """积分换算矩阵（得分段 → 积分），全局默认档位，可配置"""
     __tablename__ = "scoring_rules"
 
     id = Column(Integer, primary_key=True, index=True)
-    question_count = Column(Integer, nullable=False, index=True)  # 题数：10/20/50
+    question_count = Column(Integer, nullable=False, index=True)  # 题数：0 表示任意题数（当前按得分档统一）
     score_band = Column(Integer, nullable=False, index=True)      # 得分段：80/90/100
     points = Column(Integer, nullable=False)                     # 对应积分
     is_active = Column(Boolean, default=True, nullable=False)    # 是否启用
+
+
+class SubjectPoints(Base):
+    """科目积分覆盖：对某科目单独设置三档积分；未设置则走全局默认(5/4/3)"""
+    __tablename__ = "subject_points"
+
+    id = Column(Integer, primary_key=True, index=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), unique=True, nullable=False, index=True)
+    p100 = Column(Integer, default=5, nullable=False)   # 得分=100 的积分
+    p90 = Column(Integer, default=4, nullable=False)    # 得分>=90 的积分
+    p80 = Column(Integer, default=3, nullable=False)    # 得分>=80 的积分
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
 class StudentPoints(Base):

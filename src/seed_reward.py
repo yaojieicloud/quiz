@@ -42,6 +42,12 @@ CONFIGS = {
     "launch_popup_version": "v1",
 }
 
+# 科目积分覆盖（可选，按科目名片段匹配；无则走全局默认 5/4/3）
+# python 实操积分降低为 100->3 / 90->2 / 80->1
+SUBJECT_POINT_OVERRIDES = {
+    "Python基础实操": (3, 2, 1),
+}
+
 
 def seed():
     db = SessionLocal()
@@ -75,6 +81,19 @@ def seed():
             if db.query(models.Config).filter(models.Config.key == k).count() == 0:
                 db.add(models.Config(key=k, value=v))
                 print(f"[seed] config 写入 {k}={v}")
+
+        # subject_points：科目积分覆盖（幂等 upsert，按科目名片段匹配）
+        for frag, (p100, p90, p80) in SUBJECT_POINT_OVERRIDES.items():
+            sub = db.query(models.Subject).filter(models.Subject.name.contains(frag)).first()
+            if not sub:
+                print(f"[seed] 跳过科目覆盖(未找到匹配 '{frag}')")
+                continue
+            sp = db.query(models.SubjectPoints).filter(models.SubjectPoints.subject_id == sub.id).first()
+            if not sp:
+                sp = models.SubjectPoints(subject_id=sub.id)
+                db.add(sp)
+            sp.p100, sp.p90, sp.p80 = p100, p90, p80
+            print(f"[seed] subject_points 覆盖 科目={sub.name} -> {p100}/{p90}/{p80}")
 
         db.commit()
         print("[seed] 完成。")

@@ -84,6 +84,7 @@ function renderTopbar(active = '') {
     { key: 'parent', href: 'parent.html', text: '👶 孩子情况', roles: ['parent'] },
     { key: 'admin', href: 'admin.html', text: '⚙️ 管理后台', roles: ['admin'] },
     { key: 'reward', href: 'admin-reward.html', text: '🎁 奖励管理', roles: ['admin'] },
+    { key: 'subjectPoints', href: 'admin-subject-points.html', text: '📚 科目积分', roles: ['admin'] },
     { key: 'llm', href: 'admin-llm.html', text: '📊 LLM 日志', roles: ['admin'] },
   ];
   const navHtml = links

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion, ScoringRule, StudentPoints, PointsLedger
+from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion, ScoringRule, StudentPoints, PointsLedger, SubjectPoints
 from schemas import (
     ExamStartRequest, ExamStartResponse, ExamSubmitRequest,
     ExamRecordOut, AnswerRecordOut, WrongQuestionOut, QuestionOut, QuestionForExam,
@@ -379,33 +379,51 @@ def _ensure_student_points(db: Session, student_id: int) -> StudentPoints:
 
 
 def _award_exam_points(db: Session, student_id: int, record: ExamRecord) -> int:
-    """提交试卷后按得分档位查 scoring_rules 发放积分（与题数无关）。
+    """提交试卷后发放积分。
 
-    档位示例：100分→5、90分→4、80分→3、低于80→0。
-    取满足条件 score_band <= 得分 中档位最高（points 最大）的一条。无匹配则 0。
+    优先级：
+      1. 若该科目在 subject_points 有覆盖设置，按 p100/p90/p80 三档命中；
+      2. 否则走全局默认 scoring_rules（得分档：100→5、90→4、80→3、<80→0）。
+    低于 80 分一律 0 分。
     """
-    rule = (
-        db.query(ScoringRule)
-        .filter(
-            ScoringRule.score_band <= record.score,
-            ScoringRule.is_active == True,  # noqa: E712
-        )
-        .order_by(ScoringRule.score_band.desc())
+    override = (
+        db.query(SubjectPoints)
+        .filter(SubjectPoints.subject_id == record.subject_id)
         .first()
     )
-    if not rule or rule.points <= 0:
+    if override:
+        if record.score >= 100:
+            pts = override.p100
+        elif record.score >= 90:
+            pts = override.p90
+        elif record.score >= 80:
+            pts = override.p80
+        else:
+            pts = 0
+    else:
+        rule = (
+            db.query(ScoringRule)
+            .filter(
+                ScoringRule.score_band <= record.score,
+                ScoringRule.is_active == True,  # noqa: E712
+            )
+            .order_by(ScoringRule.score_band.desc())
+            .first()
+        )
+        pts = rule.points if rule else 0
+    if pts <= 0:
         return 0
     sp = _ensure_student_points(db, student_id)
-    sp.balance += rule.points
+    sp.balance += pts
     db.add(PointsLedger(
         student_id=student_id,
-        delta=rule.points,
+        delta=pts,
         reason="exam_reward",
         ref_id=record.id,
         balance_after=sp.balance,
     ))
     db.flush()
-    return rule.points
+    return pts
 
 
 # ============ 提交判分 ============

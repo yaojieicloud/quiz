@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>科目课程积分设置 · 题库闯关</title>
+  <link rel="stylesheet" href="/static/css/common.css">
+  <style>
+    .admin-card { background:#fff; border-radius:16px; padding:16px 18px; margin:14px 0; box-shadow:0 3px 12px rgba(0,0,0,.06); }
+    .form-row { display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin:10px 0; }
+    .form-row input { padding:8px 10px; border:1px solid #d9d2e6; border-radius:10px; font-size:14px; width:90px; text-align:center; }
+    .form-row label { font-size:14px; color:#6b5b8a; }
+    .cfg-table { width:100%; border-collapse:collapse; margin-top:8px; font-size:14px; }
+    .cfg-table th,.cfg-table td { border:1px solid #efeaf6; padding:7px 10px; text-align:center; }
+    .cfg-table th { background:#f6f2fc; color:#6b5b8a; }
+    .cfg-table tr.sel { background:#fff7e6; }
+    .badge-default { color:#a89; font-size:12px; }
+    .badge-set { color:#2e8b57; font-weight:600; }
+    .hint { font-size:12px; color:#a89; margin-left:6px; }
+    td.name { text-align:left; }
+  </style>
+</head>
+<body>
+  <div id="topbar"></div>
+  <div class="redeem-wrap">
+    <h2 class="section-title">📚 科目课程积分设置（管理员）</h2>
+
+    <div class="admin-card">
+      <h3>批量设置所选科目的三档积分</h3>
+      <p class="hint">勾选下方科目 → 填入三档积分 → 点「批量设置」。留空/不设置则走全局默认（100→5、90→4、80→3）。</p>
+      <div class="form-row">
+        <label>100分</label><input id="p100" type="number" min="0" value="5">
+        <label>90分</label><input id="p90" type="number" min="0" value="4">
+        <label>80分</label><input id="p80" type="number" min="0" value="3">
+        <button class="btn btn-green" onclick="batchSet()">批量设置选中科目</button>
+        <span id="batchMsg" class="hint"></span>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h3>科目列表 <button class="btn btn-sm btn-yellow" onclick="loadList()">刷新</button></h3>
+      <table class="cfg-table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="chkAll" onchange="toggleAll(this)"></th>
+            <th>科目</th>
+            <th>类型</th>
+            <th>当前设置</th>
+            <th>100分</th>
+            <th>90分</th>
+            <th>80分</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="listBody"><tr><td colspan="8">加载中…</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="/static/js/common.js"></script>
+  <script src="/static/js/admin-subject-points.js"></script>
+</body>
+</html>

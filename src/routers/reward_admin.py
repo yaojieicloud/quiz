@@ -20,6 +20,7 @@ from database import get_db
 from models import (
     User, StudentPoints, PointsLedger, WheelPrize, Play,
     DirectRedemption, RedeemItem, ScoringRule, Config, LLMCall,
+    Subject, SubjectPoints,
 )
 from core.deps import require_role
 
@@ -349,3 +350,60 @@ def put_config(key: str, body: ConfigIn, _: User = admin_user, db: Session = Dep
         db.add(r)
     db.commit()
     return {"ok": True, "key": key, "value": body.value}
+
+
+# ============ 科目课程积分设置 ============
+class SubjectPointsBatchIn(BaseModel):
+    subject_ids: list[int]
+    p100: int = 5
+    p90: int = 4
+    p80: int = 3
+
+
+@router.get("/subject-points")
+def list_subject_points(_: User = admin_user, db: Session = Depends(get_db)):
+    """列出全部科目及其积分覆盖设置（无覆盖则 has_override=false）。"""
+    subs = db.query(Subject).order_by(Subject.sort_order, Subject.id).all()
+    ov_map = {sp.subject_id: sp for sp in db.query(SubjectPoints).all()}
+    return {
+        "items": [
+            {
+                "subject_id": s.id,
+                "subject_name": s.name,
+                "category": s.category,
+                "has_override": s.id in ov_map,
+                "p100": ov_map[s.id].p100 if s.id in ov_map else None,
+                "p90": ov_map[s.id].p90 if s.id in ov_map else None,
+                "p80": ov_map[s.id].p80 if s.id in ov_map else None,
+            }
+            for s in subs
+        ]
+    }
+
+
+@router.post("/subject-points/batch")
+def batch_set_subject_points(req: SubjectPointsBatchIn, _: User = admin_user, db: Session = Depends(get_db)):
+    """批量设置/覆盖多个科目的三档积分（upsert）。"""
+    if req.p100 < 0 or req.p90 < 0 or req.p80 < 0:
+        raise HTTPException(status_code=400, detail="积分不能为负")
+    updated = 0
+    for sid in req.subject_ids:
+        sub = db.query(Subject).filter(Subject.id == sid).first()
+        if not sub:
+            continue
+        sp = db.query(SubjectPoints).filter(SubjectPoints.subject_id == sid).first()
+        if not sp:
+            sp = SubjectPoints(subject_id=sid)
+            db.add(sp)
+        sp.p100, sp.p90, sp.p80 = req.p100, req.p90, req.p80
+        updated += 1
+    db.commit()
+    return {"ok": True, "updated": updated}
+
+
+@router.delete("/subject-points/{subject_id}")
+def reset_subject_points(subject_id: int, _: User = admin_user, db: Session = Depends(get_db)):
+    """删除某科目的积分覆盖，恢复为全局默认。"""
+    n = db.query(SubjectPoints).filter(SubjectPoints.subject_id == subject_id).delete()
+    db.commit()
+    return {"ok": True, "deleted": n}
