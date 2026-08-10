@@ -83,7 +83,7 @@ async function loadRules() {
   try {
     const rs = await API.get('/api/admin/scoring-rules');
     renderTable('rulesTbl', ['题数', '得分段', '积分', '启用'],
-      rs.map(r => [r.question_count, r.score_band, r.points, r.is_active ? '✅' : '—']));
+      rs.map(r => [r.question_count == 0 ? '任意题数' : r.question_count, r.score_band, r.points, r.is_active ? '✅' : '—']));
   } catch (e) {}
 }
 

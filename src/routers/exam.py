@@ -379,14 +379,18 @@ def _ensure_student_points(db: Session, student_id: int) -> StudentPoints:
 
 
 def _award_exam_points(db: Session, student_id: int, record: ExamRecord) -> int:
-    """提交试卷后按题数×得分段查 scoring_rules 发放积分。返回发放的积分（无匹配规则则 0）。"""
+    """提交试卷后按得分档位查 scoring_rules 发放积分（与题数无关）。
+
+    档位示例：100分→5、90分→4、80分→3、低于80→0。
+    取满足条件 score_band <= 得分 中档位最高（points 最大）的一条。无匹配则 0。
+    """
     rule = (
         db.query(ScoringRule)
         .filter(
-            ScoringRule.question_count == record.total,
-            ScoringRule.score_band == record.score,
+            ScoringRule.score_band <= record.score,
             ScoringRule.is_active == True,  # noqa: E712
         )
+        .order_by(ScoringRule.score_band.desc())
         .first()
     )
     if not rule or rule.points <= 0:

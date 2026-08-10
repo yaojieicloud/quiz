@@ -9,11 +9,12 @@ import models  # noqa: F401 确保全部表已注册到 metadata
 
 Base.metadata.create_all(bind=engine)
 
-# 初值矩阵：题数 × 得分段 → 积分
+# 积分矩阵：得分档位 → 积分（与题数无关，单题/多题统一适用）
+# question_count 列保留为兼容占位（0 表示"任意题数"），发分仅按 score_band 命中
 SCORING_MATRIX = [
-    (10, 80, 1), (10, 90, 2), (10, 100, 3),
-    (20, 80, 2), (20, 90, 3), (20, 100, 4),
-    (50, 80, 8), (50, 90, 9), (50, 100, 10),
+    (0, 80, 3),   # 得分>=80 → 3 分
+    (0, 90, 4),   # 得分>=90 → 4 分
+    (0, 100, 5),  # 得分=100 → 5 分（低于80分不配置，默认0分）
 ]
 
 # 转盘奖品（mode=wheel）：name, type, virtual_payload, weight, sort_order
@@ -45,11 +46,11 @@ CONFIGS = {
 def seed():
     db = SessionLocal()
     try:
-        # scoring_rules
-        if db.query(models.ScoringRule).count() == 0:
-            for qc, band, pts in SCORING_MATRIX:
-                db.add(models.ScoringRule(question_count=qc, score_band=band, points=pts, is_active=True))
-            print(f"[seed] scoring_rules 写入 {len(SCORING_MATRIX)} 条")
+        # scoring_rules：按最新积分矩阵覆盖（积分规则属配置，非用户数据；流水不受影响）
+        db.query(models.ScoringRule).delete()
+        for qc, band, pts in SCORING_MATRIX:
+            db.add(models.ScoringRule(question_count=qc, score_band=band, points=pts, is_active=True))
+        print(f"[seed] scoring_rules 覆盖写入 {len(SCORING_MATRIX)} 条")
 
         # wheel_prizes
         if db.query(models.WheelPrize).filter(models.WheelPrize.mode == "wheel").count() == 0:
