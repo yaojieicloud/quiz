@@ -66,8 +66,10 @@ db.sqlite3-journal
 *.db-journal
 *.db.old
 *.db.bak_*
+*.db.bak.*
 src/quiz.db
 src/quiz.db.old
+quiz.db.bak.20260810151644
 
 # Flask stuff:
 instance/

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion
+from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion, ScoringRule, StudentPoints, PointsLedger
 from schemas import (
     ExamStartRequest, ExamStartResponse, ExamSubmitRequest,
     ExamRecordOut, AnswerRecordOut, WrongQuestionOut, QuestionOut, QuestionForExam,
@@ -367,6 +367,43 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
     return ExamStartResponse(questions=questions)
 
 
+# ============ 积分辅助 ============
+def _ensure_student_points(db: Session, student_id: int) -> StudentPoints:
+    """获取或创建学员积分余额行，返回最新余额对象。"""
+    sp = db.query(StudentPoints).filter(StudentPoints.student_id == student_id).first()
+    if not sp:
+        sp = StudentPoints(student_id=student_id, balance=0)
+        db.add(sp)
+        db.flush()
+    return sp
+
+
+def _award_exam_points(db: Session, student_id: int, record: ExamRecord) -> int:
+    """提交试卷后按题数×得分段查 scoring_rules 发放积分。返回发放的积分（无匹配规则则 0）。"""
+    rule = (
+        db.query(ScoringRule)
+        .filter(
+            ScoringRule.question_count == record.total,
+            ScoringRule.score_band == record.score,
+            ScoringRule.is_active == True,  # noqa: E712
+        )
+        .first()
+    )
+    if not rule or rule.points <= 0:
+        return 0
+    sp = _ensure_student_points(db, student_id)
+    sp.balance += rule.points
+    db.add(PointsLedger(
+        student_id=student_id,
+        delta=rule.points,
+        reason="exam_reward",
+        ref_id=record.id,
+        balance_after=sp.balance,
+    ))
+    db.flush()
+    return rule.points
+
+
 # ============ 提交判分 ============
 @router.post("/exam/submit", response_model=ExamRecordOut)
 def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -428,9 +465,13 @@ def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user),
     record.correct = correct
     record.wrong = record.total - correct
     record.score = int(correct / record.total * 100) if record.total else 0
+
+    # ---- 积分获取钩子：按 scoring_rules 查表计分，与成绩同一事务提交 ----
+    points_earned = _award_exam_points(db, user.id, record)
+
     db.commit()
     db.refresh(record)
-    return _record_to_out(record, db)
+    return _record_to_out(record, db, points_earned=points_earned)
 
 
 # ============ 历史记录 ============
@@ -448,8 +489,16 @@ def record_detail(record_id: int, user: User = Depends(get_current_user), db: Se
     return _record_to_out(record, db, with_answers=True)
 
 
-def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True) -> ExamRecordOut:
+def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True, points_earned: int = 0) -> ExamRecordOut:
     out = ExamRecordOut.model_validate(record)
+    # 兼容旧数据：调用方没传积分时，从 points_ledger 回填（历史记录也能显示）
+    if points_earned == 0:
+        ledger = db.query(PointsLedger).filter_by(
+            student_id=record.user_id, reason="exam_reward", ref_id=record.id
+        ).first()
+        if ledger:
+            points_earned = ledger.delta
+    out.points_earned = points_earned
     if with_answers:
         ars = db.query(AnswerRecord).filter(AnswerRecord.exam_record_id == record.id).all()
         out.answer_records = []

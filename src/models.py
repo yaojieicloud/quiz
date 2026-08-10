@@ -204,3 +204,130 @@ class AIReport(Base):
     report_text = Column(Text, nullable=False)  # LLM 生成的周报正文
     data_summary = Column(JSON, nullable=False)  # 生成时的数据快照（图表渲染用）
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+# ============================================================================
+# 积分系统 + 大转盘抽奖（阶段 1）
+# 设计原则：参数全可配置、概率服务端决定、原子记账、预留盲盒(mode)扩展。
+# 详见 docs/积分系统与大转盘方案.md
+# ============================================================================
+
+class ScoringRule(Base):
+    """积分换算矩阵（题数 × 得分段 → 积分），可配置"""
+    __tablename__ = "scoring_rules"
+
+    id = Column(Integer, primary_key=True, index=True)
+    question_count = Column(Integer, nullable=False, index=True)  # 题数：10/20/50
+    score_band = Column(Integer, nullable=False, index=True)      # 得分段：80/90/100
+    points = Column(Integer, nullable=False)                     # 对应积分
+    is_active = Column(Boolean, default=True, nullable=False)    # 是否启用
+
+
+class StudentPoints(Base):
+    """学员积分余额缓存（独立表，不改动 users 表）"""
+    __tablename__ = "student_points"
+
+    student_id = Column(Integer, ForeignKey("users.id"), primary_key=True)
+    balance = Column(Integer, default=0, nullable=False)         # 当前积分
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class PointsLedger(Base):
+    """积分流水（审计用）"""
+    __tablename__ = "points_ledger"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    delta = Column(Integer, nullable=False)        # 正=获得，负=消耗
+    reason = Column(String(20), nullable=False)    # exam_reward / wheel_spin / direct_redeem / adjust
+    ref_id = Column(Integer, nullable=True)        # 关联 exam_records.id / plays.id / direct_redemptions.id
+    balance_after = Column(Integer, nullable=False)  # 变动后余额（冗余）
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+
+class WheelPrize(Base):
+    """转盘/盲盒奖品池（可配置，mode 区分玩法以支持扩展）"""
+    __tablename__ = "wheel_prizes"
+
+    id = Column(Integer, primary_key=True, index=True)
+    mode = Column(String(20), default="wheel", nullable=False, index=True)  # wheel / blindbox（预留）
+    name = Column(String(100), nullable=False)      # 奖品名
+    type = Column(String(20), default="physical", nullable=False)  # virtual / physical
+    virtual_payload = Column(String(100), nullable=True)  # 虚拟载荷（如 "+2积分"），physical 时为 null
+    weight = Column(Integer, default=1, nullable=False)   # 概率权重
+    is_active = Column(Boolean, default=True, nullable=False)
+    sort_order = Column(Integer, default=0)
+
+
+class Play(Base):
+    """通用抽奖/开箱记录（覆盖大转盘与未来盲盒）"""
+    __tablename__ = "plays"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    mode = Column(String(20), default="wheel", nullable=False, index=True)  # wheel / blindbox
+    prize_id = Column(Integer, ForeignKey("wheel_prizes.id"), nullable=False)
+    prize_name = Column(String(100), nullable=False)   # 冗余快照
+    is_physical = Column(Boolean, default=True, nullable=False)
+    status = Column(String(20), default="pending", nullable=False)  # pending / redeemed / granted
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    redeemed_at = Column(DateTime, nullable=True)
+    redeemed_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+
+
+class DirectRedemption(Base):
+    """直兑商城兑换记录"""
+    __tablename__ = "direct_redemptions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    item_id = Column(Integer, ForeignKey("redeem_items.id"), nullable=False)
+    cost = Column(Integer, nullable=False)   # 扣减积分快照
+    status = Column(String(20), default="pending", nullable=False)  # pending / redeemed
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    redeemed_at = Column(DateTime, nullable=True)
+    redeemed_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+
+
+class RedeemItem(Base):
+    """直兑商城配置（可配置）"""
+    __tablename__ = "redeem_items"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), nullable=False)
+    type = Column(String(20), default="physical", nullable=False)  # virtual / physical
+    cost = Column(Integer, nullable=False)          # 积分价格
+    virtual_payload = Column(String(100), nullable=True)
+    is_active = Column(Boolean, default=True, nullable=False)
+    sort_order = Column(Integer, default=0)
+
+
+class Config(Base):
+    """全局键值配置（抽奖费、弹窗版本号等，均可配置）"""
+    __tablename__ = "config"
+
+    key = Column(String(50), primary_key=True)
+    value = Column(String(200), nullable=False)
+
+
+# ============================================================================
+# LLM 调用记录（兜底 + 追溯审计）
+# 每次 LLM 调用（评分 / 周报等）无论成败都落一条；先试 aliyun，失败再 deepseek，
+# 各自记一条，便于事后分析「走了哪个模型、消耗多少 token、耗时、成败原因」。
+# ============================================================================
+
+class LLMCall(Base):
+    """LLM 调用审计日志（可追溯每次调用的 provider / 模型 / token 消耗 / 耗时 / 成败）"""
+    __tablename__ = "llm_calls"
+
+    id = Column(Integer, primary_key=True, index=True)
+    scenario = Column(String(40), nullable=False, index=True)     # 调用场景：code_grade / weekly_report / ...
+    provider = Column(String(20), nullable=False, index=True)      # aliyun / deepseek
+    model = Column(String(40), nullable=False)                    # 实际使用的模型名
+    prompt_tokens = Column(Integer, nullable=True)
+    completion_tokens = Column(Integer, nullable=True)
+    total_tokens = Column(Integer, nullable=True)
+    status = Column(String(10), nullable=False)                   # success / failed
+    latency_ms = Column(Integer, nullable=True)                   # 本次调用耗时（毫秒）
+    error = Column(Text, nullable=True)                           # 失败原因（截断存储）
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)

@@ -226,6 +226,7 @@ class ExamRecordOut(BaseModel):
     started_at: datetime
     finished_at: Optional[datetime] = None
     answer_records: List[AnswerRecordOut] = []
+    points_earned: int = 0  # 本次答题按 scoring_rules 获得的积分
     class Config:
         from_attributes = True
 

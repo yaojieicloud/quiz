@@ -741,14 +741,12 @@ class ReportRequest(BaseModel):
 @router.post("/analytics/report")
 def analytics_report(data: ReportRequest, _=Depends(require_role("admin")), db: Session = Depends(get_db)):
     """AI 学情周报：聚合学员数据 → LLM 生成自然语言评语（失败返回 502，不造假）"""
-    from core import llm_grader
-    from openai import OpenAI
+    from core import llm_client
 
     student = db.query(User).filter(User.id == data.student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="学员不存在")
-    if not llm_grader.LLM_API_KEY:
-        raise HTTPException(status_code=502, detail="LLM_API_KEY 未配置，无法生成 AI 报告")
+    # LLM key 检查交给 llm_client：阿里云不通自动兜底 DeepSeek，全失败才 502
 
     # 检查7天内是否有缓存的周报（除非强制重新生成）
     if not data.force:
@@ -827,20 +825,18 @@ def analytics_report(data: ReportRequest, _=Depends(require_role("admin")), db: 
 5. 直接输出周报内容，不要额外说明"""
 
     try:
-        client = OpenAI(api_key=llm_grader.LLM_API_KEY, base_url=llm_grader.LLM_BASE_URL)
-        resp = client.chat.completions.create(
-            model=llm_grader.LLM_MODEL,
-            messages=[
+        report_text = llm_client.llm_chat(
+            [
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt_data},
             ],
+            scenario="weekly_report",
             temperature=0.7,
             max_tokens=800,
             timeout=90,
-        )
-        report_text = resp.choices[0].message.content.strip()
+        ).strip()
     except Exception as e:  # noqa: BLE001
-        raise HTTPException(status_code=502, detail=f"AI 报告生成失败：{e}")
+        raise HTTPException(status_code=502, detail=f"AI 报告生成失败（含兜底）：{e}")
 
     # 构建完整的图表数据
     score_trend = []

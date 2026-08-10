@@ -1,7 +1,7 @@
-"""LLM 代码评分模块：调用 LLM API（阿里云百炼兼容模式，qwen3.7-max）对编程题做星级评分与个性化反馈。
+"""LLM 代码评分模块：调用 LLM API 对编程题做星级评分与个性化反馈。
 
-降级策略：若 openai 库不可用 / API Key 未配置 / API 超时 / 返回格式异常，
-自动返回 fallback 标记，由调用方（exam.py）回退到 stdout 精确匹配的二元判分。
+实际调用走 core.llm_client.llm_chat（阿里云优先，DeepSeek 兜底），
+每次调用都会写入 llm_calls 审计表。降级策略见下方 grade_code。
 """
 import os
 import json
@@ -9,22 +9,10 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# ── API Key：优先环境变量（LLM_API_KEY，兼容旧名 DEEPSEEK_API_KEY），其次数据卷文件 ──
-LLM_API_KEY = os.getenv("LLM_API_KEY", "") or os.getenv("DEEPSEEK_API_KEY", "")
-if not LLM_API_KEY:
-    for _key_file in ("/app/data/llm_key.txt", "/app/data/deepseek_key.txt"):
-        try:
-            if os.path.exists(_key_file):
-                with open(_key_file, "r", encoding="utf-8") as f:
-                    LLM_API_KEY = f.read().strip()
-                if LLM_API_KEY:
-                    break
-        except Exception:
-            pass
-
-# ── 端点与模型（2026-08-03 切换为阿里云百炼兼容模式；max→plus，速度更快）──
+# 保留旧导出名，避免其它模块（如 admin 周报）直接引用时断链；新代码请用 llm_client
 LLM_BASE_URL = "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
 LLM_MODEL = "qwen3.7-plus"
+LLM_API_KEY = os.getenv("LLM_API_KEY", "")
 
 # ── 系统提示词 ──
 SYSTEM_PROMPT = """你是一位 Python 编程老师，正在批改一位 10 岁小学生的 Python 练习题。
@@ -75,16 +63,6 @@ def grade_code(
         {"stars": int, "score": int, "feedback": str}
         若 LLM 不可用，返回 {"stars": -1, "score": -1, "feedback": ""} 表示需降级
     """
-    if not LLM_API_KEY:
-        logger.warning("LLM_API_KEY 未配置，跳过 LLM 评分")
-        return _fallback()
-
-    try:
-        from openai import OpenAI  # noqa: PLC0415
-    except ImportError:
-        logger.warning("openai 库未安装，跳过 LLM 评分")
-        return _fallback()
-
     user_prompt = f"""题目要求：
 {question_content}
 
@@ -101,61 +79,51 @@ def grade_code(
 
 请根据以上信息给出评分。"""
 
+    # 实际调用走 llm_client（阿里云优先，DeepSeek 兜底），每次调用已落审计日志
     try:
-        client = OpenAI(
-            api_key=LLM_API_KEY,
-            base_url=LLM_BASE_URL,
-        )
-        response = client.chat.completions.create(
-            model=LLM_MODEL,
-            messages=[
+        from core.llm_client import llm_chat
+        raw = llm_chat(
+            [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": user_prompt},
             ],
+            scenario="code_grade",
             temperature=0,
             max_tokens=300,
             timeout=90,
-        )
-        
-        # 记录 token 消耗
-        if hasattr(response, 'usage') and response.usage:
-            prompt_tokens = response.usage.prompt_tokens or 0
-            completion_tokens = response.usage.completion_tokens or 0
-            total_tokens = response.usage.total_tokens or 0
-            logger.info(f"[LLM_TOKEN] model={LLM_MODEL} prompt={prompt_tokens} completion={completion_tokens} total={total_tokens}")
-        
-        raw = response.choices[0].message.content.strip()
-
-        # 提取 JSON（处理可能的 markdown 代码块包裹）
-        if raw.startswith("```"):
-            lines = raw.split("\n")
-            # 去掉第一行 ```json 或 ```
-            raw = "\n".join(lines[1:])
-            if raw.rstrip().endswith("```"):
-                raw = raw.rstrip()[:-3]
-        raw = raw.strip()
-
-        result = json.loads(raw)
-        stars = int(result.get("stars", -1))
-        score = int(result.get("score", -1))
-        feedback = str(result.get("feedback", ""))
-
-        # 合法性校验
-        if stars < 0 or stars > 5 or score < 0 or score > 100:
-            logger.warning(
-                "LLM 返回的评分不合法: stars=%d score=%d raw=%s", stars, score, raw[:200]
-            )
-            return _fallback()
-
-        logger.info("LLM 评分完成: stars=%d score=%d", stars, score)
-        return {"stars": stars, "score": score, "feedback": feedback}
-
-    except json.JSONDecodeError:
-        logger.warning("LLM 返回格式无法解析: %s", raw[:200] if "raw" in dir() else "(无输出)")
-        return _fallback()
+        ).strip()
     except Exception:
-        logger.exception("LLM 评分异常")
+        logger.warning("LLM 评分不可用（含兜底全部失败），降级回原判分逻辑")
         return _fallback()
+
+    # 提取 JSON（处理可能的 markdown 代码块包裹）
+    if raw.startswith("```"):
+        lines = raw.split("\n")
+        # 去掉第一行 ```json 或 ```
+        raw = "\n".join(lines[1:])
+        if raw.rstrip().endswith("```"):
+            raw = raw.rstrip()[:-3]
+    raw = raw.strip()
+
+    try:
+        result = json.loads(raw)
+    except json.JSONDecodeError:
+        logger.warning("LLM 返回格式无法解析: %s", raw[:200])
+        return _fallback()
+
+    stars = int(result.get("stars", -1))
+    score = int(result.get("score", -1))
+    feedback = str(result.get("feedback", ""))
+
+    # 合法性校验
+    if stars < 0 or stars > 5 or score < 0 or score > 100:
+        logger.warning(
+            "LLM 返回的评分不合法: stars=%d score=%d raw=%s", stars, score, raw[:200]
+        )
+        return _fallback()
+
+    logger.info("LLM 评分完成: stars=%d score=%d", stars, score)
+    return {"stars": stars, "score": score, "feedback": feedback}
 
 
 def _fallback() -> dict:

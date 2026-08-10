@@ -22,8 +22,11 @@ ENV QUIZ_DB_PATH=/app/data/quiz.db
 ENV QUIZ_HOST=0.0.0.0
 ENV QUIZ_PORT=8000
 
+# 启动入口（先幂等播种积分系统种子数据，再启动服务）
+RUN chmod +x /app/entrypoint.sh
+
 # 暴露端口
 EXPOSE 8000
 
 # 启动命令
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["/app/entrypoint.sh"]

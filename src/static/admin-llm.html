@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM 调用日志 · 题库闯关</title>
+  <link rel="stylesheet" href="/static/css/common.css">
+  <style>
+    .form-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 10px 0; }
+    .form-row select { padding: 8px 10px; border: 1px solid #d9d2e6; border-radius: 10px; font-size: 14px; }
+    .stat-pills { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+    .stat-pills .pill { background:#fff; border:2px solid #ffe08a; border-radius:16px; padding:6px 14px; font-size:14px; color:#7a6c8c; }
+    .cfg-table { width:100%; border-collapse:collapse; margin-top:8px; font-size:13px; }
+    .cfg-table th,.cfg-table td { border:1px solid #efeaf6; padding:7px 8px; text-align:center; }
+    .cfg-table th { background:#f6f2fc; color:#6b5b8a; position:sticky; top:0; }
+    .cfg-table td.err { text-align:left; color:#c0392b; max-width:260px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .ok { color:#2b8a3e; font-weight:bold; }
+    .fail { color:#c0392b; font-weight:bold; }
+    .pager { margin:12px 0; display:flex; gap:10px; align-items:center; }
+  </style>
+</head>
+<body>
+  <div id="topbar"></div>
+  <div class="redeem-wrap">
+    <h2 class="section-title">📊 LLM 调用日志（追溯审计）</h2>
+    <div class="admin-card">
+      <div class="form-row">
+        <label>场景</label>
+        <select id="fScenario">
+          <option value="">全部</option>
+          <option value="code_grade">编程题评分</option>
+          <option value="weekly_report">AI 周报</option>
+        </select>
+        <label>Provider</label>
+        <select id="fProvider">
+          <option value="">全部</option>
+          <option value="aliyun">阿里云</option>
+          <option value="deepseek">DeepSeek</option>
+        </select>
+        <label>状态</label>
+        <select id="fStatus">
+          <option value="">全部</option>
+          <option value="success">成功</option>
+          <option value="failed">失败</option>
+        </select>
+        <button class="btn btn-green" onclick="doQuery()">查询</button>
+        <button class="btn btn-sm btn-yellow" onclick="doQuery()">刷新</button>
+      </div>
+      <div class="stat-pills" id="stats"></div>
+    </div>
+    <div class="admin-card">
+      <div style="overflow-x:auto; max-height:60vh; overflow-y:auto;">
+        <table class="cfg-table">
+          <thead>
+            <tr>
+              <th>时间</th><th>场景</th><th>Provider</th><th>模型</th>
+              <th>Prompt</th><th>补全</th><th>合计Token</th><th>状态</th><th>耗时(ms)</th><th>错误</th>
+            </tr>
+          </thead>
+          <tbody id="logBody"><tr><td colspan="10">加载中…</td></tr></tbody>
+        </table>
+      </div>
+      <div class="pager">
+        <button class="btn btn-sm" onclick="changePage(-1)">上一页</button>
+        <span id="pageInfo">第 1 页</span>
+        <button class="btn btn-sm" onclick="changePage(1)">下一页</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/common.js"></script>
+  <script src="/static/js/admin-llm.js"></script>
+</body>
+</html>

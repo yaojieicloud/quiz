@@ -76,27 +76,108 @@ function renderTopbar(active = '') {
   if (!user) { location.href = 'index.html'; return; }
   const links = [
     { key: 'home', href: 'home.html', text: '🏠 首页', roles: ['student','parent','admin'] },
+    { key: 'lottery', href: 'lottery.html', text: '🎡 大转盘', roles: ['student','admin'] },
+    { key: 'redeem', href: 'redeem.html', text: '🎁 兑换商城', roles: ['student','admin'] },
     { key: 'records', href: 'records.html', text: '📋 答题记录', roles: ['student'] },
     { key: 'wrong', href: 'wrong.html', text: '❌ 错题本', roles: ['student'] },
     { key: 'stats', href: 'stats.html', text: '📊 学习统计', roles: ['student'] },
     { key: 'parent', href: 'parent.html', text: '👶 孩子情况', roles: ['parent'] },
     { key: 'admin', href: 'admin.html', text: '⚙️ 管理后台', roles: ['admin'] },
+    { key: 'reward', href: 'admin-reward.html', text: '🎁 奖励管理', roles: ['admin'] },
+    { key: 'llm', href: 'admin-llm.html', text: '📊 LLM 日志', roles: ['admin'] },
   ];
   const navHtml = links
     .filter(l => l.roles.includes(user.role))
     .map(l => `<a href="${l.href}" class="${active === l.key ? 'active' : ''}">${l.text}</a>`)
     .join('');
   const avatarText = (user.nickname || user.username || '?').charAt(0).toUpperCase();
+  // 学员/管理员均显示积分徽章（点击跳转大转盘）
+  const pointsChip = (user.role === 'student' || user.role === 'admin')
+    ? `<span class="points-chip" id="pointsChip" onclick="location.href='lottery.html'" title="我的积分">⭐ <span id="pointsVal">…</span></span>`
+    : '';
   return `
     <div class="topbar">
       <div class="logo" onclick="location.href='home.html'">🎯 题库闯关</div>
       <div class="nav-links">${navHtml}</div>
       <div class="user-info">
+        ${pointsChip}
         <div class="avatar">${avatarText}</div>
         <span>${esc(user.nickname)}</span>
         <button class="btn-logout" onclick="logout()">退出</button>
       </div>
     </div>`;
+}
+
+// 拉取并渲染学员积分徽章（每个学员端页面渲染顶栏后调用）
+async function initPoints() {
+  const user = getUser();
+  if (!user || (user.role !== 'student' && user.role !== 'admin')) return;
+  const val = document.getElementById('pointsVal');
+  if (!val) return;
+  try {
+    const d = await API.get('/api/points/balance');
+    val.textContent = d.balance;
+  } catch (e) {
+    val.textContent = '—';
+  }
+}
+
+// 上线弹窗：版本更新后首次进入弹出（可爱 / 醒目 / 小动画）
+async function maybeShowLaunchPopup() {
+  const user = getUser();
+  if (!user || user.role !== 'student') return;
+  const KEY = 'quiz_launch_v';
+  let latest = 'v1';
+  try {
+    const meta = await API.get('/api/meta');
+    latest = meta.launch_popup_version || 'v1';
+  } catch (e) { /* 取不到则用默认版本 */ }
+  const seen = localStorage.getItem(KEY);
+  if (seen === latest) return;       // 已看过此版本，不再弹
+  showLaunchPopup();
+  localStorage.setItem(KEY, latest); // 标记已看，避免重复弹
+}
+
+function showLaunchPopup() {
+  if (document.getElementById('launchPopup')) return;
+  const style = `
+    <style id="launchPopupStyle">
+      @keyframes lp-bounce { 0%{transform:scale(.6);opacity:0} 60%{transform:scale(1.08)} 100%{transform:scale(1);opacity:1} }
+      @keyframes lp-star { 0%,100%{transform:rotate(-12deg) scale(1)} 50%{transform:rotate(12deg) scale(1.15)} }
+      @keyframes lp-float { 0%{transform:translateY(0) rotate(0)} 100%{transform:translateY(-40px) rotate(360deg);opacity:0} }
+      @keyframes lp-glow { 0%,100%{text-shadow:0 0 12px #ffd43b} 50%{text-shadow:0 0 26px #ff922b} }
+      #launchPopup { position:fixed; inset:0; z-index:999; display:flex; align-items:center; justify-content:center;
+        background:rgba(60,40,90,0.45); backdrop-filter:blur(3px); }
+      #launchPopup .lp-card { position:relative; width:min(86vw,420px); padding:30px 26px 24px; border-radius:28px; text-align:center;
+        background:linear-gradient(160deg,#fff0f6 0%,#fff9db 55%,#e7f5ff 100%);
+        box-shadow:0 24px 60px rgba(120,80,160,0.35); animation:lp-bounce .5s cubic-bezier(.2,1.2,.4,1) both; }
+      #launchPopup .lp-title { font-size:26px; font-weight:bold; margin:8px 0 4px; color:#e8590c;
+        background:linear-gradient(90deg,#f06595,#fab005,#4dabf7); -webkit-background-clip:text; background-clip:text;
+        -webkit-text-fill-color:transparent; animation:lp-glow 1.8s ease-in-out infinite; }
+      #launchPopup .lp-sub { font-size:15px; color:#7a6c8c; line-height:1.7; margin:6px 4px 16px; }
+      #launchPopup .lp-emojis { font-size:40px; letter-spacing:6px; }
+      #launchPopup .lp-emojis span { display:inline-block; animation:lp-star 1.6s ease-in-out infinite; }
+      #launchPopup .lp-emojis span:nth-child(2){ animation-delay:.3s } #launchPopup .lp-emojis span:nth-child(3){ animation-delay:.6s }
+      #launchPopup .lp-btns { display:flex; gap:12px; justify-content:center; margin-top:6px; }
+      #launchPopup .lp-confetti { position:absolute; top:-10px; font-size:18px; animation:lp-float 2.4s linear infinite; }
+    </style>`;
+  const confetti = ['🎉','⭐','🎊','💫','🌟','🍬'].map((e,i)=>
+    `<span class="lp-confetti" style="left:${10+i*15}%;animation-delay:${i*0.3}s">${e}</span>`).join('');
+  const html = `
+    <div id="launchPopup">
+      ${style}
+      <div class="lp-card">
+        ${confetti}
+        <div class="lp-emojis"><span>🎉</span><span>🏆</span><span>⭐</span></div>
+        <div class="lp-title">积分奖励系统上线啦！</div>
+        <div class="lp-sub">做完题就能赚积分～<br>攒够积分来转大转盘🎡<br>换小礼物🎁和零花钱💰哦！</div>
+        <div class="lp-btns">
+          <button class="btn btn-yellow" onclick="document.getElementById('launchPopup').remove()">去赚积分 🚀</button>
+          <button class="btn btn-green" onclick="location.href='lottery.html'">看看大转盘 🎡</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
 }
 
 // HTML 转义（用于显示用户输入内容时防注入）

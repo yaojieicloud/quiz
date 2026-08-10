@@ -151,6 +151,8 @@
 const user = requireAuth();
 if (!user) throw new Error('redirect');
 document.getElementById('topbar').innerHTML = renderTopbar('home');
+initPoints();
+maybeShowLaunchPopup();
 
 let subjects = [];
 let currentSubject = null;

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>题库闯关 - 大转盘</title>
+<link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<header class="page-header">
+  <div class="icon">🎡</div>
+  <h1>幸运大转盘</h1>
+  <div class="subtitle">攒够积分，转一转试试手气吧！</div>
+</header>
+
+<main class="lottery-wrap">
+  <div class="lottery-balance">我的积分：<span id="balance">…</span> ⭐（每次抽奖 <span id="cost">20</span> 积分）</div>
+
+  <div class="wheel-stage">
+    <div class="wheel-pointer"></div>
+    <div id="wheelWrap">
+      <div id="wheel"></div>
+      <div id="wheelLabels"></div>
+    </div>
+    <div class="wheel-ring"></div>
+    <div class="wheel-hub">🎯</div>
+  </div>
+
+  <button class="btn-spin" id="spinBtn" onclick="spin()">开始抽奖 🎉</button>
+
+  <div class="prize-list" id="prizeList"></div>
+</main>
+
+<script src="js/common.js"></script>
+<script src="js/lottery.js"></script>
+</body>
+</html>

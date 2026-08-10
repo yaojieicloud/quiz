@@ -297,6 +297,8 @@
 const user = requireAuth();
 if (!user) throw new Error('redirect');
 document.getElementById('topbar').innerHTML = renderTopbar();
+initPoints();
+maybeShowLaunchPopup();
 
 const examData = JSON.parse(localStorage.getItem('quiz_exam') || 'null');
 if (!examData) location.href = 'home.html';
@@ -1207,6 +1209,7 @@ async function doSubmit() {
       duration_seconds,
     });
     showResult(res);
+    initPoints();  // 刷新顶栏积分徽章
   } catch (e) {
     toast(e.message, 'error');
     submitted = false;
@@ -1231,6 +1234,9 @@ function showResult(record) {
       <h2>${rank.text}</h2>
       <div class="score">${record.score}<span style="font-size:28px;">分</span></div>
       <div class="detail">答对 ${correct} 题 · 答错 ${wrong} 题 · 共 ${record.total} 题 · 用时 ${fmtDuration(record.duration_seconds)}</div>
+      <div style="margin-top:12px;font-size:20px;color:#e8590c;font-weight:bold;background:#fff3bf;display:inline-block;padding:8px 18px;border-radius:20px;">
+        ⭐ 本次获得 ${record.points_earned || 0} 积分
+      </div>
       <div class="rank">${record.subject_name || ''} · ${record.mode === 'wrong' ? '错题重做' : record.mode === 'random' ? '随机挑战' : '自由组卷'}</div>
     </div>`;
 
