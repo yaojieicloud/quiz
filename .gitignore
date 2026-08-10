@@ -70,6 +70,9 @@ db.sqlite3-journal
 src/quiz.db
 src/quiz.db.old
 quiz.db.bak.20260810151644
+# 本地 Docker / ECS 数据卷：含数据库与密钥，禁止入库
+quiz-data/
+/data/
 
 # Flask stuff:
 instance/

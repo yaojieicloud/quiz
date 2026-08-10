@@ -74,3 +74,95 @@
 - 难度 1 为主、每课穿插少量难度 2；`expected_output` 全部由沙箱实跑参考代码生成
 - 生成脚本：`src/data/gen_coding_p1.py`（第1-10课）+ `gen_coding_p2.py`（第11-20课）；实跑补 expected_output：`fill_expected_new200.py`
 - 导入方式：纯数组 JSON 需包装成 `{subject, questions}` 嵌套格式后用 `import_via_api.py`
+
+---
+
+## 🛠️ 本地开发、调试与部署
+
+> 统一约定：**以后本地测试都用本地 Docker，端口 8000，与线上 ECS 完全一致的方式**。
+
+### 1. 代码位置与依赖
+
+- 应用入口 `src/main.py`，全部后端在 `src/`（routers / models / core / schemas）。
+- 依赖见 `src/requirements.txt`。本地虚拟环境：
+  ```bash
+  python -m venv .venv
+  .venv/Scripts/python.exe -m pip install -r src/requirements.txt
+  ```
+- 数据库为 SQLite，路径由环境变量 `QUIZ_DB_PATH` 控制；容器内默认 `/app/data/quiz.db`。
+
+### 2. 本地直接运行（开发/调试，不使用 Docker）
+
+```bash
+cd src
+.venv/Scripts/python.exe -m uvicorn main:app --host 0.0.0.0 --port 8010
+# 热重载调试可加 --reload
+```
+
+- 访问 `http://localhost:8010`。
+- DeepSeek 兜底 key：通过环境变量 `DEEPSEEK_API_KEY` 注入，或放到 `quiz-data/deepseek_key.txt`
+  （容器内即 `/app/data/deepseek_key.txt`）。**切勿写入代码或提交 git。**
+- 初始化/补齐积分种子（幂等，会覆盖积分矩阵、科目积分覆盖、转盘/直兑商城）：
+  ```bash
+  .venv/Scripts/python.exe seed_reward.py
+  ```
+
+### 3. 本地 Docker 部署（推荐测试方式，端口 8000）
+
+构建镜像（**本机需能访问 PyPI**；ECS 出网受限，改用 §5 的 docker cp 热更新）：
+
+```bash
+docker build -t quiz-system:local -f src/Dockerfile src
+```
+
+准备数据卷（持久化数据库与密钥，**不进 git**）：
+
+```bash
+mkdir -p quiz-data
+cp src/quiz.db quiz-data/quiz.db        # 或留空让容器自动建库（但无科目/账号，需另行导入）
+printf '%s\n' '<你的DEEPSEEK_KEY>' > quiz-data/deepseek_key.txt
+```
+
+启动（端口 8000，entrypoint 自动 seed + 起服务）：
+
+```bash
+docker run -d --name quiz-local -p 8000:8000 \
+  -v "$(pwd)/quiz-data:/app/data" --restart unless-stopped quiz-system:local
+```
+
+- 入口 `entrypoint.sh`：先 `python seed_reward.py`（幂等播种），再 `uvicorn ... --port 8000`。
+- 访问 `http://localhost:8000`；日志 `docker logs -f quiz-local`；重启 `docker restart quiz-local`。
+- ⚠️ 8000 常被其他进程（如 node 开发服务器）占用，启动前请先释放该端口。
+
+### 4. 测试方式
+
+- 管理后台：`http://localhost:8000/admin.html`（或顶栏「⚙️ 管理后台」），账号 `admin / admin123`。
+- 积分相关：顶栏「🎁 奖励管理」「📚 科目积分」（科目可多选批量设分，未设走默认 5/4/3）。
+- LLM 兜底与审计：触发一次 AI 周报或 code 题评分，到「📊 LLM 日志」或 `GET /api/admin/llm-calls`
+  查看，应看到 `aliyun 失败 → deepseek 成功` 两条带 token/耗时的记录。
+- 积分档位：单题练习答对（100 分）默认 +5；Python基础实操 单独降到 +3（90→2、80→1）。
+
+### 5. 线上 ECS 部署（热更新，因 PyPI 不通）
+
+ECS 出网到 PyPI / Docker Hub **不通**，`docker build` 会卡死在 `pip install`。改用 `docker cp` 同步：
+
+1. 本地打包（排除库/缓存/数据）：
+   ```bash
+   tar --exclude='*.db' --exclude='__pycache__' --exclude='data' -czf quiz-src.tar.gz -C src .
+   ```
+2. `scp` 到 ECS 并解压，然后拷进运行容器：
+   ```bash
+   docker cp build/. quiz-system:/app/
+   ```
+3. 容器内跑种子 + 注入密钥 + 重启：
+   ```bash
+   docker exec quiz-system python seed_reward.py
+   # 写密钥（仅存数据卷，不进镜像/不进 git）
+   printf '%s\n' '<DEEPSEEK_KEY>' > /opt/quiz-system/quiz-data/deepseek_key.txt
+   docker restart quiz-system
+   ```
+
+### 🔐 安全提醒
+
+- DeepSeek / aliyun key 一律走环境变量或 `quiz-data/deepseek_key.txt`，**禁止写入代码或提交仓库**。
+- `quiz-data/`、`*.db`、`.venv` 已加入 `.gitignore`，提交前请确认这些不被跟踪。
