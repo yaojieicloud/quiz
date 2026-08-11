@@ -12,12 +12,15 @@ from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
-from sqlalchemy import text
+from sqlalchemy import text, func, case
 from sqlalchemy.orm import Session
 from typing import Optional
 
 from database import engine, get_db
-from models import User, ExamRecord, AnswerRecord, AIReport, PointsLedger
+from models import (
+    User, ExamRecord, AnswerRecord, AIReport, PointsLedger,
+    WrongQuestion, Question, Topic, Subject,
+)
 from schemas import ExamRecordOut, AnswerRecordOut, QuestionOut
 from core.deps import require_role
 
@@ -614,6 +617,9 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
     if wrong_limit not in (10, 20, 30, 50):
         wrong_limit = 10
 
+    # 该学员个人掌握度状态映射（topic_id -> status/label），供 by_topic / top_wrong 联动标注
+    mmap = _student_mastery_map(db, student_id)
+
     # 科目过滤条件（复用给 score_trend / by_topic / top_wrong）
     _subj_cond = "AND er.subject_id = :sid" if subject_id else ""
     _subj_params = {"uid": student_id, **({"sid": subject_id} if subject_id else {})}
@@ -633,7 +639,7 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         WHERE er.user_id=:uid {_subj_cond} GROUP BY s.id ORDER BY total DESC
     """, _subj_params)
     by_topic = _fetch_all(db, f"""
-        SELECT t.name topic, s.name subject, COUNT(*) total,
+        SELECT t.id topic_id, t.name topic, s.name subject, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
         FROM answer_records ar
         JOIN exam_records er ON er.id=ar.exam_record_id
@@ -643,9 +649,13 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         WHERE er.user_id=:uid {_subj_cond} GROUP BY q.topic_id HAVING COUNT(*)>=2
         ORDER BY (ok*1.0/total) ASC LIMIT 20
     """, _subj_params)
+    for r in by_topic:
+        m = mmap.get(r["topic_id"]) or {"status": "not_started", "status_label": "未开始"}
+        r["status"] = m["status"]
+        r["status_label"] = m["status_label"]
 
     top_wrong = _fetch_all(db, f"""
-        SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
+        SELECT q.id qid, q.content, q.type, t.id topic_id, t.name topic, s.name subject,
                COUNT(*) wrong_times
         FROM answer_records ar
         JOIN exam_records er ON er.id=ar.exam_record_id
@@ -655,6 +665,10 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         WHERE er.user_id=:uid AND ar.is_correct=0 {_subj_cond}
         GROUP BY q.id ORDER BY wrong_times DESC LIMIT {wrong_limit}
     """, _subj_params)
+    for r in top_wrong:
+        m = mmap.get(r["topic_id"]) or {"status": "not_started", "status_label": "未开始"}
+        r["status"] = m["status"]
+        r["status_label"] = m["status_label"]
 
     recent = _fetch_all(db, """
         SELECT er.id, er.started_at, er.score, er.total, er.correct, s.name subject
@@ -672,12 +686,36 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
     }
 
 
+def _student_mastery_map(db: Session, student_id: int) -> dict:
+    """复用掌握度算法，返回 {topic_id: {status, status_label, rate, coverage}}。"""
+    from routers.mastery import (
+        _load_student_rows, _rows_to_sessions, _topic_totals, _eval_topic, STATUS_LABEL,
+    )
+    rows = _load_student_rows(db, student_id)
+    sessions = _rows_to_sessions(rows)
+    totals = _topic_totals(db)
+    out = {}
+    for tid, tt in totals.items():
+        ev = _eval_topic(sessions.get((student_id, tid), []), tt)
+        out[tid] = {
+            "status": ev["status"],
+            "status_label": STATUS_LABEL[ev["status"]],
+            "rate": ev["rate"],
+            "coverage": ev["coverage"],
+        }
+    return out
+
+
 @router.get("/analytics/weakness")
 def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = None,
+                      student_id: Optional[int] = None,
                       _=Depends(require_role("admin")), db: Session = Depends(get_db)):
     """知识点薄弱分析：薄弱知识点TOP10 + 反复错题榜 + 低正确率题目
 
-    可选过滤: subject_id(科目) / grade(年级, 精确匹配 subjects.grade)。
+    可选过滤: subject_id(科目) / grade(年级) / student_id(指定学员，联动其个人掌握度)。
+    - 传 student_id 时，三张表均按「该学员个人掌握度」口径计算，已通过/精通的课不进薄弱榜，
+      从根本上与 mastery 一致，杜绝“掌握度里通过了、薄弱榜里还在”的矛盾。
+    - 不传 student_id 时保持原「全体学员历史」口径（向后兼容），但每条仍带 topic_id 便于联动。
     """
     conds, params = [], {}
     if subject_id is not None:
@@ -688,8 +726,107 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
         params["grade"] = grade
     where = ("WHERE " + " AND ".join(conds)) if conds else ""
 
+    # ---------- 学员级（联动个人掌握度）----------
+    if student_id is not None:
+        mmap = _student_mastery_map(db, student_id)
+
+        # 薄弱知识点：仅列「未通过 / 需复习 / 未开始」的课，按近期正确率升序
+        topics = db.query(Topic).all()
+        subs = {s.id: s.name for s in db.query(Subject).all()}
+        wt = []
+        for t in topics:
+            if subject_id is not None and t.subject_id != subject_id:
+                continue
+            sub = db.query(Subject).filter(Subject.id == t.subject_id).first()
+            if grade and (sub is None or sub.grade != grade):
+                continue
+            m = mmap.get(t.id)
+            # 只列「练习中 / 需复习」的课：从未练习(not_started)不是薄弱，已通过/精通更不会进榜
+            if not m or m["status"] in ("passed", "mastered", "not_started"):
+                continue  # 已掌握或从未开始 → 不计入薄弱，与掌握度口径一致
+            wt.append({
+                "topic_id": t.id,
+                "topic": t.name,
+                "subject": subs.get(t.subject_id, ""),
+                "status": m["status"],
+                "status_label": m["status_label"],
+                "rate": m["rate"],
+                "coverage": m["coverage"],
+                "total": None,
+            })
+        wt.sort(key=lambda x: (x["rate"], x["topic"]))
+        wt = wt[:10]
+
+        # 反复错题榜（该学员本人，未掌握的题）
+        rw_rows = (
+            db.query(
+                WrongQuestion.question_id, func.sum(WrongQuestion.wrong_count),
+                Question.content, Question.type, Question.topic_id,
+                Topic.name, Subject.name,
+            )
+            .join(Question, WrongQuestion.question_id == Question.id)
+            .join(Topic, Question.topic_id == Topic.id)
+            .join(Subject, Question.subject_id == Subject.id)
+            .filter(WrongQuestion.user_id == student_id, WrongQuestion.mastered == False)  # noqa: E712
+            .group_by(WrongQuestion.question_id)
+            .having(func.sum(WrongQuestion.wrong_count) >= 2)
+            .order_by(func.sum(WrongQuestion.wrong_count).desc())
+            .limit(15)
+            .all()
+        )
+        repeat_wrong = []
+        for qid, times, content, qtype, tid, tname, sname in rw_rows:
+            m = mmap.get(tid) or {"status": "not_started", "status_label": "未开始"}
+            repeat_wrong.append({
+                "qid": qid, "content": content, "type": qtype,
+                "topic_id": tid, "topic": tname, "subject": sname,
+                "times": int(times),
+                "topic_status": m["status"], "topic_status_label": m["status_label"],
+            })
+
+        # 低正确率题目（该学员本人）
+        hq_rows = (
+            db.query(
+                AnswerRecord.question_id,
+                func.count(AnswerRecord.id),
+                func.sum(case((AnswerRecord.is_correct == True, 1), else_=0)),  # noqa: E712
+                Question.content, Question.type, Question.topic_id,
+                Topic.name, Subject.name,
+            )
+            .join(Question, AnswerRecord.question_id == Question.id)
+            .join(Topic, Question.topic_id == Topic.id)
+            .join(Subject, Question.subject_id == Subject.id)
+            .filter(AnswerRecord.exam_record_id.in_(
+                db.query(ExamRecord.id).filter(ExamRecord.user_id == student_id)
+            ))
+            .group_by(AnswerRecord.question_id)
+            .having(func.count(AnswerRecord.id) >= 3)
+            .order_by((func.sum(case((AnswerRecord.is_correct == True, 1), else_=0)) * 100.0 / func.count(AnswerRecord.id)).asc())
+            .limit(15)
+            .all()
+        )
+        hard_questions = []
+        for qid, total, ok, content, qtype, tid, tname, sname in hq_rows:
+            rate = round(ok * 100.0 / total, 1) if total else 0.0
+            m = mmap.get(tid) or {"status": "not_started", "status_label": "未开始"}
+            hard_questions.append({
+                "qid": qid, "content": content, "type": qtype,
+                "topic_id": tid, "topic": tname, "subject": sname,
+                "total": int(total), "ok": int(ok), "rate": rate,
+                "topic_status": m["status"], "topic_status_label": m["status_label"],
+            })
+
+        return {
+            "mode": "student",
+            "student_id": student_id,
+            "weak_topics": wt,
+            "repeat_wrong": repeat_wrong,
+            "hard_questions": hard_questions,
+        }
+
+    # ---------- 原口径（全体学员历史，向后兼容）----------
     weak_topics = _fetch_all(db, f"""
-        SELECT t.name topic, s.name subject, COUNT(*) total,
+        SELECT t.id topic_id, t.name topic, s.name subject, COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok,
                ROUND(SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END)*100.0/COUNT(*),1) rate
         FROM answer_records ar
@@ -701,14 +838,13 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
         ORDER BY rate ASC LIMIT 10
     """, params)
 
-    # wrong_questions 无直连 subjects，需经 questions 关联
     weak_conds = ["w.mastered=0"]
     if subject_id is not None:
         weak_conds.append("q.subject_id = :sid")
     if grade:
         weak_conds.append("s.grade = :grade")
     repeat_wrong = _fetch_all(db, f"""
-        SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
+        SELECT q.id qid, q.content, q.type, t.id topic_id, t.name topic, s.name subject,
                COUNT(DISTINCT w.user_id) students, SUM(w.wrong_count) times
         FROM wrong_questions w
         JOIN questions q ON q.id=w.question_id
@@ -720,7 +856,7 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
     """, params)
 
     hard_questions = _fetch_all(db, f"""
-        SELECT q.id qid, q.content, q.type, t.name topic, s.name subject,
+        SELECT q.id qid, q.content, q.type, t.id topic_id, t.name topic, s.name subject,
                COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok,
                ROUND(SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END)*100.0/COUNT(*),1) rate
@@ -734,6 +870,7 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
     """, params)
 
     return {
+        "mode": "global",
         "weak_topics": weak_topics,
         "repeat_wrong": repeat_wrong,
         "hard_questions": hard_questions,

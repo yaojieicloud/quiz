@@ -1,168 +1,160 @@
 # Quiz 题库系统
 
-小朋友刷题系统（FastAPI + SQLite + Docker，部署于 ECS）。
+> 面向小朋友的刷题系统：做题赚积分 → 大转盘 / 直兑激励。技术栈 **FastAPI + SQLite + Docker**，原生多页 HTML/JS，部署于阿里云 ECS。
+>
+> **这份 README 是系统总入口**：想知道「有什么功能、怎么设计、怎么编码、怎么部署、怎么维护」，按下面的链接点进 `docs/design/` 对应文档即可。
+
+---
+
+## 📚 文档导航（先读这里）
+
+所有设计与运维细节都在 `docs/` 下，README 只做索引与概览。
+
+**设计文档 `docs/design/`（按模块拆分，每个功能一份）**
+
+| 文档 | 讲什么 |
+|---|---|
+| [系统架构总览](docs/design/系统架构总览.md) | 技术栈、角色权限、模块路由、请求流向、数据模型、目录布局、常量速查 |
+| [用户与权限](docs/design/用户与权限.md) | 学生/家长/管理员三角色、JWT 鉴权、注册 regkey、家长绑娃 |
+| [科目与知识点体系](docs/design/科目与知识点体系.md) | 科目→课→题三级结构、allowed_types 题型闸门、题目 CRUD/批量导入 |
+| [题型与出题规范](docs/design/题型与出题规范.md) | 9 种题型判分逻辑、归一化、阅读理解、应用题降级 |
+| [组卷与答题流程](docs/design/组卷与答题流程.md) | 组卷白名单、交卷判分、积分发放、记录与错题本 |
+| [积分与奖励体系](docs/design/积分与奖励体系.md) | 积分流水、积分矩阵、转盘权重、直兑核销、种子数据 |
+| [AI 评分与学情报告](docs/design/AI评分与学情报告.md) | 代码沙箱、LLM 双通道、code 题评星、AI 周报 |
+| [掌握度与学情联动](docs/design/掌握度与学情联动设计.md) | 课掌握度五态模型、学员×课程矩阵、与薄弱分析双向联动 |
+| [管理后台与学情分析](docs/design/管理后台与学情分析.md) | 12 tab 总台、学情分析四接口、记录管理、掌握度矩阵 |
+| [部署与运维](docs/design/部署与运维.md) | 本地/ECS 部署、热更新、拉库脚本、运维 API（exec-sql/backup/restart） |
+
+**方案与规划 `docs/plan/`（提案类，非当前实现）**
+
+- [积分系统 + 大转盘设计方案](docs/plan/积分系统与大转盘方案.md)
+- [实时出题改造方案](docs/plan/实时出题改造方案.md)
+- [未来规划](docs/plan/未来规划.md)
+
+---
 
 ## ⚠️ 出题铁律（永远遵守）
 
 **小朋友的英语、语文、数学课本全部是人教版新课标课本。**
 
-- 英语：人教 PEP 新课标（**2024 年秋季改版**，三年级上册单元为
-  U1 Making friends / U2 Different families / U3 Amazing animals /
-  U4 Plants around us / U5 The colourful world / U6 Useful numbers）
+- 英语：人教 PEP 新课标（**2024 年秋季改版**，三年级上册单元为 U1 Making friends / U2 Different families / U3 Amazing animals / U4 Plants around us / U5 The colourful world / U6 Useful numbers）
 - 语文：部编版（统编版）
 - 数学：人教版
 
-后续为这三个科目生成/补充题目时，**单元、课时、知识点必须与课本保持一致**：
-1. 单元名和顺序照课本目录
-2. 课时按课本 Part / 课文拆分（英语按 Part A/B/C，语文按课文+语文园地）
-3. 单词表、句型、课文内容以教材为准，出题前必须核对教材清单
-4. 不得凭旧版教材或记忆杜撰单元内容
-
-## 结构约定
-
-- 文化类科目（语文/数学/英语）：Topic 表用 `unit`（单元）+ `name`（课时）两级组织
-- 编程类科目（Python）：按“课”扁平组织，`unit` 留空
-
-## 题型体系（9 种）
-
-| 题型 | type | 适用科目 | 说明 |
-|---|---|---|---|
-| 选择题 | `choice` | 全部 | 单选/多选 |
-| 判断题 | `judge` | 全部 | 固定选项 `["对","错"]` |
-| 计算题 | `calc` | 数学/Python理论 | 文本答案，支持数字容差 |
-| 填空题 | `fill` | 文化类 | 单空/多空，支持数字容差 |
-| 应用题 | `essay` | 数学 | 无标准答案，≥10字即通过（可经科目配置关闭） |
-| 连线题 | `match` | 文化类 | 左右项目连线 |
-| 排序题 | `sort` | 文化类 | 拖拽/按钮排序 |
-| 阅读理解 | `reading` | **仅语文/英语** | 一篇文章 + 多道子题（当前子题均为选择题） |
-| 编程题 | `code` | Python实操 | 沙箱实跑 + LLM 评星 |
-
-### 阅读理解（reading，2026-08 新增）
-
-- `content` = 文章正文，`reading_items` = 子题数组，一篇文章就是一道题
-- 子题结构：`{"type":"choice", "q":"问题", "options":[...], "answer":"索引", "explanation":"讲解"}`；
-  子题 `type` 预留 judge（英语 T/F）/fill/essay 扩展，当前只实现 choice
-- 顶层 `answer` 为子题正确索引逗号串（如 `"0,1"`），后台可从子题自动生成
-- 判分：按子题正确比例给分（≥60 分算通过），整篇进错题本
-- 出题格式详见 `data/template/culture_subject.md` §7 与 `data/template/question_types.md`
-
-### 科目题型配置（allowed_types，2026-08 新增）
-
-- 每个科目可配置允许参与组卷/显示的题型：管理后台 → 编辑科目 → “参与组卷的题型”勾选
-- 全勾 = 不限制（`allowed_types` 存 NULL）；未勾选的题型不在学生端显示，也不参与组卷（服务端强制拦截）
-- 典型用法：应用题（essay）只在数学科目启用；阅读理解（reading）只在语文/英语启用
-
-## 📊 学情分析（2026-08-04 新增）
-
-管理后台新增「📊 学情分析」tab（admin.html），4 个子面板，帮助全面掌握学员学习情况：
-
-| 面板 | 内容 | 接口 |
-|---|---|---|
-| 📈 学习总览 | KPI 卡（总答题/正确率/考试次数/活跃学员/今日/近7天）+ 近14天趋势图 + 科目/题型正确率图 + 活跃学员榜 | `GET /api/admin/analytics/overview` |
-| 🎒 学员档案 | 选学员看：成绩趋势曲线、各科/知识点正确率、高频错题、最近动态 | `GET /api/admin/analytics/student/{id}` |
-| 🎯 薄弱分析 | 薄弱知识点 TOP10（作答≥5次）、反复错题榜（错≥2次未掌握）、低正确率题目（作答≥3次） | `GET /api/admin/analytics/weakness` |
-| 🤖 AI 周报 | 一键生成 LLM 学情报告（学习概况/进步亮点/薄弱建议），约10-20秒 | `POST /api/admin/analytics/report` |
-
-技术要点：
-- 图表用 ECharts 5.5 CDN（加载失败自动降级提示）
-- AI 周报复用 code 题评分的 LLM 通道（qwen3.7-plus），失败返回 502 明确报错、不造假
-- 后端 `routers/admin.py` 的 `_fetch_all` 用 SQLAlchemy `.mappings()` 转 dict（勿用 `row.keys()`，2.x 会报 NoSuchColumnError）
-
-## 🐍 Python 实操题库（2026-08-04 扩充至 400 题）
-
-- 20 课 × 20 题（原 10 题/课，新增 10 题/课），三年级趣味生活场景（小明/小猫花花/玩具等）
-- 难度 1 为主、每课穿插少量难度 2；`expected_output` 全部由沙箱实跑参考代码生成
-- 生成脚本：`src/data/gen_coding_p1.py`（第1-10课）+ `gen_coding_p2.py`（第11-20课）；实跑补 expected_output：`fill_expected_new200.py`
-- 导入方式：纯数组 JSON 需包装成 `{subject, questions}` 嵌套格式后用 `import_via_api.py`
+后续生成/补充题目时，**单元、课时、知识点必须与课本一致**：单元名顺序照课本目录；课时按课本 Part/课文拆分（英语 Part A/B/C，语文 课文+语文园地）；单词表/句型/课文以教材为准；不得凭旧版教材或记忆杜撰。详见 [科目与知识点体系](docs/design/科目与知识点体系.md)。
 
 ---
 
-## 🛠️ 本地开发、调试与部署
+## ✨ 功能特性
 
-> 统一约定：**以后本地测试都用本地 Docker，端口 8000，与线上 ECS 完全一致的方式**。
+### 学员端（小朋友）
+- **刷题组卷**：选科目→章节/题型/题数（1/10/20/50）→ 答题（9 种题型，code 题在线实跑）。见 [组卷与答题流程](docs/design/组卷与答题流程.md)
+- **答题记录 & 错题本**：历史记录含「获得积分」，错题可标记掌握/删除。见 [组卷与答题流程](docs/design/组卷与答题流程.md)
+- **掌握度看板**：每课五态（未开始/练习中/通过/精通/需复习），进度条展示正确率/覆盖度。见 [掌握度与学情联动](docs/design/掌握度与学情联动设计.md)
+- **积分 & 奖励**：余额/流水、🎡 大转盘抽奖、🎁 直兑商城、我的奖品。见 [积分与奖励体系](docs/design/积分与奖励体系.md)
+- **个人统计**：KPI + 分科目正确率。
 
-### 1. 代码位置与依赖
+### 家长端
+- 用孩子的 `bind_code` 绑定，查看孩子记录/错题/掌握度/统计。见 [用户与权限](docs/design/用户与权限.md)
 
-- 应用入口 `src/main.py`，全部后端在 `src/`（routers / models / core / schemas）。
-- 依赖见 `src/requirements.txt`。本地虚拟环境：
-  ```bash
-  python -m venv .venv
-  .venv/Scripts/python.exe -m pip install -r src/requirements.txt
-  ```
-- 数据库为 SQLite，路径由环境变量 `QUIZ_DB_PATH` 控制；容器内默认 `/app/data/quiz.db`。
+### 管理端（管理员）
+- **科目/题目管理**：科目章节 CRUD、题目 CRUD、批量导入（`/api/questions/batch`）。
+- **学情分析**：学习总览（KPI/趋势/榜单）、学员档案（成绩趋势/薄弱知识点/高频错题）、薄弱分析（选学员后只列"练习中/需复习"的课，已掌握不进榜）、AI 周报。见 [管理后台与学情分析](docs/design/管理后台与学情分析.md)
+- **学员掌握度矩阵**：行=课程、列=学员，每格状态色块，点格看详情。见 [掌握度与学情联动](docs/design/掌握度与学情联动设计.md)
+- **奖励配置**：积分调整、待核销、积分矩阵/转盘权重/直兑价格编辑。见 [积分与奖励体系](docs/design/积分与奖励体系.md)
+- **科目积分**：按科目批量设分（默认 100→5/90→4/80→3）。
+- **LLM 日志**：code 评分 / 周报的模型调用审计。见 [AI 评分与学情报告](docs/design/AI评分与学情报告.md)
+- **运维**：SQL 运维、数据备份（封装运维 API）。见 [部署与运维](docs/design/部署与运维.md)
 
-### 2. 本地直接运行（开发/调试，不使用 Docker）
+> **掌握度与学情联动**：薄弱分析 / 学员档案 / 掌握度看板 共用 `mastery._eval_topic` 同一套状态判定，**已掌握的课不会出现在薄弱榜**；点薄弱榜的课 → 跳该学员 `mastery.html?student_id=&topic=`，掌握度里正位于薄弱榜的课打"⚠ 在薄弱榜"角标。
 
-```bash
-cd src
-.venv/Scripts/python.exe -m uvicorn main:app --host 0.0.0.0 --port 8010
-# 热重载调试可加 --reload
-```
+---
 
-- 访问 `http://localhost:8010`。
-- DeepSeek 兜底 key：通过环境变量 `DEEPSEEK_API_KEY` 注入，或放到 `quiz-data/deepseek_key.txt`
-  （容器内即 `/app/data/deepseek_key.txt`）。**切勿写入代码或提交 git。**
-- 初始化/补齐积分种子（幂等，会覆盖积分矩阵、科目积分覆盖、转盘/直兑商城）：
-  ```bash
-  .venv/Scripts/python.exe seed_reward.py
-  ```
+## 🏗️ 系统架构（速览）
 
-### 3. 本地 Docker 部署（推荐测试方式，端口 8000）
+- **后端** FastAPI + SQLAlchemy + SQLite；JWT Bearer 鉴权，`require_role` 做角色网关。
+- **前端** 原生多页 HTML + JS，`common.js` 提供 API 封装 / 顶栏 / embed 模式；ECharts 画图。
+- **AI** OpenAI 兼容 SDK（aliyun 主 / deepseek 兜底），代码沙箱实跑。
+- **部署** Docker，本地 `quiz-local`(localhost:8000) 与 ECS `quiz-system`(106.14.99.100:8000) 双环境，数据卷持久化。
 
-构建镜像（**本机需能访问 PyPI**；ECS 出网受限，改用 §5 的 docker cp 热更新）：
+完整技术栈、模块路由表、数据模型、请求流向见 [系统架构总览](docs/design/系统架构总览.md)。
 
+### 角色与权限
+
+| 角色 | 用途 |
+|---|---|
+| `student` | 学员（小朋友）：刷题/错题/掌握度/积分/抽奖/直兑 |
+| `parent` | 家长：绑定孩子、查看孩子数据 |
+| `admin` | 管理员：全部管理接口 |
+
+注册需 `regkey`（默认 `openschool2026`），当前未开放自由注册。详见 [用户与权限](docs/design/用户与权限.md)。
+
+---
+
+## 🚀 快速开始 / 部署
+
+### 本地 Docker（推荐测试方式）
 ```bash
 docker build -t quiz-system:local -f src/Dockerfile src
-```
-
-准备数据卷（持久化数据库与密钥，**不进 git**）：
-
-```bash
-mkdir -p quiz-data
-cp src/quiz.db quiz-data/quiz.db        # 或留空让容器自动建库（但无科目/账号，需另行导入）
-printf '%s\n' '<你的DEEPSEEK_KEY>' > quiz-data/deepseek_key.txt
-```
-
-启动（端口 8000，entrypoint 自动 seed + 起服务）：
-
-```bash
+mkdir -p quiz-data && cp src/quiz.db quiz-data/quiz.db
 docker run -d --name quiz-local -p 8000:8000 \
   -v "$(pwd)/quiz-data:/app/data" --restart unless-stopped quiz-system:local
+# 访问 http://localhost:8000  ，管理后台 admin.html 账号 admin/admin123
+```
+`entrypoint.sh` 自动 seed（积分/转盘/直兑）+ 起服务；静态文件改完 `docker cp` 即生效，改 `.py` 需 `docker restart quiz-local`。
+
+### 线上 ECS
+ECS 出网受限，改用 `docker cp` 热更新，或走运维 API。完整步骤、拉库脚本、运维接口见 [部署与运维](docs/design/部署与运维.md)。
+
+### 本地直接运行（开发调试）
+```bash
+cd src && .venv/Scripts/python.exe -m uvicorn main:app --host 0.0.0.0 --port 8010
 ```
 
-- 入口 `entrypoint.sh`：先 `python seed_reward.py`（幂等播种），再 `uvicorn ... --port 8000`。
-- 访问 `http://localhost:8000`；日志 `docker logs -f quiz-local`；重启 `docker restart quiz-local`。
-- ⚠️ 8000 常被其他进程（如 node 开发服务器）占用，启动前请先释放该端口。
+---
 
-### 4. 测试方式
+## 🔧 维护者须知
 
-- 管理后台：`http://localhost:8000/admin.html`（或顶栏「⚙️ 管理后台」），账号 `admin / admin123`。
-- 积分相关：顶栏「🎁 奖励管理」「📚 科目积分」（科目可多选批量设分，未设走默认 5/4/3）。
-- LLM 兜底与审计：触发一次 AI 周报或 code 题评分，到「📊 LLM 日志」或 `GET /api/admin/llm-calls`
-  查看，应看到 `aliyun 失败 → deepseek 成功` 两条带 token/耗时的记录。
-- 积分档位：单题练习答对（100 分）默认 +5；Python基础实操 单独降到 +3（90→2、80→1）。
+- **改完代码热更新**：`POST /api/admin/update-file` 写文件 + `POST /api/admin/restart` 重启（ECS 省去 ssh）。
+- **拉取线上库到本地**：`python src/fetch_db.py`（走 exec-sql API，纯接口）。
+- **备份/下载数据库**：`POST /api/admin/backup-db` 备份、`GET` 列表、`GET /api/admin/backup-db/download?name=` 下载。
+- **应急 SQL**：`POST /api/admin/exec-sql`（先自动备份再执行）。
+- **密钥安全**：DeepSeek / aliyun key 走环境变量或 `quiz-data/*.txt`，**禁止写入代码或提交仓库**；`quiz-data/`、`*.db`、`.venv` 已加入 `.gitignore`。
 
-### 5. 线上 ECS 部署（热更新，因 PyPI 不通）
+> 所有写操作类运维接口（exec-sql / update-file / restart）**务必先备份数据库**。
 
-ECS 出网到 PyPI / Docker Hub **不通**，`docker build` 会卡死在 `pip install`。改用 `docker cp` 同步：
+完整运维 API 清单、热更新流程、安全提醒见 [部署与运维](docs/design/部署与运维.md)。
 
-1. 本地打包（排除库/缓存/数据）：
-   ```bash
-   tar --exclude='*.db' --exclude='__pycache__' --exclude='data' -czf quiz-src.tar.gz -C src .
-   ```
-2. `scp` 到 ECS 并解压，然后拷进运行容器：
-   ```bash
-   docker cp build/. quiz-system:/app/
-   ```
-3. 容器内跑种子 + 注入密钥 + 重启：
-   ```bash
-   docker exec quiz-system python seed_reward.py
-   # 写密钥（仅存数据卷，不进镜像/不进 git）
-   printf '%s\n' '<DEEPSEEK_KEY>' > /opt/quiz-system/quiz-data/deepseek_key.txt
-   docker restart quiz-system
-   ```
+---
 
-### 🔐 安全提醒
+## 📁 目录结构
 
-- DeepSeek / aliyun key 一律走环境变量或 `quiz-data/deepseek_key.txt`，**禁止写入代码或提交仓库**。
-- `quiz-data/`、`*.db`、`.venv` 已加入 `.gitignore`，提交前请确认这些不被跟踪。
+```
+quiz/
+├── README.md              # 本文件（系统总入口）
+├── docs/
+│   ├── design/            # 各功能设计文档（10 份，见上方导航）
+│   └── plan/              # 方案/规划类提案
+├── src/
+│   ├── main.py            # 应用入口、路由挂载、静态目录
+│   ├── models.py          # ORM 模型
+│   ├── schemas.py         # Pydantic 模型
+│   ├── config.py          # 配置
+│   ├── core/              # security / deps / llm_client / llm_grader / code_runner
+│   ├── routers/           # 业务路由（auth/parent/subjects/questions/exam/stats/mastery/reward/reward_admin/admin）
+│   ├── static/            # 前端页面 + js + css
+│   ├── data/              # 题库 JSON + 导入/迁移脚本
+│   ├── seed_reward.py     # 积分/转盘/直兑种子
+│   ├── fetch_db.py        # 拉线上库到本地
+│   └── Dockerfile / entrypoint.sh / docker-compose.yml / DEPLOY.md
+└── quiz-data/ (本地，不进 git)  # 数据库 + 密钥 + 备份
+```
+
+---
+
+## 🛠️ 技术要点备忘
+
+- 题型体系与判分见 [题型与出题规范](docs/design/题型与出题规范.md)；阅读理解（reading）为「一篇文章+多子题」，按子题正确比例给分。
+- 组卷题数白名单固定为 **1/10/20/50**；科目 `allowed_types` 是组卷题型闸门。
+- 积分发放档位默认 100→5 / 90→4 / 80→3，<80 分不计分；与成绩同事务落 `points_ledger`。
+- 无 Alembic 迁移：`main.py` 启动 `create_all`；新增字段需手写 `ALTER TABLE`（参考 `src/data/*_fix_*.py`）。

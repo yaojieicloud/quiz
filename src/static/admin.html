@@ -88,6 +88,8 @@ textarea.form-input.lg { min-height:120px; }
 .qd-expl { background:#fffae8; border-radius:12px; padding:12px 16px; font-size:14px; line-height:1.8; white-space:pre-wrap; }
 .qd-meta { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
 .qd-meta .tag { background:#f1f3f5; color:#7a6c8c; padding:3px 10px; border-radius:10px; font-size:12px; }
+/* 内嵌子页 iframe（奖励管理 / 科目积分 / LLM 日志） */
+.embed-frame { width:100%; height:calc(100vh - 210px); border:0; border-radius:16px; background:#f8f9fc; display:block; }
 </style>
 </head>
 <body>
@@ -111,6 +113,10 @@ textarea.form-input.lg { min-height:120px; }
     <span class="chip" id="tabBackup" onclick="switchTab('backup')">🗄 数据备份</span>
     <span class="chip" id="tabAnalytics" onclick="switchTab('analytics')">📊 学情分析</span>
     <span class="chip" id="tabReport" onclick="switchTab('report')">📝 AI周报</span>
+    <span class="chip" id="tabReward" onclick="switchTab('reward')">🎁 奖励管理</span>
+    <span class="chip" id="tabSubjectPoints" onclick="switchTab('subjectPoints')">📚 科目积分</span>
+    <span class="chip" id="tabLlm" onclick="switchTab('llm')">📊 LLM 日志</span>
+    <span class="chip" id="tabMastery" onclick="switchTab('mastery')">🎯 学员掌握度</span>
   </div>
 
   <!-- ===== 科目与章节 ===== -->
@@ -344,29 +350,36 @@ textarea.form-input.lg { min-height:120px; }
       <div class="section-box" style="padding-bottom:8px;">
         <div class="filter-bar">
           <div class="form-group" style="flex:1;max-width:200px;">
+            <label>学员（联动其个人掌握度）</label>
+            <select class="form-select" id="wkStuSelect" onchange="loadAnaWeakness()">
+              <option value="">全体学员（历史汇总）</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;max-width:160px;">
             <label>年级</label>
             <select class="form-select" id="wkGradeSelect" onchange="onWkGradeChange()">
               <option value="">全部年级</option>
             </select>
           </div>
-          <div class="form-group" style="flex:1;max-width:260px;">
+          <div class="form-group" style="flex:1;max-width:220px;">
             <label>学科</label>
             <select class="form-select" id="wkSubjSelect" onchange="loadAnaWeakness()">
               <option value="">全部学科</option>
             </select>
           </div>
         </div>
+        <div id="wkModeHint" style="font-size:12px;color:#9c8bb5;margin-top:4px;"></div>
       </div>
       <div class="section-box">
-        <h3>🎯 薄弱知识点 TOP10 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">全体学员，作答≥5次的知识点，按正确率升序</span></h3>
+        <h3>🎯 薄弱知识点 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">按个人掌握度口径：仅列「练习中/需复习」的课，已通过的不计入</span></h3>
         <div id="weakTopicsBox"></div>
       </div>
       <div class="section-box">
-        <h3>🔁 反复错题榜 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">累计错≥2次且未掌握的题</span></h3>
+        <h3>🔁 反复错题榜 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">累计错≥2次且未掌握的题，带所属课掌握状态</span></h3>
         <div id="repeatWrongBox"></div>
       </div>
       <div class="section-box">
-        <h3>🧗 低正确率题目 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">作答≥3次，正确率最低（可检查题目质量）</span></h3>
+        <h3>🧗 低正确率题目 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">作答≥3次，正确率最低，带所属课掌握状态</span></h3>
         <div id="hardQuestionsBox"></div>
       </div>
     </div>
@@ -409,6 +422,26 @@ textarea.form-input.lg { min-height:120px; }
     </div>
   </div>
 
+  <!-- ===== 奖励管理（内嵌 admin-reward.html） ===== -->
+  <div id="paneReward" style="display:none;">
+    <iframe class="embed-frame" src="admin-reward.html?embed=1" title="奖励管理"></iframe>
+  </div>
+
+  <!-- ===== 科目积分（内嵌 admin-subject-points.html） ===== -->
+  <div id="paneSubjectPoints" style="display:none;">
+    <iframe class="embed-frame" src="admin-subject-points.html?embed=1" title="科目积分"></iframe>
+  </div>
+
+  <!-- ===== LLM 日志（内嵌 admin-llm.html） ===== -->
+  <div id="paneLlm" style="display:none;">
+    <iframe class="embed-frame" src="admin-llm.html?embed=1" title="LLM 日志"></iframe>
+  </div>
+
+  <!-- ===== 学员掌握度（内嵌 admin-mastery.html） ===== -->
+  <div id="paneMastery" style="display:none;">
+    <iframe class="embed-frame" src="admin-mastery.html?embed=1" title="学员掌握度"></iframe>
+  </div>
+
 </main>
 
 <!-- ===== 题目详情抽屉 ===== -->
@@ -447,6 +480,7 @@ if (!user || user.role !== 'admin') {
   setTimeout(() => location.href = 'index.html', 800);
 }
 document.getElementById('topbar').innerHTML = renderTopbar('admin');
+initPoints();
 
 // ============ 状态 ============
 let currentTab = 'subjects';
@@ -459,7 +493,7 @@ let qPage = 1, qPageSize = 15, qTotal = 0;
 // ============ Tab 切换 ============
 function switchTab(tab) {
   currentTab = tab;
-  ['Subjects','Questions','Students','Import','Sql','Backup','Analytics','Report'].forEach(t => {
+  ['Subjects','Questions','Students','Import','Sql','Backup','Analytics','Report','Reward','SubjectPoints','Llm','Mastery'].forEach(t => {
     const id = t.toLowerCase();
     const tabEl = document.getElementById('tab'+t);
     const paneEl = document.getElementById('pane'+t);
@@ -1687,6 +1721,15 @@ function rateBadge(rate) {
   return `<span class="rate-badge ${cls}">${rate}%</span>`;
 }
 
+const MASTERY_BADGE = {
+  not_started: ['st-not_started', '未开始'], practicing: ['st-practicing', '练习中'],
+  passed: ['st-passed', '通过'], mastered: ['st-mastered', '精通'], review: ['st-review', '需复习'],
+};
+function masteryBadge(status) {
+  const b = MASTERY_BADGE[status] || ['st-not_started', status || ''];
+  return `<span class="st-badge ${b[0]}" style="font-size:11px;padding:1px 7px;">${b[1]}</span>`;
+}
+
 // --- 学情分析：科目/年级缓存与筛选 ---
 let anaSubjectsCache = null;
 async function loadAnaSubjects() {
@@ -1840,16 +1883,20 @@ async function loadAnaStudent() {
     }
     // 薄弱知识点
     if (d.by_topic.length) {
-      html += `<h3 style="margin:16px 0 8px;">🎯 薄弱知识点（作答≥2次，正确率最低）</h3><table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
+      html += `<h3 style="margin:16px 0 8px;">🎯 薄弱知识点（作答≥2次，正确率最低，带个人掌握状态）</h3><table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>掌握状态</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
         d.by_topic.map(r => {
           const rate = r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0;
-          return `<tr><td>${esc(r.subject)}</td><td>${esc(r.topic)}</td><td>${r.total}</td><td>${rateBadge(rate)}</td></tr>`;
+          return `<tr><td>${esc(r.subject)}</td><td>${esc(r.topic)}</td><td>${masteryBadge(r.status)}</td><td>${r.total}</td><td>${rateBadge(rate)}</td></tr>`;
         }).join('') + `</tbody></table>`;
     }
     // 高频错题
     if (d.top_wrong.length) {
-      html += `<h3 style="margin:16px 0 8px;">❌ 高频错题 TOP${d.top_wrong.length}</h3><table class="ana-table"><thead><tr><th>题目</th><th>科目/知识点</th><th>错次</th><th>操作</th></tr></thead><tbody>` +
-        d.top_wrong.map(r => `<tr><td style="max-width:380px;">${esc(r.content)}</td><td style="font-size:13px;color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</td><td><b style="color:#c92a2a;">${r.wrong_times}</b></td><td><button class="btn btn-sm" onclick="viewQuestion(${r.qid})">🔍 查看</button></td></tr>`).join('') +
+      html += `<h3 style="margin:16px 0 8px;">❌ 高频错题 TOP${d.top_wrong.length}（带所属课掌握状态）</h3><table class="ana-table"><thead><tr><th>题目</th><th>科目/知识点</th><th>所属课掌握状态</th><th>错次</th><th>操作</th></tr></thead><tbody>` +
+        d.top_wrong.map(r => {
+          const st = masteryBadge(r.status);
+          const note = (r.status === 'passed' || r.status === 'mastered') ? ' <span style="color:#2b8a3e;font-size:11px;">（已掌握·偶发错）</span>' : '';
+          return `<tr><td style="max-width:380px;">${esc(r.content)}</td><td style="font-size:13px;color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</td><td>${st}${note}</td><td><b style="color:#c92a2a;">${r.wrong_times}</b></td><td><button class="btn btn-sm" onclick="viewQuestion(${r.qid})">🔍 查看</button></td></tr>`;
+        }).join('') +
         `</tbody></table>`;
     }
     // 最近动态
@@ -1975,35 +2022,97 @@ async function onWkGradeChange() {
 async function initWkFilters() {
   const gsel = document.getElementById('wkGradeSelect');
   if (gsel.options.length > 1) return; // 已初始化
+  // 学员下拉（联动个人掌握度）
+  try {
+    const students = await API.get('/api/admin/students');
+    const ssel = document.getElementById('wkStuSelect');
+    ssel.innerHTML = '<option value="">全体学员（历史汇总）</option>' +
+      students.map(s => `<option value="${s.id}">${esc(s.nickname || s.username)}（#${s.id}）</option>`).join('');
+  } catch (e) { /* 忽略 */ }
   const subs = await loadAnaSubjects();
   gsel.innerHTML = '<option value="">全部年级</option>' +
     anaGrades(subs).map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
   await onWkGradeChange();
 }
 
+function masteryLink(studentId, topicId) {
+  // 跳转该学员的掌握度页面并定位到对应课
+  return `mastery.html?student_id=${studentId}&topic=${topicId}`;
+}
+
 async function loadAnaWeakness() {
   try {
     const grade = document.getElementById('wkGradeSelect').value;
     const sid = document.getElementById('wkSubjSelect').value;
+    const uid = document.getElementById('wkStuSelect').value;
     const qs = new URLSearchParams();
     if (grade) qs.set('grade', grade);
     if (sid) qs.set('subject_id', sid);
+    if (uid) qs.set('student_id', uid);
     const d = await API.get('/api/admin/analytics/weakness' + (qs.toString() ? '?' + qs : ''));
+
+    const hint = document.getElementById('wkModeHint');
+    if (uid) {
+      hint.innerHTML = '📌 当前为 <b>该学员个人掌握度</b> 口径：已通过/精通的课不会出现在薄弱榜，与「掌握度」页完全一致。点任意课可跳转到该学员掌握度。';
+    } else {
+      hint.innerHTML = 'ℹ️ 未选学员时为「全体学员历史汇总」口径（向后兼容）。选中学员可切换为个人掌握度联动视图。';
+    }
+
+    // 1. 薄弱知识点
     const wt = document.getElementById('weakTopicsBox');
-    wt.innerHTML = d.weak_topics.length
-      ? `<table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
-        d.weak_topics.map(r => `<tr><td>${esc(r.subject)}</td><td>${esc(r.topic)}</td><td>${r.total}</td><td>${rateBadge(r.rate)}</td></tr>`).join('') + `</tbody></table>`
-      : '<div class="empty"><p>数据不足（需某知识点作答≥5次）</p></div>';
+    if (d.weak_topics.length) {
+      wt.innerHTML = `<table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>掌握状态</th>` +
+        (uid ? '<th>近期正确率</th><th>覆盖</th>' : '<th>作答</th><th>正确率</th>') + `</tr></thead><tbody>` +
+        d.weak_topics.map(r => {
+          const rateCell = uid
+            ? `<td>${rateBadge(r.rate)}</td><td>${r.coverage}%</td>`
+            : `<td>${r.total}</td><td>${rateBadge(r.rate)}</td>`;
+          const topicCell = uid
+            ? `<a href="${masteryLink(uid, r.topic_id)}" target="_blank" style="color:#5b3fa0;font-weight:bold;text-decoration:none;">${esc(r.topic)} ↗</a>`
+            : esc(r.topic);
+          return `<tr><td>${esc(r.subject)}</td><td>${topicCell}</td><td>${masteryBadge(r.status)}</td>${rateCell}</tr>`;
+        }).join('') + `</tbody></table>`;
+    } else {
+      wt.innerHTML = '<div class="empty"><p>' + (uid ? '该学员目前没有「练习中/需复习」的薄弱课了 🎉（已通过的都算学会啦）' : '数据不足（需某知识点作答≥5次）') + '</p></div>';
+    }
+
+    // 2. 反复错题榜
     const rw = document.getElementById('repeatWrongBox');
-    rw.innerHTML = d.repeat_wrong.length
-      ? `<table class="ana-table"><thead><tr><th>题目</th><th>科目/知识点</th><th>涉及学员</th><th>累计错次</th></tr></thead><tbody>` +
-        d.repeat_wrong.map(r => `<tr><td style="max-width:380px;">${esc(r.content)}</td><td style="font-size:13px;color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</td><td>${r.students}人</td><td><b style="color:#c92a2a;">${r.times}</b></td></tr>`).join('') + `</tbody></table>`
-      : '<div class="empty"><p>暂无反复错题</p></div>';
+    if (d.repeat_wrong.length) {
+      rw.innerHTML = `<table class="ana-table"><thead><tr><th>题目</th><th>科目/知识点</th><th>所属课掌握状态</th><th>` +
+        (uid ? '错次' : '涉及学员') + `</th></tr></thead><tbody>` +
+        d.repeat_wrong.map(r => {
+          const topicCell = uid
+            ? `<a href="${masteryLink(uid, r.topic_id)}" target="_blank" style="color:#7a6c8c;text-decoration:none;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''} ↗</a>`
+            : `<span style="color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</span>`;
+          const hasSt = r.topic_status != null;
+          const st = hasSt ? masteryBadge(r.topic_status) : '<span style="color:#adb5bd;font-size:11px;">—</span>';
+          const note = (r.topic_status === 'passed' || r.topic_status === 'mastered')
+            ? ' <span style="color:#2b8a3e;font-size:11px;">（已掌握·偶发错）</span>' : '';
+          const tail = uid ? `${r.times}次` : `${r.students}人`;
+          return `<tr><td style="max-width:380px;">${esc(r.content)}</td><td style="font-size:13px;">${topicCell}</td><td>${st}${note}</td><td><b style="color:#c92a2a;">${tail}</b></td></tr>`;
+        }).join('') + `</tbody></table>`;
+    } else {
+      rw.innerHTML = '<div class="empty"><p>暂无反复错题</p></div>';
+    }
+
+    // 3. 低正确率题目
     const hq = document.getElementById('hardQuestionsBox');
-    hq.innerHTML = d.hard_questions.length
-      ? `<table class="ana-table"><thead><tr><th>题目</th><th>题型</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
-        d.hard_questions.map(r => `<tr><td style="max-width:380px;">${esc(r.content)}</td><td>${TYPE_NAME[r.type]||r.type}</td><td>${r.total}</td><td>${rateBadge(r.rate)}</td></tr>`).join('') + `</tbody></table>`
-      : '<div class="empty"><p>数据不足（需某题作答≥3次）</p></div>';
+    if (d.hard_questions.length) {
+      hq.innerHTML = `<table class="ana-table"><thead><tr><th>题目</th><th>题型</th><th>所属课掌握状态</th><th>正确率</th></tr></thead><tbody>` +
+        d.hard_questions.map(r => {
+          const topicCell = uid
+            ? `<a href="${masteryLink(uid, r.topic_id)}" target="_blank" style="color:#7a6c8c;text-decoration:none;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''} ↗</a>`
+            : `<span style="color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</span>`;
+          const hasSt = r.topic_status != null;
+          const st = hasSt ? masteryBadge(r.topic_status) : '<span style="color:#adb5bd;font-size:11px;">—</span>';
+          const note = (r.topic_status === 'passed' || r.topic_status === 'mastered')
+            ? ' <span style="color:#2b8a3e;font-size:11px;">（已掌握·偶发错）</span>' : '';
+          return `<tr><td style="max-width:380px;">${esc(r.content)}</td><td>${TYPE_NAME[r.type]||r.type}</td><td>${topicCell}<br>${st}${note}</td><td>${rateBadge(r.rate)}</td></tr>`;
+        }).join('') + `</tbody></table>`;
+    } else {
+      hq.innerHTML = '<div class="empty"><p>数据不足（需某题作答≥3次）</p></div>';
+    }
   } catch (e) { toast(e.message, 'error'); }
 }
 

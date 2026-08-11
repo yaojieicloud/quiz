@@ -79,7 +79,7 @@ function guessSubject(q) {
   if (q && q.subject_id) {
     if (subjectMap[q.subject_id]) return subjectMap[q.subject_id];
     // 兜底静态（首次加载失败时）
-    const fallback = { 1: 'Python基础理论', 2: '数学(三年级)', 3: 'Python基础实操' };
+    const fallback = { 1: 'Python基础理论', 2: '数学', 3: 'Python基础实操' };
     if (fallback[q.subject_id]) return fallback[q.subject_id];
   }
   return '其他';

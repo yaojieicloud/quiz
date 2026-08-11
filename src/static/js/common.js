@@ -74,6 +74,10 @@ function scoreRank(score) {
 function renderTopbar(active = '') {
   const user = getUser();
   if (!user) { location.href = 'index.html'; return; }
+  // embed 模式：被 admin.html 的 iframe 内嵌时，不渲染独立导航（避免双重顶栏），
+  // 由父页面 tab-bar 提供导航。直接访问独立页（非 iframe、无 embed 参数）仍正常渲染。
+  const embed = new URLSearchParams(location.search).get('embed') === '1' || window.self !== window.top;
+  if (embed) return '';
   const links = [
     { key: 'home', href: 'home.html', text: '🏠 首页', roles: ['student','parent','admin'] },
     { key: 'lottery', href: 'lottery.html', text: '🎡 大转盘', roles: ['student','admin'] },
@@ -81,11 +85,9 @@ function renderTopbar(active = '') {
     { key: 'records', href: 'records.html', text: '📋 答题记录', roles: ['student'] },
     { key: 'wrong', href: 'wrong.html', text: '❌ 错题本', roles: ['student'] },
     { key: 'stats', href: 'stats.html', text: '📊 学习统计', roles: ['student'] },
+    { key: 'mastery', href: 'mastery.html', text: '🎯 掌握度', roles: ['student', 'parent'] },
     { key: 'parent', href: 'parent.html', text: '👶 孩子情况', roles: ['parent'] },
     { key: 'admin', href: 'admin.html', text: '⚙️ 管理后台', roles: ['admin'] },
-    { key: 'reward', href: 'admin-reward.html', text: '🎁 奖励管理', roles: ['admin'] },
-    { key: 'subjectPoints', href: 'admin-subject-points.html', text: '📚 科目积分', roles: ['admin'] },
-    { key: 'llm', href: 'admin-llm.html', text: '📊 LLM 日志', roles: ['admin'] },
   ];
   const navHtml = links
     .filter(l => l.roles.includes(user.role))
