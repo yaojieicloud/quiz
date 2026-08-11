@@ -112,10 +112,17 @@ def pending_redeemments(_: User = admin_user, db: Session = Depends(get_db)):
         .order_by(DirectRedemption.created_at.desc())
         .all()
     )
+    # 一次性取回涉及的学员姓名（nickname 优先，缺则 username）
+    ids = {p.student_id for p in plays} | {d.student_id for d in directs}
+    name_map = {
+        u.id: (u.nickname or u.username)
+        for u in db.query(User).filter(User.id.in_(ids)).all()
+    } if ids else {}
     out = []
     for p in plays:
         out.append({
             "source": "play", "id": p.id, "student_id": p.student_id,
+            "student_name": name_map.get(p.student_id, f"学员#{p.student_id}"),
             "name": p.prize_name, "mode": p.mode,
             "created_at": p.created_at.isoformat() if p.created_at else None,
         })
@@ -123,6 +130,7 @@ def pending_redeemments(_: User = admin_user, db: Session = Depends(get_db)):
         item = db.query(RedeemItem).filter(RedeemItem.id == d.item_id).first()
         out.append({
             "source": "direct", "id": d.id, "student_id": d.student_id,
+            "student_name": name_map.get(d.student_id, f"学员#{d.student_id}"),
             "name": item.name if item else f"兑换项#{d.item_id}",
             "mode": "direct",
             "created_at": d.created_at.isoformat() if d.created_at else None,

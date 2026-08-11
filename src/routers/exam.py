@@ -310,6 +310,10 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
     if not subject:
         raise HTTPException(status_code=404, detail="科目不存在")
 
+    # 题目数量只允许标准档位：1（实操单题）、10、20、50；防止出现 40 题等非预期组卷
+    if data.count not in (1, 10, 20, 50):
+        raise HTTPException(status_code=400, detail="题目数量只能选择 1、10、20、50 题")
+
     # 抽题（注意：不创建 exam_record，未交卷不会产生空记录，提交时才落库）
     # 弃用题不再进入出题（组卷与错题重做均排除），但保留于库中以正确展示历史记录
     _active = (Question.deprecated == None) | (Question.deprecated == False)

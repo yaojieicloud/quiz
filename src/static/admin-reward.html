@@ -14,6 +14,15 @@
     .cfg-table th,.cfg-table td { border:1px solid #efeaf6; padding:7px 10px; text-align:center; }
     .cfg-table th { background:#f6f2fc; color:#6b5b8a; }
     .hint { font-size:12px; color:#a89; margin-left:6px; }
+    /* 配置编辑弹窗 */
+    .cfg-modal-mask { position:fixed; inset:0; z-index:500; display:flex; align-items:center; justify-content:center; background:rgba(60,40,90,.45); }
+    .cfg-modal { width:min(92vw,440px); max-height:86vh; overflow:auto; background:#fff; border-radius:18px; padding:20px 22px; box-shadow:0 20px 50px rgba(120,80,160,.35); }
+    .cfg-modal h3 { margin:0 0 14px; color:#5b4b8a; }
+    .cfg-modal .form-row { display:flex; align-items:center; gap:8px; margin:10px 0; }
+    .cfg-modal .form-row label { width:140px; flex:none; font-size:14px; color:#6b5b8a; }
+    .cfg-modal .form-row input, .cfg-modal .form-row select { flex:1; padding:8px 10px; border:1px solid #d9d2e6; border-radius:10px; font-size:14px; }
+    .cfg-modal-actions { display:flex; gap:12px; justify-content:flex-end; margin-top:16px; }
+    .btn-gray { background:#e9ecef; color:#495057; border:none; padding:10px 20px; border-radius:22px; cursor:pointer; font-size:14px; }
   </style>
 </head>
 <body>
@@ -25,7 +34,7 @@
     <div class="admin-card">
       <h3>积分调整 <span class="hint">用于验收/补偿发分</span></h3>
       <div class="form-row">
-        <label>学员/管理员ID</label><input id="adjId" type="number" placeholder="如 1">
+        <label>选择学员</label><select id="adjId" style="min-width:200px"><option value="">加载中…</option></select>
         <label>增减值</label><input id="adjDelta" type="number" placeholder="正发放 负扣减">
         <label>原因</label><input id="adjReason" type="text" value="admin_adjust">
         <button class="btn btn-green" onclick="doAdjust()">提交</button>
@@ -49,15 +58,18 @@
       </div>
     </div>
 
-    <!-- 配置查看 -->
+    <!-- 配置编辑 -->
     <div class="admin-card">
-      <h3>积分矩阵</h3><div id="rulesTbl"></div>
+      <h3>积分矩阵 <span class="hint">答对得分档位 → 发放积分（可新增/编辑/删除）</span></h3>
+      <div id="rulesTbl"></div>
     </div>
     <div class="admin-card">
-      <h3>转盘奖品池</h3><div id="prizesTbl"></div>
+      <h3>转盘奖品池 <span class="hint">权重越大越容易抽中（可改权重/增删）</span></h3>
+      <div id="prizesTbl"></div>
     </div>
     <div class="admin-card">
-      <h3>直兑商城</h3><div id="itemsTbl"></div>
+      <h3>直兑商城 <span class="hint">「兑换积分」即实物兑换所需积分，可改</span></h3>
+      <div id="itemsTbl"></div>
     </div>
   </div>
 

@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 from typing import Optional
 
 from database import engine, get_db
-from models import User, ExamRecord, AnswerRecord, AIReport
+from models import User, ExamRecord, AnswerRecord, AIReport, PointsLedger
 from schemas import ExamRecordOut, AnswerRecordOut, QuestionOut
 from core.deps import require_role
 
@@ -346,6 +346,13 @@ def _admin_record_out(record: ExamRecord, db: Session, with_answers: bool = True
     - answer_records 里的 user_answer 即学生提交的代码/答案，run_output 为后台实跑结果。
     """
     out = ExamRecordOut.model_validate(record)
+    # 兼容旧数据：从积分流水回填本次答题获得的积分
+    if out.points_earned == 0:
+        ledger = db.query(PointsLedger).filter_by(
+            student_id=record.user_id, reason="exam_reward", ref_id=record.id
+        ).first()
+        if ledger:
+            out.points_earned = ledger.delta
     if with_answers:
         ars = db.query(AnswerRecord).filter(AnswerRecord.exam_record_id == record.id).all()
         out.answer_records = []

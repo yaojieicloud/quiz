@@ -106,7 +106,7 @@ function renderList() {
       <div class="list-item" onclick="showDetail(${r.id})" style="cursor:pointer;">
         <div class="main-info">
           <div class="title">${esc(r.subject_name || '')} · ${r.mode === 'wrong' ? '❌错题重做' : r.mode === 'random' ? '🎲随机挑战' : '🎯自由组卷'}</div>
-          <div class="sub">✅ ${r.correct} 对 · ❌ ${r.wrong} 错 · ⏰ ${fmtTime(r.finished_at)} · 用时 ${fmtDuration(r.duration_seconds)}</div>
+          <div class="sub">✅ ${r.correct} 对 · ❌ ${r.wrong} 错 · ⏰ ${fmtTime(r.finished_at)} · 用时 ${fmtDuration(r.duration_seconds)} · ⭐ 获得 ${r.points_earned || 0} 积分</div>
         </div>
         <div class="score-badge ${rank.cls}">${r.score}分</div>
         <button class="btn btn-sm ${btnCls}" onclick="event.stopPropagation();showDetail(${r.id})">${btnTxt}</button>
@@ -148,7 +148,7 @@ async function fillDrawer(recordId) {
   try {
     const r = await API.get(`/api/exam/records/${recordId}`);
     let html = `<div class="card" style="margin:8px 0 4px;">
-      <div class="card-title">📋 ${esc(r.subject_name)} · ${r.score}分（对${r.correct} 错${r.wrong}）</div>`;
+      <div class="card-title">📋 ${esc(r.subject_name)} · ${r.score}分（对${r.correct} 错${r.wrong}） · ⭐ 获得 ${r.points_earned || 0} 积分</div>`;
     if (!r.answer_records || !r.answer_records.length) {
       html += '<div class="empty"><div class="icon">📭</div><p>本次没有作答明细</p></div>';
     } else {

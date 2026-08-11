@@ -1292,7 +1292,7 @@ function renderStuRecordList() {
       <div class="list-item" onclick="showStuDetail(${r.id})" style="cursor:pointer;">
         <div class="main-info">
           <div class="title">${esc(r.subject_name || '')} · ${modeTxt}${unfinished}</div>
-          <div class="sub">✅ ${r.correct} 对 · ❌ ${r.wrong} 错 / 共 ${r.total} 题 · ⏰ ${fmtTime(r.finished_at || r.started_at)} · 用时 ${fmtDuration(r.duration_seconds)}</div>
+          <div class="sub">✅ ${r.correct} 对 · ❌ ${r.wrong} 错 / 共 ${r.total} 题 · ⏰ ${fmtTime(r.finished_at || r.started_at)} · 用时 ${fmtDuration(r.duration_seconds)} · ⭐ 获得 ${r.points_earned || 0} 积分</div>
         </div>
         <div class="score-badge ${rank.cls}">${r.score}分</div>
         <button class="btn btn-sm ${btnCls}" onclick="event.stopPropagation();showStuDetail(${r.id})">${btnTxt}</button>
@@ -1415,7 +1415,7 @@ async function fillStuDrawer(recordId) {
     const sel = document.getElementById('stuSelect');
     const stu = students.find(s => String(s.id) === sel.value);
     let html = `<div class="section-box" style="margin:8px 0 4px;">
-      <h3>📋 ${stu ? esc(stu.nickname) + ' · ' : ''}${esc(r.subject_name || '')} · ${r.score}分（对 ${r.correct} / 错 ${r.wrong}）
+      <h3>📋 ${stu ? esc(stu.nickname) + ' · ' : ''}${esc(r.subject_name || '')} · ${r.score}分（对 ${r.correct} / 错 ${r.wrong}） · ⭐ 获得 ${r.points_earned || 0} 积分
         <button class="btn btn-sm btn-yellow" style="margin-left:auto;" onclick="showStuDetail(${recordId})">收起</button>
       </h3>
       <div style="font-size:13px;color:#9c8bb5;margin-bottom:14px;">⏰ ${fmtTime(r.started_at)} 开始 · 用时 ${fmtDuration(r.duration_seconds)} · 共 ${r.total} 题 · 记录ID ${r.id}</div>`;
