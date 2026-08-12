@@ -24,6 +24,7 @@ from core.deps import require_role
 from core.mastery import (
     STATUS_LABEL, _topic_totals, _load_student_rows, _rows_to_sessions, _eval_topic,
 )
+from core.tier import tier_label
 
 router = APIRouter(prefix="/api/admin", tags=["管理端学情分析"])
 
@@ -162,11 +163,12 @@ def admin_delete_record(record_id: int, _=Depends(require_role("admin")), db: Se
 # ============ 学情分析（4 个接口） ============
 @router.get("/analytics/overview")
 def analytics_overview(grade: Optional[str] = None, subject_id: Optional[int] = None,
-                       _=Depends(require_role("admin")), db: Session = Depends(get_db)):
+                      tier: Optional[int] = None,
+                      _=Depends(require_role("admin")), db: Session = Depends(get_db)):
     """总览仪表盘：核心指标 + 近14天趋势(按科目) + 科目/题型正确率 + 活跃榜
 
-    可选过滤: grade(年级, 精确匹配 subjects.grade) / subject_id(科目)。
-    顶部 KPI 始终为全局总量；趋势/正确率/活跃榜受过滤影响。
+    可选过滤: grade(年级, 精确匹配 subjects.grade) / subject_id(科目) / tier(档位)。
+    顶部 KPI 始终为全局总量；趋势/正确率/活跃榜受过滤影响（含 tier）。
     """
     # 过滤条件（基于 exam_records.subject_id -> subjects）
     conds, params = [], {}
@@ -176,6 +178,9 @@ def analytics_overview(grade: Optional[str] = None, subject_id: Optional[int] = 
     if grade:
         conds.append("s.grade = :grade")
         params["grade"] = grade
+    if tier is not None:
+        conds.append("er.tier = :tier")
+        params["tier"] = tier
     where = ("WHERE " + " AND ".join(conds)) if conds else ""
 
     total_ar = db.execute(text(
@@ -264,16 +269,20 @@ def analytics_overview(grade: Optional[str] = None, subject_id: Optional[int] = 
         "by_subject": by_subject,
         "by_type": by_type,
         "top_students": top_students,
+        "tier": tier,
+        "tier_name": tier_label(tier) if tier is not None else None,
     }
 
 
 @router.get("/analytics/student/{student_id}")
 def analytics_student(student_id: int, subject_id: Optional[int] = None,
-                      wrong_limit: int = 10,
+                      wrong_limit: int = 10, tier: Optional[int] = None,
                       _=Depends(require_role("admin")), db: Session = Depends(get_db)):
     """学员深度档案：成绩趋势 + 科目/知识点正确率 + 高频错题 + 最近动态
 
     可选 subject_id 过滤 by_topic / top_wrong（知识点正确率与高频错题）。
+    tier: 分阶档位（1初级/2进阶/3挑战），不传默认初级；传入后全档案管理口径锁到该档位，
+          与掌握度、薄弱榜同一套口径。
     wrong_limit: 高频错题条数，仅允许 10/20/30/50。
     """
     student = db.query(User).filter(User.id == student_id).first()
@@ -281,18 +290,22 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         raise HTTPException(status_code=404, detail="学员不存在")
     if wrong_limit not in (10, 20, 30, 50):
         wrong_limit = 10
+    if tier is None:
+        tier = 1
 
     # 该学员个人掌握度状态映射（topic_id -> status/label），供 by_topic / top_wrong 联动标注
-    mmap = _student_mastery_map(db, student_id)
+    mmap = _student_mastery_map(db, student_id, tier)
 
-    # 科目过滤条件（复用给 score_trend / by_topic / top_wrong）
+    # 科目 / 档位过滤条件（复用给 score_trend / by_subject / by_topic / top_wrong / recent）
     _subj_cond = "AND er.subject_id = :sid" if subject_id else ""
-    _subj_params = {"uid": student_id, **({"sid": subject_id} if subject_id else {})}
+    _tier_cond = "AND er.tier = :tier" if tier else ""
+    _q_tier_cond = "AND q.tier = :tier" if tier else ""
+    _subj_params = {"uid": student_id, "tier": tier, **({"sid": subject_id} if subject_id else {})}
 
     score_trend = _fetch_all(db, f"""
         SELECT er.id, er.started_at, er.score, er.total, er.correct, s.name subject
         FROM exam_records er JOIN subjects s ON s.id=er.subject_id
-        WHERE er.user_id=:uid {_subj_cond} ORDER BY er.started_at
+        WHERE er.user_id=:uid {_subj_cond} {_tier_cond} ORDER BY er.started_at
     """, _subj_params)
 
     by_subject = _fetch_all(db, f"""
@@ -301,7 +314,7 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         FROM answer_records ar
         JOIN exam_records er ON er.id=ar.exam_record_id
         JOIN subjects s ON s.id=er.subject_id
-        WHERE er.user_id=:uid {_subj_cond} GROUP BY s.id ORDER BY total DESC
+        WHERE er.user_id=:uid {_subj_cond} {_tier_cond} GROUP BY s.id ORDER BY total DESC
     """, _subj_params)
     by_topic = _fetch_all(db, f"""
         SELECT t.id topic_id, t.name topic, s.name subject, COUNT(*) total,
@@ -311,7 +324,7 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         JOIN questions q ON q.id=ar.question_id
         JOIN topics t ON t.id=q.topic_id
         JOIN subjects s ON s.id=q.subject_id
-        WHERE er.user_id=:uid {_subj_cond} GROUP BY q.topic_id HAVING COUNT(*)>=2
+        WHERE er.user_id=:uid {_subj_cond} {_q_tier_cond} GROUP BY q.topic_id HAVING COUNT(*)>=2
         ORDER BY (ok*1.0/total) ASC LIMIT 20
     """, _subj_params)
     for r in by_topic:
@@ -327,7 +340,7 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         JOIN questions q ON q.id=ar.question_id
         LEFT JOIN topics t ON t.id=q.topic_id
         LEFT JOIN subjects s ON s.id=q.subject_id
-        WHERE er.user_id=:uid AND ar.is_correct=0 {_subj_cond}
+        WHERE er.user_id=:uid AND ar.is_correct=0 {_subj_cond} {_q_tier_cond}
         GROUP BY q.id ORDER BY wrong_times DESC LIMIT {wrong_limit}
     """, _subj_params)
     for r in top_wrong:
@@ -335,14 +348,16 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         r["status"] = m["status"]
         r["status_label"] = m["status_label"]
 
-    recent = _fetch_all(db, """
+    recent = _fetch_all(db, f"""
         SELECT er.id, er.started_at, er.score, er.total, er.correct, s.name subject
         FROM exam_records er JOIN subjects s ON s.id=er.subject_id
-        WHERE er.user_id=:uid ORDER BY er.started_at DESC LIMIT 10
-    """, {"uid": student_id})
+        WHERE er.user_id=:uid {_tier_cond} ORDER BY er.started_at DESC LIMIT 10
+    """, {"uid": student_id, "tier": tier})
 
     return {
         "student": {"id": student.id, "nickname": student.nickname, "username": student.username},
+        "tier": tier,
+        "tier_name": tier_label(tier),
         "score_trend": score_trend,
         "by_subject": by_subject,
         "by_topic": by_topic,
@@ -351,14 +366,19 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
     }
 
 
-def _student_mastery_map(db: Session, student_id: int) -> dict:
-    """复用掌握度算法（core.mastery），返回 {topic_id: {status, status_label, rate, coverage}}。"""
+def _student_mastery_map(db: Session, student_id: int, tier: int = 1) -> dict:
+    """复用掌握度算法（core.mastery），返回 {topic_id: {status, status_label, rate, coverage}}。
+
+    tier 化：仅计算指定档位（默认初级）。作用域与学员端掌握度一致 (uid, topic, tier)。
+    """
     rows = _load_student_rows(db, student_id)
-    sessions = _rows_to_sessions(rows)
-    totals = _topic_totals(db)
+    sessions = _rows_to_sessions(rows)   # key=(uid, topic_id, tier)
+    totals = _topic_totals(db)            # key=(topic_id, tier)
     out = {}
-    for tid, tt in totals.items():
-        ev = _eval_topic(sessions.get((student_id, tid), []), tt)
+    for (tid, tt_tier), tt in totals.items():
+        if tt_tier != tier:
+            continue
+        ev = _eval_topic(sessions.get((student_id, tid, tt_tier), []), tt)
         out[tid] = {
             "status": ev["status"],
             "status_label": STATUS_LABEL[ev["status"]],
@@ -370,14 +390,15 @@ def _student_mastery_map(db: Session, student_id: int) -> dict:
 
 @router.get("/analytics/weakness")
 def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = None,
-                      student_id: Optional[int] = None,
+                      student_id: Optional[int] = None, tier: Optional[int] = None,
                       _=Depends(require_role("admin")), db: Session = Depends(get_db)):
     """知识点薄弱分析：薄弱知识点TOP10 + 反复错题榜 + 低正确率题目
 
-    可选过滤: subject_id(科目) / grade(年级) / student_id(指定学员，联动其个人掌握度)。
-    - 传 student_id 时，三张表均按「该学员个人掌握度」口径计算，已通过/精通的课不进薄弱榜，
-      从根本上与 mastery 一致，杜绝“掌握度里通过了、薄弱榜里还在”的矛盾。
-    - 不传 student_id 时保持原「全体学员历史」口径（向后兼容），但每条仍带 topic_id 便于联动。
+    可选过滤: subject_id(科目) / grade(年级) / student_id(指定学员，联动其个人掌握度) / tier(档位)。
+    tier 不传 = 不过滤档位（保留原「全体/个人历史」口径，向后兼容）；传入则三张表均按该档位过滤。
+    - 传 student_id 时，薄弱榜按「该学员个人掌握度（指定档位）」口径计算，已通过/精通的课不进榜，
+      从根本上与 mastery 一致。
+    - 不传 student_id 时保持原「全体学员历史」口径，但每条仍带 topic_id 便于联动。
     """
     conds, params = [], {}
     if subject_id is not None:
@@ -386,11 +407,14 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
     if grade:
         conds.append("s.grade = :grade")
         params["grade"] = grade
+    if tier is not None:
+        conds.append("q.tier = :tier")
+        params["tier"] = tier
     where = ("WHERE " + " AND ".join(conds)) if conds else ""
 
     # ---------- 学员级（联动个人掌握度）----------
     if student_id is not None:
-        mmap = _student_mastery_map(db, student_id)
+        mmap = _student_mastery_map(db, student_id, tier or 1)
 
         # 薄弱知识点：仅列「未通过 / 需复习 / 未开始」的课，按近期正确率升序
         topics = db.query(Topic).all()
@@ -419,7 +443,13 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
         wt.sort(key=lambda x: (x["rate"], x["topic"]))
         wt = wt[:10]
 
-        # 反复错题榜（该学员本人，未掌握的题）
+        # 反复错题榜（该学员本人，未掌握的题；tier 给定时只统计该档位）
+        rw_filter = [
+            WrongQuestion.user_id == student_id,
+            WrongQuestion.mastered == False,  # noqa: E712
+        ]
+        if tier is not None:
+            rw_filter.append(Question.tier == tier)
         rw_rows = (
             db.query(
                 WrongQuestion.question_id, func.sum(WrongQuestion.wrong_count),
@@ -429,7 +459,7 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
             .join(Question, WrongQuestion.question_id == Question.id)
             .join(Topic, Question.topic_id == Topic.id)
             .join(Subject, Question.subject_id == Subject.id)
-            .filter(WrongQuestion.user_id == student_id, WrongQuestion.mastered == False)  # noqa: E712
+            .filter(*rw_filter)
             .group_by(WrongQuestion.question_id)
             .having(func.sum(WrongQuestion.wrong_count) >= 2)
             .order_by(func.sum(WrongQuestion.wrong_count).desc())
@@ -446,8 +476,8 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
                 "topic_status": m["status"], "topic_status_label": m["status_label"],
             })
 
-        # 低正确率题目（该学员本人）
-        hq_rows = (
+        # 低正确率题目（该学员本人；tier 给定时只统计该档位）
+        hq_q = (
             db.query(
                 AnswerRecord.question_id,
                 func.count(AnswerRecord.id),
@@ -461,6 +491,11 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
             .filter(AnswerRecord.exam_record_id.in_(
                 db.query(ExamRecord.id).filter(ExamRecord.user_id == student_id)
             ))
+        )
+        if tier is not None:
+            hq_q = hq_q.filter(Question.tier == tier)
+        hq_rows = (
+            hq_q
             .group_by(AnswerRecord.question_id)
             .having(func.count(AnswerRecord.id) >= 3)
             .order_by((func.sum(case((AnswerRecord.is_correct == True, 1), else_=0)) * 100.0 / func.count(AnswerRecord.id)).asc())
@@ -481,6 +516,8 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
         return {
             "mode": "student",
             "student_id": student_id,
+            "tier": tier,
+            "tier_name": tier_label(tier) if tier is not None else None,
             "weak_topics": wt,
             "repeat_wrong": repeat_wrong,
             "hard_questions": hard_questions,
@@ -505,6 +542,8 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
         weak_conds.append("q.subject_id = :sid")
     if grade:
         weak_conds.append("s.grade = :grade")
+    if tier is not None:
+        weak_conds.append("q.tier = :tier")
     repeat_wrong = _fetch_all(db, f"""
         SELECT q.id qid, q.content, q.type, t.id topic_id, t.name topic, s.name subject,
                COUNT(DISTINCT w.user_id) students, SUM(w.wrong_count) times
@@ -533,6 +572,8 @@ def analytics_weakness(subject_id: Optional[int] = None, grade: Optional[str] = 
 
     return {
         "mode": "global",
+        "tier": tier,
+        "tier_name": tier_label(tier) if tier is not None else None,
         "weak_topics": weak_topics,
         "repeat_wrong": repeat_wrong,
         "hard_questions": hard_questions,

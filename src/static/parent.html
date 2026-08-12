@@ -44,6 +44,9 @@ if (user.role !== 'parent') {
 }
 document.getElementById('topbar').innerHTML = renderTopbar('parent');
 
+const TIER_LABEL = { 1: '🟢初级', 2: '🟠进阶', 3: '🔴挑战' };
+const tierTag = (t) => (t && TIER_LABEL[t]) ? TIER_LABEL[t] : '🟢初级';
+
 let children = [];
 let currentChild = null;
 
@@ -117,7 +120,7 @@ async function selectChild(childId) {
     } else {
       html += records.slice(0, 10).map(r => `<div class="list-item">
         <div class="main-info">
-          <div class="title">${esc(r.subject_name)} · ${r.mode==='wrong'?'错题重做':r.mode==='random'?'随机挑战':'自由组卷'}</div>
+          <div class="title">${esc(r.subject_name)} · ${tierTag(r.tier)} · ${r.mode==='wrong'?'错题重做':r.mode==='random'?'随机挑战':'自由组卷'}</div>
           <div class="sub">对${r.correct} 错${r.wrong} · ${fmtTime(r.finished_at)}</div>
         </div>
         <div class="score-badge ${scoreRank(r.score).cls}">${r.score}分</div>

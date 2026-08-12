@@ -79,6 +79,14 @@
           <div class="label">🎯 选一课开始实操（单选）</div>
           <div class="chip-group" id="courseChips"></div>
         </div>
+        <div class="config-section">
+          <div class="label">🎚 难度档位（单选，进阶/挑战积分更高）</div>
+          <div class="chip-group">
+            <span class="chip active" data-tier="1" onclick="pickTier(this)">🟢 初级</span>
+            <span class="chip" data-tier="2" onclick="pickTier(this)">🟠 进阶</span>
+            <span class="chip" data-tier="3" onclick="pickTier(this)">🔴 挑战</span>
+          </div>
+        </div>
         <div style="font-size:13px;color:#9c8bb5;line-height:1.6;">
           💡 课程是递进的：选第 N 课，题目会综合运用第 1 ~ N 课学过的知识点。每次实操 1 题，提交后可以回来继续选课。
         </div>
@@ -136,6 +144,15 @@
             <span class="chip" data-mode="wrong" onclick="pickMode(this)">❌ 错题重做</span>
           </div>
         </div>
+
+        <div class="config-section">
+          <div class="label">🎚 难度档位（单选，进阶/挑战积分更高）</div>
+          <div class="chip-group">
+            <span class="chip active" data-tier="1" onclick="pickTier(this)">🟢 初级</span>
+            <span class="chip" data-tier="2" onclick="pickTier(this)">🟠 进阶</span>
+            <span class="chip" data-tier="3" onclick="pickTier(this)">🔴 挑战</span>
+          </div>
+        </div>
       </div>
 
       <div class="cfg-foot">
@@ -161,6 +178,7 @@ let selectedTopics = new Set();
 let selectedTypes = new Set();
 let selectedCount = 10;
 let selectedMode = 'custom';
+let selectedTier = 1;   // 分阶档位：1初级 2进阶 3挑战（单选，默认初级）
 
 async function loadSubjects() {
   try {
@@ -204,6 +222,10 @@ async function openCoursePick(subjectId) {
   currentSubject = subjects.find(s => s.id === subjectId);
   if (!currentSubject) return;
   selectedCourse = null;
+  selectedTier = 1;
+  document.querySelectorAll('#courseModal .chip[data-tier]').forEach(c => c.classList.remove('active'));
+  const ct = document.querySelector('#courseModal .chip[data-tier="1"]');
+  if (ct) ct.classList.add('active');
   document.getElementById('courseSubjectName').textContent =
     `${currentSubject.icon || ''} ${currentSubject.name} · 共 ${currentSubject.question_count} 题`;
   try {
@@ -241,9 +263,10 @@ async function startCourseExam() {
       types: [],
       count: 1,
       mode: 'custom',
+      tier: selectedTier,
     });
     if (!res.questions.length) {
-      toast('这一课还没有题目，换一课试试', 'error');
+      toast('这一课还没有题目，换一课或难度档位试试', 'error');
       return;
     }
     closeCoursePick();
@@ -251,6 +274,7 @@ async function startCourseExam() {
       subject_id: currentSubject.id,
       mode: 'custom',
       topic_ids: [selectedCourse],
+      tier: selectedTier,
       questions: res.questions,
       subject: currentSubject,
       practical: true,
@@ -280,6 +304,7 @@ async function openConfig(subjectId) {
   // 需求8：文化类默认 50 题；编程理论默认 10 题
   selectedCount = isCulture ? 50 : 10;
   selectedMode = 'custom';
+  selectedTier = 1;
   // 重置 chip
   document.querySelectorAll('#configModal .chip').forEach(c => c.classList.remove('active'));
   // 题型显隐：只显示该科目实际可用题型（available_types 已由后端按 allowed_types 配置过滤）
@@ -291,6 +316,7 @@ async function openConfig(subjectId) {
   });
   document.querySelector(`.chip[data-count="${selectedCount}"]`).classList.add('active');
   document.querySelector('.chip[data-mode="custom"]').classList.add('active');
+  document.querySelector('.chip[data-tier="1"]').classList.add('active');
 
   // 切换科目：立即清空章节区，避免残留上一科目的内容
   const box = document.getElementById('topicChips');
@@ -384,6 +410,12 @@ function pickMode(el) {
   selectedMode = el.dataset.mode;
 }
 
+function pickTier(el) {
+  document.querySelectorAll('.chip[data-tier]').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  selectedTier = parseInt(el.dataset.tier);
+}
+
 async function startExam() {
   selectedTopics = new Set([...document.querySelectorAll('.chip[data-tid].active')].map(c => parseInt(c.dataset.tid)));
   selectedTypes = new Set([...document.querySelectorAll('.chip[data-type].active')].map(c => c.dataset.type));
@@ -398,15 +430,17 @@ async function startExam() {
       types: typesToSend,
       count: selectedCount,
       mode: selectedMode,
+      tier: selectedTier,
     });
     if (!res.questions.length) {
-      toast('没有符合条件的题目，试试其他设置吧', 'error');
+      toast('没有符合条件的题目，试试其他设置或难度档位吧', 'error');
       return;
     }
     localStorage.setItem('quiz_exam', JSON.stringify({
       subject_id: currentSubject.id,
       mode: selectedMode,
       topic_ids: [...selectedTopics],
+      tier: selectedTier,
       questions: res.questions,
       subject: currentSubject,
     }));

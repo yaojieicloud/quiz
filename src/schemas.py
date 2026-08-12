@@ -113,6 +113,7 @@ class QuestionOut(BaseModel):
     answer: Optional[str] = None  # 答题时不返回，提交后判分
     explanation: Optional[str] = None
     difficulty: int = 1
+    tier: int = 1  # 分阶档位 1初级 2进阶 3挑战
     is_multiple: bool = False
     blank_count: int = 1
     blank_answers: Optional[List[str]] = None
@@ -133,6 +134,7 @@ class QuestionForExam(BaseModel):
     match_options: Optional[List[str]] = None  # 连线题右侧选项
     topic_name: Optional[str] = None
     difficulty: int = 1
+    tier: int = 1  # 分阶档位 1初级 2进阶 3挑战
     explanation: Optional[str] = None  # code 题在答题时下发思路提示
     is_multiple: bool = False
     blank_count: int = 1
@@ -150,6 +152,7 @@ class QuestionCreate(BaseModel):
     answer: str
     explanation: Optional[str] = None
     difficulty: int = 1
+    tier: int = 1  # 分阶档位 1初级 2进阶 3挑战
     is_multiple: bool = False
     blank_count: int = 1
     blank_answers: Optional[List[str]] = None
@@ -168,6 +171,7 @@ class QuestionUpdate(BaseModel):
     answer: Optional[str] = None
     explanation: Optional[str] = None
     difficulty: Optional[int] = None
+    tier: Optional[int] = None  # 分阶档位（更新时可改）
     is_multiple: Optional[bool] = None
     blank_count: Optional[int] = None
     blank_answers: Optional[List[str]] = None
@@ -184,6 +188,7 @@ class ExamStartRequest(BaseModel):
     types: List[str] = Field(default=[], description="题型，空表示全部")
     count: int = Field(10, ge=1, le=100)
     mode: str = Field("custom", pattern="^(custom|wrong|random)$")
+    tier: int = Field(1, description="分阶档位 1初级 2进阶 3挑战，默认初级")
 
 
 class AnswerItem(BaseModel):
@@ -197,6 +202,7 @@ class ExamSubmitRequest(BaseModel):
     topic_ids: List[int] = []
     answers: List[AnswerItem]
     duration_seconds: int = 0
+    tier: int = Field(1, description="分阶档位 1初级 2进阶 3挑战，与 start 一致")
 
 
 class AnswerRecordOut(BaseModel):
@@ -225,6 +231,7 @@ class ExamRecordOut(BaseModel):
     duration_seconds: int
     started_at: datetime
     finished_at: Optional[datetime] = None
+    tier: int = 1  # 本次答题所选分阶档位
     answer_records: List[AnswerRecordOut] = []
     points_earned: int = 0  # 本次答题按 scoring_rules 获得的积分
     class Config:

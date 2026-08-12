@@ -6,12 +6,18 @@ const STATUS_TEXT = {
   mastered: '精通', review: '需复习',
 };
 
-// URL 深链参数：管理员从薄弱分析跳转过来查看某学员、并定位某课
+// URL 深链参数：管理员从薄弱分析跳转过来查看某学员、并定位某课、并定位某档位
 const URL_PARAMS = new URLSearchParams(location.search);
 const DEEP_STUDENT = URL_PARAMS.get('student_id');   // 管理员深链指定学员
 const DEEP_TOPIC = URL_PARAMS.get('topic') ? parseInt(URL_PARAMS.get('topic'), 10) : null;
+const DEEP_TIER = URL_PARAMS.get('tier') ? parseInt(URL_PARAMS.get('tier'), 10) : null;
+
+const TIERS = [1, 2, 3];
+const TIER_NAMES = { 1: '初级', 2: '进阶', 3: '挑战' };
 
 let childId = null;
+let selectedTier = 1;   // 当前选中的难度档位
+let currentSub = null;  // 当前展示的科目（用于切换档位时局部重渲染）
 
 async function loadChildrenAndData() {
   const box = document.getElementById('childBox');
@@ -58,6 +64,8 @@ async function loadData() {
     url += `?student_id=${childId}`;
   }
   const data = await API.get(url);
+  // 选中档位：优先用深链 tier，否则用后端默认选中档位
+  selectedTier = DEEP_TIER || data.selected_tier || TIERS[0];
   render(data);
   // 管理员深链：标注正位于薄弱榜的课，形成双向联动
   if (user.role === 'admin' && childId) markWeakTopics(childId);
@@ -66,7 +74,7 @@ async function loadData() {
 let weakTopicIds = new Set();
 async function markWeakTopics(studentId) {
   try {
-    const d = await API.get(`/api/admin/analytics/weakness?student_id=${studentId}`);
+    const d = await API.get(`/api/admin/analytics/weakness?student_id=${studentId}&tier=${selectedTier}`);
     weakTopicIds = new Set((d.weak_topics || []).map(t => t.topic_id));
     document.querySelectorAll('.topic-card').forEach(card => {
       const tid = parseInt(card.dataset.tid || '0', 10);
@@ -102,6 +110,7 @@ function render(data) {
     };
     tabs.appendChild(chip);
   });
+  renderTierTabs();
   showSubject(data.subjects[0]);
   // 深链定位到某课：滚动并高亮
   if (DEEP_TOPIC) {
@@ -115,7 +124,25 @@ function render(data) {
   }
 }
 
+function renderTierTabs() {
+  const wrap = document.getElementById('tierTabs');
+  wrap.innerHTML = '';
+  TIERS.forEach(t => {
+    const chip = document.createElement('span');
+    chip.className = 'chip' + (t === selectedTier ? ' active' : '');
+    chip.textContent = TIER_NAMES[t];
+    chip.onclick = () => {
+      selectedTier = t;
+      wrap.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      if (currentSub) showSubject(currentSub);
+    };
+    wrap.appendChild(chip);
+  });
+}
+
 function showSubject(sub) {
+  currentSub = sub;
   const content = document.getElementById('content');
   // 按 unit 分组
   const groups = {};
@@ -134,20 +161,21 @@ function showSubject(sub) {
 }
 
 function topicCard(t) {
-  const st = t.status;
-  const rateColor = t.rate >= 90 ? '#2b8a3e' : t.rate >= 60 ? '#1c7ed6' : '#e03131';
+  const d = t.tiers[selectedTier] || t.tiers[TIERS[0]];
+  const st = d.status;
+  const rateColor = d.rate >= 90 ? '#2b8a3e' : d.rate >= 60 ? '#1c7ed6' : '#e03131';
   return `<div class="topic-card" data-tid="${t.topic_id}" style="border-left-color:${barColor(st)}">
     <div class="tname"><span>${esc(t.name)}</span>
       <span class="st-badge st-${st}">${STATUS_TEXT[st]}</span></div>
     <div class="bar-row fi-rate">
-      <div class="bar-label"><span>近期正确率</span><b style="color:${rateColor}">${t.rate}%</b></div>
-      <div class="bar"><i style="width:${Math.min(100, t.rate)}%"></i></div>
+      <div class="bar-label"><span>近期正确率</span><b style="color:${rateColor}">${d.rate}%</b></div>
+      <div class="bar"><i style="width:${Math.min(100, d.rate)}%"></i></div>
     </div>
     <div class="bar-row fi-cov">
-      <div class="bar-label"><span>知识点覆盖</span><b>${t.coverage}%</b></div>
-      <div class="bar"><i style="width:${Math.min(100, t.coverage)}%"></i></div>
+      <div class="bar-label"><span>知识点覆盖</span><b>${d.coverage}%</b></div>
+      <div class="bar"><i style="width:${Math.min(100, d.coverage)}%"></i></div>
     </div>
-    <div class="meta">近期 ${t.total} 题 · 对 ${t.correct} 题 · ${t.sessions} 次练习 · 本课共 ${t.topic_total} 题</div>
+    <div class="meta">近期 ${d.total} 题 · 对 ${d.correct} 题 · ${d.sessions} 次练习 · 本课共 ${d.topic_total} 题</div>
   </div>`;
 }
 

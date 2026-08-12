@@ -40,14 +40,17 @@ STATUS_LABEL = {
 
 
 def _topic_totals(db) -> dict:
-    """每课活跃（未弃用）题数。"""
+    """每课每档的活跃（未弃用）题数，key=(topic_id, tier)。
+
+    tier 化后掌握度按「课 × 档位」分别计覆盖度，故题数也按 (课,档) 维度统计。
+    """
     rows = (
-        db.query(Question.topic_id, func.count(Question.id))
+        db.query(Question.topic_id, Question.tier, func.count(Question.id))
         .filter(Question.deprecated == False)  # noqa: E712
-        .group_by(Question.topic_id)
+        .group_by(Question.topic_id, Question.tier)
         .all()
     )
-    return {tid: n for tid, n in rows}
+    return {(tid, t): n for tid, t, n in rows}
 
 
 def _load_student_rows(db, student_id: int, question_ids=None):
@@ -56,6 +59,7 @@ def _load_student_rows(db, student_id: int, question_ids=None):
             AnswerRecord.is_correct,
             Question.topic_id,
             Question.id,
+            Question.tier,
             ExamRecord.id,
             ExamRecord.finished_at,
             ExamRecord.user_id,
@@ -70,11 +74,11 @@ def _load_student_rows(db, student_id: int, question_ids=None):
 
 
 def _rows_to_sessions(rows):
-    """rows: (is_correct, topic_id, qid, exam_id, finished_at, user_id)
-    返回 {(topic_id 或 (uid,topic_id)): [session, ...]}，session 按时间倒序。"""
+    """rows: (is_correct, topic_id, qid, tier, exam_id, finished_at, user_id)
+    返回 key=(uid, topic_id, tier) 的 sessions（掌握度作用域升为 学员×课×档位）。"""
     by_key = defaultdict(lambda: defaultdict(list))
-    for is_correct, topic_id, qid, exam_id, finished_at, uid in rows:
-        by_key[(uid, topic_id)][exam_id].append((is_correct, qid, finished_at))
+    for is_correct, topic_id, qid, tier, exam_id, finished_at, uid in rows:
+        by_key[(uid, topic_id, tier)][exam_id].append((is_correct, qid, finished_at))
     result = {}
     for key, exams in by_key.items():
         sess = []
@@ -84,6 +88,12 @@ def _rows_to_sessions(rows):
         sess.sort(key=lambda s: s["finished_at"] or datetime.min, reverse=True)
         result[key] = sess
     return result
+
+
+def eval_topic_tier(sessions_by_key, totals_by_tier, student_id, topic_id, tier):
+    """便捷封装：取某 (学员,课,档位) 的掌握度评估（算法同 _eval_topic，零口径漂移）。"""
+    sess = sessions_by_key.get((student_id, topic_id, tier), [])
+    return _eval_topic(sess, totals_by_tier.get((topic_id, tier), 0))
 
 
 def _eval_window(sessions, topic_total, recent_only=True):

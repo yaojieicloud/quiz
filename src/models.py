@@ -86,6 +86,15 @@ class Topic(Base):
     questions = relationship("Question", back_populates="topic")
 
 
+class TierConfig(Base):
+    """分阶档位配置：档位名称 + 积分倍率（权威来源，倍率走表而非硬编码）"""
+    __tablename__ = "tier_config"
+
+    tier = Column(Integer, primary_key=True)  # 1初级 2进阶 3挑战
+    name = Column(String(20), nullable=False)
+    points_multiplier = Column(Integer, default=1)  # 积分倍率（进阶=初阶×2 等）
+
+
 class Question(Base):
     """题目表 —— 兼容选择/判断/填空/问答/编程/连线/排序七种题型
 
@@ -116,7 +125,8 @@ class Question(Base):
     # 当前版本子题仅支持 choice；type 字段预留 judge/fill/essay 扩展
     answer = Column(String(500), nullable=False)  # 索引或字符串答案；reading 为子题答案索引串
     explanation = Column(Text)  # 讲解（可含 HTML）
-    difficulty = Column(Integer, default=1)  # 1简单 2中等 3较难
+    difficulty = Column(Integer, default=1)  # 1简单 2中等 3较难（题内微难度，不参与组卷/积分）
+    tier = Column(Integer, default=1, index=True)  # 分阶档位 1初级 2进阶 3挑战（参与组卷/积分/掌握度/学情）
     # 多选题标记（仅 choice 类型用）
     is_multiple = Column(Boolean, default=False)
     # 填空题多空支持（仅 fill 类型用）
@@ -146,6 +156,7 @@ class ExamRecord(Base):
     subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
     subject_name = Column(String(50))  # 冗余存储，便于历史记录展示
     mode = Column(String(20), default="custom")  # custom / wrong / random
+    tier = Column(Integer, default=1)  # 本次答题所选分阶档位（1初级 2进阶 3挑战）
     total = Column(Integer, nullable=False)
     correct = Column(Integer, default=0)
     wrong = Column(Integer, default=0)

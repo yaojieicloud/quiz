@@ -307,6 +307,8 @@ let questions = examData.questions;
 const examSubjectId = examData.subject_id;
 const examMode = examData.mode || 'custom';
 const examTopicIds = examData.topic_ids || [];
+const examTier = examData.tier || 1;  // 分阶档位（来自组卷时选择，随提交回传后端算积分倍率）
+const TIER_LABEL = { 1: '初级', 2: '进阶', 3: '挑战' };
 const examStartTs = Date.now();
 let subject = examData.subject;
 let userAnswers = new Array(questions.length).fill(null);
@@ -1205,6 +1207,7 @@ async function doSubmit() {
       subject_id: examSubjectId,
       mode: examMode,
       topic_ids: examTopicIds,
+      tier: examTier,
       answers,
       duration_seconds,
     });
@@ -1237,7 +1240,7 @@ function showResult(record) {
       <div style="margin-top:12px;font-size:20px;color:#e8590c;font-weight:bold;background:#fff3bf;display:inline-block;padding:8px 18px;border-radius:20px;">
         ⭐ 本次获得 ${record.points_earned || 0} 积分
       </div>
-      <div class="rank">${record.subject_name || ''} · ${record.mode === 'wrong' ? '错题重做' : record.mode === 'random' ? '随机挑战' : '自由组卷'}</div>
+      <div class="rank">${record.subject_name || ''} · ${TIER_LABEL[examTier] || ''} · ${record.mode === 'wrong' ? '错题重做' : record.mode === 'random' ? '随机挑战' : '自由组卷'}</div>
     </div>`;
 
   if (wrong === 0 && record.total > 0) {

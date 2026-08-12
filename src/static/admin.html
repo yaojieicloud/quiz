@@ -293,6 +293,15 @@ textarea.form-input.lg { min-height:120px; }
             <option value="">全部年级</option>
           </select>
         </div>
+        <div class="form-group" style="flex:1;max-width:160px;">
+          <label>难度档位</label>
+          <select class="form-select" id="ovTierSelect" onchange="onOvGradeChange()">
+            <option value="">全部档位</option>
+            <option value="1">初级</option>
+            <option value="2">进阶</option>
+            <option value="3">挑战</option>
+          </select>
+        </div>
       </div>
       <div class="kpi-grid" id="kpiGrid"></div>
       <div class="section-box">
@@ -340,6 +349,15 @@ textarea.form-input.lg { min-height:120px; }
               <option value="50">TOP 50</option>
             </select>
           </div>
+          <div class="form-group" style="flex:1;max-width:150px;">
+            <label>难度档位</label>
+            <select class="form-select" id="anaStuTierSelect" onchange="loadAnaStudent()">
+              <option value="">全部档位</option>
+              <option value="1">初级</option>
+              <option value="2">进阶</option>
+              <option value="3">挑战</option>
+            </select>
+          </div>
         </div>
         <div id="anaStudentBody"><div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div></div>
       </div>
@@ -365,6 +383,15 @@ textarea.form-input.lg { min-height:120px; }
             <label>学科</label>
             <select class="form-select" id="wkSubjSelect" onchange="loadAnaWeakness()">
               <option value="">全部学科</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;max-width:150px;">
+            <label>难度档位</label>
+            <select class="form-select" id="wkTierSelect" onchange="loadAnaWeakness()">
+              <option value="">全部档位</option>
+              <option value="1">初级</option>
+              <option value="2">进阶</option>
+              <option value="3">挑战</option>
             </select>
           </div>
         </div>
@@ -1753,7 +1780,10 @@ async function loadAnaOverview() {
         anaGrades(subs).map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
     }
     const grade = gsel.value;
-    const qs = grade ? `?grade=${encodeURIComponent(grade)}` : '';
+    const tier = document.getElementById('ovTierSelect').value;
+    let qs = '';
+    if (grade) qs += (qs ? '&' : '?') + `grade=${encodeURIComponent(grade)}`;
+    if (tier) qs += (qs ? '&' : '?') + `tier=${tier}`;
     const d = await API.get('/api/admin/analytics/overview' + qs);
     // KPI（始终为全局总量）
     const t = d.totals;
@@ -1858,17 +1888,20 @@ async function loadAnaStudentList() {
 }
 
 async function loadAnaStudent() {
-  const uid = document.getElementById('anaStuSelect').value;
-  const sid = document.getElementById('anaStuSubjSelect').value;
-  const wl = document.getElementById('anaStuWrongLimit').value || '10';
-  const body = document.getElementById('anaStudentBody');
-  if (!uid) { body.innerHTML = '<div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div>'; return; }
-  try {
-    const qs = new URLSearchParams();
-    if (sid) qs.set('subject_id', sid);
-    qs.set('wrong_limit', wl);
-    const d = await API.get(`/api/admin/analytics/student/${uid}?${qs}`);
+    const uid = document.getElementById('anaStuSelect').value;
+    const sid = document.getElementById('anaStuSubjSelect').value;
+    const wl = document.getElementById('anaStuWrongLimit').value || '10';
+    const tier = document.getElementById('anaStuTierSelect').value;
+    const body = document.getElementById('anaStudentBody');
+    if (!uid) { body.innerHTML = '<div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div>'; return; }
+    try {
+      const qs = new URLSearchParams();
+      if (sid) qs.set('subject_id', sid);
+      qs.set('wrong_limit', wl);
+      if (tier) qs.set('tier', tier);
+      const d = await API.get(`/api/admin/analytics/student/${uid}?${qs}`);
     let html = '';
+    if (d.tier_name) html += `<div class="deep-note" style="margin-bottom:12px;">🎚 当前难度档位：<b>${esc(d.tier_name)}</b>（成绩趋势 / 知识点 / 错题均按该档位口径）</div>`;
     // 成绩趋势
     if (d.score_trend.length) {
       html += `<div class="section-box" style="box-shadow:none;background:#f8f9fc;"><h3>📈 成绩趋势（共 ${d.score_trend.length} 次考试）</h3><div id="chartScoreTrend" class="chart-box"></div></div>`;
@@ -2036,8 +2069,9 @@ async function initWkFilters() {
 }
 
 function masteryLink(studentId, topicId) {
-  // 跳转该学员的掌握度页面并定位到对应课
-  return `mastery.html?student_id=${studentId}&topic=${topicId}`;
+  // 跳转该学员的掌握度页面并定位到对应课（携带当前薄弱分析所选档位，形成双向联动）
+  const tier = document.getElementById('wkTierSelect').value;
+  return `mastery.html?student_id=${studentId}&topic=${topicId}` + (tier ? `&tier=${tier}` : '');
 }
 
 async function loadAnaWeakness() {
@@ -2045,17 +2079,20 @@ async function loadAnaWeakness() {
     const grade = document.getElementById('wkGradeSelect').value;
     const sid = document.getElementById('wkSubjSelect').value;
     const uid = document.getElementById('wkStuSelect').value;
+    const tier = document.getElementById('wkTierSelect').value;
     const qs = new URLSearchParams();
     if (grade) qs.set('grade', grade);
     if (sid) qs.set('subject_id', sid);
     if (uid) qs.set('student_id', uid);
+    if (tier) qs.set('tier', tier);
     const d = await API.get('/api/admin/analytics/weakness' + (qs.toString() ? '?' + qs : ''));
 
     const hint = document.getElementById('wkModeHint');
+    const tierLabel = tier ? ({'1':'初级','2':'进阶','3':'挑战'}[tier] || '') : '';
     if (uid) {
-      hint.innerHTML = '📌 当前为 <b>该学员个人掌握度</b> 口径：已通过/精通的课不会出现在薄弱榜，与「掌握度」页完全一致。点任意课可跳转到该学员掌握度。';
+      hint.innerHTML = '📌 当前为 <b>该学员个人掌握度</b> 口径' + (tierLabel ? `（难度档位：<b>${tierLabel}</b>）` : '') + '：已通过/精通的课不会出现在薄弱榜，与「掌握度」页完全一致。点任意课可跳转该学员对应档位掌握度。';
     } else {
-      hint.innerHTML = 'ℹ️ 未选学员时为「全体学员历史汇总」口径（向后兼容）。选中学员可切换为个人掌握度联动视图。';
+      hint.innerHTML = 'ℹ️ 未选学员时为「全体学员历史汇总」口径（向后兼容）' + (tierLabel ? `，难度档位：<b>${tierLabel}</b>` : '') + '。选中学员可切换为个人掌握度联动视图。';
     }
 
     // 1. 薄弱知识点

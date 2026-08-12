@@ -11,6 +11,7 @@ from schemas import (
     ExamRecordOut, AnswerRecordOut, WrongQuestionOut, QuestionOut, QuestionForExam,
 )
 from core.deps import get_current_user
+from core.tier import get_tier_multiplier
 from core.code_runner import run_python, normalize_output
 from core.llm_grader import grade_code
 from pydantic import BaseModel
@@ -317,19 +318,23 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
     # 抽题（注意：不创建 exam_record，未交卷不会产生空记录，提交时才落库）
     # 弃用题不再进入出题（组卷与错题重做均排除），但保留于库中以正确展示历史记录
     _active = (Question.deprecated == None) | (Question.deprecated == False)
+    # 分阶档位：仅从所选 tier 抽题（C：该档位无题时池为空，前端提示空）
+    _tier = Question.tier == data.tier
     if data.mode == "wrong":
         wrongs = db.query(WrongQuestion).filter(
             WrongQuestion.user_id == user.id, WrongQuestion.mastered == False
         ).all()
         q_ids = [w.question_id for w in wrongs]
-        pool = db.query(Question).filter(
-            Question.id.in_(q_ids), Question.subject_id == data.subject_id, _active
-        ).all() if q_ids else []
+        pool = (
+            db.query(Question)
+            .filter(Question.id.in_(q_ids), Question.subject_id == data.subject_id, _active, _tier)
+            .all()
+        ) if q_ids else []
         # 错题重做同样受科目题型配置约束（被禁用的题型不参与组卷）
         if subject.allowed_types:
             pool = [q for q in pool if q.type in subject.allowed_types]
     else:
-        q = db.query(Question).filter(Question.subject_id == data.subject_id, _active)
+        q = db.query(Question).filter(Question.subject_id == data.subject_id, _active, _tier)
         if data.topic_ids:
             q = q.filter(Question.topic_id.in_(data.topic_ids))
         # 题型过滤：请求 types 与科目配置 allowed_types 取交集（科目配置是权威闸门，
@@ -365,7 +370,7 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
             id=q.id, type=q.type, content=q.content, options=q.options,
             match_options=q.match_options,
             reading_items=reading_items,
-            topic_name=topic_name, difficulty=q.difficulty,
+            topic_name=topic_name, difficulty=q.difficulty, tier=q.tier,
             explanation=q.explanation if q.type == "code" else None
         ))
     return ExamStartResponse(questions=questions)
@@ -415,6 +420,9 @@ def _award_exam_points(db: Session, student_id: int, record: ExamRecord) -> int:
             .first()
         )
         pts = rule.points if rule else 0
+    # 分阶档位倍率：进阶=初阶×2 等（倍率以 tier_config 表为准）
+    if pts > 0:
+        pts = pts * get_tier_multiplier(db, record.tier)
     if pts <= 0:
         return 0
     sp = _ensure_student_points(db, student_id)
@@ -451,6 +459,8 @@ def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user),
         user_id=user.id,
         subject_id=data.subject_id,
         subject_name=subject.name,
+        mode=data.mode,
+        tier=data.tier,  # 记录本次所选分阶档位，积分倍率据此计算
         total=len(data.answers),
         started_at=started_at,
         finished_at=now,
