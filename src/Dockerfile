@@ -9,6 +9,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # 先复制依赖文件，利用 Docker 缓存层
 COPY requirements.txt .
+# 固化阿里云 pip 镜像源（构建与容器内安装均走国内源，避免 PyPI 拉取慢/不稳）
+RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
+    pip config set install.trusted-host mirrors.aliyun.com
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 复制项目代码

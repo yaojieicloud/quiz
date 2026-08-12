@@ -11,13 +11,18 @@ from config import STATIC_DIR
 # 启动时建表（依赖上面的 models 导入，确保 metadata 已包含全部表）
 Base.metadata.create_all(bind=engine)
 
+# 轻量迁移：为已存在的库补齐增量字段/索引（见 src/migrations/）
+from migrations import run_migrations
+
+run_migrations()
+
 app = FastAPI(title="题库闯关系统", version="1.0.0")
 
 # 挂载静态文件
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # 注册路由
-from routers import auth, subjects, questions, exam, stats, parent, admin, reward, reward_admin, mastery  # noqa: E402
+from routers import auth, subjects, questions, exam, stats, parent, reward, reward_admin, mastery, system, analytics  # noqa: E402
 
 app.include_router(auth.router)
 app.include_router(subjects.router)
@@ -25,10 +30,11 @@ app.include_router(questions.router)
 app.include_router(exam.router)
 app.include_router(stats.router)
 app.include_router(parent.router)
-app.include_router(admin.router)
 app.include_router(reward.router)
 app.include_router(reward_admin.router)
 app.include_router(mastery.router)
+app.include_router(system.router)
+app.include_router(analytics.router)
 
 
 @app.get("/api/health")

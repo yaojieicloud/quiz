@@ -23,6 +23,7 @@
 | [AI 评分与学情报告](docs/design/AI评分与学情报告.md) | 代码沙箱、LLM 双通道、code 题评星、AI 周报 |
 | [掌握度与学情联动](docs/design/掌握度与学情联动设计.md) | 课掌握度五态模型、学员×课程矩阵、与薄弱分析双向联动 |
 | [管理后台与学情分析](docs/design/管理后台与学情分析.md) | 12 tab 总台、学情分析四接口、记录管理、掌握度矩阵 |
+| [数据库迁移机制](docs/design/数据库迁移机制.md) | 轻量迁移器原理、迁移文件格式、加字段标准流程、幂等要点 |
 | [部署与运维](docs/design/部署与运维.md) | 本地/ECS 部署、热更新、拉库脚本、运维 API（exec-sql/backup/restart） |
 
 **方案与规划 `docs/plan/`（提案类，非当前实现）**
@@ -104,7 +105,7 @@ docker run -d --name quiz-local -p 8000:8000 \
 `entrypoint.sh` 自动 seed（积分/转盘/直兑）+ 起服务；静态文件改完 `docker cp` 即生效，改 `.py` 需 `docker restart quiz-local`。
 
 ### 线上 ECS
-ECS 出网受限，改用 `docker cp` 热更新，或走运维 API。完整步骤、拉库脚本、运维接口见 [部署与运维](docs/design/部署与运维.md)。
+ECS 已配置阿里云 pip 源、恢复 `docker build` 标准部署；`docker cp` 仅作应急热更新。完整步骤、拉库脚本、运维接口、Schema 迁移见 [部署与运维](docs/design/部署与运维.md) 与 [数据库迁移机制](docs/design/数据库迁移机制.md)。
 
 ### 本地直接运行（开发调试）
 ```bash
@@ -119,6 +120,7 @@ cd src && .venv/Scripts/python.exe -m uvicorn main:app --host 0.0.0.0 --port 801
 - **拉取线上库到本地**：`python src/fetch_db.py`（走 exec-sql API，纯接口）。
 - **备份/下载数据库**：`POST /api/admin/backup-db` 备份、`GET` 列表、`GET /api/admin/backup-db/download?name=` 下载。
 - **应急 SQL**：`POST /api/admin/exec-sql`（先自动备份再执行）。
+- **加字段（正确姿势）**：在 `src/migrations/` 新建 `00xx_xxx.py`，定义 `MIGRATION_ID` 和幂等的 `up(engine)`（用 `add_column` 等辅助函数），应用在 `main.py` 启动时自动执行；同时记得在 `models.py` 补列声明。**禁止再手写散落 `ALTER` 或直调 `exec-sql` 加列**（`exec-sql` 仅应急）。
 - **密钥安全**：DeepSeek / aliyun key 走环境变量或 `quiz-data/*.txt`，**禁止写入代码或提交仓库**；`quiz-data/`、`*.db`、`.venv` 已加入 `.gitignore`。
 
 > 所有写操作类运维接口（exec-sql / update-file / restart）**务必先备份数据库**。
@@ -141,9 +143,10 @@ quiz/
 │   ├── schemas.py         # Pydantic 模型
 │   ├── config.py          # 配置
 │   ├── core/              # security / deps / llm_client / llm_grader / code_runner
-│   ├── routers/           # 业务路由（auth/parent/subjects/questions/exam/stats/mastery/reward/reward_admin/admin）
+│   ├── routers/           # 业务路由（auth/parent/subjects/questions/exam/stats/mastery/reward/reward_admin/system/analytics）
+│   ├── migrations/        # 轻量数据库迁移（增量 schema，启动时自动执行）
 │   ├── static/            # 前端页面 + js + css
-│   ├── data/              # 题库 JSON + 导入/迁移脚本
+│   ├── data/              # 题库 JSON + 导入脚本
 │   ├── seed_reward.py     # 积分/转盘/直兑种子
 │   ├── fetch_db.py        # 拉线上库到本地
 │   └── Dockerfile / entrypoint.sh / docker-compose.yml / DEPLOY.md
@@ -157,4 +160,4 @@ quiz/
 - 题型体系与判分见 [题型与出题规范](docs/design/题型与出题规范.md)；阅读理解（reading）为「一篇文章+多子题」，按子题正确比例给分。
 - 组卷题数白名单固定为 **1/10/20/50**；科目 `allowed_types` 是组卷题型闸门。
 - 积分发放档位默认 100→5 / 90→4 / 80→3，<80 分不计分；与成绩同事务落 `points_ledger`。
-- 无 Alembic 迁移：`main.py` 启动 `create_all`；新增字段需手写 `ALTER TABLE`（参考 `src/data/*_fix_*.py`）。
+- **轻量迁移**：`main.py` 启动 `create_all` 后跑 `run_migrations()`，增量字段走 `src/migrations/` 迁移文件（幂等、跨环境一致），不再手写散落 `ALTER`；新增字段流程见上方「维护者须知 · 加字段正确姿势」。
