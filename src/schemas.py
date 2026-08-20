@@ -60,7 +60,8 @@ class TopicOut(BaseModel):
     name: str
     unit: Optional[str] = None
     sort_order: int = 0
-    question_count: int = 0
+    question_count: int = 0  # 当前档位(tier 参数)下、排除弃用的有效题数
+    valid_by_tier: dict = {}  # 各档位有效题数 {1: n, 2: n, 3: n}，供前端跨档显示/校验
     class Config:
         from_attributes = True
 
@@ -144,7 +145,7 @@ class QuestionForExam(BaseModel):
 class QuestionCreate(BaseModel):
     subject_id: int
     topic_id: int
-    type: str = Field(..., pattern="^(choice|judge|fill|essay|code|match|sort|reading)$")
+    type: str = Field(..., pattern="^(choice|judge|fill|essay|code|match|sort|reading|calc)$")
     content: str
     options: Optional[List[Any]] = None
     match_options: Optional[List[str]] = None  # 连线题右侧选项
@@ -163,7 +164,7 @@ class QuestionCreate(BaseModel):
 
 class QuestionUpdate(BaseModel):
     topic_id: Optional[int] = None
-    type: Optional[str] = Field(None, pattern="^(choice|judge|fill|essay|code|match|sort|reading)$")
+    type: Optional[str] = Field(None, pattern="^(choice|judge|fill|essay|code|match|sort|reading|calc)$")
     content: Optional[str] = None
     options: Optional[List[Any]] = None
     match_options: Optional[List[str]] = None  # 连线题右侧选项
@@ -189,6 +190,12 @@ class ExamStartRequest(BaseModel):
     count: int = Field(10, ge=1, le=100)
     mode: str = Field("custom", pattern="^(custom|wrong|random)$")
     tier: int = Field(1, description="分阶档位 1初级 2进阶 3挑战，默认初级")
+
+
+class AvailableCountOut(BaseModel):
+    """组卷可用题数（与 start_exam 抽题池逻辑完全一致，不含 count 截断）。
+    前端可用它在选择课时/tier 变化时判断：合计可用题数 < 50 时禁用「50题」选项。"""
+    available: int
 
 
 class AnswerItem(BaseModel):
