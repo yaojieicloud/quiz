@@ -8,26 +8,24 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import User, ParentChild, ExamRecord, AnswerRecord, Question, Subject, Topic
+from models import User, ParentChild, ExamRecord, AnswerRecord, Question, Subject, Topic, StudentMastery
 from core.deps import require_role, get_current_user
-from core.mastery import (
-    STATUS_LABEL, _topic_totals, _load_student_rows, _rows_to_sessions, _eval_topic,
-    eval_topic_tier,
-)
+from core.mastery import STATUS_LABEL, _topic_totals
 from core.tier import ACTIVE_TIERS, tier_label
 
 router = APIRouter(prefix="/api", tags=["掌握度"])
 
 
 def _build_student_mastery(db: Session, sid: int, tier: int = None) -> dict:
-    """构造某学员（按 user.id）的掌握度结构，供学员端/家长端/管理端复用。
+    """构造某学员的掌握度结构，读 StudentMastery 缓存表（不再实时全算）。
 
     tier 化：每个课按档位（初级/进阶/挑战）分别给出掌握度，results.topics[].tiers
     为 {tier: {status, status_label, rate, coverage, ...}}。tier 参数用于标记前端默认选中档位。
+    表中无记录的 (课,档位) 视为 not_started。
     """
-    rows = _load_student_rows(db, sid)
-    sessions_by_key = _rows_to_sessions(rows)  # key=(uid, topic_id, tier)
-    totals = _topic_totals(db)  # key=(topic_id, tier)
+    # 一次性查该学员全部 mastery 行，按 (topic_id, tier) 索引
+    rows = db.query(StudentMastery).filter(StudentMastery.student_id == sid).all()
+    mmap = {(r.topic_id, r.tier): r for r in rows}
     topics = db.query(Topic).all()
 
     out = []
@@ -38,16 +36,32 @@ def _build_student_mastery(db: Session, sid: int, tier: int = None) -> dict:
                 continue
             tiers = {}
             for tt in ACTIVE_TIERS:
-                ev = eval_topic_tier(sessions_by_key, totals, sid, t.id, tt)
+                r = mmap.get((t.id, tt))
+                if r:
+                    status = r.status
+                    rate = r.rate
+                    coverage = r.coverage
+                    total = r.answered_count
+                    correct = r.correct_count
+                    sessions = 1 if r.answered_count else 0
+                    topic_total = r.topic_total
+                else:
+                    status = "not_started"
+                    rate = 0.0
+                    coverage = 0.0
+                    total = 0
+                    correct = 0
+                    sessions = 0
+                    topic_total = 0
                 tiers[tt] = {
-                    "status": ev["status"],
-                    "status_label": STATUS_LABEL[ev["status"]],
-                    "rate": ev["rate"],
-                    "coverage": ev["coverage"],
-                    "total": ev["total"],
-                    "correct": ev["correct"],
-                    "sessions": ev["sessions"],
-                    "topic_total": ev["topic_total"],
+                    "status": status,
+                    "status_label": STATUS_LABEL[status],
+                    "rate": rate,
+                    "coverage": coverage,
+                    "total": total,
+                    "correct": correct,
+                    "sessions": sessions,
+                    "topic_total": topic_total,
                 }
             tlist.append(
                 {
@@ -111,7 +125,7 @@ def admin_student_mastery(
 
 @router.get("/admin/mastery")
 def class_mastery(
-    subject_id: int = Query(..., description="科目 ID"),
+    subject_ids: Optional[str] = Query(None, description="逗号分隔的科目 ID，如 '1,2,3'，为空则查全部"),
     tier: int = Query(1, description="分阶档位 1初级 2进阶 3挑战，默认初级"),
     _: User = Depends(require_role("admin")),
     db: Session = Depends(get_db),
@@ -121,36 +135,34 @@ def class_mastery(
     cells 结构由 {student_id: {...}} 升级为 {student_id: {tier: {...}}}，
     counts / pass_rate / mastery_rate 均按所选 tier 聚合。
     """
-    sub = db.query(Subject).filter(Subject.id == subject_id).first()
-    if not sub:
-        raise HTTPException(status_code=404, detail="科目不存在")
+    # 解析科目 ID 列表
+    if subject_ids:
+        ids = [int(x.strip()) for x in subject_ids.split(',') if x.strip()]
+        subs = db.query(Subject).filter(Subject.id.in_(ids)).all()
+    else:
+        subs = db.query(Subject).all()
+    if not subs:
+        return {"subjects": [], "total_students": 0, "topics": []}
+
+    topic_ids = [t.id for t in db.query(Topic).filter(Topic.subject_id.in_([s.id for s in subs])).all()]
     topics = (
         db.query(Topic)
-        .filter(Topic.subject_id == subject_id)
+        .filter(Topic.id.in_(topic_ids))
         .order_by(Topic.unit, Topic.name)
         .all()
     )
     if not topics:
-        return {"subject": {"id": subject_id, "name": sub.name}, "total_students": 0, "topics": []}
+        return {"subjects": [{"id": s.id, "name": s.name} for s in subs], "total_students": 0, "topics": []}
 
-    qids = [q.id for q in db.query(Question.id).filter(Question.subject_id == subject_id).all()]
-    totals = _topic_totals(db)  # key=(topic_id, tier)
-    rows = (
-        db.query(
-            AnswerRecord.is_correct,
-            Question.topic_id,
-            Question.id,
-            Question.tier,
-            ExamRecord.id,
-            ExamRecord.finished_at,
-            ExamRecord.user_id,
-        )
-        .join(ExamRecord, AnswerRecord.exam_record_id == ExamRecord.id)
-        .join(Question, AnswerRecord.question_id == Question.id)
-        .filter(Question.id.in_(qids))
+    # 读 StudentMastery 缓存表（不再实时全算）
+    mastery_rows = (
+        db.query(StudentMastery)
+        .filter(StudentMastery.subject_id.in_([s.id for s in subs]), StudentMastery.tier == tier)
         .all()
     )
-    sessions_by_key = _rows_to_sessions(rows)  # key=(uid, topic_id, tier)
+    mmap = {(r.student_id, r.topic_id): r for r in mastery_rows}
+    # 每课该档位的题库总量（覆盖度计算用）
+    totals = _topic_totals(db)  # key=(topic_id, tier)
     students = (
         db.query(User)
         .filter(User.role == "student")
@@ -159,6 +171,7 @@ def class_mastery(
     )
     total_students = len(students)
 
+    subject_name = {s.id: s.name for s in subs}
     result = []
     for t in topics:
         tt = totals.get((t.id, tier), 0)
@@ -166,17 +179,24 @@ def class_mastery(
         started = 0
         cells = {}
         for s in students:
-            sess = sessions_by_key.get((s.id, t.id, tier), [])
-            ev = _eval_topic(sess, tt)
-            counts[ev["status"]] += 1
-            if ev["status"] != "not_started":
+            r = mmap.get((s.id, t.id))
+            if r:
+                status = r.status
+                rate = r.rate
+                coverage = r.coverage
+            else:
+                status = "not_started"
+                rate = 0.0
+                coverage = 0.0
+            counts[status] += 1
+            if status != "not_started":
                 started += 1
             cells[s.id] = {
                 tier: {
-                    "status": ev["status"],
-                    "status_label": STATUS_LABEL[ev["status"]],
-                    "rate": ev["rate"],
-                    "coverage": ev["coverage"],
+                    "status": status,
+                    "status_label": STATUS_LABEL[status],
+                    "rate": rate,
+                    "coverage": coverage,
                 }
             }
         passed_master = counts["passed"] + counts["mastered"]
@@ -186,6 +206,7 @@ def class_mastery(
             {
                 "topic_id": t.id,
                 "name": t.name,
+                "subject_name": subject_name.get(t.subject_id, ""),
                 "unit": t.unit,
                 "tier": tier,
                 "tier_name": tier_label(tier),
@@ -198,7 +219,7 @@ def class_mastery(
             }
         )
     return {
-        "subject": {"id": subject_id, "name": sub.name},
+        "subjects": [{"id": s.id, "name": s.name} for s in subs],
         "tier": tier,
         "tier_name": tier_label(tier),
         "total_students": total_students,

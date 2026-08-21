@@ -1,21 +1,24 @@
 """答题路由：组卷 / 提交判分 / 历史记录 / 错题本"""
 import random
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion, ScoringRule, StudentPoints, PointsLedger, SubjectPoints
+from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion, ScoringRule, StudentPoints, PointsLedger, SubjectPoints, StudentMastery, Topic
 from schemas import (
     ExamStartRequest, ExamStartResponse, ExamSubmitRequest,
     ExamRecordOut, AnswerRecordOut, WrongQuestionOut, QuestionOut, QuestionForExam,
+    AvailableCountOut,
 )
 from core.deps import get_current_user
 from core.tier import get_tier_multiplier
 from core.code_runner import run_python, normalize_output
 from core.llm_grader import grade_code
+from core.mastery import compute_mastery_for_topics, upsert_student_mastery
 from pydantic import BaseModel
-
 router = APIRouter(prefix="/api", tags=["答题"])
 
 
@@ -305,22 +308,21 @@ def _build_question_out(q: Question) -> QuestionOut:
 
 
 # ============ 组卷 ============
-@router.post("/exam/start", response_model=ExamStartResponse)
-def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
-    subject = db.query(Subject).filter(Subject.id == data.subject_id).first()
-    if not subject:
-        raise HTTPException(status_code=404, detail="科目不存在")
+def _build_pool(db: Session, subject: Subject, data: ExamStartRequest, user: User = None):
+    """构建组卷抽题池（不含 count 截断 / 不含 shuffle）。
 
-    # 题目数量只允许标准档位：1（实操单题）、10、20、50；防止出现 40 题等非预期组卷
-    if data.count not in (1, 10, 20, 50):
-        raise HTTPException(status_code=400, detail="题目数量只能选择 1、10、20、50 题")
-
-    # 抽题（注意：不创建 exam_record，未交卷不会产生空记录，提交时才落库）
-    # 弃用题不再进入出题（组卷与错题重做均排除），但保留于库中以正确展示历史记录
+    与 start_exam 的抽题口径完全一致：
+    - 排除弃用题（deprecated）
+    - 仅取所选 tier 档位
+    - 指定 topic_ids 时仅取这些课时（多个课时即「合计」）
+    - 题型取 请求 types 与 科目 allowed_types 的交集（科目配置为权威闸门）
+    返回该选择下「实际可用题数」，供 available-count 接口与前端守卫使用。
+    """
     _active = (Question.deprecated == None) | (Question.deprecated == False)
-    # 分阶档位：仅从所选 tier 抽题（C：该档位无题时池为空，前端提示空）
     _tier = Question.tier == data.tier
     if data.mode == "wrong":
+        if user is None:
+            return []
         wrongs = db.query(WrongQuestion).filter(
             WrongQuestion.user_id == user.id, WrongQuestion.mastered == False
         ).all()
@@ -333,27 +335,97 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
         # 错题重做同样受科目题型配置约束（被禁用的题型不参与组卷）
         if subject.allowed_types:
             pool = [q for q in pool if q.type in subject.allowed_types]
+        return pool
+    q = db.query(Question).filter(Question.subject_id == data.subject_id, _active, _tier)
+    if data.topic_ids:
+        q = q.filter(Question.topic_id.in_(data.topic_ids))
+    # 题型过滤：请求 types 与科目配置 allowed_types 取交集（科目配置是权威闸门，
+    # 防止前端隐藏后仍被 API 绕过）；两者都不设则不限制
+    if data.types and subject.allowed_types:
+        allowed = [t for t in data.types if t in subject.allowed_types]
+        if not allowed:
+            return []  # 交集为空，无可抽题目
+    elif data.types:
+        allowed = data.types
+    elif subject.allowed_types:
+        allowed = subject.allowed_types
     else:
-        q = db.query(Question).filter(Question.subject_id == data.subject_id, _active, _tier)
-        if data.topic_ids:
-            q = q.filter(Question.topic_id.in_(data.topic_ids))
-        # 题型过滤：请求 types 与科目配置 allowed_types 取交集（科目配置是权威闸门，
-        # 防止前端隐藏后仍被 API 绕过）；两者都不设则不限制
-        if data.types and subject.allowed_types:
-            allowed = [t for t in data.types if t in subject.allowed_types]
-            if not allowed:
-                return ExamStartResponse(questions=[])  # 交集为空，无可抽题目
-        elif data.types:
-            allowed = data.types
-        elif subject.allowed_types:
-            allowed = subject.allowed_types
-        else:
-            allowed = None
-        if allowed:
-            q = q.filter(Question.type.in_(allowed))
-        pool = q.all()
+        allowed = None
+    if allowed:
+        q = q.filter(Question.type.in_(allowed))
+    return q.all()
 
-    random.shuffle(pool)
+
+def _rank_pool(db: Session, pool, user: User):
+    """4 层优先抽题排序（normal 模式用）。
+
+    层1 未答过的题        → 随机洗牌置最前
+    层2 答过且有错的题    → 错次降序（先shuffle再稳定sort保证并列随机）
+    层3 答过无错的题      → 做题次数升序（少做的优先），并列随机
+    兜底：层2/3 已涵盖全部答过的题，层内随机破并列。
+    返回排序后的题列表（未截断）。
+    """
+    if not pool:
+        return pool
+    qids = [q.id for q in pool]
+    # 该学员在 pool 内每题的做题次数
+    ans_rows = (
+        db.query(AnswerRecord.question_id, func.count(AnswerRecord.id))
+        .join(ExamRecord, AnswerRecord.exam_record_id == ExamRecord.id)
+        .filter(ExamRecord.user_id == user.id, AnswerRecord.question_id.in_(qids))
+        .group_by(AnswerRecord.question_id)
+        .all()
+    )
+    cnt = {qid: n for qid, n in ans_rows}
+    answered = set(cnt.keys())
+    # 错题次数
+    wrong_rows = (
+        db.query(WrongQuestion.question_id, WrongQuestion.wrong_count)
+        .filter(WrongQuestion.user_id == user.id, WrongQuestion.question_id.in_(qids))
+        .all()
+    )
+    wrong = {qid: wc for qid, wc in wrong_rows}
+
+    layer1 = [q for q in pool if q.id not in answered]
+    random.shuffle(layer1)
+    layer2 = [q for q in pool if q.id in answered]
+    random.shuffle(layer2)  # 先随机，稳定 sort 后并列项保持随机序
+    layer2.sort(key=lambda q: (-wrong.get(q.id, 0), cnt.get(q.id, 0)))
+    return layer1 + layer2
+
+
+@router.post("/exam/available-count", response_model=AvailableCountOut)
+def available_count(data: ExamStartRequest, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """返回当前选择（科目 + 课时 + 档位 + 题型）下的「实际可用题数」。
+
+    与 start_exam 抽题池逻辑 100% 一致。前端在课时/tier/题型选择变化时调用，
+    若 available < 50 则禁用「50题」选项，从而避免学员选了不满 50 题的课时却误选 50 题档位。
+    """
+    subject = db.query(Subject).filter(Subject.id == data.subject_id).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="科目不存在")
+    pool = _build_pool(db, subject, data, user)
+    return AvailableCountOut(available=len(pool))
+
+
+@router.post("/exam/start", response_model=ExamStartResponse)
+def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    subject = db.query(Subject).filter(Subject.id == data.subject_id).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="科目不存在")
+
+    # 题目数量只允许标准档位：1（实操单题）、10、20、50；防止出现 40 题等非预期组卷
+    if data.count not in (1, 10, 20, 50):
+        raise HTTPException(status_code=400, detail="题目数量只能选择 1、10、20、50 题")
+
+    # 抽题（注意：不创建 exam_record，未交卷不会产生空记录，提交时才落库）
+    pool = _build_pool(db, subject, data, user)
+    if data.mode == "wrong":
+        # 错题重做：仅刷错题，保留纯随机
+        random.shuffle(pool)
+    else:
+        # normal：4 层优先（未答过 > 错次多 > 做题少 > 随机）
+        pool = _rank_pool(db, pool, user)
     selected = pool[: data.count]
 
     questions = []
@@ -391,10 +463,33 @@ def _award_exam_points(db: Session, student_id: int, record: ExamRecord) -> int:
     """提交试卷后发放积分。
 
     优先级：
+      0. 掌握度闸门：本次涉及课全部 mastered → 不发分（防刷分）；
       1. 若该科目在 subject_points 有覆盖设置，按 p100/p90/p80 三档命中；
       2. 否则走全局默认 scoring_rules（得分档：100→5、90→4、80→3、<80→0）。
     低于 80 分一律 0 分。
     """
+    # 掌握度闸门：本次涉及课若全部精通，不发分（按课×tier 查 StudentMastery 表）
+    topic_ids = (
+        db.query(Question.topic_id)
+        .join(AnswerRecord, AnswerRecord.question_id == Question.id)
+        .filter(AnswerRecord.exam_record_id == record.id)
+        .distinct()
+        .all()
+    )
+    topic_ids = [t[0] for t in topic_ids]
+    if topic_ids:
+        mastered_rows = (
+            db.query(StudentMastery)
+            .filter(
+                StudentMastery.student_id == student_id,
+                StudentMastery.tier == record.tier,
+                StudentMastery.topic_id.in_(topic_ids),
+            )
+            .all()
+        )
+        # 必须每课都有记录且全部 mastered 才拦；缺记录说明未精通
+        if len(mastered_rows) == len(topic_ids) and all(r.status == "mastered" for r in mastered_rows):
+            return 0
     override = (
         db.query(SubjectPoints)
         .filter(SubjectPoints.subject_id == record.subject_id)
@@ -502,8 +597,25 @@ def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user),
     record.wrong = record.total - correct
     record.score = int(correct / record.total * 100) if record.total else 0
 
+    db.flush()  # 确保 AnswerRecord 落库可被同事务查询（掌握度闸门/upsert 依赖）
+
+    # 本次涉及的不重复 topic（供掌握度闸门与增量 upsert 共用）
+    topic_ids = [t[0] for t in (
+        db.query(Question.topic_id)
+        .join(AnswerRecord, AnswerRecord.question_id == Question.id)
+        .filter(AnswerRecord.exam_record_id == record.id)
+        .distinct()
+        .all()
+    )]
+
     # ---- 积分获取钩子：按 scoring_rules 查表计分，与成绩同一事务提交 ----
     points_earned = _award_exam_points(db, user.id, record)
+
+    # ---- 掌握度增量更新：对本次涉及的 (topic, tier) 重算并 upsert StudentMastery ----
+    if topic_ids:
+        pairs = [(tid, record.tier) for tid in topic_ids]
+        computed = compute_mastery_for_topics(db, user.id, pairs)
+        upsert_student_mastery(db, user.id, computed)
 
     db.commit()
     db.refresh(record)
@@ -515,6 +627,18 @@ def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user),
 def my_records(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     records = db.query(ExamRecord).filter(ExamRecord.user_id == user.id).order_by(ExamRecord.started_at.desc()).all()
     return [_record_to_out(r, db, with_answers=False) for r in records]
+
+
+@router.get("/exam/recent-activity")
+def my_recent_activity(
+    subject_ids: Optional[str] = Query(None, description="逗号分隔的科目 ID，如 '1,2,3'"),
+    days: int = Query(7, ge=1, le=90),
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """学员端：本人最近刷题动态（与 admin 端结构一致，学员固定为当前用户）。"""
+    from routers.analytics import build_recent_activity
+    return build_recent_activity(db, user.id, subject_ids, days, 100)
 
 
 @router.get("/exam/records/{record_id}", response_model=ExamRecordOut)

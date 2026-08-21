@@ -1,0 +1,472 @@
+[
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《花的学校》这篇课文的作者是谁？",
+    "options": ["泰戈尔", "李白", "冰心", "杜甫"],
+    "answer": "0",
+    "explanation": "《花的学校》是印度诗人泰戈尔的作品，选入课文的是他的散文诗。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "花孩子们在“地下的学校”里做什么？",
+    "options": ["做功课", "看电影", "踢足球", "睡觉"],
+    "answer": "0",
+    "explanation": "课文中说“他们关了门做功课”，花孩子们在地下的学校里上学、做功课。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "文中写“湿润的东风走过荒野，在竹林中吹着口笛”，这里把东风当作什么来写？",
+    "options": ["会走会吹笛的人", "一种动物", "一台机器", "一棵树木"],
+    "answer": "0",
+    "explanation": "用“走过”“吹着口笛”把东风写成会走路、会吹笛子的人，这是拟人。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "雨一来，花孩子们怎么样了？",
+    "options": ["便放假了", "被关起来", "去考试", "睡着了"],
+    "answer": "0",
+    "explanation": "课文原文写道：“雨一来，他们便放假了。”"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "is_multiple": true,
+    "content": "花孩子们冲出来时穿着什么颜色的衣裳？（多选）",
+    "options": ["紫的", "黄的", "白的", "蓝的"],
+    "answer": "0,1,2",
+    "explanation": "课文写道：“花孩子们便穿了紫的、黄的、白的衣裳，冲了出来。”没有提到蓝色。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《花的学校》是一首古诗。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "《花的学校》是一篇散文诗，不是古诗。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "花孩子们在地下的学校里做功课。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "课文说“那些花朵是在地下的学校里上学”“关了门做功课”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "雨一来，花孩子们便放假了。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "课文原句：“雨一来，他们便放假了。”"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "花孩子们的家在天上，在星星所住的地方。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "课文写道：“他们的家是在天上，在星星所住的地方。”"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "课文把花当作孩子来写，这是一种比喻的写法。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "把物当作人来写是“拟人”，不是比喻。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "当雷云在天上轰响，六月的____落下的时候，湿润的东风走过荒野。",
+    "answer": "阵雨",
+    "explanation": "课文原句：“六月的阵雨落下的时候”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "一群一群的花从无人知道的____突然跑出来，在绿草上跳舞、狂欢。",
+    "answer": "地方",
+    "explanation": "课文原句：“从无人知道的地方突然跑出来”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "如果他们想在放学以前出来游戏，他们的老师是要罚他们站____的。",
+    "answer": "墙角",
+    "explanation": "课文原句：“罚他们站墙角的”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "绿叶在狂风里____地响，雷云拍着大手。",
+    "answer": "簌簌",
+    "explanation": "课文原句：“绿叶在狂风里簌簌地响”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "花孩子们便穿了紫的、黄的、白的____，冲了出来。",
+    "answer": "衣裳",
+    "explanation": "课文原句：“穿了紫的、黄的、白的衣裳”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "课文中说花孩子们在地下的学校里上学、做功课。请你想象一下：花孩子们在地下学校里会学些什么？写一写。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：花孩子们可能在学怎么在雨后开出美丽的花朵，怎么随风跳舞，怎么向太阳公公问好。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "课文把花当作孩子来写，你觉得这样写有什么好处？请写几句话。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：这样写让花变得可爱、生动，像小朋友一样，读者会更容易喜欢、也更容易想象画面。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "雨一来，花孩子们便放假了，冲了出来。你想象中，它们冲出来后会做什么？",
+    "answer": "待老师点评",
+    "explanation": "参考示例：它们会在草地上唱歌、跳舞、做游戏，还会张开双臂拥抱自己的妈妈。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "文中写“他们的家是在天上，在星星所住的地方”。你认为花孩子的妈妈是谁？写一写你的想法。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：花孩子的妈妈也许是太阳，因为花儿总是朝着阳光生长，向着光明开放。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "读了《花的学校》，你喜欢花孩子们吗？为什么？请写几句话。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：我喜欢花孩子们，因为它们活泼可爱、爱自己的妈妈，也爱在雨中自由地跳舞狂欢。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把词语和它们的意思连起来。",
+    "options": ["轰响", "狂欢", "荒野", "簌簌"],
+    "match_options": ["荒凉的野外", "很大的响声", "形容风吹叶子的声音", "尽情地欢乐"],
+    "answer": "0:1,1:3,2:0,3:2",
+    "explanation": "轰响是很大的响声，狂欢是尽情地欢乐，荒野是荒凉的野外，簌簌形容风吹叶子的声音。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把花孩子的动作和对应的内容连起来。",
+    "options": ["花孩子做功课", "雨一来", "花孩子冲出来", "花孩子扬起双臂"],
+    "match_options": ["放假了", "在地下学校关了门", "拥抱妈妈", "穿紫黄白衣裳"],
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "做功课→关了门，雨一来→放假，冲出来→穿紫黄白衣裳，扬起双臂→拥抱妈妈。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把描写和事物连起来。",
+    "options": ["湿润的东风", "六月的阵雨", "雷云", "绿叶"],
+    "match_options": ["拍着大手", "簌簌地响", "走过荒野吹口笛", "落下"],
+    "answer": "0:2,1:3,2:0,3:1",
+    "explanation": "东风走过荒野吹口笛，阵雨落下，雷云拍着大手，绿叶簌簌地响。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把词语和读音连起来。",
+    "options": ["衣裳", "碰触", "口笛", "放假"],
+    "match_options": ["fàng jià", "yī shang", "kǒu dí", "pèng chù"],
+    "answer": "0:1,1:3,2:2,3:0",
+    "explanation": "衣裳 yī shang，碰触 pèng chù，口笛 kǒu dí，放假 fàng jià。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把花孩子的特点和课文内容连起来。",
+    "options": ["在地下的学校", "雨一来就", "冲出来时穿", "急着去天上"],
+    "match_options": ["紫黄白的衣裳", "放假", "上学做功课", "找妈妈"],
+    "answer": "0:2,1:1,2:0,3:3",
+    "explanation": "地下学校→上学做功课，雨一来→放假，冲出来→紫黄白衣裳，急着去天上→找妈妈。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "按课文内容，把花孩子一天的活动按先后顺序排列。",
+    "options": ["在绿草上跳舞狂欢", "雨一来便放假冲出来", "在地下学校关门做功课", "穿着紫黄白衣裳"],
+    "answer": "2,1,3,0",
+    "explanation": "顺序应为：地下学校做功课→雨来放假冲出→穿紫黄白衣裳→在绿草上跳舞狂欢。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "按课文从开头到结尾的顺序，排列下面的内容。",
+    "options": ["花孩子冲出来穿紫黄白衣裳", "雷云轰响阵雨落下东风吹口笛", "花孩子急着去天上找妈妈", "花孩子在地下学校上学"],
+    "answer": "1,3,0,2",
+    "explanation": "顺序：雷云轰响阵雨落下→地下学校上学→冲出来穿衣裳→急着去天上找妈妈。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "花孩子被罚站墙角的原因，按事情发展排序。",
+    "options": ["老师罚他们站墙角", "想在放学以前出来游戏", "关了门做功课", "雨一来才放假"],
+    "answer": "2,1,0,3",
+    "explanation": "顺序：关门做功课→想出来游戏→被罚站墙角→雨来才放假。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "花孩子冲出来前，课文描写的景象按先后顺序排列。",
+    "options": ["雷云拍着大手", "绿叶簌簌地响", "树枝互相碰触着", "花孩子穿好衣裳冲出"],
+    "answer": "2,1,0,3",
+    "explanation": "顺序：树枝互相碰触→绿叶簌簌地响→雷云拍着大手→花孩子穿好衣裳冲出。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "按课文内容，把花孩子一天的活动重新排序。",
+    "options": ["在绿草上跳舞、狂欢", "雨一来，他们便放假了", "花孩子们从地下学校跑出来", "关了门做功课"],
+    "answer": "3,1,2,0",
+    "explanation": "顺序：关了门做功课→雨来放假→从地下学校跑出来→在绿草上跳舞狂欢。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "下雨了，校园里的月季花、太阳花都张开了笑脸。它们好像刚放学的孩子，在雨中又唱又跳。风一吹，花瓣轻轻摆动，像在挥手说：“妈妈，我们出来玩啦！”",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "文中的花被比作什么？",
+        "options": ["刚放学的孩子", "小鸟", "星星", "石头"],
+        "answer": "0",
+        "explanation": "文中说“好像刚放学的孩子”。"
+      },
+      {
+        "type": "choice",
+        "q": "花在雨中做了什么？",
+        "options": ["又唱又跳", "睡觉", "落叶", "枯萎"],
+        "answer": "0",
+        "explanation": "文中写“在雨中又唱又跳”。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "本篇阅读考查比喻对象和花的行为，两题答案均为第1项。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "秋天到了，蒲公英的妈妈给每个孩子准备了一把小白伞。风一吹，孩子们就撑着伞，飞到田野、山坡去旅行。它们要在新的地方，开出新的黄花。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "蒲公英的孩子靠什么去旅行？",
+        "options": ["小白伞（风）", "小鱼", "汽车", "翅膀"],
+        "answer": "0",
+        "explanation": "文中说准备“小白伞”，风一吹就飞走，靠风和伞旅行。"
+      },
+      {
+        "type": "judge",
+        "q": "蒲公英的孩子要飞到新地方开出新的黄花。",
+        "options": ["对", "错"],
+        "answer": "0",
+        "explanation": "原文写“在新的地方，开出新的黄花”。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "本篇阅读考查旅行方式和目的，两题答案均为“对/第1项”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "春风姐姐来了，她轻轻摸了摸柳枝，柳枝就冒出了嫩绿的小芽。她又亲了亲桃花，桃花立刻笑红了脸。小草也从土里探出头，好奇地看世界。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "文中把春风写成谁？",
+        "options": ["姐姐", "老师", "医生", "司机"],
+        "answer": "0",
+        "explanation": "文中称“春风姐姐”。"
+      },
+      {
+        "type": "choice",
+        "q": "桃花因为什么笑红了脸？",
+        "options": ["春风亲了亲它", "被雨打", "被风吹断", "天冷"],
+        "answer": "0",
+        "explanation": "文中写“亲了亲桃花，桃花立刻笑红了脸”。"
+      },
+      {
+        "type": "judge",
+        "q": "小草从土里探出头看世界，这是拟人写法。",
+        "options": ["对", "错"],
+        "answer": "0",
+        "explanation": "“探出头”“好奇地看”把小草当人写，是拟人。"
+      }
+    ],
+    "answer": "0,0,0",
+    "explanation": "本篇阅读考查拟人对象和写法，三题答案均为“对/第1项”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "小溪从山上跑下来，一路唱着歌。它遇见小鱼，就停下脚步陪小鱼捉迷藏；遇见青蛙，就听青蛙呱呱讲故事。夜晚，小溪轻轻摇着月光，睡着了。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "小溪一路上在做什么？",
+        "options": ["唱着歌", "哭着", "结冰", "燃烧"],
+        "answer": "0",
+        "explanation": "文中写“一路唱着歌”。"
+      },
+      {
+        "type": "choice",
+        "q": "小溪遇见小鱼时怎么做？",
+        "options": ["陪它捉迷藏", "吃掉它", "离开", "睡觉"],
+        "answer": "0",
+        "explanation": "文中写“停下脚步陪小鱼捉迷藏”。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "本篇阅读考查小溪的行为，两题答案均为第1项。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 233,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "向日葵每天早早起床，朝着太阳公公笑。太阳走到东，它转向东；太阳走到西，它转向西。到了晚上，它才低下头，悄悄数着今天学到的光。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "向日葵白天朝着谁笑？",
+        "options": ["太阳公公", "月亮", "星星", "大风"],
+        "answer": "0",
+        "explanation": "文中写“朝着太阳公公笑”。"
+      },
+      {
+        "type": "judge",
+        "q": "向日葵晚上低下头数光，是把向日葵当人写。",
+        "options": ["对", "错"],
+        "answer": "0",
+        "explanation": "“低下头”“数光”把向日葵当人，是拟人。"
+      },
+      {
+        "type": "choice",
+        "q": "太阳走到西，向日葵就转向？",
+        "options": ["西", "东", "上", "下"],
+        "answer": "0",
+        "explanation": "文中写“太阳走到西，它转向西”。"
+      }
+    ],
+    "answer": "0,0,0",
+    "explanation": "本篇阅读考查向日葵朝向与拟人写法，三题答案均为第1项。"
+  }
+]

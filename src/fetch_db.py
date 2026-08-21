@@ -52,7 +52,9 @@ def main():
     print("[2/5] 获取表结构...")
     result = exec_sql(token, "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
     tables = [row["name"] for row in result["rows"]]
-    print(f"  找到 {len(tables)} 张表: {tables}")
+    # 跳过 sqlite_sequence（SQLite 内部保留表，无法手动创建）
+    tables = [t for t in tables if t != "sqlite_sequence"]
+    print(f"  找到 {len(tables)} 张表（已排除 sqlite_sequence）")
 
     # 3. 获取每张表的结构和数据
     print("[3/5] 导出表结构和数据...")

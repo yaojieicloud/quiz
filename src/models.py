@@ -217,6 +217,34 @@ class AIReport(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
+class StudentMastery(Base):
+    """学员课程掌握度缓存表（学员 × 课 × 档位）。
+
+    每次 submit_exam 后对本次涉及课增量 upsert，避免实时全算。
+    status: not_started / practicing / passed / mastered / review
+    判定算法见 core/mastery.py（做题数 + 正确率 + 覆盖度三硬门槛）。
+    """
+    __tablename__ = "student_mastery"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False, index=True)
+    topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False, index=True)
+    tier = Column(Integer, default=1, nullable=False)  # 分阶档位，与 Question.tier 一致
+    status = Column(String(20), default="not_started", nullable=False)  # 掌握状态
+    rate = Column(Float, default=0.0)        # 累计正确率 0-1
+    coverage = Column(Float, default=0.0)    # 覆盖度 = 答过的不重复题 / 该课该tier题库总量
+    answered_count = Column(Integer, default=0)   # 累计做题次数（含重复）
+    distinct_count = Column(Integer, default=0)   # 答过的不重复题数
+    correct_count = Column(Integer, default=0)    # 累计答对次数
+    topic_total = Column(Integer, default=0)     # 该课该tier题库总量（冗余，便于展示）
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    student = relationship("User")
+    topic = relationship("Topic")
+    __table_args__ = (UniqueConstraint("student_id", "topic_id", "tier", name="uq_student_topic_tier"),)
+
+
 # ============================================================================
 # 积分系统 + 大转盘抽奖（阶段 1）
 # 设计原则：参数全可配置、概率服务端决定、原子记账、预留盲盒(mode)扩展。

@@ -145,7 +145,7 @@ class QuestionForExam(BaseModel):
 class QuestionCreate(BaseModel):
     subject_id: int
     topic_id: int
-    type: str = Field(..., pattern="^(choice|judge|fill|essay|code|match|sort|reading|calc)$")
+    type: str = Field(..., pattern="^(choice|judge|fill|essay|code|match|sort|reading)$")
     content: str
     options: Optional[List[Any]] = None
     match_options: Optional[List[str]] = None  # 连线题右侧选项
@@ -164,7 +164,7 @@ class QuestionCreate(BaseModel):
 
 class QuestionUpdate(BaseModel):
     topic_id: Optional[int] = None
-    type: Optional[str] = Field(None, pattern="^(choice|judge|fill|essay|code|match|sort|reading|calc)$")
+    type: Optional[str] = Field(None, pattern="^(choice|judge|fill|essay|code|match|sort|reading)$")
     content: Optional[str] = None
     options: Optional[List[Any]] = None
     match_options: Optional[List[str]] = None  # 连线题右侧选项

@@ -3,65 +3,95 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>题库闯关 - 学习统计</title>
+<title>题库闯关 - 最新动态</title>
 <link rel="stylesheet" href="css/common.css">
+<script src="vendor/echarts.min.js"></script>
+<style>
+  .section-box { background:#fff; border-radius:18px; padding:20px; box-shadow:0 4px 14px rgba(0,0,0,0.08); margin-bottom:16px; }
+  .section-box h3 { font-size:18px; color:#3a3a55; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
+  .filter-bar { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:16px; }
+  .filter-bar .form-group { margin:0; flex:1; min-width:140px; }
+  .filter-bar select { padding:10px 14px; }
+  .chart-box { width:100%; height:320px; }
+  .ana-table { width:100%; border-collapse:collapse; font-size:14px; }
+  .ana-table th { background:#f4f0fa; color:#7a6c8c; padding:10px 12px; text-align:left; }
+  .ana-table td { padding:10px 12px; border-top:1px solid #f1f3f5; vertical-align:top; }
+  .rate-badge { display:inline-block; min-width:52px; text-align:center; padding:3px 10px; border-radius:12px; font-weight:bold; font-size:13px; }
+  .rate-good { background:#d3f9d8; color:#2b8a3e; }
+  .rate-mid { background:#fff3bf; color:#e67700; }
+  .rate-bad { background:#ffe3e3; color:#c92a2a; }
+  .config-section { margin-bottom:4px; }
+</style>
 </head>
 <body>
 
 <div id="topbar"></div>
 
 <header class="page-header">
-  <div class="icon">📊</div>
-  <h1>学习统计</h1>
-  <div class="subtitle">用数据看见你的每一次进步！</div>
+  <div class="icon">🕒</div>
+  <h1>最新动态</h1>
+  <div class="subtitle">看看你最近都刷了哪些课！</div>
 </header>
 
 <main>
-  <div id="overview"></div>
-  <div id="subjectBox"></div>
+  <div class="section-box" style="padding-bottom:8px;">
+    <div class="filter-bar">
+      <div class="form-group" style="flex:1;max-width:150px;">
+        <label>时间范围</label>
+        <select class="form-select" id="rcDaysSelect" onchange="loadRecent()">
+          <option value="1">今天</option>
+          <option value="3">近3天</option>
+          <option value="7" selected>近7天</option>
+          <option value="14">近14天</option>
+          <option value="30">近30天</option>
+        </select>
+      </div>
+      <button class="btn btn-sm" onclick="loadRecent()">🔄 刷新</button>
+    </div>
+    <div class="config-section" style="margin-top:4px;">
+      <div class="label" style="font-size:13px;color:#7a6c8c;margin-bottom:6px;">📚 科目（可多选，不选=全部）</div>
+      <div class="chip-group" id="rcSubjChips"></div>
+    </div>
+  </div>
+
+  <div class="section-box">
+    <h3>📚 各课答题量（近期）</h3>
+    <div id="chartRecentTopic" class="chart-box"></div>
+  </div>
+  <div class="section-box">
+    <h3>🕒 最近答题场次明细</h3>
+    <div id="recentSessionsBox"></div>
+  </div>
 </main>
 
 <script src="js/common.js"></script>
+<script src="js/analytics-shared.js"></script>
 <script>
 const user = requireAuth();
 if (!user) throw new Error('redirect');
 document.getElementById('topbar').innerHTML = renderTopbar('stats');
 
-async function load() {
+async function loadRecent() {
+  const subjIds = getSubjectChipValues('rcSubjChips');
+  const days = document.getElementById('rcDaysSelect').value || '7';
   try {
-    const s = await API.get('/api/stats/overview');
-    document.getElementById('overview').innerHTML = `
-      <div class="stats-grid">
-        <div class="stat-card blue"><div class="num">${s.total_exams}</div><div class="label">总闯关次数</div></div>
-        <div class="stat-card green"><div class="num">${s.avg_score}</div><div class="label">平均分</div></div>
-        <div class="stat-card"><div class="num">${s.best_score}</div><div class="label">最高分</div></div>
-        <div class="stat-card orange"><div class="num">${s.total_wrong}</div><div class="label">待消灭错题</div></div>
-      </div>`;
-
-    const box = document.getElementById('subjectBox');
-    if (!s.subjects.length) {
-      box.innerHTML = '<div class="empty"><div class="icon">📭</div><p>暂无科目数据</p></div>';
-      return;
-    }
-    box.innerHTML = `<div class="card">
-      <div class="card-title">📚 各科目情况</div>
-      ${s.subjects.map(sub => {
-        const rank = scoreRank(sub.best_score);
-        return `<div class="list-item">
-          <div class="main-info">
-            <div class="title">${esc(sub.subject_name)} <span class="tag tag-gray">${sub.question_count}题库</span></div>
-            <div class="sub">闯关 ${sub.exam_count} 次 · 平均 ${sub.avg_score} 分 · 错题 ${sub.wrong_count} 题</div>
-          </div>
-          <div class="score-badge ${rank.cls}">最高 ${sub.best_score}</div>
-        </div>`;
-      }).join('')}
-    </div>`;
-  } catch (e) {
-    toast(e.message, 'error');
-  }
+    let qs = `?days=${days}`;
+    if (subjIds.length) qs += `&subject_ids=${subjIds.join(',')}`;
+    const d = await API.get('/api/exam/recent-activity' + qs);
+    renderRecentTopicChart('chartRecentTopic', d);
+    renderRecentSessions('recentSessionsBox', d);
+  } catch (e) { toast(e.message, 'error'); }
 }
 
-load();
+async function init() {
+  try {
+    const subs = await API.get('/api/subjects');
+    populateSubjectChips('rcSubjChips', subs, ['Python基础实操'], 'loadRecent');
+  } catch (e) { /* ignore */ }
+  loadRecent();
+}
+
+init();
 </script>
 </body>
 </html>

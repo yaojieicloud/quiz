@@ -1,0 +1,540 @@
+{
+ "subject": {
+  "name": "Python基础理论",
+  "icon": "🐍",
+  "grade": "入门",
+  "desc": "Python 基础理论知识"
+ },
+ "questions": [
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "想把文字 '123' 变成能算数学的整数，用哪个函数？",
+   "options": [
+    "int('123')",
+    "str(123)",
+    "float('123')",
+    "list('123')"
+   ],
+   "answer": "0",
+   "explanation": "<code>int()</code> 把文字数字<b>转成整数</b>。<code>int('123')</code>=123，之后就能做加减乘除了。",
+   "difficulty": 1
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "想把数字 5 变成文字 '5'（方便拼接输出），用哪个函数？",
+   "options": [
+    "int(5)",
+    "str(5)",
+    "float(5)",
+    "bool(5)"
+   ],
+   "answer": "1",
+   "explanation": "<code>str()</code> 把任何东西<b>转成文字（字符串）</b>。<code>str(5)</code>='5'，这样才能和别的文字拼在一起。",
+   "difficulty": 1
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "int('3.14') 会怎样？",
+   "options": [
+    "得到 3",
+    "得到 3.14",
+    "报错",
+    "得到 '3.14'"
+   ],
+   "answer": "2",
+   "explanation": "<code>int()</code> 只能把<b>整数样子</b>的文字转整数，'3.14' 带小数点会<b>报错</b>。要转小数得用 <code>float('3.14')</code>。",
+   "difficulty": 2
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "float('3.14') 的结果是？",
+   "options": [
+    "3",
+    "3.14（小数）",
+    "'3.14'",
+    "报错"
+   ],
+   "answer": "1",
+   "explanation": "<code>float()</code> 把文字转成<b>小数（浮点数）</b>，'3.14' → 3.14。",
+   "difficulty": 1
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "空列表 [] 转成布尔值，bool([]) 等于？",
+   "options": [
+    "True",
+    "False",
+    "[]",
+    "报错"
+   ],
+   "answer": "1",
+   "explanation": "<code>bool()</code> 转真假：<b>空的（空列表、空字符串、0）都是 False</b>。所以 bool([])=False。",
+   "difficulty": 2
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "下面哪个转换是正确的？",
+   "options": [
+    "int('abc') 得到 0",
+    "str(10) 得到 '10'",
+    "float(10) 报错",
+    "bool('') 得到 True"
+   ],
+   "answer": "1",
+   "explanation": "<code>str(10)</code> 把数字 10 转成文字 '10'。'abc'不能转int会报错；float(10)=10.0没问题；空字符串bool是False。",
+   "difficulty": 2
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "想从用户输入得到数字做计算，正确的写法是？",
+   "options": [
+    "n = input()",
+    "n = int(input())",
+    "n = str(input())",
+    "n = float(input()) + ''"
+   ],
+   "answer": "1",
+   "explanation": "<code>input()</code> 得到的是文字，<code>int(input())</code> 才转成整数能算。这里最通用正确的是转整数。",
+   "difficulty": 2
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "int(7.8) 的结果是？",
+   "options": [
+    "7",
+    "8",
+    "7.8",
+    "报错"
+   ],
+   "answer": "0",
+   "explanation": "<code>int()</code> 从小数转整数会<b>直接去掉小数部分</b>（不是四舍五入），7.8 → 7。",
+   "difficulty": 2
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "下面哪个能把文字 'True' 变成布尔值（True/False 这种类型）？",
+   "options": [
+    "int('True')",
+    "str('True')",
+    "bool('True')",
+    "float('True')"
+   ],
+   "answer": "2",
+   "explanation": "<code>bool('True')</code> 把文字转成<b>布尔值</b> True（非空字符串都是 True）。int/float 遇到 'True' 会报错，str 只能得到字符串不是布尔。",
+   "difficulty": 3
+  },
+  {
+   "type": "choice",
+   "topic_name": "类型转换",
+   "content": "'10' + '20' 和 10 + 20 的结果，下面哪个说法正确？",
+   "options": [
+    "两个都等于 30",
+    "'10'+'20'='1020'（文字拼接），10+20=30",
+    "两个都等于 '1020'",
+    "两个都报错"
+   ],
+   "answer": "1",
+   "explanation": "文字相加是<b>拼接</b>：'10'+'20'='1020'；数字相加是<b>数学加</b>：10+20=30。要算数得先 int() 转换。",
+   "difficulty": 2
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "int('123') 可以把文字 '123' 转换成整数 123。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "0",
+   "explanation": "<b>对</b>。<code>int()</code> 把整数样子的文字转成整数。",
+   "difficulty": 1
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "str(5) 可以把数字 5 转换成文字 '5'。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "0",
+   "explanation": "<b>对</b>。<code>str()</code> 转成字符串。",
+   "difficulty": 1
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "int('3.14') 能直接得到小数 3.14。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "1",
+   "explanation": "<b>错</b>。'3.14' 带小数点，<code>int()</code> 会<b>报错</b>。应先 <code>float('3.14')</code>。",
+   "difficulty": 2
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "bool(0) 的结果是 False。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "0",
+   "explanation": "<b>对</b>。0、空字符串、空列表在转成真假时都是 False。",
+   "difficulty": 2
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "文字 '10' 和 数字 10 相加，结果都是 20。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "1",
+   "explanation": "<b>错</b>。'10'+10 会<b>报错</b>（文字和数字不能直接相加）。要先转成同类型。",
+   "difficulty": 2
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "int(3.9) 的结果是 4（四舍五入）。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "1",
+   "explanation": "<b>错</b>。<code>int()</code> 从小数转整数是<b>直接去掉小数</b>，3.9 → 3，不是四舍五入。",
+   "difficulty": 2
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "float('2.5') 把文字 '2.5' 转换成小数 2.5。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "0",
+   "explanation": "<b>对</b>。<code>float()</code> 转成浮点数。",
+   "difficulty": 1
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "input() 得到的内容默认是文字（字符串）类型。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "0",
+   "explanation": "<b>对</b>。<code>input()</code> 永远返回文字，要算数得自己 int()/float() 转换。",
+   "difficulty": 2
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "bool('')（空字符串）转换成布尔值是 True。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "1",
+   "explanation": "<b>错</b>。<b>空</b>的东西（空字符串、0、空列表）转布尔都是 False。",
+   "difficulty": 2
+  },
+  {
+   "type": "judge",
+   "topic_name": "类型转换",
+   "content": "str(3.14) 的结果是 '3.14'。",
+   "options": [
+    "对",
+    "错"
+   ],
+   "answer": "0",
+   "explanation": "<b>对</b>。<code>str()</code> 把小数也变成文字 '3.14'。",
+   "difficulty": 1
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(int('123') + 1)",
+   "options": null,
+   "answer": "124",
+   "explanation": "<code>int('123')</code>=123，加 1 得 <b>124</b>。",
+   "difficulty": 1
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(str(5) + '只')",
+   "options": null,
+   "answer": "5只",
+   "explanation": "<code>str(5)</code>='5'，和'只'拼接得 <b>5只</b>。",
+   "difficulty": 1
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(float('3.14'))",
+   "options": null,
+   "answer": "3.14",
+   "explanation": "文字 '3.14' 转成小数 <b>3.14</b>。",
+   "difficulty": 1
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(bool(0))",
+   "options": null,
+   "answer": "False",
+   "explanation": "0 转布尔是 <b>False</b>。",
+   "difficulty": 2
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(bool('hi'))",
+   "options": null,
+   "answer": "True",
+   "explanation": "非空字符串转布尔是 <b>True</b>。",
+   "difficulty": 2
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(int(7.8))",
+   "options": null,
+   "answer": "7",
+   "explanation": "小数转整数直接去小数，7.8 → <b>7</b>。",
+   "difficulty": 2
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(int('10') + int('20'))",
+   "options": null,
+   "answer": "30",
+   "explanation": "'10'和'20'都转成整数再相加：10+20=<b>30</b>。",
+   "difficulty": 2
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(str(2 + 3))",
+   "options": null,
+   "answer": "5",
+   "explanation": "先算 2+3=5，再转文字得 <b>5</b>。",
+   "difficulty": 1
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(type(5) is int)",
+   "options": null,
+   "answer": "True",
+   "explanation": "<code>type(5)</code> 是整数类型，<code>is int</code> 判断成立，返回 <b>True</b>。",
+   "difficulty": 3
+  },
+  {
+   "type": "calc",
+   "topic_name": "类型转换",
+   "content": "print(float('2') + 0.5)",
+   "options": null,
+   "answer": "2.5",
+   "explanation": "'2'转小数=2.0，加0.5得 <b>2.5</b>。",
+   "difficulty": 2
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧转换函数与右侧它做的事情连线。",
+   "options": [
+    "int(x)",
+    "str(x)",
+    "float(x)"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "int→整数；str→文字；float→小数。",
+   "difficulty": 1,
+   "match_options": [
+    "转成整数",
+    "转成文字",
+    "转成小数"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧表达式与右侧它的转换结果连线。",
+   "options": [
+    "int('123')",
+    "str(5)",
+    "float('2.5')"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "'123'→123；5→'5'；'2.5'→2.5。",
+   "difficulty": 1,
+   "match_options": [
+    "123",
+    "'5'",
+    "2.5"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧内容（转成布尔）与右侧它得到的值连线。",
+   "options": [
+    "bool(0)",
+    "bool('hi')",
+    "bool('')"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "0假；非空真；空假。",
+   "difficulty": 2,
+   "match_options": [
+    "False（0是假）",
+    "True（非空是真）",
+    "False（空是假）"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧运算与右侧正确的结果连线。",
+   "options": [
+    "'10'+'20'",
+    "10+20",
+    "int('10')+int('20')"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "文字相加是拼接得'1020'；数字相加得30；都转整数再加也得30。",
+   "difficulty": 2,
+   "match_options": [
+    "'1020'（文字拼接）",
+    "30（数字相加）",
+    "30（先转整数再相加）"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧写法与右侧它是否正确连线。",
+   "options": [
+    "int('123')",
+    "int('3.14')",
+    "str(10)"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "int('123')正确；int('3.14')报错（带小数点）；str(10)正确得'10'。",
+   "difficulty": 2,
+   "match_options": [
+    "正确（得123）",
+    "会报错",
+    "正确（得'10'）"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧类型判断与右侧结论连线。",
+   "options": [
+    "type('5') 是 str",
+    "type(5) 是 int",
+    "type(3.14) 是 float"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "'5'是文字；5是整数；3.14是小数。",
+   "difficulty": 1,
+   "match_options": [
+    "文字类型",
+    "整数类型",
+    "小数类型"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧需求与右侧该用的函数连线。",
+   "options": [
+    "把'99'变成能算数",
+    "把 7 拼进一句话",
+    "把'4.5'变成小数"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "算数用int；拼文字用str；变小数用float。",
+   "difficulty": 1,
+   "match_options": [
+    "int('99')",
+    "str(7)",
+    "float('4.5')"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧小数转整数与右侧结果连线。",
+   "options": [
+    "int(3.9)",
+    "int(5.1)",
+    "int(0.9)"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "int()直接去小数，不是四舍五入：3.9→3，5.1→5，0.9→0。",
+   "difficulty": 2,
+   "match_options": [
+    "3（去小数）",
+    "5（去小数）",
+    "0（去小数）"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧输入处理与右侧它的作用连线。",
+   "options": [
+    "input()",
+    "int(input())",
+    "str(input())"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "input()本身返回文字；int(input())转整数；str()对已是文字的输入不改变本质。",
+   "difficulty": 2,
+   "match_options": [
+    "得到文字",
+    "得到能算的整数",
+    "仍是文字（只是确认类型）"
+   ]
+  },
+  {
+   "type": "match",
+   "topic_name": "类型转换",
+   "content": "将左侧组合转换与右侧结果连线。",
+   "options": [
+    "str(int('12')+8)",
+    "int(str(20))",
+    "float(int('3'))"
+   ],
+   "answer": "0:0,1:1,2:2",
+   "explanation": "int('12')+8=20再str→'20'；int(str(20))→20；float(int('3'))→3.0。",
+   "difficulty": 3,
+   "match_options": [
+    "'20'",
+    "20",
+    "3.0"
+   ]
+  }
+ ]
+}

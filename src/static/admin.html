@@ -107,12 +107,10 @@ textarea.form-input.lg { min-height:120px; }
   <div class="tab-bar">
     <span class="chip active" id="tabSubjects" onclick="switchTab('subjects')">📚 科目与章节</span>
     <span class="chip" id="tabQuestions" onclick="switchTab('questions')">📝 题目管理</span>
-    <span class="chip" id="tabStudents" onclick="switchTab('students')">👀 学员答题</span>
     <span class="chip" id="tabImport" onclick="switchTab('import')">📥 批量导入</span>
     <span class="chip" id="tabSql" onclick="switchTab('sql')">🛠 SQL 运维</span>
     <span class="chip" id="tabBackup" onclick="switchTab('backup')">🗄 数据备份</span>
     <span class="chip" id="tabAnalytics" onclick="switchTab('analytics')">📊 学情分析</span>
-    <span class="chip" id="tabReport" onclick="switchTab('report')">📝 AI周报</span>
     <span class="chip" id="tabReward" onclick="switchTab('reward')">🎁 奖励管理</span>
     <span class="chip" id="tabSubjectPoints" onclick="switchTab('subjectPoints')">📚 科目积分</span>
     <span class="chip" id="tabLlm" onclick="switchTab('llm')">📊 LLM 日志</span>
@@ -166,24 +164,6 @@ textarea.form-input.lg { min-height:120px; }
   </div>
 
   <!-- ===== 学员答题记录 ===== -->
-  <div id="paneStudents" style="display:none;">
-    <div class="section-box">
-      <h3>👀 学员答题记录 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">选择学员 → 点某次记录看每题详情（含实操提交的代码）</span></h3>
-      <div class="filter-bar">
-        <div class="form-group" style="flex:2;">
-          <label>选择学员</label>
-          <select class="form-select" id="stuSelect" onchange="onStudentChange()">
-            <option value="">请选择学员...</option>
-          </select>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="loadStudents(true)">🔄 刷新学员</button>
-      </div>
-      <div id="stuSubjectFilter" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px;"></div>
-      <div id="stuRecordList"></div>
-    </div>
-    <div id="stuRecordDetail"></div>
-  </div>
-
   <!-- ===== 批量导入 ===== -->
   <div id="paneImport" style="display:none;">
     <div class="section-box">
@@ -279,91 +259,14 @@ textarea.form-input.lg { min-height:120px; }
   <!-- ===== 学情分析 ===== -->
   <div id="paneAnalytics" style="display:none;">
     <div class="ana-subtabs">
-      <span class="ana-subtab active" id="anaTabOverview" onclick="switchAnaPane('overview')">📈 学习总览</span>
-      <span class="ana-subtab" id="anaTabStudent" onclick="switchAnaPane('student')">🎒 学员档案</span>
+      <span class="ana-subtab active" id="anaTabMastery" onclick="switchAnaPane('mastery')">🎯 掌握度全景</span>
+      <span class="ana-subtab" id="anaTabRecent" onclick="switchAnaPane('recent')">🕒 最近动态</span>
+      <span class="ana-subtab" id="anaTabRecords" onclick="switchAnaPane('records')">👀 学员答题</span>
       <span class="ana-subtab" id="anaTabWeakness" onclick="switchAnaPane('weakness')">🎯 薄弱分析</span>
+      <span class="ana-subtab" id="anaTabReport" onclick="switchAnaPane('report')">📝 AI周报</span>
     </div>
 
-    <!-- 1. 学习总览 -->
-    <div id="anaPaneOverview">
-      <div class="filter-bar" style="margin-bottom:12px;">
-        <div class="form-group" style="flex:1;max-width:220px;">
-          <label>年级筛选</label>
-          <select class="form-select" id="ovGradeSelect" onchange="onOvGradeChange()">
-            <option value="">全部年级</option>
-          </select>
-        </div>
-        <div class="form-group" style="flex:1;max-width:160px;">
-          <label>难度档位</label>
-          <select class="form-select" id="ovTierSelect" onchange="onOvGradeChange()">
-            <option value="">全部档位</option>
-            <option value="1">初级</option>
-            <option value="2">进阶</option>
-            <option value="3">挑战</option>
-          </select>
-        </div>
-      </div>
-      <div class="kpi-grid" id="kpiGrid"></div>
-      <div class="section-box">
-        <h3>📅 近 14 天答题趋势</h3>
-        <div id="chartTrend" class="chart-box"></div>
-      </div>
-      <div class="chart-row">
-        <div class="section-box">
-          <h3>📚 各科目正确率</h3>
-          <div id="chartSubject" class="chart-box"></div>
-        </div>
-        <div class="section-box">
-          <h3>🧩 各题型正确率</h3>
-          <div id="chartType" class="chart-box"></div>
-        </div>
-      </div>
-      <div class="section-box">
-        <h3>🏆 活跃学员榜</h3>
-        <div id="topStudentsBox"></div>
-      </div>
-    </div>
-
-    <!-- 2. 学员档案 -->
-    <div id="anaPaneStudent" style="display:none;">
-      <div class="section-box">
-        <div class="filter-bar">
-          <div class="form-group" style="flex:2;">
-            <label>选择学员</label>
-            <select class="form-select" id="anaStuSelect" onchange="loadAnaStudent()">
-              <option value="">请选择学员...</option>
-            </select>
-          </div>
-          <div class="form-group" style="flex:2;">
-            <label>科目筛选（知识点/错题）</label>
-            <select class="form-select" id="anaStuSubjSelect" onchange="loadAnaStudent()">
-              <option value="">全部科目</option>
-            </select>
-          </div>
-          <div class="form-group" style="flex:1;min-width:130px;">
-            <label>高频错题条数</label>
-            <select class="form-select" id="anaStuWrongLimit" onchange="loadAnaStudent()">
-              <option value="10" selected>TOP 10</option>
-              <option value="20">TOP 20</option>
-              <option value="30">TOP 30</option>
-              <option value="50">TOP 50</option>
-            </select>
-          </div>
-          <div class="form-group" style="flex:1;max-width:150px;">
-            <label>难度档位</label>
-            <select class="form-select" id="anaStuTierSelect" onchange="loadAnaStudent()">
-              <option value="">全部档位</option>
-              <option value="1">初级</option>
-              <option value="2">进阶</option>
-              <option value="3">挑战</option>
-            </select>
-          </div>
-        </div>
-        <div id="anaStudentBody"><div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div></div>
-      </div>
-    </div>
-
-    <!-- 3. 薄弱分析 -->
+    <!-- 1. 薄弱分析 -->
     <div id="anaPaneWeakness" style="display:none;">
       <div class="section-box" style="padding-bottom:8px;">
         <div class="filter-bar">
@@ -410,41 +313,127 @@ textarea.form-input.lg { min-height:120px; }
         <div id="hardQuestionsBox"></div>
       </div>
     </div>
-  </div>
-
-  <!-- ===== AI 周报（独立顶级面板） ===== -->
-  <div id="paneReport" style="display:none;">
-    <!-- 列表视图 -->
-    <div id="reportListView">
+    <!-- 4. 掌握度全景（新增） -->
+    <div id="anaPaneMastery" style="display:none;">
+      <div class="section-box" style="padding-bottom:8px;">
+        <div class="filter-bar">
+          <div class="form-group" style="flex:1;max-width:200px;">
+            <label>学员</label>
+            <select class="form-select" id="mvpStuSelect" onchange="loadAnaMastery()">
+              <option value="">全部学员</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;max-width:150px;">
+            <label>难度档位</label>
+            <select class="form-select" id="mvpTierSelect" onchange="loadAnaMastery()">
+              <option value="1">初级</option>
+              <option value="2">进阶</option>
+              <option value="3">挑战</option>
+            </select>
+          </div>
+          <button class="btn btn-sm" onclick="loadAnaMastery()">🔄 刷新</button>
+        </div>
+        <div class="config-section" style="margin-top:4px;">
+          <div class="label" style="font-size:13px;color:#7a6c8c;margin-bottom:6px;">📚 科目（可多选，不选=全部）</div>
+          <div class="chip-group" id="mvpSubjChips"></div>
+        </div>
+      </div>
       <div class="section-box">
-        <h3>📝 AI 周报管理 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">查看历史周报、生成新周报</span></h3>
-        
-        <!-- 筛选与生成 -->
-        <div class="filter-bar" style="margin-bottom:16px;">
+        <h3>📊 各课掌握状态分布</h3>
+        <div id="chartMasteryDist" class="chart-box" style="height:320px;"></div>
+      </div>
+      <div class="section-box" id="mvpScoreTrendBox" style="display:none;">
+        <h3>📈 成绩趋势（<span id="mvpScoreTrendCount"></span>）</h3>
+        <div id="chartScoreTrend" class="chart-box"></div>
+      </div>
+      <div class="section-box">
+        <h3>🎯 掌握度矩阵 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">每课 × 每位学员的掌握状态</span></h3>
+        <div id="mvpMatrixBox"></div>
+      </div>
+    </div>
+
+    <!-- 5. 最近刷题动态（新增） -->
+    <div id="anaPaneRecent" style="display:none;">
+      <div class="section-box" style="padding-bottom:8px;">
+        <div class="filter-bar">
+          <div class="form-group" style="flex:1;max-width:200px;">
+            <label>学员</label>
+            <select class="form-select" id="rcStuSelect" onchange="loadAnaRecent()">
+              <option value="">全部学员</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex:1;max-width:150px;">
+            <label>时间范围</label>
+            <select class="form-select" id="rcDaysSelect" onchange="loadAnaRecent()">
+              <option value="1">今天</option>
+              <option value="3">近3天</option>
+              <option value="7" selected>近7天</option>
+              <option value="14">近14天</option>
+              <option value="30">近30天</option>
+            </select>
+          </div>
+          <button class="btn btn-sm" onclick="loadAnaRecent()">🔄 刷新</button>
+        </div>
+        <div class="config-section" style="margin-top:4px;">
+          <div class="label" style="font-size:13px;color:#7a6c8c;margin-bottom:6px;">📚 科目（可多选，不选=全部）</div>
+          <div class="chip-group" id="rcSubjChips"></div>
+        </div>
+      </div>
+      <div class="section-box">
+        <h3>📚 各课答题量（近期）</h3>
+        <div id="chartRecentTopic" class="chart-box" style="height:320px;"></div>
+      </div>
+      <div class="section-box">
+        <h3>🕒 最近答题场次明细</h3>
+        <div id="recentSessionsBox"></div>
+      </div>
+    </div>
+
+    <!-- 6. 学员答题（原顶级页并入） -->
+    <div id="anaPaneRecords" style="display:none;">
+      <div class="section-box">
+        <h3>👀 学员答题记录 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">选择学员 → 点某次记录看每题详情（含实操提交的代码）</span></h3>
+        <div class="filter-bar">
           <div class="form-group" style="flex:2;">
-            <label>选择学员生成新周报</label>
-            <select class="form-select" id="reportGenSelect">
+            <label>选择学员</label>
+            <select class="form-select" id="stuSelect" onchange="onStudentChange()">
               <option value="">请选择学员...</option>
             </select>
           </div>
-          <button class="btn btn-primary" onclick="generateReport(false)">✨ 生成周报</button>
-          <button class="btn btn-sm" onclick="generateReport(true)" style="margin-left:8px;" title="忽略缓存强制重新生成">🔄 强制重生成</button>
+          <button class="btn btn-ghost btn-sm" onclick="loadStudents(true)">🔄 刷新学员</button>
         </div>
-        
-        <!-- 周报列表 -->
-        <div id="reportListTable"></div>
+        <div id="stuSubjectFilter" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 4px;"></div>
+        <div id="stuRecordList"></div>
       </div>
+      <div id="stuRecordDetail"></div>
     </div>
-    
-    <!-- 详情视图（默认隐藏） -->
-    <div id="reportDetailView" style="display:none;">
-      <div class="section-box">
-        <div class="filter-bar">
-          <button class="btn btn-sm" onclick="showReportList()">← 返回列表</button>
-          <button class="btn btn-danger btn-sm" id="deleteReportBtn" style="margin-left:auto;">🗑 删除</button>
+
+    <!-- 7. AI 周报（原顶级页并入） -->
+    <div id="anaPaneReport" style="display:none;">
+      <div id="reportListView">
+        <div class="section-box">
+          <h3>📝 AI 周报管理 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">查看历史周报、生成新周报</span></h3>
+          <div class="filter-bar" style="margin-bottom:16px;">
+            <div class="form-group" style="flex:2;">
+              <label>选择学员生成新周报</label>
+              <select class="form-select" id="reportGenSelect">
+                <option value="">请选择学员...</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="generateReport(false)">✨ 生成周报</button>
+            <button class="btn btn-sm" onclick="generateReport(true)" style="margin-left:8px;" title="忽略缓存强制重新生成">🔄 强制重生成</button>
+          </div>
+          <div id="reportListTable"></div>
         </div>
-        
-        <div id="reportDetailContent"></div>
+      </div>
+      <div id="reportDetailView" style="display:none;">
+        <div class="section-box">
+          <div class="filter-bar">
+            <button class="btn btn-sm" onclick="showReportList()">← 返回列表</button>
+            <button class="btn btn-danger btn-sm" id="deleteReportBtn" style="margin-left:auto;">🗑 删除</button>
+          </div>
+          <div id="reportDetailContent"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -499,6 +488,7 @@ textarea.form-input.lg { min-height:120px; }
 </div>
 
 <script src="js/common.js"></script>
+<script src="js/analytics-shared.js"></script>
 <script>
 // ============ 权限检查 ============
 const user = requireAuth();
@@ -520,7 +510,7 @@ let qPage = 1, qPageSize = 15, qTotal = 0;
 // ============ Tab 切换 ============
 function switchTab(tab) {
   currentTab = tab;
-  ['Subjects','Questions','Students','Import','Sql','Backup','Analytics','Report','Reward','SubjectPoints','Llm','Mastery'].forEach(t => {
+  ['Subjects','Questions','Import','Sql','Backup','Analytics','Reward','SubjectPoints','Llm','Mastery'].forEach(t => {
     const id = t.toLowerCase();
     const tabEl = document.getElementById('tab'+t);
     const paneEl = document.getElementById('pane'+t);
@@ -529,11 +519,9 @@ function switchTab(tab) {
   });
   if (tab === 'subjects') loadSubjects();
   if (tab === 'questions') { initQuestionFilters(); loadQuestions(1); }
-  if (tab === 'students') loadStudents();
   if (tab === 'import') initImportSubject();
   if (tab === 'backup') loadBackups();
   if (tab === 'analytics') initAnalytics();
-  if (tab === 'report') initReportManagement();
 }
 
 // ============ 科目与章节 ============
@@ -1726,35 +1714,26 @@ async function doBackupAndDownload() {
 
 // ============ 学情分析 ============
 const anaCharts = {};  // 缓存 echarts 实例
-const TYPE_NAME = { choice:'选择', judge:'判断', calc:'计算', fill:'填空', essay:'应用', match:'连线', sort:'排序', code:'编程', reading:'阅读' };
 
+const ANA_PANES = ['mastery','recent','records','weakness','report'];
 function switchAnaPane(pane) {
-  ['overview','student','weakness'].forEach(p => {
-    document.getElementById('anaTab' + p.charAt(0).toUpperCase() + p.slice(1)).classList.toggle('active', p === pane);
-    document.getElementById('anaPane' + p.charAt(0).toUpperCase() + p.slice(1)).style.display = p === pane ? 'block' : 'none';
+  ANA_PANES.forEach(p => {
+    const cap = p.charAt(0).toUpperCase() + p.slice(1);
+    const tabEl = document.getElementById('anaTab' + cap);
+    const paneEl = document.getElementById('anaPane' + cap);
+    if (tabEl) tabEl.classList.toggle('active', p === pane);
+    if (paneEl) paneEl.style.display = p === pane ? 'block' : 'none';
   });
-  if (pane === 'overview') loadAnaOverview();
-  if (pane === 'student') loadAnaStudentList();
+  if (pane === 'mastery') initAnaMastery();
+  if (pane === 'recent') initAnaRecent();
+  if (pane === 'records') loadStudents();
   if (pane === 'weakness') initWkFilters();
+  if (pane === 'report') initReportManagement();
 }
 
 let anaInited = false;
 function initAnalytics() {
-  if (!anaInited) { anaInited = true; loadAnaOverview(); }
-}
-
-function rateBadge(rate) {
-  const cls = rate >= 80 ? 'rate-good' : (rate >= 60 ? 'rate-mid' : 'rate-bad');
-  return `<span class="rate-badge ${cls}">${rate}%</span>`;
-}
-
-const MASTERY_BADGE = {
-  not_started: ['st-not_started', '未开始'], practicing: ['st-practicing', '练习中'],
-  passed: ['st-passed', '通过'], mastered: ['st-mastered', '精通'], review: ['st-review', '需复习'],
-};
-function masteryBadge(status) {
-  const b = MASTERY_BADGE[status] || ['st-not_started', status || ''];
-  return `<span class="st-badge ${b[0]}" style="font-size:11px;padding:1px 7px;">${b[1]}</span>`;
+  if (!anaInited) { anaInited = true; initAnaMastery(); }
 }
 
 // --- 学情分析：科目/年级缓存与筛选 ---
@@ -1768,95 +1747,6 @@ async function loadAnaSubjects() {
 function anaGrades(subs) {
   return [...new Set(subs.map(s => s.grade).filter(Boolean))];
 }
-const ANA_PALETTE = ['#74c0fc','#ffa94d','#69db7c','#b197fc','#ff8787','#ffd43b','#63e6be','#a5d8ff'];
-
-async function loadAnaOverview() {
-  try {
-    // 年级筛选下拉（仅首次/数据变化时重建）
-    const subs = await loadAnaSubjects();
-    const gsel = document.getElementById('ovGradeSelect');
-    if (gsel.options.length <= 1) {
-      gsel.innerHTML = '<option value="">全部年级</option>' +
-        anaGrades(subs).map(g => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
-    }
-    const grade = gsel.value;
-    const tier = document.getElementById('ovTierSelect').value;
-    let qs = '';
-    if (grade) qs += (qs ? '&' : '?') + `grade=${encodeURIComponent(grade)}`;
-    if (tier) qs += (qs ? '&' : '?') + `tier=${tier}`;
-    const d = await API.get('/api/admin/analytics/overview' + qs);
-    // KPI（始终为全局总量）
-    const t = d.totals;
-    document.getElementById('kpiGrid').innerHTML = [
-      { num: t.answers, lbl: '📝 总答题数' },
-      { num: t.correct_rate + '%', lbl: '✅ 总正确率' },
-      { num: t.exams, lbl: '📋 考试次数' },
-      { num: t.active_students, lbl: '👦 活跃学员' },
-      { num: t.today_answers, lbl: '☀️ 今日答题' },
-      { num: t.week_answers, lbl: '🗓 近7天答题' },
-    ].map(k => `<div class="kpi-card"><div class="num">${k.num}</div><div class="lbl">${k.lbl}</div></div>`).join('');
-    renderOverviewCharts(d);
-    // 活跃榜
-    const box = document.getElementById('topStudentsBox');
-    if (!d.top_students.length) {
-      box.innerHTML = '<div class="empty"><div class="icon">📭</div><p>暂无答题数据</p></div>';
-    } else {
-      box.innerHTML = `<table class="ana-table"><thead><tr><th>排名</th><th>学员</th><th>考试次数</th><th>最近答题</th></tr></thead><tbody>` +
-        d.top_students.map((s, i) => `<tr><td>${['🥇','🥈','🥉'][i] || (i+1)}</td><td><b>${esc(s.nickname)}</b> <span style="color:#9c8bb5;font-size:12px;">${esc(s.username)}</span></td><td>${s.exams}</td><td style="color:#9c8bb5;font-size:13px;">${s.last_at ? s.last_at.slice(0,16).replace('T',' ') : '—'}</td></tr>`).join('') +
-        `</tbody></table>`;
-    }
-  } catch (e) { toast(e.message, 'error'); }
-}
-function onOvGradeChange() { loadAnaOverview(); }
-
-function renderOverviewCharts(d) {
-  if (typeof echarts === 'undefined') {
-    document.getElementById('chartTrend').innerHTML = '<div class="empty"><p>图表库加载失败，请检查网络</p></div>';
-    return;
-  }
-  // 趋势图：按科目分线（不同颜色），X 轴为日期
-  const tbs = d.trend_by_subject || [];
-  const dates = [...new Set(tbs.map(r => r.d))].sort();
-  const subjMap = new Map();
-  tbs.forEach(r => { if (!subjMap.has(r.subject_id)) subjMap.set(r.subject_id, r.subject); });
-  const trendSeries = [...subjMap.entries()].map(([sid, name], i) => ({
-    name, type: 'line', smooth: true, connectNulls: true,
-    itemStyle: { color: ANA_PALETTE[i % ANA_PALETTE.length] },
-    data: dates.map(dt => {
-      const row = tbs.find(r => r.d === dt && r.subject_id === sid);
-      return row ? row.total : null;
-    }),
-  }));
-  _anaChart('chartTrend', {
-    tooltip: { trigger: 'axis' },
-    legend: { top: 0, type: 'scroll' },
-    grid: { left: 44, right: 20, top: 36, bottom: 24 },
-    xAxis: { type: 'category', data: dates.map(x => x.slice(5)) },
-    yAxis: { type: 'value', name: '答题量', minInterval: 1 },
-    series: trendSeries.length ? trendSeries
-      : [{ type: 'line', data: dates.map(() => null) }],
-  });
-  // 科目正确率（保持原有样式）
-  const subjNames = d.by_subject.map(r => r.subject);
-  const subjRates = d.by_subject.map(r => r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0);
-  _anaChart('chartSubject', {
-    tooltip: { trigger: 'axis', formatter: p => `${p[0].name}：${p[0].value}%` },
-    grid: { left: 40, right: 20, top: 20, bottom: 60 },
-    xAxis: { type: 'category', data: subjNames, axisLabel: { rotate: 20, fontSize: 11 } },
-    yAxis: { type: 'value', max: 100, name: '%' },
-    series: [{ type: 'bar', data: subjRates, itemStyle: { color: '#69db7c', borderRadius: [6,6,0,0] }, barMaxWidth: 40 }],
-  });
-  // 题型正确率
-  const typeNames = d.by_type.map(r => TYPE_NAME[r.type] || r.type);
-  const typeRates = d.by_type.map(r => r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0);
-  _anaChart('chartType', {
-    tooltip: { trigger: 'axis', formatter: p => `${p[0].name}：${p[0].value}%` },
-    grid: { left: 40, right: 20, top: 20, bottom: 40 },
-    xAxis: { type: 'category', data: typeNames },
-    yAxis: { type: 'value', max: 100, name: '%' },
-    series: [{ type: 'bar', data: typeRates, itemStyle: { color: '#b197fc', borderRadius: [6,6,0,0] }, barMaxWidth: 40 }],
-  });
-}
 
 function _anaChart(domId, option) {
   const el = document.getElementById(domId);
@@ -1866,107 +1756,6 @@ function _anaChart(domId, option) {
   anaCharts[domId].setOption(option, true);
 }
 window.addEventListener('resize', () => Object.values(anaCharts).forEach(c => c.resize()));
-
-// --- 学员档案 ---
-let anaStudentsCache = null;
-async function loadAnaStudentList() {
-  if (!anaStudentsCache) {
-    try { anaStudentsCache = await API.get('/api/admin/students'); } catch (e) { toast(e.message, 'error'); return; }
-  }
-  const sel = document.getElementById('anaStuSelect');
-  const cur = sel.value;
-  sel.innerHTML = '<option value="">请选择学员...</option>' +
-    anaStudentsCache.filter(s => s.exam_count > 0).map(s => `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)} · ${s.exam_count}次）</option>`).join('');
-  if (cur) { sel.value = cur; }
-  // 科目筛选下拉
-  const ssel = document.getElementById('anaStuSubjSelect');
-  const scur = ssel.value;
-  const subs = await loadAnaSubjects();
-  ssel.innerHTML = '<option value="">全部科目</option>' +
-    subs.map(s => `<option value="${s.id}">${esc(s.icon||'📚')} ${esc(s.name)}${s.grade ? '（'+esc(s.grade)+'）' : ''}</option>`).join('');
-  if (scur) { ssel.value = scur; }
-}
-
-async function loadAnaStudent() {
-    const uid = document.getElementById('anaStuSelect').value;
-    const sid = document.getElementById('anaStuSubjSelect').value;
-    const wl = document.getElementById('anaStuWrongLimit').value || '10';
-    const tier = document.getElementById('anaStuTierSelect').value;
-    const body = document.getElementById('anaStudentBody');
-    if (!uid) { body.innerHTML = '<div class="empty"><div class="icon">🎒</div><p>请选择一位学员查看学习档案</p></div>'; return; }
-    try {
-      const qs = new URLSearchParams();
-      if (sid) qs.set('subject_id', sid);
-      qs.set('wrong_limit', wl);
-      if (tier) qs.set('tier', tier);
-      const d = await API.get(`/api/admin/analytics/student/${uid}?${qs}`);
-    let html = '';
-    if (d.tier_name) html += `<div class="deep-note" style="margin-bottom:12px;">🎚 当前难度档位：<b>${esc(d.tier_name)}</b>（成绩趋势 / 知识点 / 错题均按该档位口径）</div>`;
-    // 成绩趋势
-    if (d.score_trend.length) {
-      html += `<div class="section-box" style="box-shadow:none;background:#f8f9fc;"><h3>📈 成绩趋势（共 ${d.score_trend.length} 次考试）</h3><div id="chartScoreTrend" class="chart-box"></div></div>`;
-    }
-    // 科目正确率
-    if (d.by_subject.length) {
-      html += `<h3 style="margin:16px 0 8px;">📚 各科目正确率</h3><table class="ana-table"><thead><tr><th>科目</th><th>作答数</th><th>正确率</th></tr></thead><tbody>` +
-        d.by_subject.map(r => {
-          const rate = r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0;
-          return `<tr><td>${esc(r.subject)}</td><td>${r.total}</td><td>${rateBadge(rate)}</td></tr>`;
-        }).join('') + `</tbody></table>`;
-    }
-    // 薄弱知识点
-    if (d.by_topic.length) {
-      html += `<h3 style="margin:16px 0 8px;">🎯 薄弱知识点（作答≥2次，正确率最低，带个人掌握状态）</h3><table class="ana-table"><thead><tr><th>科目</th><th>知识点</th><th>掌握状态</th><th>作答</th><th>正确率</th></tr></thead><tbody>` +
-        d.by_topic.map(r => {
-          const rate = r.total ? Math.round(r.ok / r.total * 1000) / 10 : 0;
-          return `<tr><td>${esc(r.subject)}</td><td>${esc(r.topic)}</td><td>${masteryBadge(r.status)}</td><td>${r.total}</td><td>${rateBadge(rate)}</td></tr>`;
-        }).join('') + `</tbody></table>`;
-    }
-    // 高频错题
-    if (d.top_wrong.length) {
-      html += `<h3 style="margin:16px 0 8px;">❌ 高频错题 TOP${d.top_wrong.length}（带所属课掌握状态）</h3><table class="ana-table"><thead><tr><th>题目</th><th>科目/知识点</th><th>所属课掌握状态</th><th>错次</th><th>操作</th></tr></thead><tbody>` +
-        d.top_wrong.map(r => {
-          const st = masteryBadge(r.status);
-          const note = (r.status === 'passed' || r.status === 'mastered') ? ' <span style="color:#2b8a3e;font-size:11px;">（已掌握·偶发错）</span>' : '';
-          return `<tr><td style="max-width:380px;">${esc(r.content)}</td><td style="font-size:13px;color:#7a6c8c;">${esc(r.subject||'')}${r.topic ? ' / '+esc(r.topic) : ''}</td><td>${st}${note}</td><td><b style="color:#c92a2a;">${r.wrong_times}</b></td><td><button class="btn btn-sm" onclick="viewQuestion(${r.qid})">🔍 查看</button></td></tr>`;
-        }).join('') +
-        `</tbody></table>`;
-    }
-    // 最近动态
-    if (d.recent.length) {
-      html += `<h3 style="margin:16px 0 8px;">🕐 最近学习动态</h3><table class="ana-table"><thead><tr><th>时间</th><th>科目</th><th>得分</th><th>对/总</th></tr></thead><tbody>` +
-        d.recent.map(r => `<tr><td style="font-size:13px;color:#7a6c8c;">${r.started_at.slice(0,16).replace('T',' ')}</td><td>${esc(r.subject)}</td><td>${rateBadge(r.score)}</td><td>${r.correct}/${r.total}</td></tr>`).join('') +
-        `</tbody></table>`;
-    }
-    if (!html) html = '<div class="empty"><div class="icon">📭</div><p>该学员暂无答题数据</p></div>';
-    // innerHTML 会销毁旧 DOM，必须清理对应的 ECharts 缓存实例
-    if (anaCharts['chartScoreTrend']) { anaCharts['chartScoreTrend'].dispose(); delete anaCharts['chartScoreTrend']; }
-    body.innerHTML = html;
-    // 渲染成绩趋势图：按科目分线，时间轴为各次考试时间
-    if (d.score_trend.length && typeof echarts !== 'undefined') {
-      // 按科目分组
-      const groups = new Map();
-      d.score_trend.forEach(r => {
-        const key = r.subject || '其他';
-        if (!groups.has(key)) groups.set(key, []);
-        groups.get(key).push(r);
-      });
-      const series = [...groups.entries()].map(([name, rows], i) => ({
-        name, type: 'line', smooth: true,
-        itemStyle: { color: ANA_PALETTE[i % ANA_PALETTE.length] },
-        data: rows.map(r => [r.started_at.slice(0, 16).replace('T', ' '), r.score]),
-      }));
-      _anaChart('chartScoreTrend', {
-        tooltip: { trigger: 'axis', formatter: ps => ps.map(p => `${p.marker}${p.seriesName}：${p.value[1]}分`).join('<br/>') },
-        legend: { top: 0, type: 'scroll' },
-        grid: { left: 40, right: 20, top: 36, bottom: 60 },
-        xAxis: { type: 'time' },
-        yAxis: { type: 'value', max: 100, name: '分' },
-        series,
-      });
-    }
-  } catch (e) { toast(e.message, 'error'); }
-}
 
 // --- 题目详情抽屉 ---
 async function viewQuestion(qid) {
@@ -2150,6 +1939,117 @@ async function loadAnaWeakness() {
     } else {
       hq.innerHTML = '<div class="empty"><p>数据不足（需某题作答≥3次）</p></div>';
     }
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+// ============ 掌握度全景（新增子页） ============
+let mvpInited = false;
+async function initAnaMastery() {
+  if (!mvpInited) {
+    try {
+      const subs = await loadAnaSubjects();
+      populateSubjectChips('mvpSubjChips', subs, ['Python基础实操'], 'loadAnaMastery');
+      const students = await API.get('/api/admin/students');
+      document.getElementById('mvpStuSelect').innerHTML = '<option value="">全部学员</option>' +
+        students.map(s => `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)}）</option>`).join('');
+    } catch (e) { /* ignore */ }
+    mvpInited = true;
+  }
+  loadAnaMastery();
+}
+
+async function loadAnaMastery() {
+  const subjIds = getSubjectChipValues('mvpSubjChips');
+  const tier = document.getElementById('mvpTierSelect').value || '1';
+  const stuSel = document.getElementById('mvpStuSelect').value;
+  try {
+    let qs = `?tier=${tier}`;
+    if (subjIds.length) qs += `&subject_ids=${subjIds.join(',')}`;
+    const d = await API.get(`/api/admin/mastery${qs}`);
+    // 学员过滤：只保留选中学员的 cells，并按该学员重算各课 counts
+    if (stuSel) {
+      const stuId = parseInt(stuSel);
+      d.students = d.students.filter(s => s.id === stuId);
+      d.topics = d.topics.map(t => {
+        const cell = (t.cells[stuId] || {})[String(tier)] || { status: 'not_started' };
+        const counts = { passed: 0, mastered: 0, review: 0, practicing: 0, not_started: 0 };
+        counts[cell.status || 'not_started'] = 1;
+        return { ...t, cells: { [stuId]: t.cells[stuId] || {} }, counts, started: (cell.status !== 'not_started') ? 1 : 0 };
+      });
+    }
+    renderMasteryCoverageChart('chartMasteryDist', d);
+    renderMasteryMatrix('mvpMatrixBox', d);
+    // 成绩趋势：选中单学员时显示其成绩趋势，选全部则隐藏
+    const trendBox = document.getElementById('mvpScoreTrendBox');
+    if (stuSel) {
+      await loadMvpScoreTrend(parseInt(stuSel), tier);
+      trendBox.style.display = '';
+    } else {
+      trendBox.style.display = 'none';
+    }
+  } catch (e) { toast(e.message, 'error'); }
+}
+
+async function loadMvpScoreTrend(uid, tier) {
+  const box = document.getElementById('mvpScoreTrendBox');
+  try {
+    const d = await API.get(`/api/admin/analytics/student/${uid}?wrong_limit=10&tier=${tier}`);
+    const trend = d.score_trend || [];
+    document.getElementById('mvpScoreTrendCount').textContent = `共 ${trend.length} 次考试`;
+    if (anaCharts['chartScoreTrend']) { anaCharts['chartScoreTrend'].dispose(); delete anaCharts['chartScoreTrend']; }
+    if (!trend.length) { box.style.display = 'none'; return; }
+    const groups = new Map();
+    trend.forEach(r => {
+      const key = r.subject || '其他';
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(r);
+    });
+    const series = [...groups.entries()].map(([name, rows], i) => ({
+      name, type: 'line', smooth: true,
+      itemStyle: { color: ANA_PALETTE[i % ANA_PALETTE.length] },
+      data: rows.map(r => [r.started_at.slice(0, 16).replace('T', ' '), r.score]),
+    }));
+    _anaChart('chartScoreTrend', {
+      tooltip: { trigger: 'axis', formatter: ps => ps.map(p => `${p.marker}${p.seriesName}：${p.value[1]}分`).join('<br/>') },
+      legend: { top: 0, type: 'scroll' },
+      grid: { left: 40, right: 20, top: 36, bottom: 60 },
+      xAxis: { type: 'time' },
+      yAxis: { type: 'value', max: 100, name: '分' },
+      series,
+    });
+  } catch (e) { /* 成绩趋势加载失败不阻塞掌握度展示 */ }
+}
+
+// ============ 最近刷题动态（新增子页） ============
+let rcInited = false;
+async function initAnaRecent() {
+  if (!rcInited) {
+    try {
+      const students = await API.get('/api/admin/students');
+      const sel = document.getElementById('rcStuSelect');
+      sel.innerHTML = '<option value="">全部学员</option>' +
+        students.map(s => `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)}）</option>`).join('');
+    } catch (e) { /* ignore */ }
+    try {
+      const subs = await loadAnaSubjects();
+      populateSubjectChips('rcSubjChips', subs, ['Python基础实操'], 'loadAnaRecent');
+    } catch (e) { /* ignore */ }
+    rcInited = true;
+  }
+  loadAnaRecent();
+}
+
+async function loadAnaRecent() {
+  const sid = document.getElementById('rcStuSelect').value;
+  const subjIds = getSubjectChipValues('rcSubjChips');
+  const days = document.getElementById('rcDaysSelect').value || '7';
+  try {
+    let qs = `?days=${days}`;
+    if (sid) qs += `&student_id=${sid}`;
+    if (subjIds.length) qs += `&subject_ids=${subjIds.join(',')}`;
+    const d = await API.get('/api/admin/analytics/recent-activity' + qs);
+    renderRecentTopicChart('chartRecentTopic', d);
+    renderRecentSessions('recentSessionsBox', d);
   } catch (e) { toast(e.message, 'error'); }
 }
 

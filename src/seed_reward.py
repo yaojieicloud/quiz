@@ -43,9 +43,9 @@ CONFIGS = {
 }
 
 # 科目积分覆盖（可选，按科目名片段匹配；无则走全局默认 5/4/3）
-# python 实操积分降低为 100->3 / 90->2 / 80->1
+# python 实操积分：100->2 / 90->1 / <90->0（防刷分，用户 2026-08-21 确认）
 SUBJECT_POINT_OVERRIDES = {
-    "Python基础实操": (3, 2, 1),
+    "Python基础实操": (2, 1, 0),
 }
 
 
@@ -82,18 +82,18 @@ def seed():
                 db.add(models.Config(key=k, value=v))
                 print(f"[seed] config 写入 {k}={v}")
 
-        # subject_points：科目积分覆盖（幂等 upsert，按科目名片段匹配）
+        # subject_points：科目积分初始值（仅首次创建，已存在则不覆盖，保留管理员手动调整）
         for frag, (p100, p90, p80) in SUBJECT_POINT_OVERRIDES.items():
             sub = db.query(models.Subject).filter(models.Subject.name.contains(frag)).first()
             if not sub:
-                print(f"[seed] 跳过科目覆盖(未找到匹配 '{frag}')")
+                print(f"[seed] 跳过科目积分(未找到匹配 '{frag}')")
                 continue
             sp = db.query(models.SubjectPoints).filter(models.SubjectPoints.subject_id == sub.id).first()
-            if not sp:
-                sp = models.SubjectPoints(subject_id=sub.id)
-                db.add(sp)
-            sp.p100, sp.p90, sp.p80 = p100, p90, p80
-            print(f"[seed] subject_points 覆盖 科目={sub.name} -> {p100}/{p90}/{p80}")
+            if sp:
+                print(f"[seed] subject_points 已存在 科目={sub.name} -> {sp.p100}/{sp.p90}/{sp.p80}（不覆盖）")
+                continue
+            db.add(models.SubjectPoints(subject_id=sub.id, p100=p100, p90=p90, p80=p80))
+            print(f"[seed] subject_points 初始化 科目={sub.name} -> {p100}/{p90}/{p80}")
 
         db.commit()
         print("[seed] 完成。")

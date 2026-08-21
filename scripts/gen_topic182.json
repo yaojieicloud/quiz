@@ -1,0 +1,488 @@
+[
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“群儿戏于庭”中“庭”的意思是？",
+    "options": ["庭院", "大厅", "教室", "操场"],
+    "answer": "0",
+    "explanation": "“庭”指庭院、院子，句子意思是孩子们在庭院里玩耍。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“一儿登瓮”中“瓮”指的是什么？",
+    "options": ["一种口小肚大的陶器", "大大的水缸", "木桶", "铁锅"],
+    "answer": "0",
+    "explanation": "“瓮”是口小肚大的陶制容器，课文里孩子爬上去玩不小心掉进水里。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“众皆弃去”中“弃”的意思是？",
+    "options": ["丢弃、离开", "拥抱", "保护", "寻找"],
+    "answer": "0",
+    "explanation": "“弃”是抛弃、丢下的意思，“众皆弃去”指孩子们都丢下落水同伴跑走了。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“光持石击瓮破之”中“持”的意思是？",
+    "options": ["拿着", "扔掉", "踢开", "修理"],
+    "answer": "0",
+    "explanation": "“持”是拿着、握着，司马光拿着石头去砸瓮。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“水迸”中“迸”的意思是？",
+    "options": ["涌出、喷出", "慢慢流走", "结冰", "变少"],
+    "answer": "0",
+    "explanation": "“迸”是涌出、喷出的意思，瓮被砸破后水一下子涌了出来。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《司马光》是一篇用文言文写的课文。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "《司马光》是小学阶段接触的一篇文言文，语言简练，和现代白话文不同。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "小伙伴落水后，司马光也跟着其他孩子一起跑掉了。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "其他孩子跑掉了，但司马光没有逃走，而是留下来想办法救人。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "司马光用石头砸破瓮，水流出来，落水孩子得救了。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "课文原句“光持石击瓮破之，水迸，儿得活”说的正是这件事。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“群儿戏于庭”的意思是孩子们在家里看电视。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "“群儿戏于庭”是孩子们在庭院里游戏玩耍，不是在家里看电视。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "这个故事告诉我们遇到危险要冷静、动脑筋想办法。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "司马光没有慌乱逃跑，而是冷静砸瓮救人，正是机智勇敢的好榜样。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "群儿戏于____，一儿登瓮，足跌____水中。",
+    "blank_count": 2,
+    "blank_answers": ["庭", "没"],
+    "answer": "庭,没",
+    "explanation": "课文原句为“群儿戏于庭，一儿登瓮，足跌没水中”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "众皆____去，光____石击瓮破之。",
+    "blank_count": 2,
+    "blank_answers": ["弃", "持"],
+    "answer": "弃,持",
+    "explanation": "课文原句为“众皆弃去，光持石击瓮破之”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "水____，儿得____。",
+    "blank_count": 2,
+    "blank_answers": ["迸", "活"],
+    "answer": "迸,活",
+    "explanation": "课文原句为“水迸，儿得活”，水涌出来孩子得救活了下来。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "光持石击瓮破之，意思是司马光____石头____瓮。",
+    "blank_count": 2,
+    "blank_answers": ["拿着", "砸破"],
+    "answer": "拿着,砸破",
+    "explanation": "“持”是拿着，“破之”是把它砸破，整句意为司马光拿石头砸破瓮。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "一儿登瓮，足____没水中，众皆弃____。",
+    "blank_count": 2,
+    "blank_answers": ["跌", "去"],
+    "answer": "跌,去",
+    "explanation": "课文原句为“一儿登瓮，足跌没水中，众皆弃去”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "用自己的话说说“群儿戏于庭，一儿登瓮，足跌没水中”的意思。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：一群孩子在庭院里玩耍，其中一个孩子爬上大瓮，脚下一滑掉进装满水的瓮里。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "其他孩子和司马光面对小伙伴落水，表现有什么不同？",
+    "answer": "待老师点评",
+    "explanation": "参考示例：其他孩子都吓得丢下同伴跑走了；司马光没有慌，他拿石头砸破瓮把人救了出来。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "你觉得司马光是个怎样的孩子？说说你的理由。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：司马光是个机智勇敢的孩子。小伙伴落水大家都跑了，他却能冷静想办法砸瓮救人。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "如果你在现场，你会想出什么办法救落水的小伙伴？写一写。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：我会赶快去找大人帮忙，或者找根长木棍、绳子伸进瓮里，让落水的孩子抓住拉上来。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "这个故事告诉了我们什么道理？请写几句话。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：遇到危险不要慌张，要冷静动脑筋想办法；看到别人有危险，要勇敢地去帮助。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把左边的字词和右边的意思连起来。",
+    "options": ["庭", "瓮", "弃", "持", "迸"],
+    "match_options": ["涌出", "拿着", "口小肚大的陶器", "离开", "庭院"],
+    "answer": "0:4,1:2,2:3,3:1,4:0",
+    "explanation": "庭是庭院，瓮是口小肚大的陶器，弃是离开，持是拿着，迸是涌出。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把左边的句子和右边的意思连起来。",
+    "options": ["群儿戏于庭", "一儿登瓮", "众皆弃去", "光持石击瓮破之", "儿得活"],
+    "match_options": ["落水小孩活了下来", "孩子们在庭院玩耍", "司马光拿石头砸瓮", "小孩爬上瓮", "孩子们都丢下他跑了"],
+    "answer": "0:1,1:3,2:4,3:2,4:0",
+    "explanation": "群儿戏于庭=孩子们在庭院玩耍；一儿登瓮=小孩爬上瓮；众皆弃去=孩子们都跑走；光持石击瓮破之=司马光砸瓮；儿得活=小孩活了下来。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把左边的人物和右边的表现连起来。",
+    "options": ["其他孩子", "司马光"],
+    "match_options": ["冷静机智，砸瓮救人", "惊慌逃跑，丢下同伴"],
+    "answer": "0:1,1:0",
+    "explanation": "其他孩子惊慌逃跑丢下同伴，司马光冷静机智砸瓮救人。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把左边的词语和右边的近义词连起来。",
+    "options": ["弃", "持", "迸", "登", "没"],
+    "match_options": ["沉没", "爬上", "丢弃", "拿着", "涌出"],
+    "answer": "0:2,1:3,2:4,3:1,4:0",
+    "explanation": "弃—丢弃，持—拿着，迸—涌出，登—爬上，没—沉没。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把左边的情节类型和右边的具体内容连起来。",
+    "options": ["起因", "经过", "结果"],
+    "match_options": ["水迸，儿得活", "一儿登瓮，足跌没水中", "光持石击瓮破之"],
+    "answer": "0:1,1:2,2:0",
+    "explanation": "起因是小孩登瓮落水，经过是司马光砸瓮，结果是水流出来孩子得救。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "按《司马光》课文，排列故事发生的先后顺序。",
+    "options": ["水迸，儿得活", "群儿戏于庭", "光持石击瓮破之", "一儿登瓮，足跌没水中", "众皆弃去"],
+    "answer": "1,3,4,2,0",
+    "explanation": "正确顺序：群儿戏于庭→一儿登瓮落水→众皆弃去→光持石击瓮破之→水迸儿得活。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "排列司马光救人的动作顺序。",
+    "options": ["击瓮破之", "水迸", "持石", "儿得活"],
+    "answer": "2,0,1,3",
+    "explanation": "正确顺序：先持石（拿石头）→击瓮破之（砸破瓮）→水迸（水涌出）→儿得活（孩子得救）。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "排列故事发展的顺序。",
+    "options": ["光持石击瓮破之", "群儿戏于庭", "众皆弃去", "一儿登瓮足跌没水中"],
+    "answer": "1,3,2,0",
+    "explanation": "正确顺序：群儿戏于庭→一儿登瓮落水→众皆弃去→光持石击瓮破之。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "按时间先后排列下面的内容。",
+    "options": ["一儿登瓮", "水迸儿得活", "群儿戏于庭", "众皆弃去", "光持石击瓮"],
+    "answer": "2,0,3,4,1",
+    "explanation": "正确顺序：群儿戏于庭→一儿登瓮→众皆弃去→光持石击瓮→水迸儿得活。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "排列救人过程的逻辑顺序。",
+    "options": ["瓮破", "儿得活", "持石击瓮", "水迸"],
+    "answer": "2,0,3,1",
+    "explanation": "正确顺序：持石击瓮→瓮破→水迸→儿得活。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "司马光小时候，和一群孩子在院子里玩耍。有一个孩子爬上大瓮，不小心掉进水里。别的孩子们都吓跑了，只有司马光不慌张。他搬起一块大石头，用力砸破大瓮，水流出来，落水的孩子得救了。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "孩子们在哪里玩耍？",
+        "options": ["院子里", "学校里", "河边", "山上"],
+        "answer": "0",
+        "explanation": "短文第一句说“和一群孩子在院子里玩耍”。"
+      },
+      {
+        "type": "choice",
+        "q": "司马光用什么砸破了瓮？",
+        "options": ["木棍", "石头", "砖头", "拳头"],
+        "answer": "1",
+        "explanation": "短文说“他搬起一块大石头，用力砸破大瓮”。"
+      }
+    ],
+    "answer": "0,1",
+    "explanation": "本阅读考查地点和救人工具，第1题选院子里，第2题选石头。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "从前有个聪明的小男孩叫司马光。一天，小伙伴掉进装满水的大瓮里，大家急得哭喊着跑开。司马光想：如果去叫大人，孩子可能就淹死了。于是他举起石头砸瓮，水一下子涌出来，小伙伴得救啦！",
+    "reading_items": [
+      {
+        "type": "judge",
+        "q": "小伙伴们落水后都冷静地一起救人。",
+        "options": ["对", "错"],
+        "answer": "1",
+        "explanation": "短文说大家“急得哭喊着跑开”，并没有一起救人。"
+      },
+      {
+        "type": "choice",
+        "q": "司马光为什么自己砸瓮而不去叫大人？",
+        "options": ["因为来不及", "因为懒得叫", "因为大人在场", "因为他害怕"],
+        "answer": "0",
+        "explanation": "他认为去叫大人来不及，孩子会淹死，所以要马上救人。"
+      },
+      {
+        "type": "choice",
+        "q": "这个故事表现了司马光什么特点？",
+        "options": ["勇敢机智", "胆小怕事", "调皮捣蛋", "粗心大意"],
+        "answer": "0",
+        "explanation": "他自己想办法砸瓮救人是勇敢又机智的表现。"
+      }
+    ],
+    "answer": "1,0,0",
+    "explanation": "本阅读考查人物表现、救人原因和品质，答案依次为错、因为来不及、勇敢机智。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "司马光七岁时就很聪明。那天院子里的大瓮装满了水，一个小孩上去玩，脚一滑掉进去。别的孩子都跑了，司马光却搬石头砸瓮。水喷出来，孩子保住了性命。从此大家更佩服司马光了。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "落水孩子是怎么掉进瓮里的？",
+        "options": ["被人推的", "脚滑掉进去的", "自己跳的", "被风吹的"],
+        "answer": "1",
+        "explanation": "短文说“脚一滑掉进去”。"
+      },
+      {
+        "type": "judge",
+        "q": "别的孩子都留下来一起救落水同伴。",
+        "options": ["对", "错"],
+        "answer": "1",
+        "explanation": "短文说“别的孩子都跑了”，并没有留下来救人。"
+      },
+      {
+        "type": "choice",
+        "q": "孩子得救后，大家怎样看待司马光？",
+        "options": ["更佩服他", "更讨厌他", "不理他", "害怕他"],
+        "answer": "0",
+        "explanation": "短文最后说“从此大家更佩服司马光了”。"
+      }
+    ],
+    "answer": "1,1,0",
+    "explanation": "本阅读考查落水原因、他人表现和大家态度，答案依次为脚滑掉进去、错、更佩服他。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "古时候，有个孩子叫司马光。他和朋友在庭院里做游戏，一个朋友爬上大水瓮，忽然掉进去。朋友们惊慌逃走，司马光却冷静地找来石头，砸破水瓮。水哗地流出，朋友得救。这故事一直流传到今天。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "朋友掉进了什么里面？",
+        "options": ["水井", "大水瓮", "河里", "水池"],
+        "answer": "1",
+        "explanation": "短文说“爬上大水瓮，忽然掉进去”。"
+      },
+      {
+        "type": "choice",
+        "q": "朋友们看到同伴落水怎么做？",
+        "options": ["一起救人", "惊慌逃走", "去叫大人", "找绳子"],
+        "answer": "1",
+        "explanation": "短文说“朋友们惊慌逃走”。"
+      }
+    ],
+    "answer": "1,1",
+    "explanation": "本阅读考查落水容器和朋友的反应，两题都选大水瓮和惊慌逃走。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 182,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "司马光是我国古代有名的政治家，他小时候就很聪明。一次，一个孩子掉进瓮里快被淹没，别的孩子哭着跑开。司马光拿起石头砸瓮，水流光了，孩子得活。老师常拿这个故事教我们要勇敢、爱动脑筋。",
+    "reading_items": [
+      {
+        "type": "judge",
+        "q": "司马光长大后成了有名的政治家。",
+        "options": ["对", "错"],
+        "answer": "0",
+        "explanation": "短文第一句就说他是我国古代有名的政治家。"
+      },
+      {
+        "type": "choice",
+        "q": "老师用这个故事教育我们要怎样？",
+        "options": ["勇敢爱动脑筋", "只顾自己", "乱跑乱叫", "不救别人"],
+        "answer": "0",
+        "explanation": "短文说老师教我们要“勇敢、爱动脑筋”。"
+      },
+      {
+        "type": "judge",
+        "q": "落水的孩子最后没能得救。",
+        "options": ["对", "错"],
+        "answer": "1",
+        "explanation": "短文说“孩子得活”，意思是孩子得救了。"
+      }
+    ],
+    "answer": "0,0,1",
+    "explanation": "本阅读考查人物身份、教育意义和结局，答案依次为对、勇敢爱动脑筋、错。"
+  }
+]

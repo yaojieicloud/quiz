@@ -17,13 +17,11 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import (
     User, ExamRecord, AnswerRecord, AIReport, PointsLedger,
-    WrongQuestion, Question, Topic, Subject,
+    WrongQuestion, Question, Topic, Subject, StudentMastery,
 )
 from schemas import ExamRecordOut, AnswerRecordOut, QuestionOut
 from core.deps import require_role
-from core.mastery import (
-    STATUS_LABEL, _topic_totals, _load_student_rows, _rows_to_sessions, _eval_topic,
-)
+from core.mastery import STATUS_LABEL
 from core.tier import tier_label
 
 router = APIRouter(prefix="/api/admin", tags=["管理端学情分析"])
@@ -367,23 +365,23 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
 
 
 def _student_mastery_map(db: Session, student_id: int, tier: int = 1) -> dict:
-    """复用掌握度算法（core.mastery），返回 {topic_id: {status, status_label, rate, coverage}}。
+    """读 StudentMastery 缓存表，返回 {topic_id: {status, status_label, rate, coverage}}。
 
-    tier 化：仅计算指定档位（默认初级）。作用域与学员端掌握度一致 (uid, topic, tier)。
+    tier 化：仅取指定档位。作用域与学员端掌握度一致 (uid, topic, tier)。
+    表中无记录的课视为 not_started。
     """
-    rows = _load_student_rows(db, student_id)
-    sessions = _rows_to_sessions(rows)   # key=(uid, topic_id, tier)
-    totals = _topic_totals(db)            # key=(topic_id, tier)
+    rows = (
+        db.query(StudentMastery)
+        .filter(StudentMastery.student_id == student_id, StudentMastery.tier == tier)
+        .all()
+    )
     out = {}
-    for (tid, tt_tier), tt in totals.items():
-        if tt_tier != tier:
-            continue
-        ev = _eval_topic(sessions.get((student_id, tid, tt_tier), []), tt)
-        out[tid] = {
-            "status": ev["status"],
-            "status_label": STATUS_LABEL[ev["status"]],
-            "rate": ev["rate"],
-            "coverage": ev["coverage"],
+    for r in rows:
+        out[r.topic_id] = {
+            "status": r.status,
+            "status_label": STATUS_LABEL[r.status],
+            "rate": r.rate,
+            "coverage": r.coverage,
         }
     return out
 
@@ -793,3 +791,99 @@ def delete_report(
     db.commit()
 
     return {"message": "报告已删除"}
+
+
+# ============ 最近刷题动态 ============
+def build_recent_activity(db: Session, student_id: Optional[int], subject_ids: Optional[str],
+                          days: int, limit: int) -> dict:
+    """最近刷题动态聚合（admin 与学员端共用）。
+
+    返回：{days, sessions, by_topic}
+    - sessions: 最近答题场次明细（时间、学员、科目、课时列表、题数、得分）
+    - by_topic: 各课累计答题量聚合（学员/科目/课时/题数/正确率）
+    """
+    from datetime import datetime, timedelta
+    since = datetime.utcnow() - timedelta(days=days)
+    q = (
+        db.query(ExamRecord)
+        .filter(ExamRecord.started_at >= since)
+    )
+    if student_id:
+        q = q.filter(ExamRecord.user_id == student_id)
+    if subject_ids:
+        ids = [int(x.strip()) for x in subject_ids.split(',') if x.strip()]
+        if ids:
+            q = q.filter(ExamRecord.subject_id.in_(ids))
+    records = (
+        q.order_by(ExamRecord.started_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+    students = {u.id: (u.nickname or u.username) for u in db.query(User).filter(User.role == "student").all()}
+    subjects = {s.id: s.name for s in db.query(Subject).all()}
+    topic_name = {t.id: t.name for t in db.query(Topic).all()}
+
+    sessions = []
+    agg = {}  # (student_id, subject_id, topic_id) -> {answers, correct}
+    for r in records:
+        # 该次涉及的不重复课时
+        trows = (
+            db.query(Question.topic_id, func.count(AnswerRecord.id), func.sum(case((AnswerRecord.is_correct == True, 1), else_=0)))
+            .join(AnswerRecord, AnswerRecord.question_id == Question.id)
+            .filter(AnswerRecord.exam_record_id == r.id)
+            .group_by(Question.topic_id)
+            .all()
+        )
+        topics_info = [
+            {"topic_id": tid, "topic": topic_name.get(tid, f"课时{tid}"), "answers": int(n), "correct": int(c or 0)}
+            for tid, n, c in trows
+        ]
+        for ti in topics_info:
+            key = (r.user_id, r.subject_id, ti["topic_id"])
+            if key not in agg:
+                agg[key] = {"answers": 0, "correct": 0}
+            agg[key]["answers"] += ti["answers"]
+            agg[key]["correct"] += ti["correct"]
+        sessions.append({
+            "record_id": r.id,
+            "student_id": r.user_id,
+            "student": students.get(r.user_id, f"学员{r.user_id}"),
+            "subject_id": r.subject_id,
+            "subject": subjects.get(r.subject_id, r.subject_name or ""),
+            "tier": r.tier,
+            "topics": topics_info,
+            "total": r.total,
+            "score": r.score,
+            "started_at": r.started_at.isoformat() if r.started_at else None,
+        })
+
+    by_topic = []
+    for (uid, sid, tid), v in sorted(agg.items(), key=lambda x: -x[1]["answers"]):
+        by_topic.append({
+            "student_id": uid,
+            "student": students.get(uid, f"学员{uid}"),
+            "subject_id": sid,
+            "subject": subjects.get(sid, ""),
+            "topic_id": tid,
+            "topic": topic_name.get(tid, f"课时{tid}"),
+            "answers": v["answers"],
+            "correct": v["correct"],
+            "rate": round(v["correct"] / v["answers"] * 100, 1) if v["answers"] else 0,
+        })
+
+    return {"days": days, "sessions": sessions, "by_topic": by_topic}
+
+
+@router.get("/analytics/recent-activity")
+def analytics_recent_activity(
+    student_id: Optional[int] = None,
+    subject_ids: Optional[str] = Query(None, description="逗号分隔的科目 ID，如 '1,2,3'"),
+    days: int = Query(7, ge=1, le=90),
+    limit: int = Query(100, ge=1, le=500),
+    _=Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """管理端：最近刷题动态（近 N 天每场考试的科目/课时/得分）。"""
+    return build_recent_activity(db, student_id, subject_ids, days, limit)
+

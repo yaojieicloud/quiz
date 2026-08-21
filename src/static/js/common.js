@@ -84,7 +84,7 @@ function renderTopbar(active = '') {
     { key: 'redeem', href: 'redeem.html', text: '🎁 兑换商城', roles: ['student','admin'] },
     { key: 'records', href: 'records.html', text: '📋 答题记录', roles: ['student'] },
     { key: 'wrong', href: 'wrong.html', text: '❌ 错题本', roles: ['student'] },
-    { key: 'stats', href: 'stats.html', text: '📊 学习统计', roles: ['student'] },
+    { key: 'stats', href: 'stats.html', text: '🕒 最新动态', roles: ['student'] },
     { key: 'mastery', href: 'mastery.html', text: '🎯 掌握度', roles: ['student', 'parent'] },
     { key: 'parent', href: 'parent.html', text: '👶 孩子情况', roles: ['parent'] },
     { key: 'admin', href: 'admin.html', text: '⚙️ 管理后台', roles: ['admin'] },

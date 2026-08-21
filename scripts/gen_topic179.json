@@ -1,0 +1,404 @@
+[
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "choice",
+    "content": "课文《搭船的鸟》的作者是谁？",
+    "options": ["郭风", "老舍", "叶圣陶", "冰心"],
+    "answer": "0",
+    "explanation": "《搭船的鸟》是著名散文家郭风写的一篇儿童散文，收录在三年级上册语文教材中。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "choice",
+    "content": "搭船的鸟是一只什么鸟？",
+    "options": ["麻雀", "翠鸟", "燕子", "鹦鹉"],
+    "answer": "1",
+    "explanation": "课文中搭船的是一只翠鸟，小作者仔细观察了它的外形和捕鱼的动作。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "choice",
+    "content": "翠鸟的羽毛是什么颜色的？",
+    "options": ["红色", "翠绿", "黄色", "黑色"],
+    "answer": "1",
+    "explanation": "课文中写翠鸟“羽毛是翠绿的”，这是它外形描写的重要特点。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "choice",
+    "content": "翠鸟有一张什么样的嘴？",
+    "options": ["黑色的短嘴", "红色的长嘴", "黄色的弯嘴", "绿色的尖嘴"],
+    "answer": "1",
+    "explanation": "课文描写翠鸟“还有一张红色的长嘴”，捕鱼后“红色的长嘴衔着一条小鱼”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "choice",
+    "content": "翠鸟捕鱼时，一下子怎样了？",
+    "options": ["飞上天空", "冲进水里", "停在树枝", "躲进草丛"],
+    "answer": "1",
+    "explanation": "课文写“它一下子冲进水里，不见了”，这是翠鸟捕鱼的敏捷动作。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "judge",
+    "content": "《搭船的鸟》的作者是郭风。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "正确。本文作者郭风，是一篇描写细致观察的散文。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "judge",
+    "content": "翠鸟的羽毛是红色的。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "错误。课文中翠鸟的羽毛是翠绿的，只有长嘴是红色的。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "judge",
+    "content": "翠鸟站在船头，一口把小鱼吞了下去。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "正确。课文写翠鸟捕鱼后“站在船头，一口把小鱼吞了下去”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "judge",
+    "content": "课文中说翠鸟比鹦鹉还漂亮。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "正确。原文写道“比鹦鹉还漂亮”，突出翠鸟外形的美丽。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "judge",
+    "content": "这只搭船的鸟是小作者在陆地上看到的。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "错误。小作者是和母亲坐小船到乡下时，在船头看到这只翠鸟的。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "fill",
+    "content": "天下着小雨，雨点打在船篷上，____地响。",
+    "answer": "沙啦沙啦",
+    "explanation": "课文中用“沙啦沙啦”这个拟声词描写雨点打在船篷上的声音。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "fill",
+    "content": "它的羽毛是____的，翅膀带着一些蓝色。",
+    "answer": "翠绿",
+    "explanation": "课文中描写翠鸟羽毛是“翠绿的”，翅膀带蓝，色彩鲜艳。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "fill",
+    "content": "我看见一只彩色的小鸟站在船头，多么____的小鸟啊！",
+    "answer": "美丽",
+    "explanation": "原文感叹“多么美丽的小鸟啊”，表达小作者对翠鸟的喜爱。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "fill",
+    "content": "后来雨停了。我看见一只____的小鸟站在船头。",
+    "answer": "彩色",
+    "explanation": "课文写“我看见一只彩色的小鸟站在船头”，点明小鸟的颜色丰富。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "fill",
+    "blank_count": 2,
+    "content": "翠鸟有一张____的____嘴。",
+    "blank_answers": ["红色", "长"],
+    "answer": "红色,长",
+    "explanation": "课文中描写翠鸟“还有一张红色的长嘴”，两个空分别填“红色”和“长”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "essay",
+    "content": "请仔细观察一种小动物，写几句话描写它的外形（颜色、样子等）。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：我家的小猫浑身雪白，两只耳朵尖尖的，眼睛像两颗绿宝石，尾巴又细又长，真可爱。要按顺序写外形，用上表示颜色的词语。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "essay",
+    "content": "课文中作者是怎么观察翠鸟的？说说你的体会。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：作者先看到翠鸟站在船头，再仔细看它的羽毛、翅膀和嘴的颜色，最后观察它捕鱼的连续动作。体会：只有仔细、按顺序观察，才能把事物写得清楚又生动。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "essay",
+    "content": "你喜欢这只翠鸟吗？为什么？请写几句话。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：我喜欢这只翠鸟，因为它羽毛翠绿、翅膀带蓝，比鹦鹉还漂亮，而且捕鱼动作又快又准，真是一只本领高强的小鸟。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "essay",
+    "content": "仿照课文，用“一下子……没一会儿……”写一写某种小动物的动作。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：小松鼠一下子窜上树干，不见了。没一会儿，它抱着一颗松果从树杈上探出头来。注意用上连接词写出动作的迅速和连贯。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "essay",
+    "content": "观察是一种好习惯。你在生活中观察过什么？写下来和同学分享。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：我观察过马路边的小蚂蚁。它们排成一队，用下巴搬着饭粒往洞口走，遇到困难就互相帮忙，真有趣。要写出观察的对象和发现。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "match",
+    "content": "把翠鸟的外形特点和对应的描写连起来。",
+    "options": ["翠鸟的羽毛", "翠鸟的翅膀", "翠鸟的嘴", "翠鸟捕鱼", "翠鸟站着"],
+    "match_options": ["带蓝色", "红色长嘴", "翠绿", "船头", "冲进水里"],
+    "answer": "0:2,1:0,2:1,3:4,4:3",
+    "explanation": "羽毛是翠绿的，翅膀带蓝色，嘴是红色长嘴，捕鱼时冲进水里，平时站在船头。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "match",
+    "content": "把下面的人物或事物和他们在文中的情况连起来。",
+    "options": ["小作者", "翠鸟", "船夫", "鹦鹉"],
+    "match_options": ["船头", "笼子里", "船舱里", "摇船"],
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "小作者在船舱里，翠鸟站在船头，船夫在摇船，鹦鹉被关在笼子里作对比。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "match",
+    "content": "把翠鸟的动作和对应的对象连起来。",
+    "options": ["冲进", "衔着", "吞下", "停在"],
+    "match_options": ["小鱼", "船头", "水里", "下去"],
+    "answer": "0:2,1:0,2:3,3:1",
+    "explanation": "冲进（水里）、衔着（小鱼）、吞下（下去）、停在（船头），是连贯的捕鱼动作。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "match",
+    "content": "把翠鸟的特点和描写连起来。",
+    "options": ["羽毛", "翅膀", "嘴", "样子"],
+    "match_options": ["带蓝色", "翠绿", "比鹦鹉还漂亮", "红色长嘴"],
+    "answer": "0:1,1:0,2:3,3:2",
+    "explanation": "羽毛翠绿，翅膀带蓝色，嘴是红色长嘴，整体样子比鹦鹉还漂亮。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "match",
+    "content": "把作者的观察内容和发现连起来。",
+    "options": ["看外形", "看颜色", "看动作", "看捕鱼"],
+    "match_options": ["吞下小鱼", "彩色美丽", "羽毛翅膀嘴", "冲进飞起"],
+    "answer": "0:2,1:1,2:3,3:0",
+    "explanation": "看外形（羽毛翅膀嘴），看颜色（彩色美丽），看动作（冲进飞起），看捕鱼（吞下小鱼）。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "sort",
+    "content": "请把翠鸟捕鱼的连续动作按课文顺序排一排。",
+    "options": ["飞起来了", "冲进水里", "一口吞下去", "衔着一条小鱼"],
+    "answer": "1,0,3,2",
+    "explanation": "顺序：冲进水里 → 飞起来了 → 衔着一条小鱼 → 一口吞下去。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "sort",
+    "content": "请把课文中事情发生的先后顺序排一排。",
+    "options": ["后来雨停了", "我们到乡下", "翠鸟捕鱼", "天下着小雨"],
+    "answer": "1,3,0,2",
+    "explanation": "顺序：我们到乡下 → 天下着小雨 → 后来雨停了 → 翠鸟捕鱼。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "sort",
+    "content": "请把课文中描写翠鸟外形的顺序排一排。",
+    "options": ["翅膀带着蓝色", "羽毛是翠绿的", "比鹦鹉还漂亮", "一张红色的长嘴"],
+    "answer": "1,0,2,3",
+    "explanation": "顺序：羽毛是翠绿的 → 翅膀带着蓝色 → 比鹦鹉还漂亮 → 一张红色的长嘴。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "sort",
+    "content": "请把翠鸟捕鱼时的动作按课文顺序排一排。",
+    "options": ["它站在船头", "红色的长嘴衔着小鱼", "它一下子冲进水里", "它飞起来了"],
+    "answer": "2,3,1,0",
+    "explanation": "顺序：冲进水里 → 飞起来了 → 衔着小鱼 → 站在船头。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "sort",
+    "content": "请把翠鸟入水捕鱼的过程按顺序排列。",
+    "options": ["不见了", "冲进水里", "飞起来了", "吞了下去"],
+    "answer": "1,0,2,3",
+    "explanation": "顺序：冲进水里 → 不见了 → 飞起来了 → 吞了下去。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "reading",
+    "content": "我家的小猫雪雪很可爱。它全身雪白，只有尾巴尖上有一点黑。早上，它喜欢趴在窗台上晒太阳；傍晚，它一下子跳上桌子，用爪子拨弄我的橡皮。没一会儿，橡皮滚到地上，它又一口叼起来跑开了。",
+    "reading_items": [
+      {"type": "choice", "q": "小猫的尾巴是什么样子的？", "options": ["全白", "全黑", "白尾巴尖上有点黑", "长尾巴"], "answer": "2", "explanation": "文中写“只有尾巴尖上有一点黑”。"},
+      {"type": "judge", "q": "小猫早上喜欢趴在窗台上晒太阳。", "options": ["对", "错"], "answer": "0", "explanation": "文中明确写“早上，它喜欢趴在窗台上晒太阳”。"},
+      {"type": "fill", "q": "傍晚，小猫一下子跳上____，用爪子拨弄橡皮。", "options": [], "answer": "桌子", "explanation": "原文是“跳上桌子”。"}
+    ],
+    "answer": "2,0,桌子",
+    "explanation": "短文仿照《搭船的鸟》的观察方法，按顺序写小猫外形与动作，考查提取信息的能力。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "reading",
+    "content": "放学路上，我看见一群小蚂蚁在搬家。它们排成一条长长的队伍，用下巴搬着饭粒往高处走。忽然下起小雨，没一会儿，蚂蚁们全钻进了墙角的洞里。我想，它们一定提前知道了要下雨。",
+    "reading_items": [
+      {"type": "choice", "q": "小蚂蚁在做什么？", "options": ["找水喝", "搬家", "睡觉", "打架"], "answer": "1", "explanation": "文中第一句写“我看见一群小蚂蚁在搬家”。"},
+      {"type": "choice", "q": "蚂蚁把饭粒搬到哪里去？", "options": ["低处", "高处", "水里", "树上"], "answer": "1", "explanation": "文中写“往高处走”。"},
+      {"type": "judge", "q": "小作者认为蚂蚁提前知道要下雨。", "options": ["对", "错"], "answer": "0", "explanation": "文末写“我想，它们一定提前知道了要下雨”，符合文意。"}
+    ],
+    "answer": "1,1,0",
+    "explanation": "短文训练按顺序观察并提取关键信息，与课文观察描写的方法一致。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "reading",
+    "content": "阳台上的向日葵开花了。金黄金黄的花盘朝着太阳，像一张圆圆的笑脸。叶子绿绿的、大大的。中午，一只小蜜蜂一下子飞过来，落在花盘上采蜜；没一会儿，它又飞走了，腿上沾满了花粉。",
+    "reading_items": [
+      {"type": "fill", "q": "向日葵的花盘是____色的，朝着____。", "options": [], "answer": "金黄,太阳", "explanation": "文中写“金黄金黄的花盘朝着太阳”。"},
+      {"type": "choice", "q": "谁飞过来在花盘上采蜜？", "options": ["蝴蝶", "小鸟", "小蜜蜂", "蜻蜓"], "answer": "2", "explanation": "文中写“一只小蜜蜂一下子飞过来，落在花盘上采蜜”。"},
+      {"type": "judge", "q": "小蜜蜂采完蜜腿上沾满了花粉。", "options": ["对", "错"], "answer": "0", "explanation": "文末写“腿上沾满了花粉”，正确。"}
+    ],
+    "answer": "金黄,太阳,2,0",
+    "explanation": "短文练习用“一下子……没一会儿……”体会动作描写，并提取颜色与事物信息。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "reading",
+    "content": "夏天的雨来得快。刚开始，天上飘来几朵乌云。忽然，雨点沙啦沙啦地落下来，打在树叶上。没一会儿，雨停了，树叶被洗得绿油油的，空气也变得清新了。远处，一道彩虹挂在天上。",
+    "reading_items": [
+      {"type": "choice", "q": "雨点打在什么上面？", "options": ["屋顶", "树叶", "窗户", "地面"], "answer": "1", "explanation": "文中写“打在树叶上”。"},
+      {"type": "fill", "q": "雨停后，____被洗得绿油油的。", "options": [], "answer": "树叶", "explanation": "文中写“树叶被洗得绿油油的”。"},
+      {"type": "judge", "q": "雨停后天上出现了一道彩虹。", "options": ["对", "错"], "answer": "0", "explanation": "文末写“一道彩虹挂在天上”，正确。"}
+    ],
+    "answer": "1,树叶,0",
+    "explanation": "短文用拟声词“沙啦沙啦”和“没一会儿”描写雨景，与课文写法相近。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 179,
+    "tier": 1,
+    "difficulty": 1,
+    "type": "reading",
+    "content": "夜晚的池塘真安静。圆圆的月亮倒映在水里，像一个大玉盘。一只青蛙蹲在荷叶上，一下子跳进水里，不见了。没一会儿，它又从另一片荷叶下探出头来，“呱”地叫了一声。池塘里泛起一圈圈波纹。",
+    "reading_items": [
+      {"type": "choice", "q": "月亮倒映在水里像什么？", "options": ["小船", "大玉盘", "镜子", "星星"], "answer": "1", "explanation": "文中写“像一个大玉盘”。"},
+      {"type": "choice", "q": "青蛙一开始蹲在哪里？", "options": ["水里", "荷叶上", "岸边", "石头上"], "answer": "1", "explanation": "文中写“一只青蛙蹲在荷叶上”。"},
+      {"type": "judge", "q": "青蛙跳进水里后就一直没再出现。", "options": ["对", "错"], "answer": "1", "explanation": "文中写“没一会儿，它又从另一片荷叶下探出头来”，所以说法错误。"}
+    ],
+    "answer": "1,1,1",
+    "explanation": "短文仿照课文用“一下子……没一会儿……”写动物动作，考查按顺序理解与判断。"
+  }
+]

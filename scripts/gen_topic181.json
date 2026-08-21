@@ -1,0 +1,466 @@
+[
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《山行》这首诗的作者是谁？",
+    "options": ["杜牧", "苏轼", "叶绍翁", "李白"],
+    "answer": "0",
+    "explanation": "《山行》是唐代诗人杜牧写的一首描写秋天山林景色的诗。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“停车坐爱枫林晚”中的“坐”是什么意思？",
+    "options": ["因为", "坐下", "座位", "坐车"],
+    "answer": "0",
+    "explanation": "这里的“坐”是“因为”的意思，诗人因为喜爱傍晚的枫林而停下马车。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《赠刘景文》中“一年好景君须记”，这里的“君”指的是谁？",
+    "options": ["刘景文", "苏轼自己", "杜牧", "读者"],
+    "answer": "0",
+    "explanation": "这首诗是苏轼写给朋友刘景文的，所以“君”指刘景文，是尊称“您”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《夜书所见》的作者是下列哪一位？",
+    "options": ["叶绍翁", "杜牧", "苏轼", "白居易"],
+    "answer": "0",
+    "explanation": "《夜书所见》是宋代诗人叶绍翁的作品，写秋夜思乡之情。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "choice",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“霜叶红于二月花”描写的是哪个季节的景色？",
+    "options": ["秋天", "春天", "夏天", "冬天"],
+    "answer": "0",
+    "explanation": "“霜叶”是经霜的枫叶，枫叶在秋天变红，这句诗写的是秋天的景色。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《山行》描写的是春天百花盛开的景色。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "《山行》写的是秋天，“霜叶红于二月花”描写经霜的红枫，不是春天。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《赠刘景文》中“荷尽已无擎雨盖”写的是荷花已经凋谢。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "“荷尽”就是荷花凋谢，“擎雨盖”指像伞一样的荷叶，诗句写荷花谢了、荷叶也没了。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《夜书所见》表达了诗人思念家乡、思念亲人的感情。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "诗中“江上秋风动客情”的“客情”就是漂泊在外的思乡之情，说法正确。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“菊残犹有傲霜枝”中的“傲霜枝”指的是菊花凋残后依然挺立的枝干。",
+    "options": ["对", "错"],
+    "answer": "0",
+    "explanation": "菊花虽残，却还留有傲立于寒霜中的枝干，赞美菊花坚强，说法正确。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "judge",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《山行》的作者是宋代诗人苏轼。",
+    "options": ["对", "错"],
+    "answer": "1",
+    "explanation": "《山行》的作者是唐代诗人杜牧，不是苏轼，说法错误。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "远上寒山石径____。",
+    "answer": "斜",
+    "explanation": "《山行》原句为“远上寒山石径斜”，写弯弯的石头小路伸向远山。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "停车____爱枫林晚，霜叶红于二月____。",
+    "answer": "坐,花",
+    "blank_count": 2,
+    "blank_answers": ["坐", "花"],
+    "explanation": "《山行》原句为“停车坐爱枫林晚，霜叶红于二月花”。“坐”是“因为”的意思。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "荷尽已无擎雨____，菊残犹有傲霜枝。",
+    "answer": "盖",
+    "explanation": "《赠刘景文》原句为“荷尽已无擎雨盖”，“擎雨盖”指像伞一样托着雨的荷叶。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "萧萧____叶送寒声，江上秋风动客情。",
+    "answer": "梧",
+    "explanation": "《夜书所见》原句为“萧萧梧叶送寒声”，写梧桐叶在秋风中沙沙作响。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "fill",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "知有儿童挑____，夜深篱落一灯明。",
+    "answer": "促织",
+    "explanation": "《夜书所见》原句为“知有儿童挑促织”，“促织”就是蟋蟀，指孩子们夜里捉蟋蟀。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "用自己的话写一写《山行》后两句“停车坐爱枫林晚，霜叶红于二月花”的意思。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：诗人因为喜爱傍晚的枫林而停下马车，那经霜的枫叶比二月里盛开的鲜花还要红艳美丽。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "诗人为什么说“霜叶红于二月花”？写一写你的理解。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：秋天的枫叶经过寒霜变得火红，诗人觉得它比春天二月的花更鲜艳，写出了秋叶独特的美和对秋天的喜爱。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《赠刘景文》中“一年好景君须记，最是橙黄橘绿时”告诉我们要记住什么？",
+    "answer": "待老师点评",
+    "explanation": "参考示例：诗人告诉朋友要记住秋天橙子金黄、橘子青绿的好景致，也勉励朋友在人生的秋天里依然要保持乐观向上。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《夜书所见》里，诗人在秋夜听到了什么、又看到了什么？请写一写。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：诗人听到萧萧的梧叶声和秋风声，看到远处篱笆下有一盏明灯，那是孩子们正在捉蟋蟀。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "essay",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "这三首古诗都写的是哪个季节？请选择其中一首，说说你最喜欢的一句诗及原因。",
+    "answer": "待老师点评",
+    "explanation": "参考示例：三首诗都写秋天。我喜欢《山行》的“霜叶红于二月花”，因为经霜的枫叶比春花还红，让我感受到秋天的美丽。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把诗人和他写的诗连起来。",
+    "options": ["杜牧", "苏轼", "叶绍翁"],
+    "match_options": ["《赠刘景文》", "《夜书所见》", "《山行》"],
+    "answer": "0:2,1:0,2:1",
+    "explanation": "杜牧写《山行》，苏轼写《赠刘景文》，叶绍翁写《夜书所见》。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把诗句和它描写的事物连起来。",
+    "options": ["霜叶红于二月花", "菊残犹有傲霜枝", "知有儿童挑促织"],
+    "match_options": ["儿童捉蟋蟀", "经霜的红枫叶", "凋残的菊花"],
+    "answer": "0:1,1:2,2:0",
+    "explanation": "霜叶指经霜红枫，菊残写凋残的菊花，挑促织是儿童捉蟋蟀。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把诗句和它所属的诗题连起来。",
+    "options": ["停车坐爱枫林晚", "一年好景君须记", "夜深篱落一灯明"],
+    "match_options": ["《夜书所见》", "《山行》", "《赠刘景文》"],
+    "answer": "0:1,1:2,2:0",
+    "explanation": "“停车坐爱枫林晚”出自《山行》，“一年好景君须记”出自《赠刘景文》，“夜深篱落一灯明”出自《夜书所见》。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把词语和它们的意思连起来。",
+    "options": ["擎雨盖", "促织", "坐"],
+    "match_options": ["蟋蟀", "因为", "荷叶"],
+    "answer": "0:2,1:0,2:1",
+    "explanation": "“擎雨盖”指像伞一样的荷叶，“促织”是蟋蟀，“停车坐爱”的“坐”是“因为”。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "match",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把诗题和它表达的主要内容连起来。",
+    "options": ["《山行》", "《赠刘景文》", "《夜书所见》"],
+    "match_options": ["秋天思念家乡", "赞美秋天枫叶", "勉励朋友珍惜好景"],
+    "answer": "0:1,1:2,2:0",
+    "explanation": "《山行》赞美枫叶，《赠刘景文》勉励朋友，《夜书所见》写秋夜思乡。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把《山行》的诗句按课文正确顺序排列。",
+    "options": ["霜叶红于二月花", "远上寒山石径斜", "停车坐爱枫林晚", "白云生处有人家"],
+    "answer": "1,3,2,0",
+    "explanation": "正确顺序：远上寒山石径斜→白云生处有人家→停车坐爱枫林晚→霜叶红于二月花。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把《赠刘景文》的诗句按课文正确顺序排列。",
+    "options": ["菊残犹有傲霜枝", "最是橙黄橘绿时", "荷尽已无擎雨盖", "一年好景君须记"],
+    "answer": "2,0,3,1",
+    "explanation": "正确顺序：荷尽已无擎雨盖→菊残犹有傲霜枝→一年好景君须记→最是橙黄橘绿时。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "把《夜书所见》的诗句按课文正确顺序排列。",
+    "options": ["知有儿童挑促织", "萧萧梧叶送寒声", "夜深篱落一灯明", "江上秋风动客情"],
+    "answer": "1,3,0,2",
+    "explanation": "正确顺序：萧萧梧叶送寒声→江上秋风动客情→知有儿童挑促织→夜深篱落一灯明。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "按《山行》中诗人游览的先后，把下面内容排列顺序。",
+    "options": ["停车欣赏枫林", "走上寒山石径", "看到霜叶红于二月花", "看到白云生处的人家"],
+    "answer": "1,3,0,2",
+    "explanation": "顺序：走上寒山石径→看到白云生处人家→停车欣赏枫林→看到霜叶红于二月花。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "sort",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "按由远到近的顺序，把《山行》中的景象排列。",
+    "options": ["停车坐爱枫林晚", "霜叶红于二月花", "远上寒山石径斜", "白云生处有人家"],
+    "answer": "2,3,0,1",
+    "explanation": "由远到近：远上寒山石径斜→白云生处有人家→停车坐爱枫林晚→霜叶红于二月花。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "秋天，诗人杜牧沿着弯弯的石径登上远山。他看见白云升起的地方有几户人家。傍晚的枫林格外美丽，诗人停下马车，静静欣赏。经霜的枫叶比二月的鲜花还要红艳。这首诗让我们感受到秋天山林的迷人景色。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "这首诗的作者是谁？",
+        "options": ["杜牧", "苏轼", "叶绍翁", "李白"],
+        "answer": "0",
+        "explanation": "短文写的是杜牧《山行》的内容，作者是杜牧。"
+      },
+      {
+        "type": "choice",
+        "q": "“霜叶”指的是什么？",
+        "options": ["经霜的红枫叶", "二月的花", "白云", "石径"],
+        "answer": "0",
+        "explanation": "“霜叶”是经霜变红的枫叶，短文说它比二月鲜花还红艳。"
+      },
+      {
+        "type": "choice",
+        "q": "诗人为什么停下马车？",
+        "options": ["因为喜爱傍晚的枫林", "因为累了", "因为下雨", "因为天黑"],
+        "answer": "0",
+        "explanation": "短文中写“诗人停下马车，静静欣赏”美丽的枫林，是因为喜爱。"
+      }
+    ],
+    "answer": "0,0,0",
+    "explanation": "阅读短文对应《山行》，作者杜牧，霜叶指经霜红枫，停车因爱枫林。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "秋天到了，池塘里的荷花已经凋谢，再也看不到像伞一样的荷叶。菊花虽然残败，却还留有傲霜的枝干。这一年里最好的景色，你要记牢——正是橙子金黄、橘子青绿的时节。诗人苏轼把这首诗送给朋友刘景文。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "“擎雨盖”在诗中指什么？",
+        "options": ["荷叶", "菊花", "橘子", "枫叶"],
+        "answer": "0",
+        "explanation": "“擎雨盖”指像伞一样托着雨的荷叶，短文说荷花谢了就看不到它了。"
+      },
+      {
+        "type": "choice",
+        "q": "诗人说一年最好的景致是什么时候？",
+        "options": ["橙黄橘绿时", "荷花盛开时", "春暖花开时", "雪花飞舞时"],
+        "answer": "0",
+        "explanation": "短文写“正是橙子金黄、橘子青绿的时节”，即秋末冬初的橙黄橘绿时。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "阅读短文对应《赠刘景文》，擎雨盖指荷叶，好景是橙黄橘绿时。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "秋风吹动梧桐叶，发出萧萧的声响，送来阵阵寒意。江面上的秋风，牵动了诗人思念家乡的心情。夜深了，诗人忽然看到远处篱笆下有一盏明灯，知道是孩子们正在捉蟋蟀。这情景让漂泊在外的诗人更加想念自己的家乡。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "诗人听到了什么声音？",
+        "options": ["梧桐叶的萧萧声", "雨声", "歌声", "钟声"],
+        "answer": "0",
+        "explanation": "短文开头写“秋风吹动梧桐叶，发出萧萧的声响”。"
+      },
+      {
+        "type": "choice",
+        "q": "“挑促织”是什么意思？",
+        "options": ["捉蟋蟀", "挑灯笼", "织布", "读书"],
+        "answer": "0",
+        "explanation": "短文说孩子们“正在捉蟋蟀”，“促织”就是蟋蟀。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "阅读短文对应《夜书所见》，听梧桐萧萧声，挑促织即捉蟋蟀。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "《古诗三首》里，杜牧、苏轼、叶绍翁都写了秋天的景色。杜牧爱那经霜的红枫，苏轼赞那橙黄橘绿的秋实，叶绍翁则在秋夜思念远方的家乡。三首诗虽然写的景物不同，却都让我们爱上了美丽的秋天。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "这三首诗写的都是什么季节？",
+        "options": ["秋天", "春天", "夏天", "冬天"],
+        "answer": "0",
+        "explanation": "短文第一句说三位诗人“都写了秋天的景色”。"
+      },
+      {
+        "type": "choice",
+        "q": "《夜书所见》表达了诗人怎样的感情？",
+        "options": ["思念家乡", "高兴", "生气", "害怕"],
+        "answer": "0",
+        "explanation": "短文写叶绍翁“在秋夜思念远方的家乡”，是思乡之情。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "阅读短文综合三首诗，都写秋天，《夜书所见》表达思乡。"
+  },
+  {
+    "subject_id": 4,
+    "topic_id": 181,
+    "type": "reading",
+    "tier": 1,
+    "difficulty": 1,
+    "content": "“霜叶红于二月花”是《山行》中最有名的一句。枫叶在秋天经霜以后，会变得火红火红的。诗人觉得，这时的红叶比春天二月的鲜花还要鲜艳美丽。这句话写出了秋天独有的美，也表达了诗人对秋天的喜爱。",
+    "reading_items": [
+      {
+        "type": "choice",
+        "q": "这句诗出自哪一首诗？",
+        "options": ["《山行》", "《赠刘景文》", "《夜书所见》", "《春晓》"],
+        "answer": "0",
+        "explanation": "短文第一句明确说“霜叶红于二月花”是《山行》中最有名的一句。"
+      },
+      {
+        "type": "choice",
+        "q": "诗人觉得霜叶和二月花相比怎样？",
+        "options": ["霜叶更红更美", "二月花更美", "一样美", "都不美"],
+        "answer": "0",
+        "explanation": "短文写红叶“比春天二月的鲜花还要鲜艳美丽”，即霜叶更红更美。"
+      }
+    ],
+    "answer": "0,0",
+    "explanation": "阅读短文讲“霜叶红于二月花”，出自《山行》，霜叶比春花更美。"
+  }
+]

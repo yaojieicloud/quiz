@@ -134,6 +134,7 @@
             <span class="chip" data-count="20" onclick="pickCount(this)">20题</span>
             <span class="chip" data-count="50" onclick="pickCount(this)">50题</span>
           </div>
+          <div id="countHint" style="display:none;color:#e8590c;font-size:13px;margin-top:6px;"></div>
         </div>
 
         <div class="config-section">
@@ -179,6 +180,42 @@ let selectedTypes = new Set();
 let selectedCount = 10;
 let selectedMode = 'custom';
 let selectedTier = 1;   // 分阶档位：1初级 2进阶 3挑战（单选，默认初级）
+let available = 0;     // 当前选择下的实际可用题数（由 /api/exam/available-count 返回）
+let _availTimer = null; // 防抖定时器
+let masteryMap = {};   // 掌握度缓存 {topicId_tier: status}，用于显示精通角标
+let masteryCoverageMap = {};  // 覆盖度缓存 {topicId_tier: coverage}
+
+async function loadMastery() {
+  try {
+    const me = await API.get('/api/mastery/me');
+    masteryMap = {};
+    masteryCoverageMap = {};
+    (me.subjects || []).forEach(sub => {
+      (sub.topics || []).forEach(t => {
+        Object.entries(t.tiers || {}).forEach(([tier, info]) => {
+          masteryMap[`${t.topic_id}_${tier}`] = info.status;
+          masteryCoverageMap[`${t.topic_id}_${tier}`] = info.coverage;
+        });
+      });
+    });
+  } catch (e) { /* 掌握度非关键，失败静默 */ }
+}
+
+// 某课在某档位的掌握度角标：精通→红底白字「精通」，未精通→灰色百分比（覆盖度进度）
+function masteredBadge(topicId, tier) {
+  const key = `${topicId}_${tier}`;
+  const st = masteryMap[key];
+  if (!st || st === 'not_started') return '';
+  if (st === 'mastered') {
+    return '<span style="background:#e67700;color:#fff;font-size:10px;padding:1px 6px;border-radius:6px;margin-left:4px;font-weight:700;">精通</span>';
+  }
+  // 未精通：显示覆盖度百分比（进度感）
+  const cov = masteryCoverageMap[key];
+  if (cov != null && cov > 0) {
+    return '<span style="background:#e9ecef;color:#495057;font-size:10px;padding:1px 5px;border-radius:6px;margin-left:4px;">' + Math.round(cov) + '%</span>';
+  }
+  return '';
+}
 
 async function loadSubjects() {
   try {
@@ -236,7 +273,7 @@ async function openCoursePick(subjectId) {
   }
   const box = document.getElementById('courseChips');
   box.innerHTML = topics.map((t, i) =>
-    `<span class="chip" data-tid="${t.id}" onclick="pickCourse(this)">第${i + 1}课 ${esc(t.name)} (${t.question_count})</span>`
+    `<span class="chip" data-tid="${t.id}" onclick="pickCourse(this)">第${i + 1}课 ${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`
   ).join('');
   document.getElementById('courseModal').classList.add('show');
 }
@@ -332,7 +369,7 @@ async function openConfig(subjectId) {
       box.innerHTML = '<div style="color:#9c8bb5;font-size:14px;padding:8px 0;">📭 该科目还没有章节，请先在管理后台添加</div>';
     } else if (isProg) {
       // 编程类理论：扁平多选
-      box.innerHTML = topics.map(t => `<span class="chip" data-tid="${t.id}" onclick="toggleChip(this)">${esc(t.name)} (${t.question_count})</span>`).join('');
+      box.innerHTML = topics.map(t => `<span class="chip" data-tid="${t.id}" onclick="toggleChip(this)">${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`).join('');
     } else {
       // 文化类：按 unit 分组折叠
       box.innerHTML = renderTopicGroups(topics);
@@ -346,6 +383,7 @@ async function openConfig(subjectId) {
     toast('加载章节失败', 'error');
   }
   document.getElementById('configModal').classList.add('show');
+  refreshAvailable();   // 初始根据默认选择计算可用题数并守卫题数选项
 }
 
 // 文化类科目：按 unit 分组渲染
@@ -370,7 +408,7 @@ function renderTopicGroups(topics) {
           <button class="unit-select-all" onclick="event.stopPropagation(); selectAllUnit('${safe}', this)">全选本单元</button>
         </div>
         <div class="unit-topics">
-          ${list.map(t => `<span class="chip" data-tid="${t.id}" data-unit="${esc(u)}" onclick="toggleChip(this)">${esc(t.name)} (${t.question_count})</span>`).join('')}
+          ${list.map(t => `<span class="chip" data-tid="${t.id}" data-unit="${esc(u)}" onclick="toggleChip(this)">${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`).join('')}
         </div>
       </div>`;
   }).join('');
@@ -396,6 +434,7 @@ function closeConfig() {
 
 function toggleChip(el) {
   el.classList.toggle('active');
+  refreshAvailable();   // 课时/题型选择变化会影响可用题数
 }
 
 function pickCount(el) {
@@ -408,12 +447,90 @@ function pickMode(el) {
   document.querySelectorAll('.chip[data-mode]').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   selectedMode = el.dataset.mode;
+  refreshAvailable();   // 错题重做等模式的可用题数不同
 }
 
 function pickTier(el) {
   document.querySelectorAll('.chip[data-tier]').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   selectedTier = parseInt(el.dataset.tier);
+  refreshTopicLabels();  // 课时旁显示的题数随档位更新
+  refreshAvailable();    // 可用题数随档位变化
+}
+
+// ---- 可用题数守卫（方案二）：选择变化时(防抖)调 available-count，不足则禁用对应题数选项 ----
+// 某课时的有效题数（按当前档位，来自后端 valid_by_tier；兼容旧字段 question_count）
+function topicCount(t) {
+  if (t.valid_by_tier && t.valid_by_tier[selectedTier] != null) return t.valid_by_tier[selectedTier];
+  return t.question_count || 0;
+}
+
+// 当前实际要发送的题型（与 startExam 逻辑一致：可见题型全选时传空=不过滤）
+function currentTypesToSend() {
+  const visible = document.querySelectorAll('#configModal .chip[data-type]:not([style*="none"])');
+  const sel = new Set([...document.querySelectorAll('#configModal .chip[data-type].active')].map(c => c.dataset.type));
+  return sel.size === visible.length ? [] : [...sel];
+}
+
+// 防抖调用后端 available-count，得到当前选择下的实际可用题数
+function refreshAvailable() {
+  if (!document.getElementById('configModal').classList.contains('show')) return;
+  if (_availTimer) clearTimeout(_availTimer);
+  _availTimer = setTimeout(async () => {
+    try {
+      const tids = [...document.querySelectorAll('#configModal .chip[data-tid].active')].map(c => parseInt(c.dataset.tid));
+      const res = await API.post('/api/exam/available-count', {
+        subject_id: currentSubject.id,
+        topic_ids: tids,
+        types: currentTypesToSend(),
+        tier: selectedTier,
+        mode: selectedMode,
+        count: 50,
+      });
+      applyCountGuard(res.available);
+    } catch (e) { /* 忽略 */ }
+  }, 250);
+}
+
+// 根据可用题数禁用/启用题数选项；若当前选中档被禁用则自动退到最大可选档
+function applyCountGuard(avail) {
+  available = avail;
+  const chips = [...document.querySelectorAll('#configModal .chip[data-count]')];
+  chips.forEach(chip => {
+    const cnt = parseInt(chip.dataset.count);
+    const enough = avail >= cnt;
+    chip.classList.toggle('disabled', !enough);
+    chip.style.opacity = enough ? '' : '0.5';
+    chip.style.pointerEvents = enough ? '' : 'none';
+    chip.style.cursor = enough ? '' : 'not-allowed';
+    if (!enough && chip.classList.contains('active')) chip.classList.remove('active');
+  });
+  const active = chips.find(c => c.classList.contains('active'));
+  if (!active) {
+    const enabled = chips.filter(c => !c.classList.contains('disabled'))
+      .sort((a, b) => parseInt(b.dataset.count) - parseInt(a.dataset.count));
+    if (enabled.length) { enabled[0].classList.add('active'); selectedCount = parseInt(enabled[0].dataset.count); }
+  }
+  const hint = document.getElementById('countHint');
+  if (hint) {
+    if (avail < 50) { hint.style.display = ''; hint.textContent = `当前选择共 ${avail} 题，不足 50 题（已禁用）`; }
+    else hint.style.display = 'none';
+  }
+}
+
+// 切换档位时，更新两个弹层里课时 chips 旁显示的题数 + 精通角标
+function refreshTopicLabels() {
+  document.querySelectorAll('#configModal .chip[data-tid], #courseModal .chip[data-tid]').forEach(c => {
+    const t = topics.find(x => x.id === parseInt(c.dataset.tid));
+    if (!t) return;
+    const n = topicCount(t);
+    // 重设文本节点（保留角标 HTML）：题数 + 角标
+    // 找到题数文本部分替换，角标用 masteredBadge 重新生成
+    const badgeHtml = masteredBadge(t.id, selectedTier);
+    // 原格式：第N课 名称 (N题) 或 名称 (N题)；替换末尾 (N题) 及旧角标
+    let base = c.textContent.replace(/\s*精通$/, '').replace(/\([^)]*题\)$/, `(${n}题)`);
+    c.innerHTML = esc(base) + badgeHtml;
+  });
 }
 
 async function startExam() {
@@ -451,6 +568,7 @@ async function startExam() {
 }
 
 // 支持 quiz 结果页「继续选课做题」跳回：home.html?pick=<subjectId>
+loadMastery();  // 预加载掌握度，供组卷界面显示精通角标
 loadSubjects().then(() => {
   const pick = new URLSearchParams(location.search).get('pick');
   if (!pick) return;
