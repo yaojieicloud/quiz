@@ -112,7 +112,6 @@ textarea.form-input.lg { min-height:120px; }
     <span class="chip" id="tabBackup" onclick="switchTab('backup')">🗄 数据备份</span>
     <span class="chip" id="tabAnalytics" onclick="switchTab('analytics')">📊 学情分析</span>
     <span class="chip" id="tabReward" onclick="switchTab('reward')">🎁 奖励管理</span>
-    <span class="chip" id="tabSubjectPoints" onclick="switchTab('subjectPoints')">📚 科目积分</span>
     <span class="chip" id="tabLlm" onclick="switchTab('llm')">📊 LLM 日志</span>
     <span class="chip" id="tabMastery" onclick="switchTab('mastery')">🎯 学员掌握度</span>
   </div>
@@ -443,11 +442,6 @@ textarea.form-input.lg { min-height:120px; }
     <iframe class="embed-frame" src="admin-reward.html?embed=1" title="奖励管理"></iframe>
   </div>
 
-  <!-- ===== 科目积分（内嵌 admin-subject-points.html） ===== -->
-  <div id="paneSubjectPoints" style="display:none;">
-    <iframe class="embed-frame" src="admin-subject-points.html?embed=1" title="科目积分"></iframe>
-  </div>
-
   <!-- ===== LLM 日志（内嵌 admin-llm.html） ===== -->
   <div id="paneLlm" style="display:none;">
     <iframe class="embed-frame" src="admin-llm.html?embed=1" title="LLM 日志"></iframe>
@@ -510,7 +504,7 @@ let qPage = 1, qPageSize = 15, qTotal = 0;
 // ============ Tab 切换 ============
 function switchTab(tab) {
   currentTab = tab;
-  ['Subjects','Questions','Import','Sql','Backup','Analytics','Reward','SubjectPoints','Llm','Mastery'].forEach(t => {
+  ['Subjects','Questions','Import','Sql','Backup','Analytics','Reward','Llm','Mastery'].forEach(t => {
     const id = t.toLowerCase();
     const tabEl = document.getElementById('tab'+t);
     const paneEl = document.getElementById('pane'+t);
@@ -2007,7 +2001,7 @@ async function loadMvpScoreTrend(uid, tier) {
     const series = [...groups.entries()].map(([name, rows], i) => ({
       name, type: 'line', smooth: true,
       itemStyle: { color: ANA_PALETTE[i % ANA_PALETTE.length] },
-      data: rows.map(r => [r.started_at.slice(0, 16).replace('T', ' '), r.score]),
+      data: rows.map(r => [new Date(r.started_at), r.score]),
     }));
     _anaChart('chartScoreTrend', {
       tooltip: { trigger: 'axis', formatter: ps => ps.map(p => `${p.marker}${p.seriesName}：${p.value[1]}分`).join('<br/>') },

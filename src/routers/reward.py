@@ -25,6 +25,7 @@ from models import (
     WheelPrize, Play, DirectRedemption, RedeemItem, Config,
 )
 from core.deps import get_current_user
+from core.times import to_iso_utc
 
 router = APIRouter(prefix="/api", tags=["积分系统"])
 
@@ -127,7 +128,7 @@ def get_ledger(
             {
                 "id": it.id, "delta": it.delta, "reason": it.reason,
                 "ref_id": it.ref_id, "balance_after": it.balance_after,
-                "created_at": it.created_at.isoformat() if it.created_at else None,
+                "created_at": to_iso_utc(it.created_at),
             }
             for it in items
         ],
@@ -275,7 +276,7 @@ def my_rewards(user: User = Depends(get_current_user), db: Session = Depends(get
         result.append({
             "source": "wheel", "id": p.id, "name": p.prize_name,
             "is_physical": p.is_physical, "status": p.status,
-            "created_at": p.created_at.isoformat() if p.created_at else None,
+            "created_at": to_iso_utc(p.created_at),
         })
     for d in directs:
         item = db.query(RedeemItem).filter(RedeemItem.id == d.item_id).first()
@@ -283,7 +284,7 @@ def my_rewards(user: User = Depends(get_current_user), db: Session = Depends(get
             "source": "direct", "id": d.id,
             "name": item.name if item else f"兑换项#{d.item_id}",
             "is_physical": True, "status": d.status,
-            "created_at": d.created_at.isoformat() if d.created_at else None,
+            "created_at": to_iso_utc(d.created_at),
         })
     # 合并后按时间倒序
     result.sort(key=lambda x: x["created_at"] or "", reverse=True)

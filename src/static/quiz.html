@@ -1213,6 +1213,10 @@ async function doSubmit() {
     });
     showResult(res);
     initPoints();  // 刷新顶栏积分徽章
+    // 精通奖励惊喜弹窗（新达成 + 历史补发，烟花特效）
+    if (res.mastery_rewards && res.mastery_rewards.length) {
+      showMasteryRewardPopup((user && user.nickname) || '学员', res.mastery_rewards);
+    }
   } catch (e) {
     toast(e.message, 'error');
     submitted = false;

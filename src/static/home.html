@@ -132,6 +132,8 @@
           <div class="chip-group">
             <span class="chip active" data-count="10" onclick="pickCount(this)">10题</span>
             <span class="chip" data-count="20" onclick="pickCount(this)">20题</span>
+            <span class="chip" data-count="30" onclick="pickCount(this)">30题</span>
+            <span class="chip" data-count="40" onclick="pickCount(this)">40题</span>
             <span class="chip" data-count="50" onclick="pickCount(this)">50题</span>
           </div>
           <div id="countHint" style="display:none;color:#e8590c;font-size:13px;margin-top:6px;"></div>
@@ -492,30 +494,20 @@ function refreshAvailable() {
   }, 250);
 }
 
-// 根据可用题数禁用/启用题数选项；若当前选中档被禁用则自动退到最大可选档
+// 根据可用题数提示降档：不再禁用任何档位（后端自动降档），仅在题数不足时提示
+// 会降至不超过可用题数的最大档位
 function applyCountGuard(avail) {
   available = avail;
-  const chips = [...document.querySelectorAll('#configModal .chip[data-count]')];
-  chips.forEach(chip => {
-    const cnt = parseInt(chip.dataset.count);
-    const enough = avail >= cnt;
-    chip.classList.toggle('disabled', !enough);
-    chip.style.opacity = enough ? '' : '0.5';
-    chip.style.pointerEvents = enough ? '' : 'none';
-    chip.style.cursor = enough ? '' : 'not-allowed';
-    if (!enough && chip.classList.contains('active')) chip.classList.remove('active');
-  });
-  const active = chips.find(c => c.classList.contains('active'));
-  if (!active) {
-    const enabled = chips.filter(c => !c.classList.contains('disabled'))
-      .sort((a, b) => parseInt(b.dataset.count) - parseInt(a.dataset.count));
-    if (enabled.length) { enabled[0].classList.add('active'); selectedCount = parseInt(enabled[0].dataset.count); }
-  }
   const hint = document.getElementById('countHint');
-  if (hint) {
-    if (avail < 50) { hint.style.display = ''; hint.textContent = `当前选择共 ${avail} 题，不足 50 题（已禁用）`; }
-    else hint.style.display = 'none';
-  }
+  if (!hint) return;
+  // 当前选择档位数；若可用题数不足该档位，提示将降到的目标档
+  const cur = selectedCount;
+  if (avail >= cur) { hint.style.display = 'none'; return; }
+  const target = [50, 40, 30, 20, 10].find(c => c <= avail) || 0;
+  hint.style.display = '';
+  hint.textContent = target
+    ? `当前选择共 ${avail} 题，不足 ${cur} 题，开始后将自动降至 ${target} 题档`
+    : `当前选择共 ${avail} 题，不足 ${cur} 题，将按实际题数出题`;
 }
 
 // 切换档位时，更新两个弹层里课时 chips 旁显示的题数 + 精通角标
@@ -553,6 +545,10 @@ async function startExam() {
       toast('没有符合条件的题目，试试其他设置或难度档位吧', 'error');
       return;
     }
+    // 自动降档：题池不足所选档位时后端已降档，开始答题前提醒学员
+    if (res.downgraded && !confirm(
+      `题目数不够，已降至 ${res.actual_count} 题档位开始答题（积分按 ${res.actual_count} 题档计算）。\n继续吗？`
+    )) return;
     localStorage.setItem('quiz_exam', JSON.stringify({
       subject_id: currentSubject.id,
       mode: selectedMode,

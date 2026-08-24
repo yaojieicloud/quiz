@@ -441,3 +441,109 @@ function _stripFeedbackFromRunOutput(runOutput) {
   }
   return s.trim();
 }
+
+// ================= 精通奖励惊喜弹窗（烟花特效） =================
+// showMasteryRewardPopup(nickname, rewards)
+//   rewards: [{subject_name, topic_name, tier, points, mode}]  mode: new=新达成 / retroactive=补发
+// 烟花：canvas 全屏粒子，无外部依赖，自动随弹窗关闭销毁。
+function showMasteryRewardPopup(nickname, rewards) {
+  if (!rewards || !rewards.length) return;
+  const total = rewards.reduce((s, r) => s + (r.points || 0), 0);
+  const tierName = { 1: '初级', 2: '进阶', 3: '挑战' };
+
+  const mask = document.createElement('div');
+  mask.className = 'mrp-mask';
+  mask.innerHTML = `
+    <canvas class="mrp-fireworks"></canvas>
+    <div class="mrp-card">
+      <div class="mrp-emoji">🎉</div>
+      <div class="mrp-title">恭喜 <b>${esc(nickname || '学员')}</b>！</div>
+      <div class="mrp-sub">课程达成精通，奖励「玩转大转盘」积分！</div>
+      <div class="mrp-list">
+        ${rewards.map(r => `
+          <div class="mrp-item">
+            <span class="mrp-item-tag">${r.mode === 'retroactive' ? '补发' : '精通'}</span>
+            <span class="mrp-item-name">${esc(r.subject_name)} · ${esc(r.topic_name)}${r.tier > 1 ? '（' + (tierName[r.tier] || '') + '）' : ''}</span>
+            <span class="mrp-item-pts">+${r.points}积分</span>
+          </div>`).join('')}
+      </div>
+      <div class="mrp-total">本次共获得 <b>${total}</b> 积分</div>
+      <button class="mrp-btn" onclick="this.closest('.mrp-mask').remove()">太棒啦！收下了 🎁</button>
+    </div>
+    <style>
+      .mrp-mask{position:fixed;inset:0;background:rgba(20,10,40,.82);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+      .mrp-fireworks{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+      .mrp-card{position:relative;background:linear-gradient(160deg,#fffdf5,#fff3d6);border-radius:24px;padding:26px 30px 22px;max-width:420px;width:calc(100% - 48px);box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 0 4px rgba(255,200,80,.35);text-align:center;animation:mrpPop .5s cubic-bezier(.2,1.6,.4,1)}
+      @keyframes mrpPop{0%{transform:scale(.5);opacity:0}100%{transform:scale(1);opacity:1}}
+      .mrp-emoji{font-size:52px;line-height:1;animation:mrpBounce 1.2s ease infinite}
+      @keyframes mrpBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+      .mrp-title{font-size:22px;font-weight:800;color:#8a5a00;margin-top:8px}
+      .mrp-title b{color:#e8590c}
+      .mrp-sub{font-size:13px;color:#a87f2e;margin-top:4px}
+      .mrp-list{margin:14px 0 4px;display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto}
+      .mrp-item{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #ffe29a;border-radius:12px;padding:9px 12px;font-size:13px}
+      .mrp-item-tag{flex-shrink:0;font-size:11px;font-weight:700;color:#fff;background:#ffa94d;border-radius:8px;padding:2px 8px}
+      .mrp-item-name{flex:1;text-align:left;color:#5c4a1e;font-weight:600}
+      .mrp-item-pts{color:#e8590c;font-weight:800}
+      .mrp-total{font-size:15px;color:#8a5a00;margin:12px 0}
+      .mrp-total b{font-size:22px;color:#e8590c}
+      .mrp-btn{border:none;background:linear-gradient(135deg,#ffa94d,#ff922b);color:#fff;font-size:16px;font-weight:700;padding:12px 34px;border-radius:24px;cursor:pointer;box-shadow:0 6px 16px rgba(255,146,43,.5);font-family:inherit}
+      .mrp-btn:hover{filter:brightness(1.06)}
+    </style>`;
+  document.body.appendChild(mask);
+
+  // 补发条目换蓝色标签
+  mask.querySelectorAll('.mrp-item').forEach((el, i) => {
+    if (rewards[i] && rewards[i].mode === 'retroactive') el.querySelector('.mrp-item-tag').style.background = '#74c0fc';
+  });
+
+  // ---- 烟花粒子 ----
+  const canvas = mask.querySelector('.mrp-fireworks');
+  const ctx = canvas.getContext('2d');
+  let W, H, raf, particles = [], running = true;
+  const COLORS = ['#ffd43b', '#ff922b', '#ff6b6b', '#74c0fc', '#69db7c', '#f783ac', '#ffffff'];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  function burst(x, y) {
+    const n = 36 + Math.floor(Math.random() * 30);
+    const hue = COLORS[Math.floor(Math.random() * COLORS.length)];
+    for (let i = 0; i < n; i++) {
+      const ang = (Math.PI * 2 * i) / n + Math.random() * 0.2;
+      const sp = 2 + Math.random() * 4.5;
+      particles.push({ x, y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, life: 1, decay: 0.012 + Math.random() * 0.012, color: Math.random() < 0.7 ? hue : COLORS[Math.floor(Math.random() * COLORS.length)], size: 1.5 + Math.random() * 2 });
+    }
+  }
+  function loop() {
+    if (!running) return;
+    ctx.clearRect(0, 0, W, H);
+    particles = particles.filter(p => p.life > 0);
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.045; p.vx *= 0.985; p.life -= p.decay;
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    raf = requestAnimationFrame(loop);
+  }
+  // 开场连续烟花
+  let count = 0;
+  const opener = setInterval(() => {
+    burst(W * (0.2 + Math.random() * 0.6), H * (0.15 + Math.random() * 0.35));
+    if (++count >= 6) clearInterval(opener);
+  }, 380);
+  // 之后随机补烟花
+  const ambient = setInterval(() => {
+    if (Math.random() < 0.7) burst(W * Math.random(), H * (0.1 + Math.random() * 0.4));
+  }, 1200);
+  loop();
+  // 关闭时清理
+  new MutationObserver((_, obs) => {
+    if (!document.body.contains(mask)) {
+      running = false; cancelAnimationFrame(raf);
+      clearInterval(opener); clearInterval(ambient);
+      window.removeEventListener('resize', resize);
+      obs.disconnect();
+    }
+  }).observe(document.body, { childList: true });
+}

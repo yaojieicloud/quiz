@@ -5,9 +5,13 @@ if (user.role !== 'admin') { location.href = 'home.html'; }
 
 document.getElementById('topbar').innerHTML = renderTopbar('reward');
 
+// 科目列表（积分矩阵的「科目」列用）：id → 名称
+let subjectMap = {};
+
 loadAll();
 
 async function loadAll() {
+  await loadSubjects();
   await loadStudentOptions();
   await loadPending();
   await loadConfig();
@@ -16,39 +20,92 @@ async function loadAll() {
   await loadEntity('items');
 }
 
-// 积分调整：学员下拉（学员列表 + 当前管理员自己）
+async function loadSubjects() {
+  try {
+    const list = await API.get('/api/subjects');
+    subjectMap = {};
+    list.forEach(s => { subjectMap[s.id] = s.name; });
+  } catch (e) {
+    subjectMap = {};
+  }
+}
+
+// 学员卡片选择器（积分调整用，移动端友好）+ 待核销筛选学员下拉
+let selectedAdjId = null;
+let pendingCache = [];
+let pendSrcFilter = '';
+
 async function loadStudentOptions() {
-  const sel = document.getElementById('adjId');
+  const picker = document.getElementById('adjStudents');
+  const sel = document.getElementById('pendStudent');
   const me = getUser();
   try {
     const list = await API.get('/api/admin/students');
-    const opts = ['<option value="">— 请选择 —</option>'];
-    if (me && me.id) opts.push(`<option value="${me.id}">👑 ${esc(me.nickname || me.username || '管理员')}（我自己 #${me.id}）</option>`);
-    list.forEach(s => {
-      opts.push(`<option value="${s.id}">${esc(s.nickname || s.username)}（#${s.id}）· 答题${s.exam_count}次</option>`);
-    });
-    sel.innerHTML = opts.join('');
+    studentsCache = list;
+    // 积分调整：学员卡片（含管理员自己）
+    const cards = [];
+    if (me && me.id) {
+      cards.push({ id: me.id, nickname: '👑 ' + (me.nickname || me.username || '管理员'), exam_count: 0, balance: null, me: true });
+    }
+    list.forEach(s => cards.push(s));
+    picker.innerHTML = cards.map(s => `
+      <div class="stu-card" data-id="${s.id}" onclick="pickStudent(this, ${s.id})">
+        <div class="sc-name">${esc(s.nickname || s.username || ('学员#' + s.id))}</div>
+        <div class="sc-info">${s.me ? '我自己' : '答题 ' + (s.exam_count || 0) + ' 次'}</div>
+      </div>`).join('') || '<p style="color:#888">暂无学员</p>';
+    // 待核销筛选：学员下拉
+    sel.innerHTML = '<option value="">全部学员</option>' +
+      list.map(s => `<option value="${s.id}">${esc(s.nickname || s.username || ('学员#' + s.id))}</option>`).join('');
   } catch (e) {
-    sel.innerHTML = `<option value="">加载学员失败：${esc(e.message)}</option>`;
+    picker.innerHTML = `<p style="color:#c0392b">加载学员失败：${esc(e.message)}</p>`;
   }
+}
+
+function pickStudent(el, id) {
+  document.querySelectorAll('.stu-card').forEach(c => c.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedAdjId = id;
+}
+
+function pickSrc(el) {
+  document.querySelectorAll('.psc').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  pendSrcFilter = el.dataset.src || '';
+  renderPending();
 }
 
 async function loadPending() {
   const el = document.getElementById('pendingList');
   try {
     const d = await API.get('/api/admin/redeem/pending');
-    if (!d.items.length) { el.innerHTML = '<p style="color:#888">暂无待核销</p>'; return; }
-    el.innerHTML = d.items.map(it => `
-      <div class="mine-item">
-        <div>
-          <div class="mi-name">${esc(it.name)}</div>
-          <div style="font-size:12px;color:#888">${esc(it.student_name)}（#${it.student_id}） · ${it.source === 'play' ? '转盘' : '直兑'} · ${fmtTime(it.created_at)}</div>
-        </div>
-        <button class="btn btn-green btn-sm" onclick="approve('${it.source}',${it.id})">核销</button>
-      </div>`).join('');
+    pendingCache = d.items || [];
+    renderPending();
   } catch (e) {
     el.innerHTML = '<p style="color:#c0392b">加载失败：' + esc(e.message) + '</p>';
   }
+}
+
+function renderPending() {
+  const el = document.getElementById('pendingList');
+  const stuFilter = document.getElementById('pendStudent').value;
+  let items = pendingCache;
+  if (stuFilter) items = items.filter(it => String(it.student_id) === String(stuFilter));
+  if (pendSrcFilter) items = items.filter(it => it.source === pendSrcFilter);
+  if (!items.length) {
+    el.innerHTML = '<p style="color:#888">没有符合条件的待核销记录</p>';
+    return;
+  }
+  el.innerHTML = items.map(it => `
+    <div class="pend-card ${it.source === 'direct' ? 'src-direct' : ''}">
+      <div>
+        <div class="pend-name">
+          <span class="pend-badge ${it.source === 'play' ? 'play' : 'direct'}">${it.source === 'play' ? '🎡 转盘' : '🎁 直兑'}</span>
+          ${esc(it.name)}
+        </div>
+        <div class="pend-meta">${esc(it.student_name)}（#${it.student_id}） · ${fmtTime(it.created_at)}</div>
+      </div>
+      <button class="btn btn-green btn-sm" onclick="approve('${it.source}',${it.id})">核销</button>
+    </div>`).join('');
 }
 
 async function approve(source, id) {
@@ -63,10 +120,10 @@ async function approve(source, id) {
 }
 
 async function doAdjust() {
-  const sid = parseInt(document.getElementById('adjId').value, 10);
+  const sid = selectedAdjId;
   const delta = parseInt(document.getElementById('adjDelta').value, 10);
   const reason = document.getElementById('adjReason').value || 'admin_adjust';
-  if (!sid) { toast('请选择学员', 'error'); return; }
+  if (!sid) { toast('请先点选一名学员（上方卡片）', 'error'); return; }
   if (!delta) { toast('请填写增减值', 'error'); return; }
   try {
     const r = await API.post('/api/admin/points/adjust', { student_id: sid, delta, reason });
@@ -92,17 +149,29 @@ async function saveCfg() {
   } catch (e) { toast(e.message, 'error'); }
 }
 
+// 精通奖励测试：调预览接口（只读），弹同款烟花弹窗
+async function testMasteryReward() {
+  try {
+    const d = await API.post('/api/admin/test-mastery-reward', {});
+    showMasteryRewardPopup(d.nickname, d.rewards);
+  } catch (e) { toast(e.message, 'error'); }
+}
+
 // ================= 可编辑配置（积分矩阵 / 转盘奖品 / 直兑商城） =================
 const dataCache = { rules: [], wheel: [], items: [] };
 
 const ENTITIES = {
   rules: {
     title: '积分矩阵', el: 'rulesTbl', api: '/api/admin/scoring-rules',
-    headers: ['题数', '得分段', '积分', '启用', '操作'],
-    cols: r => [r.question_count == 0 ? '任意题数' : r.question_count, r.score_band, r.points, r.is_active ? '✅' : '—'],
+    headers: ['科目', '题数', '得分段', '积分', '启用', '操作'],
+    cols: r => [
+      r.subject_id ? (subjectMap[r.subject_id] || ('科目#' + r.subject_id)) : '全局默认',
+      r.question_count == 0 ? '任意/兜底' : r.question_count,
+      r.score_band, r.points, r.is_active ? '✅' : '—'],
     fields: [
-      { key: 'question_count', label: '题数(0=任意)', type: 'number', def: 0 },
-      { key: 'score_band', label: '得分段', type: 'number', def: 100 },
+      { key: 'subject_id', label: '科目(空=全局默认)', type: 'subject', def: null },
+      { key: 'question_count', label: '题数档位(0=兜底)', type: 'number', def: 0 },
+      { key: 'score_band', label: '得分段(≤该分命中)', type: 'number', def: 100 },
       { key: 'points', label: '发放积分', type: 'number', def: 5 },
       { key: 'is_active', label: '启用', type: 'checkbox', def: true },
     ],
@@ -203,6 +272,12 @@ function fieldRow(f, val) {
     ctrl = `<select id="mf_${f.key}">` +
       f.options.map(o => `<option value="${o[0]}" ${String(val) === String(o[0]) ? 'selected' : ''}>${o[1]}</option>`).join('') +
       `</select>`;
+  else if (f.type === 'subject') {
+    const opts = ['<option value="">全局默认（所有科目）</option>'];
+    for (const id in subjectMap)
+      opts.push(`<option value="${id}" ${String(val) === String(id) ? 'selected' : ''}>${esc(subjectMap[id])}</option>`);
+    ctrl = `<select id="mf_${f.key}">` + opts.join('') + `</select>`;
+  }
   else if (f.type === 'checkbox')
     ctrl = `<input type="checkbox" id="mf_${f.key}" ${val ? 'checked' : ''}>`;
   return `<div class="form-row"><label>${f.label}</label>${ctrl}</div>`;
@@ -216,6 +291,7 @@ function collectModal() {
     const el = document.getElementById('mf_' + f.key);
     if (f.type === 'checkbox') data[f.key] = el.checked;
     else if (f.type === 'number') data[f.key] = parseInt(el.value, 10) || 0;
+    else if (f.type === 'subject') data[f.key] = el.value ? parseInt(el.value, 10) : null;
     else data[f.key] = el.value;
   }
   return data;

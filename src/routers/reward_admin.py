@@ -10,6 +10,8 @@
 均 require_role("admin")。详见 docs/积分系统与大转盘方案.md
 """
 from datetime import datetime
+
+from core.times import to_iso_utc
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -20,7 +22,7 @@ from database import get_db
 from models import (
     User, StudentPoints, PointsLedger, WheelPrize, Play,
     DirectRedemption, RedeemItem, ScoringRule, Config, LLMCall,
-    Subject, SubjectPoints,
+    StudentMastery, Subject, Topic,
 )
 from core.deps import require_role
 
@@ -38,6 +40,7 @@ class ScoringRuleIn(BaseModel):
     question_count: int
     score_band: int
     points: int
+    subject_id: Optional[int] = None  # NULL=全局默认；非空=科目专属
     is_active: bool = True
 
 
@@ -124,7 +127,7 @@ def pending_redeemments(_: User = admin_user, db: Session = Depends(get_db)):
             "source": "play", "id": p.id, "student_id": p.student_id,
             "student_name": name_map.get(p.student_id, f"学员#{p.student_id}"),
             "name": p.prize_name, "mode": p.mode,
-            "created_at": p.created_at.isoformat() if p.created_at else None,
+            "created_at": to_iso_utc(p.created_at),
         })
     for d in directs:
         item = db.query(RedeemItem).filter(RedeemItem.id == d.item_id).first()
@@ -133,7 +136,7 @@ def pending_redeemments(_: User = admin_user, db: Session = Depends(get_db)):
             "student_name": name_map.get(d.student_id, f"学员#{d.student_id}"),
             "name": item.name if item else f"兑换项#{d.item_id}",
             "mode": "direct",
-            "created_at": d.created_at.isoformat() if d.created_at else None,
+            "created_at": to_iso_utc(d.created_at),
         })
     return {"items": out}
 
@@ -176,7 +179,7 @@ def admin_ledger(student_id: int, _: User = admin_user, db: Session = Depends(ge
             {
                 "id": it.id, "delta": it.delta, "reason": it.reason,
                 "ref_id": it.ref_id, "balance_after": it.balance_after,
-                "created_at": it.created_at.isoformat() if it.created_at else None,
+                "created_at": to_iso_utc(it.created_at),
             }
             for it in items
         ],
@@ -186,9 +189,9 @@ def admin_ledger(student_id: int, _: User = admin_user, db: Session = Depends(ge
 # ---------------- 配置：scoring_rules ----------------
 @router.get("/scoring-rules")
 def list_scoring_rules(_: User = admin_user, db: Session = Depends(get_db)):
-    rows = db.query(ScoringRule).order_by(ScoringRule.question_count, ScoringRule.score_band).all()
+    rows = db.query(ScoringRule).order_by(ScoringRule.subject_id, ScoringRule.question_count, ScoringRule.score_band).all()
     return [{"id": r.id, "question_count": r.question_count, "score_band": r.score_band,
-             "points": r.points, "is_active": r.is_active} for r in rows]
+             "points": r.points, "subject_id": r.subject_id, "is_active": r.is_active} for r in rows]
 
 
 @router.post("/scoring-rules")
@@ -341,7 +344,7 @@ def list_llm_calls(
                 "model": it.model, "prompt_tokens": it.prompt_tokens,
                 "completion_tokens": it.completion_tokens, "total_tokens": it.total_tokens,
                 "status": it.status, "latency_ms": it.latency_ms,
-                "error": it.error, "created_at": it.created_at.isoformat() if it.created_at else None,
+                "error": it.error, "created_at": to_iso_utc(it.created_at),
             }
             for it in items
         ],
@@ -360,58 +363,45 @@ def put_config(key: str, body: ConfigIn, _: User = admin_user, db: Session = Dep
     return {"ok": True, "key": key, "value": body.value}
 
 
-# ============ 科目课程积分设置 ============
-class SubjectPointsBatchIn(BaseModel):
-    subject_ids: list[int]
-    p100: int = 5
-    p90: int = 4
-    p80: int = 3
+# ============ 精通奖励测试（仅预览，不写任何数据） ============
+@router.post("/test-mastery-reward")
+def test_mastery_reward(_: User = admin_user, db: Session = Depends(get_db)):
+    """模拟达成精通的弹窗预览：取真实精通样本 + 当前 wheel_cost，纯只读不发积分。"""
+    cost = 20
+    row = db.query(Config).filter(Config.key == "wheel_cost").first()
+    if row:
+        try:
+            cost = int(row.value)
+        except (ValueError, TypeError):
+            pass
 
-
-@router.get("/subject-points")
-def list_subject_points(_: User = admin_user, db: Session = Depends(get_db)):
-    """列出全部科目及其积分覆盖设置（无覆盖则 has_override=false）。"""
-    subs = db.query(Subject).order_by(Subject.sort_order, Subject.id).all()
-    ov_map = {sp.subject_id: sp for sp in db.query(SubjectPoints).all()}
-    return {
-        "items": [
-            {
-                "subject_id": s.id,
-                "subject_name": s.name,
-                "category": s.category,
-                "has_override": s.id in ov_map,
-                "p100": ov_map[s.id].p100 if s.id in ov_map else None,
-                "p90": ov_map[s.id].p90 if s.id in ov_map else None,
-                "p80": ov_map[s.id].p80 if s.id in ov_map else None,
-            }
-            for s in subs
+    rewards = []
+    # 优先取真实精通记录做样本（更像真的）
+    samples = (
+        db.query(StudentMastery)
+        .filter(StudentMastery.status == "mastered")
+        .order_by(StudentMastery.updated_at.desc())
+        .limit(2)
+        .all()
+    )
+    if samples:
+        topic_map = {t.id: t for t in db.query(Topic).filter(
+            Topic.id.in_([s.topic_id for s in samples])).all()}
+        subject_map = {s.id: s for s in db.query(Subject).filter(
+            Subject.id.in_([s.subject_id for s in samples])).all()}
+        for i, m in enumerate(samples):
+            t = topic_map.get(m.topic_id)
+            sub = subject_map.get(m.subject_id)
+            rewards.append({
+                "subject_name": sub.name if sub else "科目",
+                "topic_name": t.name if t else "课程",
+                "tier": m.tier,
+                "points": cost,
+                "mode": "new" if i == 0 else "retroactive",  # 演示两种标签
+            })
+    else:
+        rewards = [
+            {"subject_name": "数学", "topic_name": "示例课程A", "tier": 1, "points": cost, "mode": "new"},
+            {"subject_name": "语文", "topic_name": "示例课程B", "tier": 2, "points": cost, "mode": "retroactive"},
         ]
-    }
-
-
-@router.post("/subject-points/batch")
-def batch_set_subject_points(req: SubjectPointsBatchIn, _: User = admin_user, db: Session = Depends(get_db)):
-    """批量设置/覆盖多个科目的三档积分（upsert）。"""
-    if req.p100 < 0 or req.p90 < 0 or req.p80 < 0:
-        raise HTTPException(status_code=400, detail="积分不能为负")
-    updated = 0
-    for sid in req.subject_ids:
-        sub = db.query(Subject).filter(Subject.id == sid).first()
-        if not sub:
-            continue
-        sp = db.query(SubjectPoints).filter(SubjectPoints.subject_id == sid).first()
-        if not sp:
-            sp = SubjectPoints(subject_id=sid)
-            db.add(sp)
-        sp.p100, sp.p90, sp.p80 = req.p100, req.p90, req.p80
-        updated += 1
-    db.commit()
-    return {"ok": True, "updated": updated}
-
-
-@router.delete("/subject-points/{subject_id}")
-def reset_subject_points(subject_id: int, _: User = admin_user, db: Session = Depends(get_db)):
-    """删除某科目的积分覆盖，恢复为全局默认。"""
-    n = db.query(SubjectPoints).filter(SubjectPoints.subject_id == subject_id).delete()
-    db.commit()
-    return {"ok": True, "deleted": n}
+    return {"nickname": "测试学员", "wheel_cost": cost, "rewards": rewards}

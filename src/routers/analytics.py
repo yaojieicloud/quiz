@@ -23,6 +23,7 @@ from schemas import ExamRecordOut, AnswerRecordOut, QuestionOut
 from core.deps import require_role
 from core.mastery import STATUS_LABEL
 from core.tier import tier_label
+from core.times import to_iso_utc, to_beijing_date, beijing_today_str
 
 router = APIRouter(prefix="/api/admin", tags=["管理端学情分析"])
 
@@ -87,9 +88,9 @@ def list_students(_=Depends(require_role("admin")), db: Session = Depends(get_db
             "id": s.id,
             "username": s.username,
             "nickname": s.nickname,
-            "created_at": s.created_at.isoformat() if s.created_at else None,
+            "created_at": to_iso_utc(s.created_at),
             "exam_count": exam_count,
-            "last_exam_at": last.started_at.isoformat() if last and last.started_at else None,
+            "last_exam_at": to_iso_utc(last.started_at) if last else None,
         })
     return result
 
@@ -186,10 +187,11 @@ def analytics_overview(grade: Optional[str] = None, subject_id: Optional[int] = 
     total_exams = db.execute(text("SELECT COUNT(*) c FROM exam_records")).fetchone().c
     active_students = db.execute(text(
         "SELECT COUNT(DISTINCT user_id) c FROM exam_records")).fetchone().c
-    today = datetime.now().strftime("%Y-%m-%d")
+    # 按北京日历日聚合（库里存 UTC，直接 date() 会把北京 0-8 点算到前一天）
+    today = beijing_today_str()
     today_ar = db.execute(text(
         "SELECT COUNT(*) c FROM answer_records ar JOIN exam_records er ON er.id=ar.exam_record_id "
-        "WHERE date(er.started_at)=:d"), {"d": today}).fetchone().c
+        "WHERE date(er.started_at, '+8 hours')=:d"), {"d": today}).fetchone().c
     week_ar = db.execute(text(
         "SELECT COUNT(*) c FROM answer_records ar JOIN exam_records er ON er.id=ar.exam_record_id "
         "WHERE julianday('now') - julianday(er.started_at) <= 7")).fetchone().c
@@ -198,26 +200,26 @@ def analytics_overview(grade: Optional[str] = None, subject_id: Optional[int] = 
     _trend_where = ("WHERE julianday('now') - julianday(er.started_at) <= 14"
                     + ((" AND " + " AND ".join(conds)) if conds else ""))
     trend = _fetch_all(db, f"""
-        SELECT date(er.started_at) d,
+        SELECT date(er.started_at, '+8 hours') d,
                COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
         FROM answer_records ar
         JOIN exam_records er ON er.id=ar.exam_record_id
         JOIN subjects s ON s.id=er.subject_id
         {_trend_where}
-        GROUP BY date(er.started_at) ORDER BY d
+        GROUP BY date(er.started_at, '+8 hours') ORDER BY d
     """, params)
 
     # 按科目分组趋势（前端画多线用）
     trend_by_subject = _fetch_all(db, f"""
-        SELECT date(er.started_at) d, er.subject_id, s.name subject,
+        SELECT date(er.started_at, '+8 hours') d, er.subject_id, s.name subject,
                COUNT(*) total,
                SUM(CASE WHEN ar.is_correct=1 THEN 1 ELSE 0 END) ok
         FROM answer_records ar
         JOIN exam_records er ON er.id=ar.exam_record_id
         JOIN subjects s ON s.id=er.subject_id
         {_trend_where}
-        GROUP BY date(er.started_at), er.subject_id ORDER BY d, er.subject_id
+        GROUP BY date(er.started_at, '+8 hours'), er.subject_id ORDER BY d, er.subject_id
     """, params)
 
     by_subject = _fetch_all(db, f"""
@@ -305,6 +307,8 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         FROM exam_records er JOIN subjects s ON s.id=er.subject_id
         WHERE er.user_id=:uid {_subj_cond} {_tier_cond} ORDER BY er.started_at
     """, _subj_params)
+    for r in score_trend:
+        r["started_at"] = to_iso_utc(r["started_at"])
 
     by_subject = _fetch_all(db, f"""
         SELECT s.name subject, COUNT(*) total,
@@ -351,6 +355,8 @@ def analytics_student(student_id: int, subject_id: Optional[int] = None,
         FROM exam_records er JOIN subjects s ON s.id=er.subject_id
         WHERE er.user_id=:uid {_tier_cond} ORDER BY er.started_at DESC LIMIT 10
     """, {"uid": student_id, "tier": tier})
+    for r in recent:
+        r["started_at"] = to_iso_utc(r["started_at"])
 
     return {
         "student": {"id": student.id, "nickname": student.nickname, "username": student.username},
@@ -689,7 +695,7 @@ def analytics_report(data: ReportRequest, _=Depends(require_role("admin")), db: 
         score_trend.append({
             "index": i + 1,
             "score": exam["score"],
-            "date": exam["started_at"].strftime("%Y-%m-%d") if hasattr(exam["started_at"], "strftime") else str(exam["started_at"])[:10]
+            "date": to_beijing_date(exam["started_at"])
         })
 
     # 保存报告到数据库
@@ -747,7 +753,7 @@ def list_reports(
         "student_name": r.student_name,
         "report_preview": r.report_text[:100] + "..." if len(r.report_text) > 100 else r.report_text,
         "data_summary": r.data_summary,
-        "created_at": r.created_at
+        "created_at": to_iso_utc(r.created_at)
     } for r in reports]
 
 
@@ -771,7 +777,7 @@ def get_report(
         "student_name": report.student_name,
         "report": report.report_text,
         "data_summary": report.data_summary,
-        "created_at": report.created_at
+        "created_at": to_iso_utc(report.created_at)
     }
 
 
@@ -855,7 +861,7 @@ def build_recent_activity(db: Session, student_id: Optional[int], subject_ids: O
             "topics": topics_info,
             "total": r.total,
             "score": r.score,
-            "started_at": r.started_at.isoformat() if r.started_at else None,
+            "started_at": to_iso_utc(r.started_at),
         })
 
     by_topic = []

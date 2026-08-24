@@ -1,7 +1,24 @@
 """Pydantic 数据模型 —— 入参校验与出参序列化"""
 from datetime import datetime
 from typing import Optional, List, Any
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
+
+from core.times import to_iso_utc
+
+
+class _UtcTimeMixin(BaseModel):
+    """库中时间为 UTC（naive），序列化时统一补 +00:00 时区标识。
+
+    前端 new Date() 依据时区标识自动换算本地时间；若无标识，
+    无时区字符串会被当作本地时间解析，显示将比北京时间早 8 小时。
+    """
+
+    @field_serializer(
+        "created_at", "started_at", "finished_at", "last_wrong_at",
+        when_used="json", check_fields=False,
+    )
+    def _ser_utc(self, v):
+        return to_iso_utc(v)
 
 
 # ============ 认证 ============
@@ -17,7 +34,7 @@ class LoginRequest(BaseModel):
     password: str
 
 
-class UserOut(BaseModel):
+class UserOut(_UtcTimeMixin):
     id: int
     username: str
     nickname: str
@@ -226,7 +243,16 @@ class AnswerRecordOut(BaseModel):
         from_attributes = True
 
 
-class ExamRecordOut(BaseModel):
+class MasteryRewardOut(BaseModel):
+    """精通奖励发放明细（交卷后弹窗展示）"""
+    subject_name: str
+    topic_name: str
+    tier: int
+    points: int
+    mode: str  # new=新达成 / retroactive=历史补发
+
+
+class ExamRecordOut(_UtcTimeMixin):
     id: int
     subject_id: int
     subject_name: Optional[str] = None
@@ -241,16 +267,20 @@ class ExamRecordOut(BaseModel):
     tier: int = 1  # 本次答题所选分阶档位
     answer_records: List[AnswerRecordOut] = []
     points_earned: int = 0  # 本次答题按 scoring_rules 获得的积分
+    mastery_rewards: List[MasteryRewardOut] = []  # 本次触发的精通奖励（含历史补发）
     class Config:
         from_attributes = True
 
 
 class ExamStartResponse(BaseModel):
     questions: List[QuestionForExam]
+    requested_count: int = 0   # 学员请求的题数档位
+    actual_count: int = 0      # 实际发题数（题池不足时自动降档）
+    downgraded: bool = False   # 是否因题池不足被降档
 
 
 # ============ 错题本 ============
-class WrongQuestionOut(BaseModel):
+class WrongQuestionOut(_UtcTimeMixin):
     id: int
     question_id: int
     wrong_count: int

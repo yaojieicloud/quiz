@@ -7,7 +7,7 @@ from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from database import get_db
-from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion, ScoringRule, StudentPoints, PointsLedger, SubjectPoints, StudentMastery, Topic
+from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuestion, ScoringRule, StudentPoints, PointsLedger, StudentMastery, MasteryReward, Config, Topic
 from schemas import (
     ExamStartRequest, ExamStartResponse, ExamSubmitRequest,
     ExamRecordOut, AnswerRecordOut, WrongQuestionOut, QuestionOut, QuestionForExam,
@@ -414,9 +414,9 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
     if not subject:
         raise HTTPException(status_code=404, detail="科目不存在")
 
-    # 题目数量只允许标准档位：1（实操单题）、10、20、50；防止出现 40 题等非预期组卷
-    if data.count not in (1, 10, 20, 50):
-        raise HTTPException(status_code=400, detail="题目数量只能选择 1、10、20、50 题")
+    # 题目数量只允许标准档位：1（实操单题）、10、20、30、40、50；防止出现 15 题等非预期组卷
+    if data.count not in (1, 10, 20, 30, 40, 50):
+        raise HTTPException(status_code=400, detail="题目数量只能选择 1、10、20、30、40、50 题")
 
     # 抽题（注意：不创建 exam_record，未交卷不会产生空记录，提交时才落库）
     pool = _build_pool(db, subject, data, user)
@@ -426,7 +426,17 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
     else:
         # normal：4 层优先（未答过 > 错次多 > 做题少 > 随机）
         pool = _rank_pool(db, pool, user)
-    selected = pool[: data.count]
+
+    # 自动降档：题池不足所选档位时，降到「不超过题池数量的最大档位」
+    # （如选 50 但池内 49 题 → 降为 40 题档，不凑 49）；防「虚选高档位拿高积分」。
+    # 题池不足最小多题档位（10）时，按实际全部出题（积分按查表兜底）。
+    requested = data.count
+    if len(pool) >= requested:
+        actual = requested
+    else:
+        actual = next((c for c in (50, 40, 30, 20, 10) if c <= len(pool)), len(pool))
+    selected = pool[:actual]
+    downgraded = bool(selected) and actual != requested
 
     questions = []
     for q in selected:
@@ -445,7 +455,12 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
             topic_name=topic_name, difficulty=q.difficulty, tier=q.tier,
             explanation=q.explanation if q.type == "code" else None
         ))
-    return ExamStartResponse(questions=questions)
+    return ExamStartResponse(
+        questions=questions,
+        requested_count=requested,
+        actual_count=len(selected),
+        downgraded=downgraded,
+    )
 
 
 # ============ 积分辅助 ============
@@ -459,14 +474,117 @@ def _ensure_student_points(db: Session, student_id: int) -> StudentPoints:
     return sp
 
 
+def _match_scoring_rule(db: Session, subject_id: int, total: int, score: int) -> int:
+    """按「题数档位 × 分数段」查积分，返回积分值（无命中=0）。
+
+    匹配优先级：
+      1. 科目专属（subject_id=本科目）→ 2. 全局默认（subject_id IS NULL）；
+    每个范围内先精确匹配 question_count=实际题数，缺则回落 question_count=0（兜底）；
+    分数段取 score_band <= score 且 is_active 的最大者。无命中=0。
+    """
+    for scope in (ScoringRule.subject_id == subject_id, ScoringRule.subject_id.is_(None)):
+        for qc in (total, 0):
+            rule = (
+                db.query(ScoringRule)
+                .filter(
+                    scope,
+                    ScoringRule.question_count == qc,
+                    ScoringRule.score_band <= score,
+                    ScoringRule.is_active == True,  # noqa: E712
+                )
+                .order_by(ScoringRule.score_band.desc())
+                .first()
+            )
+            if rule:
+                return rule.points
+    return 0
+
+
+def _cfg_int(db: Session, key: str, default: int) -> int:
+    row = db.query(Config).filter(Config.key == key).first()
+    if not row:
+        return default
+    try:
+        return int(row.value)
+    except (ValueError, TypeError):
+        return default
+
+
+def _award_mastery_rewards(db: Session, student_id: int, newly_mastered_topic_ids: list) -> list:
+    """精通奖励发放：达成精通 → 奖励一次「玩转大转盘」等额积分（动态读 wheel_cost）。
+
+    触发条件：本次交卷产生了新精通（非精通→精通跃迁）。触发后：
+      - 新精通逐条发放（mode=new）；
+      - 一次性补发该学员历史上已精通但未发奖的课（mode=retroactive，功能上线前达成的）。
+    防重复：(student_id, topic_id, tier) 唯一约束 + 发放前查已发放集合。
+    保护：wheel_cost <= 0 时暂不发放（精通记录保留，费用恢复后随下次触发补发）。
+    返回发放明细列表（供前端弹窗），同事务记账。
+    """
+    if not newly_mastered_topic_ids:
+        return []
+    cost = _cfg_int(db, "wheel_cost", 20)
+    if cost <= 0:
+        return []
+
+    # 该学员全部精通课（含本次新达成 + 历史）
+    mastered = (
+        db.query(StudentMastery)
+        .filter(StudentMastery.student_id == student_id, StudentMastery.status == "mastered")
+        .all()
+    )
+    if not mastered:
+        return []
+    # 已发放集合（防重复）
+    granted = {
+        (r.topic_id, r.tier) for r in
+        db.query(MasteryReward.topic_id, MasteryReward.tier)
+        .filter(MasteryReward.student_id == student_id).all()
+    }
+    new_set = {(tid) for tid in newly_mastered_topic_ids}
+
+    # 课程/科目名映射（弹窗展示）
+    topic_map = {t.id: t for t in db.query(Topic).filter(
+        Topic.id.in_([m.topic_id for m in mastered])).all()}
+    subject_map = {s.id: s for s in db.query(Subject).filter(
+        Subject.id.in_([m.subject_id for m in mastered])).all()}
+
+    rewards = []
+    sp = _ensure_student_points(db, student_id)
+    for m in mastered:
+        if (m.topic_id, m.tier) in granted:
+            continue
+        mode = "new" if m.topic_id in new_set else "retroactive"
+        mr = MasteryReward(
+            student_id=student_id, topic_id=m.topic_id, tier=m.tier,
+            subject_id=m.subject_id, points=cost, mode=mode,
+        )
+        db.add(mr)
+        db.flush()  # 拿 mr.id 供流水 ref
+        sp.balance += cost
+        db.add(PointsLedger(
+            student_id=student_id, delta=cost,
+            reason="mastery_reward", ref_id=mr.id, balance_after=sp.balance,
+        ))
+        topic = topic_map.get(m.topic_id)
+        subject = subject_map.get(m.subject_id)
+        rewards.append({
+            "subject_name": subject.name if subject else f"科目#{m.subject_id}",
+            "topic_name": topic.name if topic else f"课时#{m.topic_id}",
+            "tier": m.tier,
+            "points": cost,
+            "mode": mode,
+        })
+    return rewards
+
+
 def _award_exam_points(db: Session, student_id: int, record: ExamRecord) -> int:
     """提交试卷后发放积分。
 
-    优先级：
+    逻辑：
       0. 掌握度闸门：本次涉及课全部 mastered → 不发分（防刷分）；
-      1. 若该科目在 subject_points 有覆盖设置，按 p100/p90/p80 三档命中；
-      2. 否则走全局默认 scoring_rules（得分档：100→5、90→4、80→3、<80→0）。
-    低于 80 分一律 0 分。
+      1. 查表：科目专属规则优先于全局规则；各自内部按实际题数
+         （question_count=record.total，兜底 0）× 分数档命中；无命中=0。
+      2. tier 倍率：基础分 × 倍率（进阶×2、挑战×3）。
     """
     # 掌握度闸门：本次涉及课若全部精通，不发分（按课×tier 查 StudentMastery 表）
     topic_ids = (
@@ -490,31 +608,7 @@ def _award_exam_points(db: Session, student_id: int, record: ExamRecord) -> int:
         # 必须每课都有记录且全部 mastered 才拦；缺记录说明未精通
         if len(mastered_rows) == len(topic_ids) and all(r.status == "mastered" for r in mastered_rows):
             return 0
-    override = (
-        db.query(SubjectPoints)
-        .filter(SubjectPoints.subject_id == record.subject_id)
-        .first()
-    )
-    if override:
-        if record.score >= 100:
-            pts = override.p100
-        elif record.score >= 90:
-            pts = override.p90
-        elif record.score >= 80:
-            pts = override.p80
-        else:
-            pts = 0
-    else:
-        rule = (
-            db.query(ScoringRule)
-            .filter(
-                ScoringRule.score_band <= record.score,
-                ScoringRule.is_active == True,  # noqa: E712
-            )
-            .order_by(ScoringRule.score_band.desc())
-            .first()
-        )
-        pts = rule.points if rule else 0
+    pts = _match_scoring_rule(db, record.subject_id, record.total, record.score)
     # 分阶档位倍率：进阶=初阶×2 等（倍率以 tier_config 表为准）
     if pts > 0:
         pts = pts * get_tier_multiplier(db, record.tier)
@@ -612,14 +706,30 @@ def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user),
     points_earned = _award_exam_points(db, user.id, record)
 
     # ---- 掌握度增量更新：对本次涉及的 (topic, tier) 重算并 upsert StudentMastery ----
+    mastery_rewards = []
     if topic_ids:
         pairs = [(tid, record.tier) for tid in topic_ids]
+        # upsert 前：记录本次涉及课中「原本已精通」的集合（用于跃迁检测）
+        prev_mastered = {
+            r.topic_id for r in db.query(StudentMastery)
+            .filter(
+                StudentMastery.student_id == user.id,
+                StudentMastery.tier == record.tier,
+                StudentMastery.topic_id.in_(topic_ids),
+                StudentMastery.status == "mastered",
+            ).all()
+        }
         computed = compute_mastery_for_topics(db, user.id, pairs)
         upsert_student_mastery(db, user.id, computed)
+        # 跃迁检测：本次重算后新达到精通的课（非精通→精通）
+        newly_mastered = [tid for tid, _, _, status, *_ in computed
+                          if status == "mastered" and tid not in prev_mastered]
+        # 精通奖励：新达成发奖 + 一次性补发历史未派发（与成绩同一事务）
+        mastery_rewards = _award_mastery_rewards(db, user.id, newly_mastered)
 
     db.commit()
     db.refresh(record)
-    return _record_to_out(record, db, points_earned=points_earned)
+    return _record_to_out(record, db, points_earned=points_earned, mastery_rewards=mastery_rewards)
 
 
 # ============ 历史记录 ============
@@ -649,7 +759,7 @@ def record_detail(record_id: int, user: User = Depends(get_current_user), db: Se
     return _record_to_out(record, db, with_answers=True)
 
 
-def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True, points_earned: int = 0) -> ExamRecordOut:
+def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True, points_earned: int = 0, mastery_rewards: list = None) -> ExamRecordOut:
     out = ExamRecordOut.model_validate(record)
     # 兼容旧数据：调用方没传积分时，从 points_ledger 回填（历史记录也能显示）
     if points_earned == 0:
@@ -659,6 +769,9 @@ def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True, p
         if ledger:
             points_earned = ledger.delta
     out.points_earned = points_earned
+    # 精通奖励：仅交卷时实时传入（历史记录不回显弹窗）
+    if mastery_rewards:
+        out.mastery_rewards = mastery_rewards
     if with_answers:
         ars = db.query(AnswerRecord).filter(AnswerRecord.exam_record_id == record.id).all()
         out.answer_records = []

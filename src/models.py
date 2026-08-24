@@ -245,6 +245,26 @@ class StudentMastery(Base):
     __table_args__ = (UniqueConstraint("student_id", "topic_id", "tier", name="uq_student_topic_tier"),)
 
 
+class MasteryReward(Base):
+    """精通奖励发放记录：达成精通 → 奖励一次「玩转大转盘」等额积分（动态读 wheel_cost）。
+
+    (student_id, topic_id, tier) 唯一约束：同一课同一档位的精通奖励只发一次（防重复派发）。
+    points 为发放时积分快照；mode：new=新达成 / retroactive=历史补发。
+    """
+    __tablename__ = "mastery_rewards"
+
+    id = Column(Integer, primary_key=True, index=True)
+    student_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    topic_id = Column(Integer, ForeignKey("topics.id"), nullable=False)
+    tier = Column(Integer, default=1, nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False)
+    points = Column(Integer, nullable=False)          # 发放时的积分快照（当时的 wheel_cost）
+    mode = Column(String(20), default="new", nullable=False)  # new=新达成 / retroactive=历史补发
+    granted_at = Column(DateTime, default=datetime.utcnow)
+
+    __table_args__ = (UniqueConstraint("student_id", "topic_id", "tier", name="uq_mastery_reward"),)
+
+
 # ============================================================================
 # 积分系统 + 大转盘抽奖（阶段 1）
 # 设计原则：参数全可配置、概率服务端决定、原子记账、预留盲盒(mode)扩展。
@@ -252,13 +272,18 @@ class StudentMastery(Base):
 # ============================================================================
 
 class ScoringRule(Base):
-    """积分换算矩阵（得分段 → 积分），全局默认档位，可配置"""
+    """积分换算矩阵（题数档位 × 分数段 → 积分），可配置。
+
+    匹配优先级（发分时）：科目专属（subject_id=科目）> 全局（subject_id IS NULL）；
+    各自内部先精确匹配 question_count=实际题数，缺则回落 question_count=0（兜底）。
+    """
     __tablename__ = "scoring_rules"
 
     id = Column(Integer, primary_key=True, index=True)
-    question_count = Column(Integer, nullable=False, index=True)  # 题数：0 表示任意题数（当前按得分档统一）
-    score_band = Column(Integer, nullable=False, index=True)      # 得分段：80/90/100
+    question_count = Column(Integer, nullable=False, index=True)  # 题数档位：1/10/20/30/40/50；0=兜底
+    score_band = Column(Integer, nullable=False, index=True)      # 得分段：score_band <= 实际得分 命中最大者
     points = Column(Integer, nullable=False)                     # 对应积分
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=True, index=True)  # NULL=全局，非空=科目专属
     is_active = Column(Boolean, default=True, nullable=False)    # 是否启用
 
 
