@@ -1,6 +1,6 @@
 # AI 评分与学情报告 设计文档
 
-> 模块：`core/code_runner.py`（沙箱）、`core/llm_client.py`（LLM 通道）、`core/llm_grader.py`（code 评分）、`routers/admin.py`(analytics_report)
+> 模块：`core/code_runner.py`（沙箱）、`core/llm_client.py`（LLM 通道）、`core/llm_grader.py`（code 评分）、`routers/analytics.py`(analytics_report)
 > 关联：[题型与出题规范](题型与出题规范.md)（code 题判法）、[管理后台与学情分析](管理后台与学情分析.md)（AI 周报）
 
 ---
@@ -41,13 +41,13 @@
 
 ## 4. AI 学情周报 `POST /api/admin/analytics/report`
 
-- 入参 `{student_id, force}`；`force=False` 命中 **7 天缓存** `datetime('now','-7 days')` 直接返回 `cached:True`（`admin.py:896-909`）。
-- 聚合 4 组 SQL：按科目正确率、按知识点（HAVING≥2，正确率升序 LIMIT 8）、全部考试分数、未掌握错题数（`admin.py:911-936`）。
-- 无答题记录 → 400；取 early_scores 前 5 / recent_scores 后 5（`admin.py:950-951`）。
-- 通道：`llm_chat(scenario="weekly_report", temperature=0.7, max_tokens=800, timeout=90)`（`admin.py:972-981`）。
-- **全部 provider 失败抛 502，不造假**（`admin.py:982-983`）。
+- 入参 `{student_id, force}`；`force=False` 命中 **7 天缓存** `datetime('now','-7 days')` 直接返回 `cached:True`（`analytics.py:602-616`）。
+- 聚合 4 组 SQL：按科目正确率、按知识点（HAVING≥2，正确率升序 LIMIT 8）、全部考试分数、未掌握错题数（`analytics.py:618-643`）。
+- 无答题记录 → 400；取 early_scores 前 5 / recent_scores 后 5（`analytics.py:645-646、656-658`）。
+- 通道：`llm_chat(scenario="weekly_report", temperature=0.7, max_tokens=800, timeout=90)`（`analytics.py:684-689`）。
+- **全部 provider 失败抛 502，不造假**（`analytics.py:690`）。
 - 落 `AIReport`，`data_summary` 含 score_trend / by_subject / weak_topics。
-- 提示词要求 200-350 字、三段式【学习概况】【进步与亮点】【薄弱点与建议】（`admin.py:963-969`）。
+- 提示词要求 200-350 字、三段式【学习概况】【进步与亮点】【薄弱点与建议】（`analytics.py:660-683`）。
 
 ### AI 报告管理
 `GET /api/admin/ai-reports`（列表）、`GET /api/admin/ai-reports/{id}`、`DELETE /api/admin/ai-reports/{id}`。

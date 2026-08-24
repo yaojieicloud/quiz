@@ -1,8 +1,9 @@
-fastapi
-uvicorn[standard]
-sqlalchemy
-pydantic
-python-jose[cryptography]
-passlib
-python-multipart
-openai
+# 版本锁定（2026-08-25）：来源本地 .venv 实测（Python 3.13，与 Dockerfile python:3.13-slim 一致）
+fastapi==0.141.1
+uvicorn[standard]==0.52.1
+sqlalchemy==2.0.51
+pydantic==2.13.4
+python-jose[cryptography]==3.5.0
+passlib==1.7.4
+python-multipart==0.0.32
+openai==2.53.0

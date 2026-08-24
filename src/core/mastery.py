@@ -29,6 +29,7 @@ from models import AnswerRecord, ExamRecord, Question, StudentMastery
 
 # 阈值常量（精通/通过）
 MIN_ANSWERS_FLOOR = 10          # 做题数绝对下限（题少时兜底）
+RATE_WINDOW = 100               # 正确率只看最近 N 题（滑动窗口），防止历史欠账无限放大
 PASS_RATE = 0.85
 PASS_COV = 0.50
 PASS_ANSWERS_RATIO = 0.50
@@ -57,7 +58,9 @@ def _topic_totals(db) -> dict:
 
 
 def _load_student_rows(db, student_id: int, question_ids=None):
-    """加载某学员全部答题明细：返回 (is_correct, topic_id, qid, tier, exam_id, finished_at, uid)"""
+    """加载某学员全部答题明细：返回 (is_correct, topic_id, qid, tier, exam_id, finished_at, uid)
+    按 finished_at 降序排列（最新答题在前），用于滑动窗口计算。
+    """
     q = (
         db.query(
             AnswerRecord.is_correct,
@@ -71,32 +74,49 @@ def _load_student_rows(db, student_id: int, question_ids=None):
         .join(ExamRecord, AnswerRecord.exam_record_id == ExamRecord.id)
         .join(Question, AnswerRecord.question_id == Question.id)
         .filter(ExamRecord.user_id == student_id)
+        .filter(Question.deprecated == False)  # noqa: E712
+        .order_by(ExamRecord.finished_at.desc())  # 按时间降序，最新在前
     )
     if question_ids is not None:
         q = q.filter(Question.id.in_(question_ids))
     return q.all()
 
 
-def _rows_to_stats(rows):
-    """rows: (is_correct, topic_id, qid, tier, exam_id, finished_at, uid)
-    返回 key=(uid, topic_id, tier) 的累计统计 dict。
+def _rows_to_stats(rows, window=RATE_WINDOW):
+    """rows: 按 finished_at 降序排列的答题明细
+    返回 key=(uid, topic_id, tier) 的统计 dict，包含全量统计和窗口统计。
+    
+    窗口统计：只取最近 window 道题（按时间倒序），用于计算"近期正确率"。
     """
-    by_key = defaultdict(lambda: {"N": 0, "D": set(), "C": 0})
+    by_key = defaultdict(lambda: {
+        "N": 0, "D": set(), "C": 0,              # 全量统计
+        "recent_N": 0, "recent_C": 0             # 窗口统计（最近 window 题）
+    })
+    
     for is_correct, topic_id, qid, tier, exam_id, finished_at, uid in rows:
         k = (uid, topic_id, tier)
+        # 全量统计
         by_key[k]["N"] += 1
         by_key[k]["D"].add(qid)
         if is_correct:
             by_key[k]["C"] += 1
+        
+        # 窗口统计（只取最近 window 题）
+        if by_key[k]["recent_N"] < window:
+            by_key[k]["recent_N"] += 1
+            if is_correct:
+                by_key[k]["recent_C"] += 1
+    
     return by_key
 
 
 def eval_topic_tier(sessions_by_key, totals_by_tier, student_id, topic_id, tier):
     """便捷封装：取某 (学员,课,档位) 的掌握度评估。
 
-    sessions_by_key: _rows_to_stats 产出的 {key: {N,D,C}} —— 字段名沿用 sessions_by_key 以兼容旧调用方
+    sessions_by_key: _rows_to_stats 产出的 {key: {N,D,C,recent_N,recent_C}}
     totals_by_tier: _topic_totals 产出的 {(topic_id,tier): Q}
     返回字段与旧版兼容：status/rate/coverage/total/correct/sessions/topic_total
+    其中 rate 使用窗口正确率（最近 RATE_WINDOW 题）。
     """
     key = (student_id, topic_id, tier)
     st = sessions_by_key.get(key)
@@ -112,8 +132,13 @@ def eval_topic_tier(sessions_by_key, totals_by_tier, student_id, topic_id, tier)
             "topic_total": Q,
         }
     N, D, C = st["N"], len(st["D"]), st["C"]
-    R = C / N if N else 0.0
-    Ccov = D / Q if Q else 0.0
+    recent_N, recent_C = st["recent_N"], st["recent_C"]
+    
+    # 正确率使用窗口统计（最近 RATE_WINDOW 题）
+    R = recent_C / recent_N if recent_N else 0.0
+    
+    # 覆盖度：只统计活跃题目（deprecated=0），防止 D > Q 导致超过 100%
+    Ccov = min(D / Q, 1.0) if Q else 0.0
     thr_master_n = max(int(Q * MASTER_ANSWERS_RATIO), MIN_ANSWERS_FLOOR)
     thr_pass_n = max(int(Q * PASS_ANSWERS_RATIO), 8)
 

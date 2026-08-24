@@ -229,3 +229,35 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# 敏感文件（SSH密钥、ECS密钥等，禁止入库）
+*.pem
+.ssh_key_tmp
+*.key
+id_rsa*
+*.p12
+
+# 临时调试/运维脚本（根目录）
+auto_check.py
+check_*.py
+compact_batch*.py
+dump_*.py
+fix_batch*.py
+inspect_db*.py
+print_batch*.py
+push_*.py
+sync_ecs.py
+sync_from_ecs.py
+try_login.py
+update_progress*.py
+verify_ecs_check.py
+verify_local.py
+push_quiz.sql
+
+# scripts/ 目录下的运维脚本（历史遗留，禁止入库）
+scripts/
+
+# 根目录下其他临时文件
+src/deploy_questions.py`
+src/gen_sql.py
+src/push_questions.py
