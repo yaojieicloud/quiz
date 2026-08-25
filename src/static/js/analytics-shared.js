@@ -79,17 +79,12 @@ document.addEventListener('click', e => {
 
 // ============ 掌握度全景渲染 ============
 /* d: { tier, topics: [{name, subject_name, topic_total, cells: {sid: {tier: {status, coverage}} }}], students: [{id, name}] } */
+// 横向柱状图（REQ-1-1）：复刻 qyn_mastery_chart.html——标签单独一行在柱上方，柱子粗 20px 占满整行。
 function renderMasteryCoverageChart(domId, d) {
   const el = document.getElementById(domId);
   if (!el) return;
   const tier = String(d.tier || 1);
-  const cats = d.topics.map(t => t.subject_name ? `${t.subject_name}·${t.name}` : t.name);
-  // 动态高度：每课约 26px，最少 320，最多 900；超过则启用滚动
-  const needH = Math.min(900, Math.max(320, cats.length * 26));
-  el.style.height = needH + 'px';
-  if (!_sharedCharts[domId]) _sharedCharts[domId] = echarts.init(el);
-  const chart = _sharedCharts[domId];
-  // 每课覆盖度（精通度）＝所选学员平均覆盖度
+  // 每课覆盖度（精通度）＝所选学员平均覆盖度（保留原聚合逻辑）
   const avgs = d.topics.map(t => {
     const students = d.students || [];
     if (!students.length) return 0;
@@ -103,25 +98,28 @@ function renderMasteryCoverageChart(domId, d) {
   const colors = avgs.map(v =>
     v >= 80 ? '#e67700' : v >= 50 ? '#69db7c' : v >= 20 ? '#74c0fc' : '#dee2e6'
   );
-  const tooMany = cats.length > 20;
-  chart.setOption({
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' },
-      formatter: p => `<b>${p[0].name}</b><br/>精通度: ${p[0].value}%` },
-    grid: { left: 8, right: 48, top: 10, bottom: 8, containLabel: true },
-    xAxis: { type: 'value', max: 100, axisLabel: { formatter: '{value}%' }, minInterval: 20 },
-    yAxis: { type: 'category', data: cats, inverse: true, axisLabel: { fontSize: 11 } },
-    dataZoom: tooMany ? [
-      { type: 'slider', yAxisIndex: 0, right: 4, width: 14, start: 0, end: Math.min(100, Math.round(600 / needH * 100)) },
-      { type: 'inside', yAxisIndex: 0 },
-    ] : [],
-    series: [{
-      type: 'bar', barMaxWidth: 18,
-      itemStyle: { color: p => colors[p.dataIndex] },
-      label: { show: true, position: 'right', fontSize: 10, formatter: p => Math.round(p.value) + '%' },
-      data: avgs,
-    }],
-  }, true);
-  chart.resize();
+  if (!d.topics.length) {
+    el.innerHTML = '<div class="hbar-emptytip">该科目暂无课时</div>';
+    return;
+  }
+  // 生成横向柱 HTML：每课 = 标签行(hbar-head) + 柱行(hbar-track)
+  const rows = d.topics.map((t, i) => {
+    const v = avgs[i];
+    const name = t.subject_name ? `${t.subject_name}·${t.name}` : t.name;
+    return `
+    <div class="hbar-row">
+      <div class="hbar-head">
+        <span class="hbar-label">${esc(name)}</span>
+        <span class="hbar-meta">题库 ${t.topic_total} 题</span>
+      </div>
+      <div class="hbar-track">
+        <span class="hbar-fill" style="width:${Math.min(v, 100)}%;background:${colors[i]};"></span>
+        <span class="hbar-masterline" title="精通覆盖度门槛 80%"></span>
+        <span class="hbar-val">${Math.round(v)}%</span>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="hbar-list">${rows}</div>`;
 }
 
 function renderMasteryMatrix(boxId, d) {
@@ -148,35 +146,33 @@ function renderMasteryMatrix(boxId, d) {
 
 // ============ 最近刷题动态渲染 ============
 /* d: { by_topic: [{student, subject, topic, answers, rate}], sessions: [{...}] } */
+// 横向柱状图（REQ-1-1）：复刻 qyn_mastery_chart.html——标签单独一行在柱上方，柱子粗 20px 占满整行。
 function renderRecentTopicChart(domId, d) {
   const el = document.getElementById(domId);
   if (!el) return;
-  if (!_sharedCharts[domId]) _sharedCharts[domId] = echarts.init(el);
-  const chart = _sharedCharts[domId];
-  const items = d.by_topic.slice(0, 20);
+  const items = (d.by_topic || []).slice(0, 20);
   if (!items.length) {
-    chart.setOption({
-      graphic: [{
-        type: 'text', left: 'center', top: 'middle',
-        style: { text: '暂无答题数据', fill: '#9c8bb5', fontSize: 14 },
-      }],
-    }, true);
+    el.innerHTML = '<div class="hbar-emptytip">暂无答题数据</div>';
     return;
   }
-  chart.setOption({
-    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
-    grid: { left: 8, right: 56, top: 10, bottom: 8, containLabel: true },
-    xAxis: { type: 'value', minInterval: 1 },
-    yAxis: { type: 'category', inverse: true, axisLabel: { fontSize: 11 },
-      data: items.map(r => `${r.student}·${r.subject}·${r.topic}`) },
-    series: [{
-      type: 'bar', barMaxWidth: 16,
-      itemStyle: { color: '#74c0fc' },
-      label: { show: true, position: 'right', fontSize: 10, formatter: p => `${p.value}题 ${d.by_topic[p.dataIndex].rate}%` },
-      data: items.map(r => r.answers),
-    }],
-  }, true);
-  chart.resize();
+  // 相对柱长：以最大答题量归一化（保留原 bar 语义）
+  const maxA = Math.max(...items.map(r => r.answers)) || 1;
+  const rows = items.map(r => {
+    const w = Math.round(r.answers / maxA * 100);
+    const name = `${r.student}·${r.subject}·${r.topic}`;
+    return `
+    <div class="hbar-row">
+      <div class="hbar-head">
+        <span class="hbar-label">${esc(name)}</span>
+        <span class="hbar-meta">正确率 ${r.rate}%</span>
+      </div>
+      <div class="hbar-track">
+        <span class="hbar-fill" style="width:${Math.min(w, 100)}%;background:#74c0fc;"></span>
+        <span class="hbar-val">${r.answers}题</span>
+      </div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div class="hbar-list">${rows}</div>`;
 }
 
 function renderRecentSessions(boxId, d) {
