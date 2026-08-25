@@ -4,8 +4,12 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
-# 数据库路径：优先用环境变量（Docker 卷映射用），默认放项目根目录
-DB_PATH = Path(os.getenv("QUIZ_DB_PATH", str(BASE_DIR / "quiz.db")))
+# ★ 数据库唯一合法路径 = <项目根>/quiz-data/quiz.db（本地开发 + Docker 卷挂载统一用这一个）
+# 规则：容器内由环境变量 QUIZ_DB_PATH=/app/data/quiz.db 指向数据卷；
+#      本地裸跑（不设环境变量）回落到 <项目根>/quiz-data/quiz.db，严禁再落到 src/quiz.db。
+# 安装说明：删除 src/quiz.db（旧默认库），唯一合法路径见 docs/init/dependencies.md 说明。
+PROJECT_ROOT = BASE_DIR.parent
+DB_PATH = Path(os.getenv("QUIZ_DB_PATH", str(PROJECT_ROOT / "quiz-data" / "quiz.db")))
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 
 # JWT

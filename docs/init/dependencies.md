@@ -36,7 +36,7 @@
 ## 运行时环境变量
 | 变量 | 用途 | 默认值 |
 |------|------|--------|
-| QUIZ_DB_PATH | SQLite 文件路径 | src/quiz.db；Docker 容器内 /app/data/quiz.db |
+| QUIZ_DB_PATH | SQLite 文件路径 | 本地裸跑默认 `quiz-data/quiz.db`（★ 数据库唯一合法路径）；容器内 `/app/data/quiz.db` |
 | QUIZ_SECRET_KEY | JWT 签名密钥 | config.py 内置默认值（⚠️ 生产建议环境变量覆盖） |
 | QUIZ_HOST / QUIZ_PORT | 直跑监听 | 127.0.0.1 / 8000 |
 | LLM 相关 key | LLM 调用（aliyun/deepseek） | 环境变量或 quiz-data/*.txt，严禁提交仓库 |

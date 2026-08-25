@@ -5,7 +5,7 @@
   - questions 表新增 reading_items（JSON/TEXT，仅 reading 题型用）
 
 用法:
-    python data/migrate_reading_allowed_types.py            # 默认迁移 src/quiz.db
+    python data/migrate_reading_allowed_types.py            # 默认迁移 quiz-data/quiz.db（唯一合法路径）
     python data/migrate_reading_allowed_types.py --db /path/to/quiz.db
 """
 import argparse
@@ -43,7 +43,8 @@ def migrate(db_path: str) -> bool:
 
 def main():
     ap = argparse.ArgumentParser()
-    default_db = Path(__file__).resolve().parent.parent / "quiz.db"
+    # 数据库唯一合法路径 = <项目根>/quiz-data/quiz.db（旧版误用 src/data/../quiz.db=src/quiz.db，已修正）
+    default_db = Path(__file__).resolve().parent.parent.parent / "quiz-data" / "quiz.db"
     ap.add_argument("--db", default=str(default_db), help="数据库文件路径")
     args = ap.parse_args()
     ok = migrate(args.db)

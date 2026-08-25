@@ -97,7 +97,7 @@
 ### 本地 Docker（推荐测试方式）
 ```bash
 docker build -t quiz-system:local -f src/Dockerfile src
-mkdir -p quiz-data && cp src/quiz.db quiz-data/quiz.db
+mkdir -p quiz-data   # ★ 数据库唯一合法路径 = quiz-data/quiz.db；文件不存在时容器启动自动建库（不复制 src/ 下旧库）
 docker run -d --name quiz-local -p 8000:8000 \
   -v "$(pwd)/quiz-data:/app/data" --restart unless-stopped quiz-system:local
 # 访问 http://localhost:8000  ，管理后台 admin.html 账号 admin/admin123

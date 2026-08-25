@@ -36,7 +36,6 @@ quiz/
 │   ├── seed_reward.py         # 积分/转盘/直兑种子（幂等）
 │   ├── fetch_db.py            # 拉线上库到本地（走 exec-sql API）
 │   ├── 一次性脚本              # reconstruct_58 / evaluate_match / import_chinese_english / push_questions / verify_window
-│   ├── quiz.db + *.bak*.db    # 本地库与历史备份（不进 git）
 │   ├── requirements.txt
 │   └── Dockerfile / entrypoint.sh / docker-compose.yml
 ├── scripts/                   # 一次性运维脚本：出题生成(gen_*) / 推送(push_*) / 校验(verify_*) / 评审 JSON 等

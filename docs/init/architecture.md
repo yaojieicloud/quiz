@@ -131,6 +131,6 @@ POST /api/exam/available-count   题池计数 + 档位可满足性
 | 默认 regkey | openschool2026 | routers/auth.py |
 | 组卷题数白名单 | 1 / 10 / 20 / 30 / 40 / 50 | routers/exam.py |
 | 通过线 | 60 分 | routers/exam.py |
-| DB 路径 | 环境变量 QUIZ_DB_PATH；容器内 /app/data/quiz.db | config.py |
+| DB 路径 | 环境变量 `QUIZ_DB_PATH`；本地裸跑默认 `quiz-data/quiz.db`（★ 唯一合法路径），容器内 `/app/data/quiz.db` | config.py |
 | 管理后台入口 | /static/admin.html | static/ |
 | ECS 地址 | 106.14.99.100:8000 | src/fetch_db.py |
