@@ -29,9 +29,9 @@ quiz/
 ├── AGENTS.md / README.md / CODEBUDDY.md   # 三个入口
 ├── docs/    # 文档：design(11 份存量) + plan/qa + it-workflow 骨架(overview/init/requirements/tasks/issues/PROGRESS)
 ├── src/     # 后端（main.py / models / core / 11 routers / migrations / static / Docker）
-├── scripts/ # 出题/推送/验证一次性脚本 + pc_monitor 硬件监控子系统
-├── data/    # 题库源数据（JSON）
-├── quiz-data/ # 本地运行时数据（库/密钥/备份，不进 git）
+├── modules/  # 独立功能模块（pc_monitor 硬件监控子系统）
+├── scripts/  # 运维脚本（fetch_db 拉库 / mastery_backfill 掌握度重算）
+├── data/     # 本地运行时数据（库/密钥/备份，不进 git）
 └── .venv/   # 虚拟环境（不进 git）
 ```
 - 详见 `docs/init/project-structure.md`
@@ -73,7 +73,7 @@ fastapi==0.141.1、uvicorn[standard]==0.52.1、sqlalchemy==2.0.51、pydantic==2.
 ### 部署前检查清单
 - [ ] 本地代码完整（`git status` 无未提交文件）
 - [ ] 确认 `src/` 与 ECS `build/` 目录结构一致
-- [ ] 确认 ECS 数据卷 `/opt/quiz-system/quiz-data/` 存在且可写
+- [ ] 确认 ECS 数据卷 `/opt/quiz-system/data/` 存在且可写
 - [ ] 确认 ECS SSH 连接正常（`openclaw.pem` 私钥可用）
 - [ ] 确认 ECS 健康检查通过（`curl http://106.14.99.100:8000/` 返回 200）
 
@@ -82,6 +82,6 @@ fastapi==0.141.1、uvicorn[standard]==0.52.1、sqlalchemy==2.0.51、pydantic==2.
 ## 999. 注意事项
 - ✅ 3 份设计文档残留的 `routers/admin.py` 引用已修正为 `analytics.py` + `system.py`（2026-08-25，`BUG-1` 已关闭，见 `docs/issues/BUG-1.md`）
 - ✅ 依赖版本已锁定（2026-08-25，见 `src/requirements.txt` 与 `docs/init/dependencies.md`）
-- `quiz-data/`、`*.db`、`.venv/` 已入 .gitignore，严禁提交（含密钥）
+- `data/`、`*.db`、`.venv/` 已入 .gitignore，严禁提交（含密钥）
 - 时间口径：库内统一 UTC 存储，对外输出 +00:00（`core/times.py`），前端负责换算
 - 管理后台：`/static/admin.html`（README 记载账号 admin/admin123）

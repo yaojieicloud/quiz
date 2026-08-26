@@ -9,7 +9,7 @@ services:
       - "8000:8000"
     volumes:
       # 数据库文件映射到宿主机，数据持久化
-      - ./quiz-data:/app/data
+      - ./data:/app/data
     environment:
       - QUIZ_DB_PATH=/app/data/quiz.db
       - QUIZ_SECRET_KEY=quiz-system-secret-key-change-in-production-2024

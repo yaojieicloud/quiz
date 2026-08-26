@@ -97,9 +97,9 @@
 ### 本地 Docker（推荐测试方式）
 ```bash
 docker build -t quiz-system:local -f src/Dockerfile src
-mkdir -p quiz-data   # ★ 数据库唯一合法路径 = quiz-data/quiz.db；文件不存在时容器启动自动建库（不复制 src/ 下旧库）
+mkdir -p data   # ★ 数据库唯一合法路径 = data/quiz.db；文件不存在时容器启动自动建库（不复制 src/ 下旧库）
 docker run -d --name quiz-local -p 8000:8000 \
-  -v "$(pwd)/quiz-data:/app/data" --restart unless-stopped quiz-system:local
+  -v "$(pwd)/data:/app/data" --restart unless-stopped quiz-system:local
 # 访问 http://localhost:8000  ，管理后台 admin.html 账号 admin/admin123
 ```
 `entrypoint.sh` 自动 seed（积分/转盘/直兑）+ 起服务；静态文件改完 `docker cp` 即生效，改 `.py` 需 `docker restart quiz-local`。
@@ -117,11 +117,11 @@ cd src && .venv/Scripts/python.exe -m uvicorn main:app --host 0.0.0.0 --port 801
 ## 🔧 维护者须知
 
 - **改完代码热更新**：`POST /api/admin/update-file` 写文件 + `POST /api/admin/restart` 重启（ECS 省去 ssh）。
-- **拉取线上库到本地**：`python src/fetch_db.py`（走 exec-sql API，纯接口）。
+- **拉取线上库到本地**：`python scripts/fetch_db.py`（走 exec-sql API，纯接口）。
 - **备份/下载数据库**：`POST /api/admin/backup-db` 备份、`GET` 列表、`GET /api/admin/backup-db/download?name=` 下载。
 - **应急 SQL**：`POST /api/admin/exec-sql`（先自动备份再执行）。
 - **加字段（正确姿势）**：在 `src/migrations/` 新建 `00xx_xxx.py`，定义 `MIGRATION_ID` 和幂等的 `up(engine)`（用 `add_column` 等辅助函数），应用在 `main.py` 启动时自动执行；同时记得在 `models.py` 补列声明。**禁止再手写散落 `ALTER` 或直调 `exec-sql` 加列**（`exec-sql` 仅应急）。
-- **密钥安全**：DeepSeek / aliyun key 走环境变量或 `quiz-data/*.txt`，**禁止写入代码或提交仓库**；`quiz-data/`、`*.db`、`.venv` 已加入 `.gitignore`。
+- **密钥安全**：DeepSeek / aliyun key 走环境变量或 `data/*.txt`，**禁止写入代码或提交仓库**；`data/`、`*.db`、`.venv` 已加入 `.gitignore`。
 
 > 所有写操作类运维接口（exec-sql / update-file / restart）**务必先备份数据库**。
 
@@ -146,11 +146,12 @@ quiz/
 │   ├── routers/           # 业务路由（auth/parent/subjects/questions/exam/stats/mastery/reward/reward_admin/system/analytics）
 │   ├── migrations/        # 轻量数据库迁移（增量 schema，启动时自动执行）
 │   ├── static/            # 前端页面 + js + css
-│   ├── data/              # 题库 JSON + 导入脚本
+│   ├── data/              # 题库 JSON（权威题库源）
 │   ├── seed_reward.py     # 积分/转盘/直兑种子
-│   ├── fetch_db.py        # 拉线上库到本地
 │   └── Dockerfile / entrypoint.sh / docker-compose.yml
-└── quiz-data/ (本地，不进 git)  # 数据库 + 密钥 + 备份
+├── modules/pc_monitor/   # 独立功能模块：PC 硬件监控
+├── scripts/              # 运维脚本（fetch_db 拉库 / mastery_backfill 重算）
+└── data/ (本地，不进 git)  # 数据库 + 密钥 + 备份
 ```
 
 ---

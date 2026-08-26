@@ -88,7 +88,7 @@
 
 ## 五、进度文件
 
-路径：`quiz-data/check_progress.json`
+路径：`data/check_progress.json`
 
 ```json
 {
@@ -147,12 +147,12 @@
 
 ### 拉取（执行前）
 ```bash
-scp -i /tmp/.k -P 2222 root@localhost:/opt/quiz-system/quiz-data/quiz.db ./quiz-data/quiz.db
+scp -i /tmp/.k -P 2222 root@localhost:/opt/quiz-system/data/quiz.db ./data/quiz.db
 ```
 
 ### 推送（每批完成后）
 ```bash
-scp -i /tmp/.k -P 2222 ./quiz-data/quiz.db root@localhost:/opt/quiz-system/quiz-data/quiz.db
+scp -i /tmp/.k -P 2222 ./data/quiz.db root@localhost:/opt/quiz-system/data/quiz.db
 ssh root@localhost "cd /opt/quiz-system && docker compose restart"
 ```
 

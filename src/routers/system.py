@@ -26,7 +26,7 @@ from core.deps import require_role
 router = APIRouter(prefix="/api/admin", tags=["管理端运维"])
 
 DB_PATH = os.getenv("QUIZ_DB_PATH", "/app/data/quiz.db")
-# 备份目录与数据库同处数据卷（./quiz-data -> /app/data），随卷持久化、随容器重启不丢
+# 备份目录与数据库同处数据卷（./data -> /app/data），随卷持久化、随容器重启不丢
 BACKUP_DIR = os.path.join(os.path.dirname(DB_PATH), "backups")
 # 容器内应用根目录；写文件接口只允许写入该目录内，避免越权
 APP_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

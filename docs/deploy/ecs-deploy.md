@@ -18,7 +18,7 @@
 | 认证方式 | 公钥认证 |
 | 私钥路径 | `C:/Users/Yaojie/Documents/openclaw.pem` |
 | 部署目录 | `/opt/quiz-system/build/` |
-| 数据目录 | `/opt/quiz-system/quiz-data/` |
+| 数据目录 | `/opt/quiz-system/data/` |
 | 容器名 | `quiz-system` |
 | 镜像名 | `quiz-system:latest` |
 
@@ -32,7 +32,7 @@
 ├── build/                # 实际运行源码（与本地 src/ 对应）
 │   ├── Dockerfile
 │   └── main.py / models.py / schemas.py / routers/ / core/ / static/ ...
-└── quiz-data/            # DB 数据卷（quiz.db + backups/ + 密钥）
+└── data/            # DB 数据卷（quiz.db + backups/ + 密钥）
 ```
 
 > ⚠️ **本地 `src/` 即对应 ECS 的 `build/`；本地改代码后需 scp 到 `build/` 再重建镜像才生效。**
@@ -51,7 +51,7 @@ git status
 tar -czf /tmp/quiz-project.tar.gz \
   --exclude=.git \
   --exclude=.venv \
-  --exclude=quiz-data \
+  --exclude=data \
   --exclude=__pycache__ \
   --exclude=node_modules \
   src/ data/ docs/ README.md CODEBUDDY.md AGENTS.md
@@ -101,7 +101,7 @@ EOF
 
 # 4. 如需更新密钥
 ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 \
-  "printf '%s\n' '<KEY>' > /opt/quiz-system/quiz-data/deepseek_key.txt"
+  "printf '%s\n' '<KEY>' > /opt/quiz-system/data/deepseek_key.txt"
 
 # 5. 重启容器（改 .py 才需 restart）
 ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 \
@@ -121,7 +121,7 @@ docker tag quiz-system:rollback-<ts> quiz-system:latest
 docker compose up -d
 ```
 
-> DB 在数据卷 `quiz-data`，重建镜像不丢数据。
+> DB 在数据卷 `data`，重建镜像不丢数据。
 
 ---
 
@@ -157,7 +157,7 @@ A: 查看日志 `docker logs quiz-system`，检查 import 错误和数据库连�
 A: pip 层有缓存，通常只需 1-2 分钟。
 
 ### Q: 数据库损坏怎么办？
-A: 从 `/opt/quiz-system/quiz-data/backups/` 恢复最近备份。
+A: 从 `/opt/quiz-system/data/backups/` 恢复最近备份。
 
 ---
 

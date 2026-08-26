@@ -34,14 +34,14 @@ quiz/
 │   ├── static/                # 前端 14 个页面 + js/common.js + css
 │   ├── data/                  # 题库 JSON + 导入/清理脚本
 │   ├── seed_reward.py         # 积分/转盘/直兑种子（幂等）
-│   ├── fetch_db.py            # 拉线上库到本地（走 exec-sql API）
-│   ├── 一次性脚本              # reconstruct_58 / evaluate_match / import_chinese_english / push_questions / verify_window
 │   ├── requirements.txt
 │   └── Dockerfile / entrypoint.sh / docker-compose.yml
-├── scripts/                   # 一次性运维脚本：出题生成(gen_*) / 推送(push_*) / 校验(verify_*) / 评审 JSON 等
+├── modules/                   # 独立功能模块
 │   └── pc_monitor/            # ★ 独立子系统：PC 硬件监控（Python + LibreHardwareMonitor .NET vendor + C# 工具 + PushPlus 推送）
-├── data/                      # 题库源数据：JSON、子目录（reading_chinese / py500 / theory3 / template 等）
-├── quiz-data/                 # 本地运行时数据：数据库 + 密钥（deepseek_key.txt）+ 备份（不进 git）
+├── scripts/                   # 运维脚本（非应用代码）
+│   ├── fetch_db.py            # 拉线上库到本地（走 exec-sql API）
+│   └── mastery_backfill.py    # 掌握度重算
+├── data/                      # 本地运行时数据：数据库 + 密钥（deepseek_key.txt）+ 备份（不进 git）
 └── .venv/                     # 虚拟环境（不进 git）
 ```
 
@@ -57,13 +57,12 @@ quiz/
 | docs/requirements | 需求 | 新 REQ-{N} 体系 |
 | docs/tasks | 任务 | 新 REQ-{N}-{M}-{K} 体系 |
 | docs/issues | 问题单 | 新 BUG-{N} 体系 |
-| scripts/ | 运维一次性脚本 | 非应用代码，不进容器 |
-| data/ | 题库源数据 | 供导入脚本使用 |
-| quiz-data/ | 本地运行时数据 | 含密钥，严禁入仓库 |
+| modules/ | 独立功能模块 | pc_monitor 硬件监控 |
+| scripts/ | 运维脚本 | fetch_db 拉库 / mastery_backfill 重算 |
+| data/ | 本地运行时数据 | 含密钥，严禁入仓库 |
 
 ## 命名约定
 - Python：文件/函数 snake_case，类 PascalCase
 - 前端页面：`xxx.html`；公共能力沉淀 `js/common.js`
 - 迁移文件：`00NN_短名.py`，含 MIGRATION_ID + 幂等 up(engine)
-- 一次性脚本：动词前缀 gen_/push_/verify_/check_/inspect_ + 批次号
 - 文档：it-workflow 按编号命名；存量设计文档保持中文命名不动

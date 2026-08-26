@@ -31,15 +31,15 @@
 ## 独立子系统依赖
 | 子系统 | 位置 | 依赖 |
 |--------|------|------|
-| pc_monitor 硬件监控 | scripts/pc_monitor/ | Python + LibreHardwareMonitor（.NET DLL，vendor/ 内置）+ TaskRegistrar/TempReader（C#）+ PushPlus 推送 |
+| pc_monitor 硬件监控 | modules/pc_monitor/ | Python + LibreHardwareMonitor（.NET DLL，vendor/ 内置）+ TaskRegistrar/TempReader（C#）+ PushPlus 推送 |
 
 ## 运行时环境变量
 | 变量 | 用途 | 默认值 |
 |------|------|--------|
-| QUIZ_DB_PATH | SQLite 文件路径 | 本地裸跑默认 `quiz-data/quiz.db`（★ 数据库唯一合法路径）；容器内 `/app/data/quiz.db` |
+| QUIZ_DB_PATH | SQLite 文件路径 | 本地裸跑默认 `<项目根>/data/quiz.db`（★ 数据库唯一合法路径）；容器内 `/app/data/quiz.db` |
 | QUIZ_SECRET_KEY | JWT 签名密钥 | config.py 内置默认值（⚠️ 生产建议环境变量覆盖） |
 | QUIZ_HOST / QUIZ_PORT | 直跑监听 | 127.0.0.1 / 8000 |
-| LLM 相关 key | LLM 调用（aliyun/deepseek） | 环境变量或 quiz-data/*.txt，严禁提交仓库 |
+| LLM 相关 key | LLM 调用（aliyun/deepseek） | 环境变量或 data/*.txt，严禁提交仓库 |
 
 ## 依赖风险备忘
 - ✅ 2026-08-25 已锁定全部运行依赖版本（见上表 / src/requirements.txt）

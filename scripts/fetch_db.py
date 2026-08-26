@@ -8,10 +8,10 @@ import json
 import os
 
 BASE_URL = "http://106.14.99.100:8000"
-# 目标库 = <项目根>/quiz-data/quiz.db（数据库唯一合法路径，本地开发 + Docker 卷统一用这一个）
+# 目标库 = <项目根>/data/quiz.db（数据库唯一合法路径，本地开发 + Docker 卷统一用这一个）
 # 旧版误指向 src/quiz.db（config 默认库），会导致拉库到错误位置，已修正。
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LOCAL_DB = os.path.join(PROJECT_ROOT, "quiz-data", "quiz.db")
+LOCAL_DB = os.path.join(PROJECT_ROOT, "data", "quiz.db")
 
 
 def login():
