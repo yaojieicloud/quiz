@@ -322,10 +322,47 @@ document.getElementById('totalIdx').textContent = questions.length;
 
 const letters = ['A','B','C','D'];
 
+// ============ 答题时间限制 ============
+// 每题加载时记录开始时间
+let questionStartTs = Date.now();
+const MIN_ANSWER_TIME = 10; // 最低答题时间（秒）
+
+function resetQuestionTimer() {
+  questionStartTs = Date.now();
+}
+
+function showSpeedWarning(type) {
+  // 创建弹窗
+  const mask = document.createElement('div');
+  mask.className = 'timer-warning-mask';
+  mask.innerHTML = `
+    <div class="timer-warning-card">
+      <div class="timer-warning-emoji">⏰</div>
+      <div class="timer-warning-title">温馨提示</div>
+      <div class="timer-warning-text">${type === 'empty_code' ? '请完成代码后再提交，不要交白卷！' : '答题 10 秒一题，请认真答题！'}</div>
+      <button class="timer-warning-btn" onclick="this.closest('.timer-warning-mask').remove()">确 认</button>
+    </div>
+    <style>
+      .timer-warning-mask{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+      .timer-warning-card{background:#fff;border-radius:20px;padding:30px 36px;max-width:400px;width:calc(100% - 48px);box-shadow:0 20px 60px rgba(0,0,0,0.2);text-align:center;animation:timerPop .3s ease both}
+      @keyframes timerPop{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
+      .timer-warning-emoji{font-size:48px;margin-bottom:12px}
+      .timer-warning-title{font-size:20px;font-weight:bold;color:#3a3a55;margin-bottom:10px}
+      .timer-warning-text{font-size:16px;color:#7a6c8c;line-height:1.6;margin-bottom:20px}
+      .timer-warning-btn{background:linear-gradient(135deg,#74c0fc,#4dabf7);color:#fff;border:none;padding:10px 40px;border-radius:24px;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit;box-shadow:0 4px 12px rgba(77,171,247,0.4)}
+      .timer-warning-btn:hover{filter:brightness(1.1)}
+    </style>
+  `;
+  document.body.appendChild(mask);
+}
+
 function renderQuestion() {
   const q = questions[curIdx];
   const [cls, label] = typeTag(q.type);
   document.getElementById('curIdx').textContent = curIdx + 1;
+
+  // 重置计时器
+  resetQuestionTimer();
 
   let optsHtml = '';
   if (q.type === 'choice' || q.type === 'judge') {
@@ -1125,6 +1162,12 @@ function goPrev() {
 }
 
 function goNext() {
+  // 答题时间检查（< 10 秒弹窗提醒）
+  const elapsed = (Date.now() - questionStartTs) / 1000;
+  if (elapsed < MIN_ANSWER_TIME) {
+    showSpeedWarning('speed');
+    return;
+  }
   if (curIdx < questions.length - 1) { curIdx++; renderQuestion(); updateDots(); }
   else { confirmSubmit(); }
 }
@@ -1160,10 +1203,26 @@ function closeModal() {
 }
 
 async function doSubmit() {
+  // 答题时间检查（< 10 秒弹窗提醒）
+  const elapsed = (Date.now() - questionStartTs) / 1000;
+  if (elapsed < MIN_ANSWER_TIME) {
+    showSpeedWarning('speed');
+    return;
+  }
+
+  // Python 实操题代码为空检查
+  if (questions[curIdx] && questions[curIdx].type === 'code') {
+    const code = getCodeValue();
+    if (!code || !code.trim()) {
+      showSpeedWarning('empty_code');
+      return;
+    }
+  }
+
   closeModal();
   if (submitted) return;
   submitted = true;
-  
+
   // 显示加载动画
   document.getElementById('submitLoading').classList.add('show');
 
