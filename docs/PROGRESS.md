@@ -17,3 +17,4 @@
 - 2026-08-25：**数据库唯一合法路径统一为 quiz-data/quiz.db** ✅（config.py / fetch_db.py / migrate 脚本 + 6 份文档同步；删除 src/quiz.db 并备份）
 - 2026-08-25：**REQ-1 需求梳理 + 方案设计（REQ-1-1）+ 任务拆解（3 任务）落盘** ✅（需求/设计/任务三个 INDEX 已更新）
 - 2026-08-25：**REQ-1 柱状图横向响应式改造完成** ✅（REQ-1-1-1 CSS、REQ-1-1-2 JS、REQ-1-1-3 页面+文档+联调；学员端 mastery/stats + 管理端 admin 4 图生效，其余 ECharts 图保留；终态样式＝标签行+粗柱两行结构、无滚动条、高度由内容撑开，已通过验收）
+- 2026-08-26：**BUG-2 修复 — 组卷页面精通度显示为覆盖率** ✅（`home.html` / `mastery.js` / `analytics-shared.js` 改为显示综合精通度百分比，与 `core/mastery.py` 三门槛算法对齐；未精通状态百分比上限 99%，杜绝"显示 100% 但不发奖励"；顺带修复 `deploy_window.py` 公钥认证 + Dockerfile 路径 + docker compose v2）

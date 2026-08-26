@@ -30,7 +30,10 @@ def list_subjects(tier: int = 1, db: Session = Depends(get_db), _=Depends(get_cu
         out.question_count = counts.get((s.id, tier), 0)
         out.available_types = [
             r[0] for r in db.query(Question.type)
-            .filter(Question.subject_id == s.id)
+            .filter(
+                Question.subject_id == s.id,
+                (Question.deprecated == None) | (Question.deprecated == False),  # 排除废弃题，与组卷/掌握度口径一致
+            )
             .distinct().all()
         ]
         # 有效题型 = allowed_types ∩ available_types（未配置时不限制）

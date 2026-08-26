@@ -10,6 +10,19 @@ const MASTERY_BADGE = {
 const ANA_PALETTE = ['#74c0fc','#ffa94d','#69db7c','#b197fc','#ff8787','#ffd43b','#63e6be','#a5d8ff'];
 const _sharedCharts = {};  // echarts 实例缓存（按 domId）
 
+// 计算综合精通度百分比（与 home.html / mastery.js 算法完全一致）
+// mastered=100%，否则取 min(覆盖度÷80%, 正确率÷90%, 做题数÷门槛)，上限 100
+function calcMasteryPctShared(cell, topicTotal) {
+  if (!cell || cell.status === 'not_started') return null;
+  if (cell.status === 'mastered') return 100;
+  const covRatio = (cell.coverage || 0) / 80;
+  const rateRaw = (cell.rate || 0) / 100;
+  const rateRatio = rateRaw < 0.90 ? rateRaw / 0.90 : 0.999;
+  const thrN = Math.max(Math.floor((topicTotal || 0) * 0.8), 10);
+  const nRatio = (cell.total || 0) / thrN;
+  return Math.min(covRatio, rateRatio, nRatio, 1) * 100;
+}
+
 function rateBadge(rate) {
   const cls = rate >= 80 ? 'rate-good' : (rate >= 60 ? 'rate-mid' : 'rate-bad');
   return `<span class="rate-badge ${cls}">${rate}%</span>`;
@@ -78,31 +91,31 @@ document.addEventListener('click', e => {
 });
 
 // ============ 掌握度全景渲染 ============
-/* d: { tier, topics: [{name, subject_name, topic_total, cells: {sid: {tier: {status, coverage}} }}], students: [{id, name}] } */
-// 横向柱状图（REQ-1-1）：复刻 qyn_mastery_chart.html——标签单独一行在柱上方，柱子粗 20px 占满整行。
+/* d: { tier, topics: [{name, subject_name, topic_total, cells: {sid: {tier: {status, rate, coverage, total}} }}], students: [{id, name}] } */
+// 横向柱状图：以综合精通度为柱子值（取代原来的覆盖度），标签行在柱上方。
 function renderMasteryCoverageChart(domId, d) {
   const el = document.getElementById(domId);
   if (!el) return;
   const tier = String(d.tier || 1);
-  // 每课覆盖度（精通度）＝所选学员平均覆盖度（保留原聚合逻辑）
+  // 每课综合精通度 = 所选学员平均精通度
   const avgs = d.topics.map(t => {
     const students = d.students || [];
     if (!students.length) return 0;
-    let sum = 0;
+    let sum = 0, count = 0;
     students.forEach(s => {
       const cell = (t.cells[s.id] || {})[tier] || {};
-      sum += (cell.coverage || 0);
+      const pct = calcMasteryPctShared(cell, t.topic_total);
+      if (pct != null) { sum += pct; count++; }
     });
-    return +(sum / students.length).toFixed(1);
+    return count > 0 ? +(sum / count).toFixed(1) : 0;
   });
   const colors = avgs.map(v =>
-    v >= 80 ? '#e67700' : v >= 50 ? '#69db7c' : v >= 20 ? '#74c0fc' : '#dee2e6'
+    v >= 100 ? '#e67700' : v >= 80 ? '#e67700' : v >= 50 ? '#69db7c' : v >= 20 ? '#74c0fc' : '#dee2e6'
   );
   if (!d.topics.length) {
     el.innerHTML = '<div class="hbar-emptytip">该科目暂无课时</div>';
     return;
   }
-  // 生成横向柱 HTML：每课 = 标签行(hbar-head) + 柱行(hbar-track)
   const rows = d.topics.map((t, i) => {
     const v = avgs[i];
     const name = t.subject_name ? `${t.subject_name}·${t.name}` : t.name;
@@ -114,7 +127,7 @@ function renderMasteryCoverageChart(domId, d) {
       </div>
       <div class="hbar-track">
         <span class="hbar-fill" style="width:${Math.min(v, 100)}%;background:${colors[i]};"></span>
-        <span class="hbar-masterline" title="精通覆盖度门槛 80%"></span>
+        <span class="hbar-masterline" title="精通门槛 100%"></span>
         <span class="hbar-val">${Math.round(v)}%</span>
       </div>
     </div>`;
@@ -135,8 +148,12 @@ function renderMasteryMatrix(boxId, d) {
     d.students.forEach(s => {
       const cell = (t.cells[s.id] || {})[tier] || { status: 'not_started' };
       const st = cell.status || 'not_started';
-      const cov = cell.coverage != null ? ` (${Math.round(cell.coverage)}%)` : '';
-      html += `<td>${masteryBadge(st)}${cov ? `<span style="font-size:10px;color:#9c8bb5;">${cov}</span>` : ''}</td>`;
+      const masteryPct = calcMasteryPctShared(cell, t.topic_total);
+      // 精通度为主，覆盖度和正确率为辅
+      const masteryText = masteryPct != null ? ` ${Math.round(masteryPct)}%` : '';
+      const cov = cell.coverage != null ? `<span style="font-size:10px;color:#9c8bb5;"> 覆盖${Math.round(cell.coverage)}%</span>` : '';
+      const rate = cell.rate != null ? `<span style="font-size:10px;color:#9c8bb5;"> 正确${Math.round(cell.rate)}%</span>` : '';
+      html += `<td>${masteryBadge(st)}${masteryText ? `<span style="font-size:11px;color:#667eea;font-weight:600;">${masteryText}</span>` : ''}${cov}${rate}</td>`;
     });
     html += `</tr>`;
   });

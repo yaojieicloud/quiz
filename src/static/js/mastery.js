@@ -160,19 +160,38 @@ function showSubject(sub) {
   content.innerHTML = html;
 }
 
+// 计算综合精通度百分比（与 home.html calcMasteryPercent 算法完全一致）
+function calcMasteryPct(d) {
+  if (!d || d.status === 'not_started') return null;
+  if (d.status === 'mastered') return 100;
+  const covRatio = (d.coverage || 0) / 80;
+  const rateRaw = (d.rate || 0) / 100;
+  const rateRatio = rateRaw < 0.90 ? rateRaw / 0.90 : 0.999;
+  const thrN = Math.max(Math.floor((d.topic_total || 0) * 0.8), 10);
+  const nRatio = (d.total || 0) / thrN;
+  return Math.min(covRatio, rateRatio, nRatio, 1) * 100;
+}
+
 function topicCard(t) {
   const d = t.tiers[selectedTier] || t.tiers[TIERS[0]];
   const st = d.status;
   const rateColor = d.rate >= 90 ? '#2b8a3e' : d.rate >= 60 ? '#1c7ed6' : '#e03131';
+  const covColor = d.coverage >= 80 ? '#2b8a3e' : d.coverage >= 50 ? '#1c7ed6' : '#e03131';
+  const masteryPct = calcMasteryPct(d);
+  const masteryColor = st === 'mastered' ? '#e67700' : masteryPct >= 80 ? '#e67700' : '#667eea';
   return `<div class="topic-card" data-tid="${t.topic_id}" style="border-left-color:${barColor(st)}">
     <div class="tname"><span>${esc(t.name)}</span>
       <span class="st-badge st-${st}">${STATUS_TEXT[st]}</span></div>
+    <div class="bar-row fi-mastery">
+      <div class="bar-label"><span>精通度</span><b style="color:${masteryColor}">${st === 'mastered' ? '100%' : (masteryPct ? Math.round(masteryPct) + '%' : '—')}</b></div>
+      <div class="bar"><i style="width:${masteryPct ? Math.min(100, Math.round(masteryPct)) : 0}%"></i></div>
+    </div>
     <div class="bar-row fi-rate">
       <div class="bar-label"><span>近期正确率</span><b style="color:${rateColor}">${d.rate}%</b></div>
       <div class="bar"><i style="width:${Math.min(100, d.rate)}%"></i></div>
     </div>
     <div class="bar-row fi-cov">
-      <div class="bar-label"><span>知识点覆盖</span><b>${d.coverage}%</b></div>
+      <div class="bar-label"><span>知识点覆盖</span><b style="color:${covColor}">${d.coverage}%</b></div>
       <div class="bar"><i style="width:${Math.min(100, d.coverage)}%"></i></div>
     </div>
     <div class="meta">近期 ${d.total} 题 · 对 ${d.correct} 题 · ${d.sessions} 次练习 · 本课共 ${d.topic_total} 题</div>

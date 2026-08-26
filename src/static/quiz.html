@@ -339,7 +339,7 @@ function showSpeedWarning(type) {
     <div class="timer-warning-card">
       <div class="timer-warning-emoji">⏰</div>
       <div class="timer-warning-title">温馨提示</div>
-      <div class="timer-warning-text">${type === 'empty_code' ? '请完成代码后再提交，不要交白卷！' : '答题 10 秒一题，请认真答题！'}</div>
+      <div class="timer-warning-text">每题答题时间不得少于10秒,请认真答题!</div>
       <button class="timer-warning-btn" onclick="this.closest('.timer-warning-mask').remove()">确 认</button>
     </div>
     <style>

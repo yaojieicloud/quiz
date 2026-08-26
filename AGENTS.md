@@ -63,7 +63,23 @@ fastapi==0.141.1、uvicorn[standard]==0.52.1、sqlalchemy==2.0.51、pydantic==2.
   - 运维写接口（exec-sql / update-file / restart）前务必备份数据库
 - Python 规范：import 置顶、PEP8（4 空格/行宽 120）、中文注释、项目内相对导入优先、返回类型标注且一致、FastAPI 路由带 summary/description/response_model/tags
 
-## 8. 注意事项
+
+## 8. 部署规范（必读）
+
+> **唯一合法部署方式**：所有代码变更必须通过标准流程推送到 ECS，不得绕过。
+> **历史遗留方式已废弃**：`POST /api/admin/update-file` 接口（逐个文件推送）**已废弃**，仅保留作为紧急回滚手段。
+> **详细流程**：ECS 部署标准流程 `docs/deploy/ecs-deploy.md`（含 SSH 密钥路径、标准部署、应急热更新、回滚、安全红线）
+
+### 部署前检查清单
+- [ ] 本地代码完整（`git status` 无未提交文件）
+- [ ] 确认 `src/` 与 ECS `build/` 目录结构一致
+- [ ] 确认 ECS 数据卷 `/opt/quiz-system/quiz-data/` 存在且可写
+- [ ] 确认 ECS SSH 连接正常（`openclaw.pem` 私钥可用）
+- [ ] 确认 ECS 健康检查通过（`curl http://106.14.99.100:8000/` 返回 200）
+
+> ⚠️ 每次改代码后部署，**一律走 `docs/deploy/ecs-deploy.md` 标准流程（打包→scp→docker build→docker compose up -d→健康检查）**，禁止用逐文件 update-file 推算部署。
+
+## 999. 注意事项
 - ✅ 3 份设计文档残留的 `routers/admin.py` 引用已修正为 `analytics.py` + `system.py`（2026-08-25，`BUG-1` 已关闭，见 `docs/issues/BUG-1.md`）
 - ✅ 依赖版本已锁定（2026-08-25，见 `src/requirements.txt` 与 `docs/init/dependencies.md`）
 - `quiz-data/`、`*.db`、`.venv/` 已入 .gitignore，严禁提交（含密钥）
