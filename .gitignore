@@ -261,3 +261,4 @@ scripts/
 src/deploy_questions.py`
 src/gen_sql.py
 src/push_questions.py
+*.gz
