@@ -21,7 +21,7 @@
 - 风险评估：低（纯文档修正，零代码变更）
 
 ## 4. 修复记录
-- 2026-08-25：3 份设计文档修正完毕；it-workflow 文档中 BUG-1 相关记录同步更新（AGENTS.md / design/INDEX.md / init/architecture.md / issues/INDEX.md）
+- 2026-08-25：3 份设计文档修正完毕；it-workflow 文档中 BUG-1 相关记录同步更新（README.md / design/INDEX.md / init/architecture.md / issues/INDEX.md）
 
 ## 5. 回归测试结果
 - 全仓 grep "admin.py"：仅剩预期残留——BUG-1 问题单记录、历史一次性部署脚本 `src/data/deploy_step3_rebuild.py`（已执行的历史产物，不在本次范围）

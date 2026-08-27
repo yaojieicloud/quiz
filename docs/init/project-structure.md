@@ -5,8 +5,7 @@
 ## 目录树
 ```
 quiz/
-├── AGENTS.md                  # it-workflow 快速入门总入口
-├── README.md                  # 系统总入口（存量）：功能/架构/部署/运维导航
+├── README.md                  # 系统总入口（存量）：功能/架构/部署/运维导航 + it-workflow 流程
 ├── CODEBUDDY.md               # LLM 协作军规（存量）
 ├── .gitignore
 ├── docs/

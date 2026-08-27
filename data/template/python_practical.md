@@ -150,3 +150,4 @@ python src/data/import_via_api.py --json src/data/python_coding200.json
 3. **参考代码要能在沙箱跑通**：不能用 os/subprocess/socket 等被禁模块
 4. **中文输出**：参考代码的 print 中文正常，沙箱用 `-X utf8` 运行
 5. **`answer` 是字符串**：参考代码用 `\n` 表示换行
+6. **不超纲**：面向 3-4 年级（8-10 岁），只用当前章节教过的知识点；不串课、不碰 CPython 底层机制（对象缓存/`is`/双下划线等）、不碰超纲数学/类型（复数/二八十六进制/浮点误差等）、不混真实工程概念；存疑即废弃。细则见 [python_theory.md §〇](python_theory.md)

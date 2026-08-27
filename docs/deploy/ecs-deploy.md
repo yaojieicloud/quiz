@@ -54,7 +54,7 @@ tar -czf /tmp/quiz-project.tar.gz \
   --exclude=data \
   --exclude=__pycache__ \
   --exclude=node_modules \
-  src/ data/ docs/ README.md CODEBUDDY.md AGENTS.md
+  src/ data/ docs/ README.md CODEBUDDY.md
 
 # 3. 推送文件到 ECS build/ 目录
 scp -i C:/Users/Yaojure/Documents/openclaw.pem \

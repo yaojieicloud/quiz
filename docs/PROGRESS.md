@@ -11,7 +11,7 @@
 | — | — | 暂无进行中任务 | — | — | — | 2026-08-24 | |
 
 ## 已完成里程碑
-- 2026-08-24：it-workflow 项目初始化 ✅（AGENTS.md + docs 骨架 10 文件 + BUG-1 登记）
+- 2026-08-24：it-workflow 项目初始化 ✅（README.md + docs 骨架 10 文件 + BUG-1 登记）
 - 2026-08-25：BUG-1 设计文档 admin.py 残留引用修正 ✅（系统架构总览 / 管理后台与学情分析 / AI评分与学情报告）
 - 2026-08-25：`src/requirements.txt` 依赖版本锁定 ✅（8 项，来源本地 .venv 实测，Python 3.13）
 - 2026-08-25：**数据库唯一合法路径统一为 data/quiz.db** ✅（config.py / fetch_db.py / migrate 脚本 + 6 份文档同步；删除 src/quiz.db 并备份）

@@ -32,6 +32,14 @@
 - [实时出题改造方案](docs/plan/实时出题改造方案.md)
 - [未来规划](docs/plan/未来规划.md)
 
+**开发规范与协作流程（it-workflow）**
+
+本仓库遵循 **it-workflow** 流程（需求 → 方案设计 → 任务拆解 → 开发 → 文档同步 → 验收，Bug 流程同样两次确认门）；指令：`/需求` `/设计` `/任务` `/问题` `/测试` `/讨论` `/继续` `/暂停` `/帮助`；编号：需求 `REQ-{N}` / 设计 `REQ-{N}-{M}` / 任务 `REQ-{N}-{M}-{K}` / 问题单 `BUG-{N}`。骨架见 `docs/init/`、`docs/overview.md`、进度 `docs/PROGRESS.md`；历史协作铁律（教材/文档先行/安全红线）承自 `CODEBUDDY.md`，仍作项目约定。
+
+- [习题人工复核规范](docs/qa/manual-review.md) — 全科目题目正确性/选项合理性/超纲判定（5 检查点 + 正材清单 + 废弃正路流程）
+- [自动核对计划 check-plan](docs/qa/python-theory-check-plan.md) — 结构/答案判定 PASS/FIX/DROP
+- 需求索引 `docs/requirements/INDEX.md`；问题单 `docs/issues/INDEX.md`
+
 ---
 
 ## ⚠️ 出题铁律（永远遵守）
@@ -43,6 +51,18 @@
 - 数学：人教版
 
 后续生成/补充题目时，**单元、课时、知识点必须与课本一致**：单元名顺序照课本目录；课时按课本 Part/课文拆分（英语 Part A/B/C，语文 课文+语文园地）；单词表/句型/课文以教材为准；不得凭旧版教材或记忆杜撰。详见 [科目与知识点体系](docs/design/科目与知识点体系.md)。
+
+### 认知铁律：不超纲、不超出小朋友认知（适用 Python 两科，2026-08-26 增补）
+
+面向 **小学 3-4 年级（8-10 岁）**。出题/审核每题（含选项、连线两列）必须过一句：「一个没学过这些概念的 9 岁孩子，能不能凭已学知识做对？」不能 → 换掉或删掉，不得入库。
+
+- ❌ **不串课**：只用当前章节教过的知识点，后文章节（函数、字符串方法、列表/字典/元组、lambda 等）禁止提前出现
+- ❌ 不碰 CPython 内部机制与底层概念（对象缓存/`is` 同一性、`id/dir/help`、双下划线、类型检查器、docstring 等）
+- ❌ 不碰超纲数学/类型（复数、二/八/十六进制、科学计数、`inf`、浮点误差、步长切片、字符串字典序比较、高级格式化 spec、`round` 舍入规则等）
+- ❌ 不混真实工程概念（文件/缓冲区、日志、`import` 第三方模块、调试工具等）
+- 存疑一律废弃，不纠结
+
+> **事故注**：2026-08-26 人工复核前 8 个入门课（变量与标识符 → 字符串查找判断修改，topic 25-32）发现 **116 道超纲题**（多为批量生成批次混入入门课，属进阶题漏过滤），已全部 `deprecated`，库内 564 道活跃达标。**人工复核机制（5 检查点 + 正材清单 + 废弃正路流程）详见 [习题人工复核规范](docs/qa/manual-review.md)；出题铁律细则见 [Python 理论模板](data/template/python_theory.md#〇出题铁律不超纲不超出小朋友认知-每题必过)。**
 
 ---
 
@@ -80,6 +100,12 @@
 
 完整技术栈、模块路由表、数据模型、请求流向见 [系统架构总览](docs/design/系统架构总览.md)。
 
+### 依赖版本（2026-08-25 锁定）
+`fastapi==0.141.1`、`uvicorn[standard]==0.52.1`、`sqlalchemy==2.0.51`、`pydantic==2.13.4`、`python-jose[cryptography]==3.5.0`、`passlib==1.7.4`、`python-multipart==0.0.32`、`openai==2.53.0` + 前端 ECharts CDN。详见 `docs/init/dependencies.md`。
+
+### Python 编码规范
+import 置顶、PEP8（4 空格 / 行宽 120）、中文注释、项目内相对导入优先、返回类型标注且一致、FastAPI 路由带 `summary/description/response_model/tags`。
+
 ### 角色与权限
 
 | 角色 | 用途 |
@@ -112,6 +138,19 @@ ECS 已配置阿里云 pip 源、恢复 `docker build` 标准部署；`docker cp
 cd src && .venv/Scripts/python.exe -m uvicorn main:app --host 0.0.0.0 --port 8010
 ```
 
+### ⚠️ 部署红线（唯一合法部署方式）
+所有代码变更必须走**标准流程**推送到 ECS，不得绕过（详细见 [部署与运维](docs/design/部署与运维.md) 与 `docs/deploy/ecs-deploy.md`）：
+> **禁止**用 `POST /api/admin/update-file` 逐个文件推送——该接口**已废弃**，仅保留作紧急回滚手段。
+
+**部署前检查清单**：
+- [ ] 本地代码完整（`git status` 无未提交文件）
+- [ ] 确认 `src/` 与 ECS `build/` 目录结构一致
+- [ ] 确认 ECS 数据卷 `/opt/quiz-system/data/` 存在且可写
+- [ ] 确认 ECS SSH 正常（`openclaw.pem` 私钥可用）
+- [ ] 确认 ECS 健康检查通过（`curl http://106.14.99.100:8000/` 返回 200）
+
+> ⚠️ 改代码后一律走标准流程（打包→scp→docker build→docker compose up -d→健康检查），禁止逐文件 update-file 推算部署。推 ECS 前本地完整测试、批量数据库操作前确认备份。
+
 ---
 
 ## 🔧 维护者须知
@@ -124,6 +163,13 @@ cd src && .venv/Scripts/python.exe -m uvicorn main:app --host 0.0.0.0 --port 801
 - **密钥安全**：DeepSeek / aliyun key 走环境变量或 `data/*.txt`，**禁止写入代码或提交仓库**；`data/`、`*.db`、`.venv` 已加入 `.gitignore`。
 
 > 所有写操作类运维接口（exec-sql / update-file / restart）**务必先备份数据库**。
+
+**注意事项 / 已确认事项**：
+- ✅ `routers/admin.py` 引用残留已修正为 `analytics.py` + `system.py`（2026-08-25，`BUG-1` 已关闭，见 `docs/issues/BUG-1.md`）
+- ✅ 依赖版本已锁定（2026-08-25，见 `docs/init/dependencies.md` 与上方依赖清单）
+- `data/`、`*.db`、`.venv/` 已入 `.gitignore`，严禁提交（含密钥）
+- 时间口径：库内统一 UTC 存储，对外输出 +00:00（`core/times.py`），前端负责换算
+- 管理后台：`/static/admin.html`（账号 `admin/admin123`）
 
 完整运维 API 清单、热更新流程、安全提醒见 [部署与运维](docs/design/部署与运维.md)。
 
