@@ -186,6 +186,7 @@ let available = 0;     // 当前选择下的实际可用题数（由 /api/exam/a
 let _availTimer = null; // 防抖定时器
 let masteryMap = {};   // 精通度缓存 {topicId_tier: status}，用于显示精通角标
 let masteryDetailMap = {};  // {topicId_tier: {status, rate, coverage, total, topic_total}}
+let _masteryReady = Promise.resolve();  // 精通度加载 Promise，渲染前 await 它
 
 async function loadMastery() {
   try {
@@ -588,16 +589,15 @@ async function startExam() {
 
 // 支持 quiz 结果页「继续选课做题」跳回：home.html?pick=<subjectId>
 // 必须先等精通度加载完，再加载科目（否则课程 chips 渲染时 masteryMap 为空，角标不显示）
-(async () => {
-  await loadMastery();
-  await loadSubjects();
-  const pick = new URLSearchParams(location.search).get('pick');
-  if (!pick) return;
-  const sub = subjects.find(s => s.id === parseInt(pick));
-  if (!sub) return;
-  if (isPractical(sub)) openCoursePick(sub.id);
-  else openConfig(sub.id);
-})();
+_masteryReady = loadMastery();
+await _masteryReady;
+await loadSubjects();
+const pick = new URLSearchParams(location.search).get('pick');
+if (!pick) return;
+const sub = subjects.find(s => s.id === parseInt(pick));
+if (!sub) return;
+if (isPractical(sub)) openCoursePick(sub.id);
+else openConfig(sub.id);
 </script>
 </body>
 </html>
