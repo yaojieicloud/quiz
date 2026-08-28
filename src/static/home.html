@@ -205,6 +205,28 @@ async function loadMastery() {
   } catch (e) { /* 精通度非关键，失败静默 */ }
 }
 
+// REQ-3: 课程递进解锁 —— 判断某课是否解锁
+// 逻辑：已精通 → 永远解锁；未精通 → 前面所有课必须全部精通
+function isTopicUnlocked(topic, allTopics, masteryMap, tier) {
+  const st = masteryMap[`${topic.id}_${tier}`];
+  if (st === 'mastered') return true;
+  const prevTopics = allTopics.filter(
+    t => t.sort_order < topic.sort_order && t.subject_id === topic.subject_id
+  );
+  return prevTopics.every(t => masteryMap[`${t.id}_${tier}`] === 'mastered');
+}
+
+// REQ-3: 默认选中——最靠前且未精通且已解锁的一课；全部精通则选最后一课
+function getDefaultSelectedTopic(topics, masteryMap, tier) {
+  for (let i = 0; i < topics.length; i++) {
+    const st = masteryMap[`${topics[i].id}_${tier}`];
+    if (st !== 'mastered' && isTopicUnlocked(topics[i], topics, masteryMap, tier)) {
+      return topics[i];
+    }
+  }
+  return topics[topics.length - 1];
+}
+
 // 某课在某档位的精通度百分比（与 core/mastery.py eval_topic_tier 三门槛完全对齐）
 // 后端判定: mastered = N>=thr_master_n && R>=0.90 && Ccov>=0.80
 // 门槛与后端完全一致: MASTER_COV=0.80, MASTER_RATE=0.90, MIN_ANSWERS_FLOOR=10
@@ -298,13 +320,32 @@ async function openCoursePick(subjectId) {
     return;
   }
   const box = document.getElementById('courseChips');
-  box.innerHTML = topics.map((t, i) =>
-    `<span class="chip" data-tid="${t.id}" onclick="pickCourse(this)">第${i + 1}课 ${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`
-  ).join('');
+  box.innerHTML = topics.map((t, i) => {
+    const locked = !isTopicUnlocked(t, topics, masteryMap, selectedTier);
+    const cls = locked ? 'chip locked' : 'chip';
+    const prefix = locked ? ' ' : '';
+    return `<span class="${cls}" data-tid="${t.id}" onclick="pickCourse(this)">${prefix}第${i + 1}课 ${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`;
+  }).join('');
+  // 默认选中最靠前且未精通且已解锁的一课
+  const defaultT = getDefaultSelectedTopic(topics, masteryMap, selectedTier);
+  if (defaultT) {
+    const chip = box.querySelector(`.chip[data-tid="${defaultT.id}"]`);
+    if (chip && !chip.classList.contains('locked')) {
+      chip.classList.add('active');
+      selectedCourse = defaultT.id;
+    }
+  }
   document.getElementById('courseModal').classList.add('show');
 }
 
 function pickCourse(el) {
+  // REQ-3: 锁定拦截
+  const tid = parseInt(el.dataset.tid);
+  const t = topics.find(x => x.id === tid);
+  if (t && !isTopicUnlocked(t, topics, masteryMap, selectedTier)) {
+    toast('先把前面的课程学到精通，再来挑战这一课吧！', 'error');
+    return;
+  }
   document.querySelectorAll('#courseChips .chip').forEach(c => c.classList.remove('active'));
   el.classList.add('active');
   selectedCourse = parseInt(el.dataset.tid);
@@ -364,8 +405,8 @@ async function openConfig(subjectId) {
 
   selectedTopics = new Set();
   selectedTypes = new Set();
-  // 需求8：文化类默认 50 题；编程理论默认 10 题
-  selectedCount = isCulture ? 50 : 10;
+  // 需求8：文化类默认 50 题；编程理论默认 20 题
+  selectedCount = isCulture ? 50 : 20;
   selectedMode = 'custom';
   selectedTier = 1;
   // 重置 chip
@@ -394,8 +435,22 @@ async function openConfig(subjectId) {
     if (!topics.length) {
       box.innerHTML = '<div style="color:#9c8bb5;font-size:14px;padding:8px 0;">📭 该科目还没有章节，请先在管理后台添加</div>';
     } else if (isProg) {
-      // 编程类理论：扁平多选
-      box.innerHTML = topics.map(t => `<span class="chip" data-tid="${t.id}" onclick="toggleChip(this)">${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`).join('');
+      // 编程类理论：扁平多选，递进解锁
+      box.innerHTML = topics.map(t => {
+        const locked = !isTopicUnlocked(t, topics, masteryMap, selectedTier);
+        const cls = locked ? 'chip locked' : 'chip';
+        const prefix = locked ? ' ' : '';
+        return `<span class="${cls}" data-tid="${t.id}" onclick="toggleChip(this)">${prefix}${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`;
+      }).join('');
+      // 默认选中最靠前且未精通且已解锁的一课
+      const defaultT = getDefaultSelectedTopic(topics, masteryMap, selectedTier);
+      if (defaultT) {
+        const chip = box.querySelector(`.chip[data-tid="${defaultT.id}"]`);
+        if (chip && !chip.classList.contains('locked')) {
+          chip.classList.add('active');
+          selectedTopics.add(defaultT.id);
+        }
+      }
     } else {
       // 文化类：按 unit 分组折叠
       box.innerHTML = renderTopicGroups(topics);
@@ -434,7 +489,12 @@ function renderTopicGroups(topics) {
           <button class="unit-select-all" onclick="event.stopPropagation(); selectAllUnit('${safe}', this)">全选本单元</button>
         </div>
         <div class="unit-topics">
-          ${list.map(t => `<span class="chip" data-tid="${t.id}" data-unit="${esc(u)}" onclick="toggleChip(this)">${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`).join('')}
+          ${list.map(t => {
+            const locked = !isTopicUnlocked(t, topics, masteryMap, selectedTier);
+            const cls = locked ? 'chip locked' : 'chip';
+            const prefix = locked ? ' ' : '';
+            return `<span class="${cls}" data-tid="${t.id}" data-unit="${esc(u)}" onclick="toggleChip(this)">${prefix}${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`;
+          }).join('')}
         </div>
       </div>`;
   }).join('');

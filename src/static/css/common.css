@@ -681,6 +681,8 @@ main { max-width: 820px; margin: 0 auto; padding: 0 16px 40px; }
   border-color: #4dabf7;
   box-shadow: 0 3px 10px rgba(77,171,247,0.4);
 }
+.chip.locked { opacity: 0.45; cursor: not-allowed; background: #f1f3f5; }
+.chip.locked:hover { background: #f1f3f5; box-shadow: none; }
 
 /* ============ 响应式 ============ */
 @media (max-width: 600px) {

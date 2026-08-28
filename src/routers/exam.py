@@ -414,6 +414,34 @@ def start_exam(data: ExamStartRequest, user: User = Depends(get_current_user), d
     if not subject:
         raise HTTPException(status_code=404, detail="科目不存在")
 
+    # REQ-3: 递进解锁校验（选了指定课程时）
+    if data.topic_ids:
+        for tid in data.topic_ids:
+            topic = db.query(Topic).filter(Topic.id == tid).first()
+            if not topic:
+                continue
+            prev_topics = (
+                db.query(Topic)
+                .filter(Topic.subject_id == topic.subject_id, Topic.sort_order < topic.sort_order)
+                .order_by(Topic.sort_order)
+                .all()
+            )
+            for pt in prev_topics:
+                m = (
+                    db.query(StudentMastery)
+                    .filter(
+                        StudentMastery.student_id == user.id,
+                        StudentMastery.topic_id == pt.id,
+                        StudentMastery.tier == data.tier,
+                    )
+                    .first()
+                )
+                if not m or m.status != "mastered":
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f'请先精通「{pt.name}」再来挑战本课',
+                    )
+
     # 题目数量只允许标准档位：1（实操单题）、10、20、30、40、50；防止出现 15 题等非预期组卷
     if data.count not in (1, 10, 20, 30, 40, 50):
         raise HTTPException(status_code=400, detail="题目数量只能选择 1、10、20、30、40、50 题")
