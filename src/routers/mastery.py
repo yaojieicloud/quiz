@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from database import get_db
 from models import User, ParentChild, ExamRecord, AnswerRecord, Question, Subject, Topic, StudentMastery
 from core.deps import require_role, get_current_user
-from core.mastery import STATUS_LABEL, _topic_totals
+from core.mastery import STATUS_LABEL, _topic_totals, compute_mastery_for_topics, upsert_student_mastery, compute_mastery_for_topics, upsert_student_mastery
 from core.tier import ACTIVE_TIERS, tier_label
 
 router = APIRouter(prefix="/api", tags=["掌握度"])
@@ -232,4 +232,71 @@ def class_mastery(
             for s in students
         ],
         "topics": result,
+    }
+
+
+@router.post("/admin/mastery/recalculate")
+def recalculate_student_mastery(
+    student_id: int,
+    topic_id: int,
+    tier: int = 1,
+    _: User = Depends(require_role("admin")),
+    db: Session = Depends(get_db),
+):
+    """管理端：重算某学员在某课某档位的精通度。
+
+    仅重算指定的 topic_id，不越界。已达 mastered 的锁定不动。
+    """
+    # 验证学员存在
+    student = db.query(User).filter(User.id == student_id, User.role == "student").first()
+    if not student:
+        raise HTTPException(status_code=404, detail="学员不存在")
+
+    # 验证 topic 存在
+    topic = db.query(Topic).filter(Topic.id == topic_id).first()
+    if not topic:
+        raise HTTPException(status_code=404, detail="课程不存在")
+
+    # 重算精通度
+    computed = compute_mastery_for_topics(db, student_id, [(topic_id, tier)])
+    if not computed:
+        raise HTTPException(status_code=400, detail="无法计算精通度")
+
+    # upsert 前检查：如果已达精通，锁定不动
+    existing = (
+        db.query(StudentMastery)
+        .filter(
+            StudentMastery.student_id == student_id,
+            StudentMastery.topic_id == topic_id,
+            StudentMastery.tier == tier,
+        )
+        .first()
+    )
+    if existing and existing.status == "mastered":
+        return {
+            "message": "该学员在此课程已达精通，锁定不动",
+            "status": existing.status,
+            "rate": existing.rate,
+            "coverage": existing.coverage,
+        }
+
+    # 执行 upsert
+    upsert_student_mastery(db, student_id, computed)
+    db.commit()
+
+    # 返回新状态
+    new_mastery = (
+        db.query(StudentMastery)
+        .filter(
+            StudentMastery.student_id == student_id,
+            StudentMastery.topic_id == topic_id,
+            StudentMastery.tier == tier,
+        )
+        .first()
+    )
+    return {
+        "message": "精通度重算完成",
+        "status": new_mastery.status if new_mastery else "not_started",
+        "rate": new_mastery.rate if new_mastery else 0.0,
+        "coverage": new_mastery.coverage if new_mastery else 0.0,
     }
