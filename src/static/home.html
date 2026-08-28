@@ -587,15 +587,17 @@ async function startExam() {
 }
 
 // 支持 quiz 结果页「继续选课做题」跳回：home.html?pick=<subjectId>
-loadMastery();  // 预加载精通度，供组卷界面显示精通角标
-loadSubjects().then(() => {
+// 必须先等精通度加载完，再加载科目（否则课程 chips 渲染时 masteryMap 为空，角标不显示）
+(async () => {
+  await loadMastery();
+  await loadSubjects();
   const pick = new URLSearchParams(location.search).get('pick');
   if (!pick) return;
   const sub = subjects.find(s => s.id === parseInt(pick));
   if (!sub) return;
   if (isPractical(sub)) openCoursePick(sub.id);
   else openConfig(sub.id);
-});
+})();
 </script>
 </body>
 </html>
