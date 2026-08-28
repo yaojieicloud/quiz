@@ -68,10 +68,12 @@ def _build_student_mastery(db: Session, sid: int, tier: int = None) -> dict:
                     "topic_id": t.id,
                     "name": t.name,
                     "unit": t.unit,
+                    "sort_order": t.sort_order,
                     "tiers": tiers,
                 }
             )
-        tlist.sort(key=lambda x: (x["unit"] or "", x["name"]))
+        # 排序键：sort_order 优先（编程类递进序），unit+name 兜底（文化类无 sort_order 时按单元分组）
+        tlist.sort(key=lambda x: (x["sort_order"] or 0, x["unit"] or "", x["name"]))
         if tlist:
             out.append({"subject_id": sub.id, "name": sub.name, "topics": tlist})
     return {"student_id": sid, "selected_tier": tier or ACTIVE_TIERS[0], "subjects": out}
@@ -148,7 +150,7 @@ def class_mastery(
     topics = (
         db.query(Topic)
         .filter(Topic.id.in_(topic_ids))
-        .order_by(Topic.unit, Topic.name)
+        .order_by(Topic.sort_order, Topic.unit, Topic.name)
         .all()
     )
     if not topics:
