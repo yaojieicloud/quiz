@@ -1,11 +1,10 @@
 /* 学情分析共享组件（admin 与学员端复用）
  * 依赖：echarts（页面需引入 vendor/echarts.min.js）、esc/toast/API（common.js 提供）
- * 提供：多选下拉工具、掌握度全景渲染、最近刷题动态渲染
+ * 提供：多选下拉工具、精通度全景渲染、最近刷题动态渲染
  */
 const TYPE_NAME = { choice:'选择', judge:'判断', calc:'计算', fill:'填空', essay:'应用', match:'连线', sort:'排序', code:'编程', reading:'阅读' };
 const MASTERY_BADGE = {
-  not_started: ['st-not_started', '未开始'], practicing: ['st-practicing', '练习中'],
-  passed: ['st-passed', '通过'], mastered: ['st-mastered', '精通'], review: ['st-review', '需复习'],
+  mastered: ['st-mastered', '精通'],
 };
 const ANA_PALETTE = ['#74c0fc','#ffa94d','#69db7c','#b197fc','#ff8787','#ffd43b','#63e6be','#a5d8ff'];
 const _sharedCharts = {};  // echarts 实例缓存（按 domId）
@@ -27,9 +26,14 @@ function rateBadge(rate) {
   const cls = rate >= 80 ? 'rate-good' : (rate >= 60 ? 'rate-mid' : 'rate-bad');
   return `<span class="rate-badge ${cls}">${rate}%</span>`;
 }
-function masteryBadge(status) {
-  const b = MASTERY_BADGE[status] || ['st-not_started', status || ''];
-  return `<span class="st-badge ${b[0]}" style="font-size:11px;padding:1px 7px;">${b[1]}</span>`;
+function masteryBadge(status, masteryPct) {
+  if (status === 'mastered') {
+    return `<span class="st-badge st-mastered" style="font-size:11px;padding:1px 7px;">精通</span>`;
+  }
+  // 非精通状态显示百分比
+  const pct = masteryPct != null ? Math.round(masteryPct) : 0;
+  const color = pct >= 80 ? '#e67700' : pct >= 50 ? '#1c7ed6' : '#868e96';
+  return `<span style="font-size:11px;padding:1px 7px;font-weight:bold;color:${color};">${pct}%</span>`;
 }
 
 // ============ 多选下拉工具 ============
@@ -90,7 +94,7 @@ document.addEventListener('click', e => {
   }
 });
 
-// ============ 掌握度全景渲染 ============
+// ============ 精通度全景渲染 ============
 /* d: { tier, topics: [{name, subject_name, topic_total, cells: {sid: {tier: {status, rate, coverage, total}} }}], students: [{id, name}] } */
 // 横向柱状图：以综合精通度为柱子值（取代原来的覆盖度），标签行在柱上方。
 function renderMasteryCoverageChart(domId, d) {
@@ -149,11 +153,10 @@ function renderMasteryMatrix(boxId, d) {
       const cell = (t.cells[s.id] || {})[tier] || { status: 'not_started' };
       const st = cell.status || 'not_started';
       const masteryPct = calcMasteryPctShared(cell, t.topic_total);
-      // 精通度为主，覆盖度和正确率为辅
-      const masteryText = masteryPct != null ? ` ${Math.round(masteryPct)}%` : '';
+      // 只显示精通度（精通显示"精通"，否则显示百分比）
       const cov = cell.coverage != null ? `<span style="font-size:10px;color:#9c8bb5;"> 覆盖${Math.round(cell.coverage)}%</span>` : '';
       const rate = cell.rate != null ? `<span style="font-size:10px;color:#9c8bb5;"> 正确${Math.round(cell.rate)}%</span>` : '';
-      html += `<td>${masteryBadge(st)}${masteryText ? `<span style="font-size:11px;color:#667eea;font-weight:600;">${masteryText}</span>` : ''}${cov}${rate}</td>`;
+      html += `<td>${masteryBadge(st, masteryPct)}${cov}${rate}</td>`;
     });
     html += `</tr>`;
   });

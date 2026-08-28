@@ -113,7 +113,7 @@ textarea.form-input.lg { min-height:120px; }
     <span class="chip" id="tabAnalytics" onclick="switchTab('analytics')">📊 学情分析</span>
     <span class="chip" id="tabReward" onclick="switchTab('reward')">🎁 奖励管理</span>
     <span class="chip" id="tabLlm" onclick="switchTab('llm')">📊 LLM 日志</span>
-    <span class="chip" id="tabMastery" onclick="switchTab('mastery')">🎯 学员掌握度</span>
+    <span class="chip" id="tabMastery" onclick="switchTab('mastery')">🎯 学员精通度</span>
   </div>
 
   <!-- ===== 科目与章节 ===== -->
@@ -258,7 +258,7 @@ textarea.form-input.lg { min-height:120px; }
   <!-- ===== 学情分析 ===== -->
   <div id="paneAnalytics" style="display:none;">
     <div class="ana-subtabs">
-      <span class="ana-subtab active" id="anaTabMastery" onclick="switchAnaPane('mastery')">🎯 掌握度全景</span>
+      <span class="ana-subtab active" id="anaTabMastery" onclick="switchAnaPane('mastery')">🎯 精通度全景</span>
       <span class="ana-subtab" id="anaTabRecent" onclick="switchAnaPane('recent')">🕒 最近动态</span>
       <span class="ana-subtab" id="anaTabRecords" onclick="switchAnaPane('records')">👀 学员答题</span>
       <span class="ana-subtab" id="anaTabWeakness" onclick="switchAnaPane('weakness')">🎯 薄弱分析</span>
@@ -270,7 +270,7 @@ textarea.form-input.lg { min-height:120px; }
       <div class="section-box" style="padding-bottom:8px;">
         <div class="filter-bar">
           <div class="form-group" style="flex:1;max-width:200px;">
-            <label>学员（联动其个人掌握度）</label>
+            <label>学员（联动其个人精通度）</label>
             <select class="form-select" id="wkStuSelect" onchange="loadAnaWeakness()">
               <option value="">全体学员（历史汇总）</option>
             </select>
@@ -300,19 +300,19 @@ textarea.form-input.lg { min-height:120px; }
         <div id="wkModeHint" style="font-size:12px;color:#9c8bb5;margin-top:4px;"></div>
       </div>
       <div class="section-box">
-        <h3>🎯 薄弱知识点 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">按个人掌握度口径：仅列「练习中/需复习」的课，已通过的不计入</span></h3>
+        <h3>🎯 薄弱知识点 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">仅列未精通的课，已达100%的不计入</span></h3>
         <div id="weakTopicsBox"></div>
       </div>
       <div class="section-box">
-        <h3>🔁 反复错题榜 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">累计错≥2次且未掌握的题，带所属课掌握状态</span></h3>
+        <h3>🔁 反复错题榜 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">累计错≥2次且未精通的题，带所属课精通状态</span></h3>
         <div id="repeatWrongBox"></div>
       </div>
       <div class="section-box">
-        <h3>🧗 低正确率题目 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">作答≥3次，正确率最低，带所属课掌握状态</span></h3>
+        <h3>🧗 低正确率题目 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">作答≥3次，正确率最低，带所属课精通状态</span></h3>
         <div id="hardQuestionsBox"></div>
       </div>
     </div>
-    <!-- 4. 掌握度全景（新增） -->
+    <!-- 4. 精通度全景（新增） -->
     <div id="anaPaneMastery" style="display:none;">
       <div class="section-box" style="padding-bottom:8px;">
         <div class="filter-bar">
@@ -346,7 +346,7 @@ textarea.form-input.lg { min-height:120px; }
         <div id="chartScoreTrend" class="chart-box"></div>
       </div>
       <div class="section-box">
-        <h3>🎯 掌握度矩阵 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">每课 × 每位学员的掌握状态</span></h3>
+        <h3>🎯 精通度矩阵 <span style="margin-left:auto;font-size:13px;color:#9c8bb5;font-weight:normal;">每课 × 每位学员的精通度</span></h3>
         <div id="mvpMatrixBox"></div>
       </div>
     </div>
@@ -447,9 +447,9 @@ textarea.form-input.lg { min-height:120px; }
     <iframe class="embed-frame" src="admin-llm.html?embed=1" title="LLM 日志"></iframe>
   </div>
 
-  <!-- ===== 学员掌握度（内嵌 admin-mastery.html） ===== -->
+  <!-- ===== 学员精通度（内嵌 admin-mastery.html） ===== -->
   <div id="paneMastery" style="display:none;">
-    <iframe class="embed-frame" src="admin-mastery.html?embed=1" title="学员掌握度"></iframe>
+    <iframe class="embed-frame" src="admin-mastery.html?embed=1" title="学员精通度"></iframe>
   </div>
 
 </main>
@@ -1838,7 +1838,7 @@ async function onWkGradeChange() {
 async function initWkFilters() {
   const gsel = document.getElementById('wkGradeSelect');
   if (gsel.options.length > 1) return; // 已初始化
-  // 学员下拉（联动个人掌握度）
+  // 学员下拉（联动个人精通度）
   try {
     const students = await API.get('/api/admin/students');
     const ssel = document.getElementById('wkStuSelect');
@@ -1852,7 +1852,7 @@ async function initWkFilters() {
 }
 
 function masteryLink(studentId, topicId) {
-  // 跳转该学员的掌握度页面并定位到对应课（携带当前薄弱分析所选档位，形成双向联动）
+  // 跳转该学员的精度页面并定位到对应课（携带当前薄弱分析所选档位，形成双向联动）
   const tier = document.getElementById('wkTierSelect').value;
   return `mastery.html?student_id=${studentId}&topic=${topicId}` + (tier ? `&tier=${tier}` : '');
 }
@@ -1873,9 +1873,9 @@ async function loadAnaWeakness() {
     const hint = document.getElementById('wkModeHint');
     const tierLabel = tier ? ({'1':'初级','2':'进阶','3':'挑战'}[tier] || '') : '';
     if (uid) {
-      hint.innerHTML = '📌 当前为 <b>该学员个人掌握度</b> 口径' + (tierLabel ? `（难度档位：<b>${tierLabel}</b>）` : '') + '：已通过/精通的课不会出现在薄弱榜，与「掌握度」页完全一致。点任意课可跳转该学员对应档位掌握度。';
+      hint.innerHTML = '📌 当前为 <b>该学员个人精通度</b> 口径' + (tierLabel ? `（难度档位：<b>${tierLabel}</b>）` : '') + '：已达100%精通的课不会出现在薄弱榜，与「精通度」页完全一致。点任意课可跳转该学员对应档位精通度。';
     } else {
-      hint.innerHTML = 'ℹ️ 未选学员时为「全体学员历史汇总」口径（向后兼容）' + (tierLabel ? `，难度档位：<b>${tierLabel}</b>` : '') + '。选中学员可切换为个人掌握度联动视图。';
+      hint.innerHTML = 'ℹ️ 未选学员时为「全体学员历史汇总」口径（向后兼容）' + (tierLabel ? `，难度档位：<b>${tierLabel}</b>` : '') + '。选中学员可切换为个人精通度联动视图。';
     }
 
     // 1. 薄弱知识点
@@ -1893,7 +1893,7 @@ async function loadAnaWeakness() {
           return `<tr><td>${esc(r.subject)}</td><td>${topicCell}</td><td>${masteryBadge(r.status)}</td>${rateCell}</tr>`;
         }).join('') + `</tbody></table>`;
     } else {
-      wt.innerHTML = '<div class="empty"><p>' + (uid ? '该学员目前没有「练习中/需复习」的薄弱课了 🎉（已通过的都算学会啦）' : '数据不足（需某知识点作答≥5次）') + '</p></div>';
+      wt.innerHTML = '<div class="empty"><p>' + (uid ? '该学员目前没有薄弱课了 🎉（已达100%精通的都算学会啦）' : '数据不足（需某知识点作答≥5次）') + '</p></div>';
     }
 
     // 2. 反复错题榜
@@ -1936,7 +1936,7 @@ async function loadAnaWeakness() {
   } catch (e) { toast(e.message, 'error'); }
 }
 
-// ============ 掌握度全景（新增子页） ============
+// ============ 精通度全景（新增子页） ============
 let mvpInited = false;
 async function initAnaMastery() {
   if (!mvpInited) {
@@ -2011,7 +2011,7 @@ async function loadMvpScoreTrend(uid, tier) {
       yAxis: { type: 'value', max: 100, name: '分' },
       series,
     });
-  } catch (e) { /* 成绩趋势加载失败不阻塞掌握度展示 */ }
+  } catch (e) { /* 成绩趋势加载失败不阻塞精通度展示 */ }
 }
 
 // ============ 最近刷题动态（新增子页） ============

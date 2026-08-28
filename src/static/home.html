@@ -184,7 +184,7 @@ let selectedMode = 'custom';
 let selectedTier = 1;   // 分阶档位：1初级 2进阶 3挑战（单选，默认初级）
 let available = 0;     // 当前选择下的实际可用题数（由 /api/exam/available-count 返回）
 let _availTimer = null; // 防抖定时器
-let masteryMap = {};   // 掌握度缓存 {topicId_tier: status}，用于显示精通角标
+let masteryMap = {};   // 精通度缓存 {topicId_tier: status}，用于显示精通角标
 let masteryDetailMap = {};  // {topicId_tier: {status, rate, coverage, total, topic_total}}
 
 async function loadMastery() {
@@ -201,7 +201,7 @@ async function loadMastery() {
         });
       });
     });
-  } catch (e) { /* 掌握度非关键，失败静默 */ }
+  } catch (e) { /* 精通度非关键，失败静默 */ }
 }
 
 // 某课在某档位的精通度百分比（与 core/mastery.py eval_topic_tier 三门槛完全对齐）
@@ -587,7 +587,7 @@ async function startExam() {
 }
 
 // 支持 quiz 结果页「继续选课做题」跳回：home.html?pick=<subjectId>
-loadMastery();  // 预加载掌握度，供组卷界面显示精通角标
+loadMastery();  // 预加载精通度，供组卷界面显示精通角标
 loadSubjects().then(() => {
   const pick = new URLSearchParams(location.search).get('pick');
   if (!pick) return;

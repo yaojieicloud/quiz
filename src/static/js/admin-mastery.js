@@ -9,8 +9,7 @@ const CLS = {
   practicing: 'c-practicing', not_started: 'c-not_started',
 };
 const LABEL = {
-  passed: '通过', mastered: '精通', review: '需复习',
-  practicing: '练习中', not_started: '未开始',
+  mastered: '精通',
 };
 
 async function init() {
@@ -38,18 +37,15 @@ function render(data) {
   const tierName = data.tier_name || '';
 
   // 顶部汇总
-  let passedSum = 0, masteredSum = 0;
+  let masteredSum = 0;
   ts.forEach(t => {
-    passedSum += t.counts.passed + t.counts.mastered;
     masteredSum += t.counts.mastered;
   });
-  const avgPass = (total && ts.length) ? Math.round(passedSum / (total * ts.length) * 100) : 0;
   const avgMaster = (total && ts.length) ? Math.round(masteredSum / (total * ts.length) * 100) : 0;
   document.getElementById('summary').innerHTML = `
     <div class="kpi"><div class="v">${students.length}</div><div class="l">学员人数</div></div>
     <div class="kpi"><div class="v">${ts.length}</div><div class="l">课程数</div></div>
     <div class="kpi"><div class="v">${tierName}</div><div class="l">当前档位</div></div>
-    <div class="kpi"><div class="v">${avgPass}%</div><div class="l">平均通过率</div></div>
     <div class="kpi"><div class="v">${avgMaster}%</div><div class="l">平均精通率</div></div>
     <div class="kpi"><div class="v">${students.map(s => esc(s.name)).join('、') || '-'}</div><div class="l">学员</div></div>`;
 
@@ -64,10 +60,14 @@ function render(data) {
     const cells = students.map(s => {
       const c = (t.cells[s.id] && t.cells[s.id][tier]) || { status: 'not_started', rate: 0, coverage: 0 };
       const st = c.status;
+      // 计算精通度百分比
+      const masteryPct = (c.rate || 0) >= 90 && (c.coverage || 0) >= 80 && (c.total || 0) >= Math.max(Math.floor((t.topic_total || 0) * 0.8), 10) ? 100 : 
+                          (c.rate || 0) > 0 ? Math.min(Math.round((c.coverage || 0) / 80 * 100), 99) : 0;
+      const displayText = st === 'mastered' ? '精通' : (masteryPct > 0 ? masteryPct + '%' : '—');
       return `<td class="stu">
-        <a class="mcell ${CLS[st]}" title="${esc(t.name)}（${tierName}） · ${esc(s.name)}：${LABEL[st]}（正确率 ${c.rate}% / 覆盖 ${c.coverage}%）"
+        <a class="mcell ${CLS[st]}" title="${esc(t.name)}（${tierName}） · ${esc(s.name)}：${displayText}（正确率 ${c.rate}% / 覆盖 ${c.coverage}%）"
            href="mastery.html?student_id=${s.id}&topic=${t.topic_id}&tier=${tier}" target="_blank">
-          ${LABEL[st]}<small>正确率 ${c.rate}%</small>
+          ${displayText}<small>正确率 ${c.rate}%</small>
         </a>
       </td>`;
     }).join('');

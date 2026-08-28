@@ -1173,6 +1173,13 @@ function goNext() {
 }
 
 function jumpTo(idx) {
+  if (idx === curIdx) return;  // 点当前题不处理
+  // 答题时间检查（< 10 秒弹窗提醒）
+  const elapsed = (Date.now() - questionStartTs) / 1000;
+  if (elapsed < MIN_ANSWER_TIME) {
+    showSpeedWarning('speed');
+    return;
+  }
   curIdx = idx;
   renderQuestion();
   updateDots();

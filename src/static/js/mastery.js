@@ -2,8 +2,7 @@ const user = requireAuth();
 if (!user) throw new Error('redirect');
 
 const STATUS_TEXT = {
-  not_started: '未开始', practicing: '练习中', passed: '通过',
-  mastered: '精通', review: '需复习',
+  mastered: '精通',
 };
 
 // URL 深链参数：管理员从薄弱分析跳转过来查看某学员、并定位某课、并定位某档位
@@ -26,7 +25,7 @@ async function loadChildrenAndData() {
     childId = parseInt(DEEP_STUDENT, 10);
     const stu = await API.get(`/api/admin/students`).catch(() => []);
     const info = stu.find(s => s.id === childId);
-    box.innerHTML = `<div class="deep-note">👀 管理员视图：正在查看 <b>${esc(info ? (info.nickname || info.username) : ('学员#' + childId))}</b> 的掌握度（与薄弱分析联动）</div>`;
+    box.innerHTML = `<div class="deep-note">👀 管理员视图：正在查看 <b>${esc(info ? (info.nickname || info.username) : ('学员#' + childId))}</b> 的精通度（与薄弱分析联动）</div>`;
     loadData();
     return;
   }
@@ -181,7 +180,7 @@ function topicCard(t) {
   const masteryColor = st === 'mastered' ? '#e67700' : masteryPct >= 80 ? '#e67700' : '#667eea';
   return `<div class="topic-card" data-tid="${t.topic_id}" style="border-left-color:${barColor(st)}">
     <div class="tname"><span>${esc(t.name)}</span>
-      <span class="st-badge st-${st}">${STATUS_TEXT[st]}</span></div>
+      <span class="st-badge st-${st}">${st === 'mastered' ? '精通' : (masteryPct ? Math.round(masteryPct) + '%' : '—')}</span></div>
     <div class="bar-row fi-mastery">
       <div class="bar-label"><span>精通度</span><b style="color:${masteryColor}">${st === 'mastered' ? '100%' : (masteryPct ? Math.round(masteryPct) + '%' : '—')}</b></div>
       <div class="bar"><i style="width:${masteryPct ? Math.min(100, Math.round(masteryPct)) : 0}%"></i></div>
@@ -194,12 +193,12 @@ function topicCard(t) {
       <div class="bar-label"><span>知识点覆盖</span><b style="color:${covColor}">${d.coverage}%</b></div>
       <div class="bar"><i style="width:${Math.min(100, d.coverage)}%"></i></div>
     </div>
-    <div class="meta">近期 ${d.total} 题 · 对 ${d.correct} 题 · ${d.sessions} 次练习 · 本课共 ${d.topic_total} 题</div>
+    <div class="meta">近期 ${d.total} 题 · 对 ${d.correct} 题 · ${d.sessions} 次做题 · 本课共 ${d.topic_total} 题</div>
   </div>`;
 }
 
 function barColor(st) {
-  return { not_started: '#ced4da', practicing: '#1c7ed6', passed: '#2b8a3e',
+  return { not_started: '#ced4da', practiced: '#1c7ed6', passed: '#2b8a3e',
            mastered: '#e67700', review: '#e03131' }[st] || '#ced4da';
 }
 
