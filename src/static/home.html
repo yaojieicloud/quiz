@@ -442,23 +442,18 @@ async function openConfig(subjectId) {
         const prefix = locked ? ' ' : '';
         return `<span class="${cls}" data-tid="${t.id}" onclick="toggleChip(this)">${prefix}${esc(t.name)} (${topicCount(t)}题)${masteredBadge(t.id, selectedTier)}</span>`;
       }).join('');
-      // 默认选中最靠前且未精通且已解锁的一课
-      const defaultT = getDefaultSelectedTopic(topics, masteryMap, selectedTier);
-      if (defaultT) {
-        const chip = box.querySelector(`.chip[data-tid="${defaultT.id}"]`);
-        if (chip && !chip.classList.contains('locked')) {
-          chip.classList.add('active');
-          selectedTopics.add(defaultT.id);
-        }
-      }
     } else {
-      // 文化类：按 unit 分组折叠
+      // 文化类：按 unit 分组折叠，递进解锁
       box.innerHTML = renderTopicGroups(topics);
     }
-    // 需求8：文化类默认全选所有章节
-    if (isCulture) {
-      box.querySelectorAll('.chip[data-tid]').forEach(c => c.classList.add('active'));
-      box.querySelectorAll('.unit-select-all').forEach(b => { b.classList.add('all-active'); b.textContent = '取消全选'; });
+    // 默认选中最靠前且未精通且已解锁的一课
+    const defaultT = getDefaultSelectedTopic(topics, masteryMap, selectedTier);
+    if (defaultT) {
+      const chip = box.querySelector(`.chip[data-tid="${defaultT.id}"]`);
+      if (chip && !chip.classList.contains('locked')) {
+        chip.classList.add('active');
+        selectedTopics.add(defaultT.id);
+      }
     }
   } catch (e) {
     toast('加载章节失败', 'error');
