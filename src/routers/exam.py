@@ -11,13 +11,13 @@ from models import User, Subject, Question, ExamRecord, AnswerRecord, WrongQuest
 from schemas import (
     ExamStartRequest, ExamStartResponse, ExamSubmitRequest,
     ExamRecordOut, AnswerRecordOut, WrongQuestionOut, QuestionOut, QuestionForExam,
-    AvailableCountOut,
+    AvailableCountOut, MasteryDeltaOut,
 )
 from core.deps import get_current_user
 from core.tier import get_tier_multiplier
 from core.code_runner import run_python, normalize_output
 from core.llm_grader import grade_code
-from core.mastery import compute_mastery_for_topics, upsert_student_mastery
+from core.mastery import compute_mastery_for_topics, upsert_student_mastery, calc_mastery_pct, diagnose_bottleneck
 from pydantic import BaseModel
 router = APIRouter(prefix="/api", tags=["答题"])
 
@@ -707,29 +707,61 @@ def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user),
 
     # ---- 掌握度增量更新：对本次涉及的 (topic, tier) 重算并 upsert StudentMastery ----
     mastery_rewards = []
+    mastery_deltas = []
     if topic_ids:
         pairs = [(tid, record.tier) for tid in topic_ids]
-        # upsert 前：记录本次涉及课中「原本已精通」的集合（用于跃迁检测）
-        prev_mastered = {
-            r.topic_id for r in db.query(StudentMastery)
-            .filter(
-                StudentMastery.student_id == user.id,
-                StudentMastery.tier == record.tier,
-                StudentMastery.topic_id.in_(topic_ids),
-                StudentMastery.status == "mastered",
-            ).all()
-        }
+        
+        # 快照：upsert 前的旧精通度数据（用于计算 delta）
+        prev_mastery = {}
+        for r in db.query(StudentMastery).filter(
+            StudentMastery.student_id == user.id,
+            StudentMastery.tier == record.tier,
+            StudentMastery.topic_id.in_(topic_ids),
+        ).all():
+            prev_mastery[r.topic_id] = (r.status, r.rate, r.coverage, r.answered_count, r.topic_total)
+        
+        # 记录本次涉及课中「原本已精通」的集合（用于跃迁检测）
+        prev_mastered = {tid for tid, (status, *_) in prev_mastery.items() if status == "mastered"}
+        
         computed = compute_mastery_for_topics(db, user.id, pairs)
         upsert_student_mastery(db, user.id, computed)
+        
         # 跃迁检测：本次重算后新达到精通的课（非精通→精通）
         newly_mastered = [tid for tid, _, _, status, *_ in computed
                           if status == "mastered" and tid not in prev_mastered]
         # 精通奖励：新达成发奖 + 一次性补发历史未派发（与成绩同一事务）
         mastery_rewards = _award_mastery_rewards(db, user.id, newly_mastered)
+        
+        # 计算精通度变化 delta
+        topic_name_map = {t.id: t.name for t in db.query(Topic).filter(Topic.id.in_(topic_ids)).all()}
+        for (tid, tier, subject_id, status, rate, coverage, N, D, C, Q) in computed:
+            prev = prev_mastery.get(tid)
+            if prev:
+                prev_status, prev_rate, prev_cov, prev_N, prev_Q = prev
+            else:
+                prev_status, prev_rate, prev_cov, prev_N, prev_Q = "not_started", 0, 0, 0, Q
+            
+            before_pct = round(calc_mastery_pct(prev_status, prev_rate, prev_cov, prev_N, prev_Q))
+            after_pct = round(calc_mastery_pct(status, rate, coverage, N, Q))
+            delta = max(0, after_pct - before_pct)
+            is_newly_mastered = (status == "mastered" and prev_status != "mastered")
+            
+            bottleneck = None
+            if delta == 0 and not is_newly_mastered:
+                bottleneck = diagnose_bottleneck(rate, coverage, N, Q)
+            
+            mastery_deltas.append(MasteryDeltaOut(
+                topic_name=topic_name_map.get(tid, f"课#{tid}"),
+                before_pct=before_pct,
+                after_pct=after_pct,
+                delta=delta,
+                newly_mastered=is_newly_mastered,
+                bottleneck=bottleneck,
+            ))
 
     db.commit()
     db.refresh(record)
-    return _record_to_out(record, db, points_earned=points_earned, mastery_rewards=mastery_rewards)
+    return _record_to_out(record, db, points_earned=points_earned, mastery_rewards=mastery_rewards, mastery_deltas=mastery_deltas)
 
 
 # ============ 历史记录 ============
@@ -759,7 +791,7 @@ def record_detail(record_id: int, user: User = Depends(get_current_user), db: Se
     return _record_to_out(record, db, with_answers=True)
 
 
-def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True, points_earned: int = 0, mastery_rewards: list = None) -> ExamRecordOut:
+def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True, points_earned: int = 0, mastery_rewards: list = None, mastery_deltas: list = None) -> ExamRecordOut:
     out = ExamRecordOut.model_validate(record)
     # 兼容旧数据：调用方没传积分时，从 points_ledger 回填（历史记录也能显示）
     if points_earned == 0:
@@ -772,6 +804,9 @@ def _record_to_out(record: ExamRecord, db: Session, with_answers: bool = True, p
     # 精通奖励：仅交卷时实时传入（历史记录不回显弹窗）
     if mastery_rewards:
         out.mastery_rewards = mastery_rewards
+    # 精通度变化：仅交卷时实时传入
+    if mastery_deltas:
+        out.mastery_deltas = mastery_deltas
     if with_answers:
         ars = db.query(AnswerRecord).filter(AnswerRecord.exam_record_id == record.id).all()
         out.answer_records = []

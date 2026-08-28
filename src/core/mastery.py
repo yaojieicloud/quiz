@@ -228,3 +228,59 @@ def upsert_student_mastery(db, student_id: int, computed_rows):
                 topic_total=Q,
             ))
     db.flush()
+
+
+def calc_mastery_pct(status, rate, coverage, N, Q):
+    """计算精通度百分比（0-100），供前端展示。
+
+    逻辑：
+    - status == 'mastered' → 100
+    - 否则取 min(R/90%, Ccov/80%, N/threshold) × 100，封顶 99
+    - 无答题 → 0
+
+    参数：
+        status: 当前状态（mastered/practicing/not_started 等）
+        rate: 正确率（0-100）
+        coverage: 覆盖度（0-100）
+        N: 累计答题次数
+        Q: 题库总量
+
+    返回：0-100 的整数或浮点数
+    """
+    if status == "mastered":
+        return 100
+    if N == 0 or Q == 0:
+        return 0
+    thr_n = max(int(Q * MASTER_ANSWERS_RATIO), MIN_ANSWERS_FLOOR)
+    rate_ratio = min(rate / (MASTER_RATE * 100), 1.0)
+    cov_ratio = min(coverage / (MASTER_COV * 100), 1.0)
+    n_ratio = min(N / thr_n, 1.0)
+    return min(rate_ratio, cov_ratio, n_ratio) * 100
+
+
+def diagnose_bottleneck(rate, coverage, N, Q):
+    """诊断未提升的瓶颈原因，返回简化文案 key。
+
+    优先级：按距门槛差距从大到小排序，返回差距最大的一项。
+
+    参数：
+        rate: 正确率（0-100）
+        coverage: 覆盖度（0-100）
+        N: 累计答题次数
+        Q: 题库总量
+
+    返回：
+        "rate" / "coverage" / "count" / None（全部达标时应已精通）
+    """
+    if Q == 0:
+        return None
+    thr_n = max(int(Q * MASTER_ANSWERS_RATIO), MIN_ANSWERS_FLOOR)
+    rate_gap = max(0, MASTER_RATE * 100 - rate)
+    cov_gap = max(0, MASTER_COV * 100 - coverage)
+    n_gap = max(0, thr_n - N)
+
+    if rate_gap <= 0 and cov_gap <= 0 and n_gap <= 0:
+        return None
+
+    gaps = {"rate": rate_gap, "coverage": cov_gap, "count": n_gap}
+    return max(gaps, key=gaps.get)

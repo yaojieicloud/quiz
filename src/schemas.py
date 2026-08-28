@@ -252,6 +252,16 @@ class MasteryRewardOut(BaseModel):
     mode: str  # new=新达成 / retroactive=历史补发
 
 
+class MasteryDeltaOut(BaseModel):
+    """精通度变化（答题前后对比）"""
+    topic_name: str             # 课程名
+    before_pct: int             # 答题前精通度百分比（0-100）
+    after_pct: int              # 答题后精通度百分比（0-100）
+    delta: int                  # 变化量（after - before，可正可0不可负）
+    newly_mastered: bool        # 本次是否新达到精通
+    bottleneck: Optional[str] = None  # 未提升时的瓶颈原因 key（rate/coverage/count）
+
+
 class ExamRecordOut(_UtcTimeMixin):
     id: int
     subject_id: int
@@ -268,6 +278,7 @@ class ExamRecordOut(_UtcTimeMixin):
     answer_records: List[AnswerRecordOut] = []
     points_earned: int = 0  # 本次答题按 scoring_rules 获得的积分
     mastery_rewards: List[MasteryRewardOut] = []  # 本次触发的精通奖励（含历史补发）
+    mastery_deltas: List[MasteryDeltaOut] = []    # 本次答题的精通度变化（逐课）
     class Config:
         from_attributes = True
 

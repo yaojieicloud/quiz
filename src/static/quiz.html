@@ -241,6 +241,70 @@
     50% { content: '..'; }
     75% { content: '...'; }
   }
+
+  /* 精通度变化区域样式 */
+  .mastery-delta-section {
+    margin: 24px 0;
+  }
+  .mastery-delta-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .delta-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .delta-emoji {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+  .delta-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .delta-topic {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d3436;
+    margin-bottom: 4px;
+  }
+  .delta-text {
+    font-size: 13px;
+    color: #636e72;
+  }
+  .delta-pct {
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .delta-card.mastered {
+    background: linear-gradient(135deg, #fff9e6 0%, #fff3bf 100%);
+    border: 1px solid #ffd43b;
+  }
+  .delta-card.mastered .delta-pct {
+    color: #f59f00;
+  }
+  .delta-card.up {
+    background: linear-gradient(135deg, #e6fcf5 0%, #c3fae8 100%);
+    border: 1px solid #69db7c;
+  }
+  .delta-card.up .delta-pct {
+    color: #2b8a3e;
+  }
+  .delta-card.same {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+  }
+  .delta-card.same .delta-pct {
+    color: #868e96;
+  }
 </style>
 </head>
 <body>
@@ -1292,6 +1356,32 @@ async function doSubmit() {
   }
 }
 
+// ============ 精通度变化卡片渲染 ============
+function renderMasteryDelta(d) {
+  let emoji, text, cls;
+  if (d.newly_mastered) {
+    emoji = '🎉'; text = '恭喜！已精通！'; cls = 'mastered';
+  } else if (d.delta > 0) {
+    emoji = '📈'; text = `精通度 +${d.delta}%！继续加油！`; cls = 'up';
+  } else {
+    emoji = '💪'; cls = 'same';
+    const reasons = {
+      rate: '正确率还不够，争取答对更多！',
+      coverage: '做过的题型还不够多样，试试更多不同的题！',
+      count: '做得还太少，再多练几次！',
+    };
+    text = reasons[d.bottleneck] || '还需要加油哦，多做几套题！';
+  }
+  return `<div class="delta-card ${cls}">
+    <div class="delta-emoji">${emoji}</div>
+    <div class="delta-info">
+      <div class="delta-topic">${esc(d.topic_name)}</div>
+      <div class="delta-text">${esc(text)}</div>
+    </div>
+    <div class="delta-pct">${d.after_pct}%</div>
+  </div>`;
+}
+
 function showResult(record) {
   document.getElementById('quizMain').style.display = 'none';
   const r = document.getElementById('result');
@@ -1313,9 +1403,21 @@ function showResult(record) {
       <div class="rank">${record.subject_name || ''} · ${TIER_LABEL[examTier] || ''} · ${record.mode === 'wrong' ? '错题重做' : record.mode === 'random' ? '随机挑战' : '自由组卷'}</div>
     </div>`;
 
+  // 精通度变化区域
+  if (record.mastery_deltas && record.mastery_deltas.length) {
+    html += `<div class="mastery-delta-section">
+      <div class="section-title"><span class="icon">🎯</span>精通度变化</div>
+      <div class="mastery-delta-list">`;
+    record.mastery_deltas.forEach(d => {
+      html += renderMasteryDelta(d);
+    });
+    html += `</div></div>`;
+  }
+
   if (wrong === 0 && record.total > 0) {
     html += `<div class="no-wrong">🌟 全对啦！你太棒了！</div>`;
   }
+
   // 总是展开每一题（无论对错），方便复盘：实操题做对也能看到题干/代码/点评
   if (record.answer_records && record.answer_records.length) {
     html += `<div class="section-title"><span class="icon">📖</span>答题详情（共 ${record.total} 题）</div>`;
