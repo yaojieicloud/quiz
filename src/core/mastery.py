@@ -195,7 +195,11 @@ def compute_mastery_for_topics(db, student_id: int, topic_tier_pairs):
 
 
 def upsert_student_mastery(db, student_id: int, computed_rows):
-    """将 compute_mastery_for_topics 的结果 upsert 进 StudentMastery 表。"""
+    """将 compute_mastery_for_topics 的结果 upsert 进 StudentMastery 表。
+
+    精通锁定：已达 mastered 的 (学员, 课, 档位) 不再更新，
+    只有未达到精通的才随每次答题重新计算（可升可降）。
+    """
     for (tid, tier, subject_id, status, rate, coverage, N, D, C, Q) in computed_rows:
         row = (
             db.query(StudentMastery)
@@ -204,6 +208,9 @@ def upsert_student_mastery(db, student_id: int, computed_rows):
                     StudentMastery.tier == tier)
             .first()
         )
+        # 已达精通 → 锁定，跳过更新
+        if row and row.status == "mastered":
+            continue
         if row:
             row.status = status
             row.rate = rate
