@@ -12,5 +12,6 @@
 | REQ-2-1-2 | schemas.py 新增 MasteryDeltaOut + ExamRecordOut 字段 | REQ-2 | P0 | ✅已完成 | - |
 | REQ-2-1-3 | exam.py 快照旧精通度 + 计算 delta + 传入响应 | REQ-2 | P0 | ✅已完成 | REQ-2-1-1, REQ-2-1-2 |
 | REQ-2-1-4 | quiz.html 前端渲染精通度变化区域（CSS + JS） | REQ-2 | P0 | ✅已完成 | REQ-2-1-3 |
+| REQ-3-1-1 | 课程递进解锁全栈实现（前端锁定+默认选中+后端校验+题数默认值） | REQ-3 | P0 | ✅已完成 | - |
 
 进度跟踪（多任务并行）见 `docs/PROGRESS.md`；恢复中断任务用 `/继续`。
