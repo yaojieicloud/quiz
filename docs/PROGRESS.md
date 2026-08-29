@@ -20,4 +20,5 @@
 - 2026-08-28：**REQ-2 答题后精通度变化展示 - 前端完成** ✅（REQ-2-1-4 quiz.html 精通度变化卡片渲染：CSS 样式 + renderMasteryDelta 函数 + showResult 调用）
 - 2026-08-28：**REQ-2 全栈功能验证通过** ✅（ECS 端到端测试：mastery_deltas 字段正确返回、delta 计算准确、瓶颈诊断生效）
 - 2026-08-29：**REQ-3 收尾 — 文档同步 + 验收完成** ✅（补任务文档 REQ-3-1-1 + 三个 INDEX 对齐 + 本机只读实测：数学/编程三科递进生效，语文/英语 sort_order 全 0 暂不生效已记为已知限制；需求结束）
-- 2026-08-29：**BUG-5 修复 — 精通度页/管理端矩阵精通度恒显 0%** ✅（`mastery.html` adaptMeData 补 rate/total + `mastery.py` class_mastery 补 total，算法不变；学员端 45/46/47/48→44/85/19/81% 与组卷界面一致，管理端矩阵无回归；commit `6556915`）
+- 2026-08-29：**BUG-5 修复 — 精通度页/管理端矩阵精通度恒显示 0%** ✅（`mastery.html` adaptMeData 补 rate/total + `mastery.py` class_mastery 补 total，算法不变；学员端 45/46/47/48→44/85/19/81% 与组卷界面一致，管理端矩阵无回归；commit `6556915`）
+- 2026-08-29：BUG-4 语文/英语 sort_order 数据问题核销/修复 ✅
