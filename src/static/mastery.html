@@ -88,7 +88,7 @@ function adaptMeData(data, tier, selectedSubjIds) {
         name: t.name,
         subject_name: sub.name,
         topic_total: tierInfo.topic_total || 0,
-        cells: { [myId]: { [tier]: { status: tierInfo.status || 'not_started', coverage: tierInfo.coverage || 0 } } },
+        cells: { [myId]: { [tier]: { status: tierInfo.status || 'not_started', rate: tierInfo.rate || 0, coverage: tierInfo.coverage || 0, total: tierInfo.total || 0 } } },
       });
     });
   });

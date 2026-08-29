@@ -199,6 +199,7 @@ def class_mastery(
                     "status_label": STATUS_LABEL[status],
                     "rate": rate,
                     "coverage": coverage,
+                    "total": r.answered_count if r else 0,
                 }
             }
         passed_master = counts["passed"] + counts["mastered"]
