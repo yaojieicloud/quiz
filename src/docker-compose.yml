@@ -1,15 +1,16 @@
 services:
   quiz-app:
-    image: quiz-system:latest
-    # 如果用已构建好的镜像，注释掉 build，改用 image:
-    # image: quiz-system:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: quiz-system:local
     container_name: quiz-system
     restart: always
     ports:
       - "8000:8000"
     volumes:
-      # 数据库文件映射到宿主机，数据持久化
-      - ./data:/app/data
+      # 数据库文件映射到宿主机（项目根 data/），数据持久化
+      - ${QUIZ_DATA_DIR:-../data}:/app/data
     environment:
       - QUIZ_DB_PATH=/app/data/quiz.db
       - QUIZ_SECRET_KEY=quiz-system-secret-key-change-in-production-2024
