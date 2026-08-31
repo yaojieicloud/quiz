@@ -1,0 +1,8 @@
+# ECS Quiz Server
+Host ecs
+  HostName 106.14.99.100
+  User root
+  IdentityFile C:/Users/Yaojie/Documents/openclaw.pem
+  StrictHostKeyChecking no
+  ServerAliveInterval 60
+  ServerAliveCountMax 10
