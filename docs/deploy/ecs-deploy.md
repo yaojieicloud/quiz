@@ -177,7 +177,17 @@ docker compose up -d
 
 ---
 
-## 7. 安全红线
+## 7. 安全红线（**最高纪律**）
+
+- **🔴 ECS 数据是唯一权威**：本地 `data/quiz.db` 永远只是 ECS 的运行时工作区，**绝对不允许本地数据库覆盖 ECS 数据库**。
+  - 数据流方向：**ECS → 本地**（拉库验证用），**不允许 反向**（本地 → ECS）
+  - 打包命令必须 `tar --exclude=data` 强制排除本地数据库
+  - scp 命令**绝对不能**把本地 `data/quiz.db` 推到 `/opt/data/` 或 `/opt/quiz-system/data/`
+  - ECS 的 docker-compose.yml 应**单独维护**（不打包进 tar），用绝对路径挂载 `/opt/data`
+
+- **🔴 部署前快照**：任何 ECS 写操作前必须 `POST /api/admin/backup-db`（这是 ECS 自带的原子备份门）
+- **🔴 ECS docker-compose.yml 不动**：只动 `src/*.py` 和 `migrations/` 目录下的文件
+- **🔴 部署前后必查 users COUNT(*)**：部署前 `N` 部署后必须仍是 `N`，变了就是事故
 
 - **密钥安全**：`openclaw.pem` 等密钥文件**禁止提交到 git**（已入 `.gitignore`）
 - **数据库安全**：任何写操作前必须备份（`POST /api/admin/backup-db`）
