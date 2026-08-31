@@ -47,32 +47,70 @@
 cd /c/Users/Yaojie/Documents/GitHub/quiz
 git status
 
-# 2. 打包整个项目（排除不需要的文件）
-tar -czf /tmp/quiz-project.tar.gz \
+# 2. 打包 src/（**仅打包源码，不打包 data/docs/tests/docker**）
+# ⚠️ ECS 部署文档原版含 docs/ 是历史错误，2026-08-31 修正
+tar -czf /tmp/quiz-src.tar.gz \
   --exclude=.git \
-  --exclude=.venv \
-  --exclude=data \
   --exclude=__pycache__ \
-  --exclude=node_modules \
-  src/ data/ docs/ README.md CODEBUDDY.md
+  -C src .
 
-# 3. 推送文件到 ECS build/ 目录
-scp -i C:/Users/Yaojure/Documents/openclaw.pem \
-  /tmp/quiz-project.tar.gz \
+# 3. 推送文件到 ECS 根目录
+scp -i C:/Users/Yaojie/Documents/openclaw.pem \
+  /tmp/quiz-src.tar.gz \
   root@106.14.99.100:/opt/quiz-system/
 
 # 4. 登录 ECS 解压、重建镜像、重启容器
 ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 << 'EOF'
   cd /opt/quiz-system
-  tar -xzf quiz-project.tar.gz
-  cd build
+  # 备份旧 Dockerfile（防止覆盖后无法回滚）
+  cp Dockerfile Dockerfile.ecs-predeploy-$(date +%s).bak
+  tar -xzf quiz-src.tar.gz
+  rm quiz-src.tar.gz
   docker build -t quiz-system:latest -f Dockerfile .
-  cd /opt/quiz-system
   docker compose up -d
 EOF
 
 # 5. 健康检查
 curl -o /dev/null -w '%{http_code}\n' http://106.14.99.100:8000/
+```
+
+> **关于自定义基础镜像 `quiz-base:3.13`**：
+> 本地构建使用 `docker/base/Dockerfile` + `FROM quiz-base:3.13`（内嵌阿里云 pip 源，
+> 避免每次构建重复配置）。ECS 上首次部署需要先 build 一次：
+> ```bash
+> scp docker/base/Dockerfile ... /opt/quiz-system/docker/base/Dockerfile
+> ssh ... "cd /opt/quiz-system && docker build -t quiz-base:3.13 -f docker/base/Dockerfile docker/base"
+> ```
+> 之后 ECS 的 quiz-system:latest 可基于 quiz-base:3.13 构建。
+
+## 3.1 ⚠️ ECS 部署关键陷阱（2026-08-31 事故记录）
+
+**事故**：本次部署错误用 `src/docker-compose.yml` 覆盖了 ECS 原 compose 文件，导致
+数据卷挂载路径错乱，容器读到空数据库。
+
+### 真相
+- ECS 真实数据卷挂载在 `/opt/data`（不是 `/opt/quiz-system/data`）
+- ECS 通过环境变量 `QUIZ_DATA_DIR=/opt/data` 把 `src/docker-compose.yml` 默认的 `../data` 重定向
+- 但**新解压的 compose 文件可能不包含该环境变量**，导致默认 `../data` 解析为 `/opt/data`（**容器里是空目录**）
+
+### 应对
+- **永远不要把 src/docker-compose.yml 覆盖到 ECS 的 `/opt/quiz-system/docker-compose.yml`**
+- ECS 的 docker-compose.yml 应**单独维护**（不打包进 tar），或者改成挂载绝对路径：
+  ```yaml
+  volumes:
+    - /opt/data:/app/data    # 绝对路径，避免解析问题
+  ```
+- **部署后必须验证**：`docker exec quiz-system python3 -c "import sqlite3; print(sqlite3.connect('/app/data/quiz.db').execute('SELECT COUNT(*) FROM users').fetchone())"`
+  - 若 users 数 = 0 → 数据库被覆盖了，立即从 `/opt/quiz-system/data/quiz.db`（宿主机旧库）恢复
+
+### 数据库恢复命令（事故后回滚）
+```bash
+ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 "
+  docker stop quiz-system
+  cp /opt/data/quiz.db /opt/data/quiz.db.empty    # 备份空库（万一）
+  cp /opt/quiz-system/data/quiz.db /opt/data/quiz.db    # 用宿主机旧库覆盖
+  docker start quiz-system
+"
 ```
 
 ---
