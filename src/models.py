@@ -52,8 +52,14 @@ class Subject(Base):
     __tablename__ = "subjects"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(50), unique=True, nullable=False)
+    name = Column(String(50), nullable=False)
     description = Column(String(200))
+
+    # 复合唯一：允许同名校科目跨年级并存（如 数学/三年级 与 数学/四年级）。
+    # 设计约定「科目名不带年级，年级存 grade」，旧模型 name 单列唯一会阻止此场景。
+    __table_args__ = (
+        UniqueConstraint("name", "grade", name="uq_subject_name_grade"),
+    )
     icon = Column(String(20), default="📚")  # emoji 图标
     grade = Column(String(20))  # 学段，如"三年级"、"入门"
     category = Column(String(20), default="culture", nullable=False)  # culture / programming

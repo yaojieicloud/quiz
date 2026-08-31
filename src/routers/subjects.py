@@ -46,8 +46,11 @@ def list_subjects(tier: int = 1, db: Session = Depends(get_db), _=Depends(get_cu
 
 @router.post("/subjects", response_model=SubjectOut)
 def create_subject(data: SubjectCreate, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
-    if db.query(Subject).filter(Subject.name == data.name).first():
-        raise HTTPException(status_code=400, detail="科目已存在")
+    if db.query(Subject).filter(
+        Subject.name == data.name,
+        Subject.grade == data.grade,
+    ).first():
+        raise HTTPException(status_code=400, detail="同名同年级科目已存在")
     s = Subject(name=data.name, description=data.description, icon=data.icon,
                 grade=data.grade, category=data.category)
     db.add(s)

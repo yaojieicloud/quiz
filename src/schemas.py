@@ -61,7 +61,7 @@ class SubjectOut(BaseModel):
     name: str
     description: Optional[str] = None
     icon: str = "📚"
-    grade: Optional[str] = None
+    grade: Optional[str] = None  # 年级/学段：文化课填"三年级"/"四年级"…；编程类无年级语义填占位"通用"。复合唯一约束 (name, grade) 的第二列。
     category: str = "culture"
     sort_order: int = 0
     question_count: int = 0
@@ -87,7 +87,7 @@ class SubjectCreate(BaseModel):
     name: str
     description: Optional[str] = None
     icon: str = "📚"
-    grade: Optional[str] = None
+    grade: Optional[str] = None  # 年级/学段：文化课填"三年级"/"四年级"…；编程类无年级语义填占位"通用"。详见 SubjectOut.grade。
     category: str = Field("culture", pattern="^(culture|programming)$")
 
 
@@ -95,7 +95,7 @@ class SubjectUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     icon: Optional[str] = None
-    grade: Optional[str] = None
+    grade: Optional[str] = None  # 年级/学段：文化课填"三年级"/"四年级"…；编程类无年级语义填占位"通用"。详见 SubjectOut.grade。修改不影响复合唯一 (name, grade)。
     category: Optional[str] = Field(None, pattern="^(culture|programming)$")
     allowed_types: Optional[List[str]] = None  # 允许参与组卷的题型；传空数组或 null 表示不限制
 
