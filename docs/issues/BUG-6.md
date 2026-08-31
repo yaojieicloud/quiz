@@ -145,3 +145,42 @@
 ## 7. 根因补充记录
 
 根因确认：分析准确。修复方案已执行完毕，BUG-6 关闭。
+
+---
+
+## 8. confirmModal 回调 Bug 修复（2026-09-04）
+
+### 问题
+
+管理后台点击完成按钮，弹窗显示正常，但点「确定」后 API 未被调用，数据不更新。
+
+### 根因
+
+```javascript
+// 错误写法：closeConfirm 先把 confirmCallback 设为 null
+document.getElementById('confirmYesBtn').onclick = function() {
+    closeConfirm();                          // confirmCallback = null
+    if (confirmCallback) confirmCallback();   // 永远是 false
+};
+```
+
+### 修复
+
+```javascript
+// 正确写法：先保存回调，再关闭弹窗
+document.getElementById('confirmYesBtn').onclick = function() {
+    var cb = confirmCallback;
+    closeConfirm();
+    if (cb) cb();
+};
+```
+
+同时修复了 confirmModal 内联 `style="display:none"` 阻止 CSS 控制弹窗显示的问题。
+
+### 修复文件
+
+`src/static/admin.html`（commit `f49417c`）
+
+### 状态
+
+🟢 已关闭（2026-09-04）
