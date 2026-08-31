@@ -474,7 +474,7 @@ textarea.form-input.lg { min-height:120px; }
 </div>
 
 <!-- ===== 确认弹窗 ===== -->
-<div class="modal-mask" id="confirmModal" style="display:none">
+<div class="modal-mask" id="confirmModal">
   <div class="modal">
     <h3 id="confirmTitle">确认</h3>
     <p id="confirmMsg"></p>
@@ -1608,9 +1608,9 @@ function showConfirm(title, msg, cb) {
   document.getElementById('confirmTitle').textContent = title;
   document.getElementById('confirmMsg').textContent = msg;
   confirmCallback = cb;
-  document.getElementById('confirmModal').classList.add('show');
+  document.getElementById('confirmModal').style.display='flex';
 }
-function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); confirmCallback = null; }
+function closeConfirm() { var m=document.getElementById('confirmModal');m.style.display='none';m.classList.remove('show');confirmCallback=null;}
 document.getElementById('confirmYesBtn').onclick = function() { closeConfirm(); if (confirmCallback) confirmCallback(); };
 document.getElementById('confirmNoBtn').onclick = closeConfirm;
 

@@ -274,6 +274,61 @@ A: 从 `/opt/quiz-system/data/backups/` 恢复最近备份。
 
 ---
 
-> **文档版本**：v1.1（2026-08-31）
+## 9. 分层构建架构（2026-09-01 新增）
+
+### 镜像层次
+
+```
+quiz-base:3.13     ← Python 3.13 + 阿里云 pip 源 + 时区（基础层，几乎不变）
+       ↑
+quiz-base:deps      ← pip install 所有 Python 依赖（每改 requirements.txt 才 rebuild）
+       ↑
+quiz-system:latest  ← COPY 源码 + RUN 启动命令（业务代码变更时 rebuild，极快）
+```
+
+### 构建时机
+
+| 变更类型 | 需要 rebuild |
+|---------|------------|
+| `requirements.txt` 新增/升级依赖 | `quiz-base:deps`（约 5 分钟）|
+| `src/*.py`、`static/*`、`migrations/*`、根 `Dockerfile` | `quiz-system:latest`（约 30 秒，deps 层命中缓存）|
+| `docker/base/Dockerfile*` | `quiz-base:3.13`（不常见）|
+| 只改配置/数据 | 不 rebuild，`docker cp` + restart |
+
+### ECS 构建脚本
+
+```bash
+# 在 ECS 上执行（先 git pull 更新代码）
+cd /opt/quiz-system
+git pull
+docker build -t quiz-base:deps -f docker/base/Dockerfile.deps .
+docker build -t quiz-system:latest -f Dockerfile .
+docker tag quiz-system:latest quiz-system:local
+docker compose up -d --force-recreate
+```
+
+### .dockerignore 关键排除项
+
+> ⚠️ **历史教训**：若不打 `quiz-data/`（2.6GB）和 `data/`（475MB），
+> 构建 context 达 3.3GB，每次构建传输耗时 45 秒。打 `.dockerignore` 后 context 仅 ~5MB。
+
+```gitignore
+quiz-data/
+data/
+*.db
+*.db.bak*
+__pycache__/
+*.tar.gz
+*.mp3
+*.mp4
+docker/
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+```
+
+---
+
+> **文档版本**：v1.2（2026-09-01）
 > **维护者**：阿垤（姚杰）
-> **最后更新**：2026-08-31 16:40（重写 §2 目录结构 + §3 流程 + §3.1 事故记录 + §7 安全红线）
+> **最后更新**：2026-09-01（新增 §9 分层构建架构 + .dockerignore + ECS 构建流程）
