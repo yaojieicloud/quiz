@@ -1,0 +1,26 @@
+# quiz-base:deps - Python 依赖层
+#
+# 用途：固化 quiz 项目所有 Python 依赖到基础镜像，使 quiz-system 业务层只 COPY 源码。
+#
+# 构建（项目根目录执行）：
+#   docker build -t quiz-base:deps -f docker/base/Dockerfile.deps .
+#
+# 依赖：FROM quiz-base:3.13（提供 pip 阿里云源 + 时区配置）
+#
+# 何时重新 build：
+#   ✅ requirements.txt 新增/删除/升级依赖包
+#   ❌ 只改 src/*.py、static/*、migrations/*、Dockerfile（业务代码层无需重装依赖）
+#
+# 验证：build 时 `python -c "import fastapi"` 成功即 OK，失败则终止 build
+FROM quiz-base:3.13
+
+WORKDIR /deps
+
+# 从构建上下文根（项目根目录）复制 requirements.txt
+COPY requirements.txt .
+
+# 安装所有依赖（--no-cache-dir 不写 pip 缓存，减小镜像体积）
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 验证关键包（build 时立即失败，而非运行时才发现缺包）
+RUN python -c "import fastapi, uvicorn, sqlalchemy, pydantic; print('quiz-base:deps OK')"
