@@ -61,7 +61,8 @@ class Subject(Base):
         UniqueConstraint("name", "grade", name="uq_subject_name_grade"),
     )
     icon = Column(String(20), default="📚")  # emoji 图标
-    grade = Column(String(20))  # 学段，如"三年级"、"入门"
+    grade = Column(String(20))  # 学段，如"三年级"、"通用"
+    status = Column(String(20), default="active", nullable=False)  # active=活跃 / completed=已完成（REQ-5）
     category = Column(String(20), default="culture", nullable=False)  # culture / programming
     sort_order = Column(Integer, default=0)
     # 该科目允许参与组卷/显示的题型列表（JSON 数组）。

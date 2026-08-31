@@ -20,7 +20,38 @@
 .unit-topics { padding:12px 16px; display:flex; flex-wrap:wrap; gap:10px; }
 .unit-group.collapsed .unit-topics { display:none; }
 
-/* ============ 组卷弹层：固定头部 + 中间滚动 + 固定底部按钮 ============ */
+/* ============ 已完成科目卡片样式（REQ-5） ============ */
+.subject-card.completed {
+  opacity: 0.58;
+  border-color: #e9ecef;
+  background: #f8f9fc;
+  filter: grayscale(0.2);
+}
+.subject-card.completed h3 { color: #9c8bb5; }
+.subject-card.completed .count { color: #adb5bd; }
+.subject-card.completed:hover {
+  opacity: 0.75;
+  filter: grayscale(0.1);
+  border-color: #ced4da;
+}
+.subject-grid-completed { margin-top: 0; }
+.section-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0 8px;
+  color: #9c8bb5;
+  font-size: 14px;
+  font-weight: bold;
+}
+.section-divider::before,
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e9ecef;
+}
 .cfg-modal {
   display:flex; flex-direction:column;
   padding:0; overflow:hidden;          /* 覆盖 .modal 的整体滚动 */
@@ -273,14 +304,26 @@ async function loadSubjects() {
       grid.innerHTML = '<div class="empty"><div class="icon">📭</div><p>还没有科目，请联系管理员添加题目</p></div>';
       return;
     }
-    grid.innerHTML = subjects.map(s => `
-      <div class="subject-card" onclick="startOrConfig(${s.id})">
+
+    // REQ-5: 按 status 分组渲染
+    const activeSubs = subjects.filter(s => s.status !== 'completed');
+    const completedSubs = subjects.filter(s => s.status === 'completed');
+
+    function renderCard(s) {
+      return `<div class="subject-card ${s.status === 'completed' ? 'completed' : ''}" onclick="startOrConfig(${s.id})">
         <div class="icon">${s.icon || '📚'}</div>
         <h3>${esc(s.name)}</h3>
         ${s.grade ? `<span class="grade">${esc(s.grade)}</span>` : ''}
         <div class="count">📝 ${s.question_count} 题</div>
-      </div>
-    `).join('');
+      </div>`;
+    }
+
+    let html = activeSubs.map(renderCard).join('');
+    if (completedSubs.length) {
+      html += `<div class="section-divider">📋 历史科目（共 ${completedSubs.length} 个）</div>`;
+      html += completedSubs.map(renderCard).join('');
+    }
+    grid.innerHTML = html;
   } catch (e) {
     toast(e.message, 'error');
   }

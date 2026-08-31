@@ -20,6 +20,7 @@ const API = {
   get(url) { return this.request(url); },
   post(url, body) { return this.request(url, { method: 'POST', body: JSON.stringify(body) }); },
   put(url, body) { return this.request(url, { method: 'PUT', body: JSON.stringify(body) }); },
+  patch(url, body) { return this.request(url, { method: 'PATCH', body: JSON.stringify(body) }); },
   del(url) { return this.request(url, { method: 'DELETE' }); },
 };
 

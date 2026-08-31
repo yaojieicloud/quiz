@@ -153,6 +153,24 @@ def delete_subject(subject_id: int, db: Session = Depends(get_db), _=Depends(req
     return {"deleted": subject_id}
 
 
+# REQ-5：科目状态更新（active ↔ completed）
+@router.patch("/subjects/{subject_id}/status")
+def update_subject_status(
+    subject_id: int,
+    status: str,  # query param: "active" | "completed"
+    db: Session = Depends(get_db),
+    _=Depends(require_role("admin"))
+):
+    s = db.query(Subject).filter(Subject.id == subject_id).first()
+    if not s:
+        raise HTTPException(status_code=404, detail="科目不存在")
+    if status not in ("active", "completed"):
+        raise HTTPException(status_code=400, detail="status 必须是 active 或 completed")
+    s.status = status
+    db.commit()
+    return {"id": subject_id, "status": status}
+
+
 @router.put("/topics/{topic_id}", response_model=TopicOut)
 def update_topic(topic_id: int, data: TopicUpdate, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
     t = db.query(Topic).filter(Topic.id == topic_id).first()

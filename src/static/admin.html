@@ -29,6 +29,10 @@
 /* 表单弹窗 */
 .form-modal-mask { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:99; align-items:flex-start; justify-content:center; overflow-y:auto; padding:30px 16px; }
 .form-modal-mask.show { display:flex; }
+/* 确认弹窗（用于 markCompleted/markActive 二次确认） */
+.modal-mask { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:100; align-items:flex-start; justify-content:center; overflow-y:auto; padding:30px 16px; }
+.modal-mask.show { display:flex; }
+.modal-mask .modal { background:#fff; border-radius:24px; padding:28px; width:100%; max-width:400px; box-shadow:0 10px 40px rgba(0,0,0,0.2); animation:fadeIn 0.2s ease; margin-top:80px; }
 .form-modal { background:#fff; border-radius:24px; padding:28px; width:100%; max-width:560px; box-shadow:0 10px 40px rgba(0,0,0,0.2); animation:fadeIn 0.3s ease; }
 .form-modal h3 { font-size:22px; color:#3a3a55; margin-bottom:18px; text-align:center; }
 .form-modal .btn-row { display:flex; gap:12px; justify-content:center; margin-top:20px; }
@@ -470,12 +474,12 @@ textarea.form-input.lg { min-height:120px; }
 </div>
 
 <!-- ===== 确认弹窗 ===== -->
-<div class="modal-mask" id="confirmModal">
+<div class="modal-mask" id="confirmModal" style="display:none">
   <div class="modal">
     <h3 id="confirmTitle">确认</h3>
     <p id="confirmMsg"></p>
     <div class="btns">
-      <button class="btn-no" onclick="closeConfirm()">取消</button>
+      <button class="btn-no" id="confirmNoBtn">取消</button>
       <button class="btn-yes" id="confirmYesBtn">确定</button>
     </div>
   </div>
@@ -547,6 +551,10 @@ function renderSubjects() {
         </div>
         <div class="actions">
           <button class="icon-btn" title="展开章节" onclick="toggleTopics(${s.id})">📂</button>
+          ${s.status === 'completed'
+            ? `<button class="icon-btn" title="恢复为活跃" onclick="markActive(${s.id})">🔄</button>`
+            : `<button class="icon-btn" title="标记为已完成" onclick="markCompleted(${s.id})">✅</button>`
+          }
           <button class="icon-btn" title="编辑" onclick="openSubjectModal(${s.id})">✏️</button>
           <button class="icon-btn del" title="删除" onclick="confirmDeleteSubject(${s.id})">🗑️</button>
         </div>
@@ -669,6 +677,31 @@ function confirmDeleteSubject(id) {
     try { await API.del('/api/subjects/'+id); toast('已删除', 'success'); loadSubjects(); }
     catch(e) { toast(e.message, 'error'); }
   });
+}
+
+// REQ-5: 标记科目为已完成
+function markCompleted(id) {
+  const s = subjects.find(x => x.id === id);
+  if (!s) { toast('科目不存在', 'error'); return; }
+  showConfirm('标记完成', `确定将「${s.name}」标记为已完成？\n完成后该科目将在学生首页移至历史区域，但不影响做题和题目数据。`, async () => {
+    try {
+      await API.patch(`/api/subjects/${id}/status?status=completed`);
+      toast('已标记为完成', 'success');
+      loadSubjects();
+    } catch(e) { toast(e.message, 'error'); }
+  });
+}
+
+// REQ-5: 恢复科目为活跃
+function markActive(id) {
+  const s = subjects.find(x => x.id === id);
+  if (!s) { toast('科目不存在', 'error'); return; }
+  try {
+    API.patch(`/api/subjects/${id}/status?status=active`).then(() => {
+      toast('已恢复为活跃', 'success');
+      loadSubjects();
+    }).catch(e => toast(e.message, 'error'));
+  } catch(e) { toast(e.message, 'error'); }
 }
 
 // ---- 章节表单 ----
@@ -1578,10 +1611,8 @@ function showConfirm(title, msg, cb) {
   document.getElementById('confirmModal').classList.add('show');
 }
 function closeConfirm() { document.getElementById('confirmModal').classList.remove('show'); confirmCallback = null; }
-document.getElementById('confirmYesBtn').onclick = function() {
-  closeConfirm();
-  if (confirmCallback) confirmCallback();
-};
+document.getElementById('confirmYesBtn').onclick = function() { closeConfirm(); if (confirmCallback) confirmCallback(); };
+document.getElementById('confirmNoBtn').onclick = closeConfirm;
 
 // 点击遮罩关闭弹窗
 document.getElementById('formModal').addEventListener('click', function(e) {
