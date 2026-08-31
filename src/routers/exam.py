@@ -357,26 +357,34 @@ def _build_pool(db: Session, subject: Subject, data: ExamStartRequest, user: Use
 
 
 def _rank_pool(db: Session, pool, user: User):
-    """4 层优先抽题排序（normal 模式用）。
+    """四阶段优先抽题排序（normal 模式用）。
 
-    层1 未答过的题        → 随机洗牌置最前
-    层2 答过且有错的题    → 错次降序（先shuffle再稳定sort保证并列随机）
-    层3 答过无错的题      → 做题次数升序（少做的优先），并列随机
-    兜底：层2/3 已涵盖全部答过的题，层内随机破并列。
-    返回排序后的题列表（未截断）。
+    层1 未做过的题        → 随机抽（最高优先级）
+    层2 错题（2小时冷却） → 错次降序 → 最久没做优先（冷却内的错题排除）
+    层3 做过的非错题       → 做题次数升序 → 最久没做优先（2小时冷却）
+    层4 保底（全部冷却）   → 最久没做的优先（时间升序）
+
+    时间窗口：COOLDOWN_HOURS 小时内做过的题排除（层2/3），全部冷却时走层4保底。
     """
     if not pool:
         return pool
+    COOLDOWN_HOURS = 2  # 冷却窗口（小时）
+    cooldown_since = datetime.utcnow() - timedelta(hours=COOLDOWN_HOURS)
     qids = [q.id for q in pool]
-    # 该学员在 pool 内每题的做题次数
+    # 该学员在 pool 内每题的做题次数 + 最近答题时间
     ans_rows = (
-        db.query(AnswerRecord.question_id, func.count(AnswerRecord.id))
+        db.query(
+            AnswerRecord.question_id,
+            func.count(AnswerRecord.id),
+            func.max(ExamRecord.finished_at),
+        )
         .join(ExamRecord, AnswerRecord.exam_record_id == ExamRecord.id)
         .filter(ExamRecord.user_id == user.id, AnswerRecord.question_id.in_(qids))
         .group_by(AnswerRecord.question_id)
         .all()
     )
-    cnt = {qid: n for qid, n in ans_rows}
+    cnt = {qid: n for qid, n, _ in ans_rows}
+    last_done = {qid: t for qid, _, t in ans_rows}
     answered = set(cnt.keys())
     # 错题次数
     wrong_rows = (
@@ -385,13 +393,43 @@ def _rank_pool(db: Session, pool, user: User):
         .all()
     )
     wrong = {qid: wc for qid, wc in wrong_rows}
+    # 2小时内做过的题（冷却池）
+    recent_qids = {
+        r[0] for r in db.query(AnswerRecord.question_id)
+        .join(ExamRecord, AnswerRecord.exam_record_id == ExamRecord.id)
+        .filter(
+            ExamRecord.user_id == user.id,
+            ExamRecord.finished_at >= cooldown_since,
+            AnswerRecord.question_id.in_(qids),
+        )
+        .all()
+    }
+    # 时间兜底：从未答过的题视为最早（layer1 不参与排序）
+    epoch = datetime(2000, 1, 1)
 
+    # 层1：未做过的题 → 随机
     layer1 = [q for q in pool if q.id not in answered]
     random.shuffle(layer1)
-    layer2 = [q for q in pool if q.id in answered]
-    random.shuffle(layer2)  # 先随机，稳定 sort 后并列项保持随机序
-    layer2.sort(key=lambda q: (-wrong.get(q.id, 0), cnt.get(q.id, 0)))
-    return layer1 + layer2
+
+    # 层2：错题（冷却后的）→ 错次降序 → 最久没做优先
+    wrong_pool = [
+        q for q in pool
+        if wrong.get(q.id, 0) > 0 and q.id not in recent_qids
+    ]
+    wrong_pool.sort(key=lambda q: (-wrong[q.id], last_done.get(q.id, epoch)))
+
+    # 层3：做过的非错题（冷却后的）→ 做题次数升序 → 最久没做优先
+    done_pool = [
+        q for q in pool
+        if q.id in answered and wrong.get(q.id, 0) == 0 and q.id not in recent_qids
+    ]
+    done_pool.sort(key=lambda q: (cnt[q.id], last_done.get(q.id, epoch)))
+
+    # 层4：保底（冷却内的题）→ 最久没做的优先
+    fallback = [q for q in pool if q.id in recent_qids]
+    fallback.sort(key=lambda q: last_done.get(q.id, epoch))
+
+    return layer1 + wrong_pool + done_pool + fallback
 
 
 @router.post("/exam/available-count", response_model=AvailableCountOut)
@@ -714,6 +752,14 @@ def submit_exam(data: ExamSubmitRequest, user: User = Depends(get_current_user),
                 wq.mastered = False
             else:
                 db.add(WrongQuestion(user_id=user.id, question_id=question.id))
+        else:
+            # 答对了：如果该题在错题本里，标记为已掌握（mastered=True）
+            # 这样该题就不会再被错题重做模式抽到，正常组卷时也会回归正常优先级
+            wq = db.query(WrongQuestion).filter(
+                WrongQuestion.user_id == user.id, WrongQuestion.question_id == question.id
+            ).first()
+            if wq and not wq.mastered:
+                wq.mastered = True
 
     record.correct = correct
     record.wrong = record.total - correct
