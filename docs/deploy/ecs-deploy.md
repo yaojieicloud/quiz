@@ -24,44 +24,86 @@
 
 ---
 
-## 2. ECS 目录结构
+## 2. ECS 真实目录结构（2026-08-31 实测）
 
 ```
-/opt/quiz-system/
-├── docker-compose.yml    # 仅 image: quiz-system:latest 引用（无 build 段）
-├── build/                # 实际运行源码（与本地 src/ 对应）
-│   ├── Dockerfile
-│   └── main.py / models.py / schemas.py / routers/ / core/ / static/ ...
-└── data/            # DB 数据卷（quiz.db + backups/ + 密钥）
+/opt/quiz-system/          ← 源码根目录（本地 src/ 直接解压到此处）
+│  ├── Dockerfile          ← 构建 quiz-system:latest 镜像
+│  ├── docker-compose.yml  ← ⚠️ 单独维护，永远不打包进 tar
+│  ├── main.py
+│  ├── models.py
+│  ├── schemas.py
+│  ├── routers/            ← 路由
+│  ├── core/               ← 核心逻辑（mastery.py 等）
+│  ├── migrations/         ← 数据库迁移脚本
+│  ├── static/
+│  ├── requirements.txt
+│  └── entrypoint.sh
+/opt/data/                 ← ⚠️ 容器数据卷（真实数据库目录）
+│  └── quiz.db             ← 容器内 /app/data/quiz.db 的挂载源
+/opt/quiz-system/data/     ← ⚠️ 备用恢复目录（不是容器挂载点）
+   ├── quiz.db             ← 宿主机旧库快照（用于灾难恢复）
+   └── backups/            ← 备份历史
 ```
 
-> ⚠️ **本地 `src/` 即对应 ECS 的 `build/`；本地改代码后需 scp 到 `build/` 再重建镜像才生效。**
-> ⚠️ **历史坑**：ECS `build/core/` 曾缺失 `tier.py`、`schemas.py` 也曾与本地不同步，导致重建后 import 失败、容器重启循环。**每次部署前务必确认 `build/` 与本地 `src/` 完整一致**（缺文件/旧文件都会致启动失败）。
+### 关键配置真相
+- **容器数据卷**：`/opt/data` → 容器内 `/app/data`（compose volumes）
+- **compose 文件路径写法**：`${QUIZ_DATA_DIR:-../data}`（相对路径）
+  - ECS 通过环境变量 `QUIZ_DATA_DIR=/opt/data` 把相对路径解析到 `/opt/data`
+  - **危险**：若解压新的 docker-compose.yml 到 ECS 根目录，且 ECS 环境里没有这个环境变量，
+    默认 `../data` 会解析为 `/opt/quiz-system/../data` = `/opt/data`，**刚好凑上真数据卷**（这次事故）
+    但若 compose 文件内容有变、或 ECS 改了 WORKDIR，就会错位
+- **安全做法**：ECS docker-compose.yml 改成**绝对路径** `volumes: /opt/data:/app/data`，或永远不动 compose 文件
+- **备份恢复**：若容器读空库（users=0），立即用 `/opt/quiz-system/data/quiz.db` 恢复 `/opt/data/quiz.db`
+
+> ⚠️ **本地 `src/` 即对应 ECS 的 `/opt/quiz-system/`**；本地改代码后需打包 src/ → scp → 解压到 `/opt/quiz-system/` → 重建镜像才生效。
 
 ---
 
 ## 3. 标准部署流程（推荐）
 
 ```bash
-# 1. 确认本地代码完整（git status 无未提交文件）
+# 1. 部署前预防性检查
+ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 << 'PRECHECK'
+echo "=== ECS 数据库 users 数量（部署前基线）==="
+docker exec quiz-system python3 -c "
+import sqlite3
+c = sqlite3.connect('/app/data/quiz.db')
+print('users:', c.execute('SELECT COUNT(*) FROM users').fetchone())
+print('subjects:', c.execute('SELECT COUNT(*) FROM subjects').fetchone())
+c.close()
+"
+PRECHECK
+# 记录基线值：基线 users = ___
+
+# 2. 确认本地代码完整（git status 无未提交文件）
 cd /c/Users/Yaojie/Documents/GitHub/quiz
 git status
+git log --oneline -3
 
-# 2. 打包 src/（**仅打包源码，不打包 data/docs/tests/docker**）
-# ⚠️ ECS 部署文档原版含 docs/ 是历史错误，2026-08-31 修正
+# 3. 打包 src/（**仅打包源码，不打包 data/docs/tests/docker/docker-compose.yml**）
 tar -czf /tmp/quiz-src.tar.gz \
   --exclude=.git \
   --exclude=__pycache__ \
   -C src .
 
-# 3. 推送文件到 ECS 根目录
+# 验证打包内容（不应包含 data/ docs/ tests/ docker/ docker-compose.yml）
+echo "=== tar 内容预览 ==="
+tar -tzf /tmp/quiz-src.tar.gz | head -20
+tar -tzf /tmp/quiz-src.tar.gz | grep -E '(data/|docs/|tests/|docker/|docker-compose)' && echo "⚠️ 警告：含不应打包的目录" || echo "✅ 打包干净"
+
+# 4. 推送文件到 ECS 根目录
 scp -i C:/Users/Yaojie/Documents/openclaw.pem \
   /tmp/quiz-src.tar.gz \
   root@106.14.99.100:/opt/quiz-system/
 
-# 4. 登录 ECS 解压、重建镜像、重启容器
+# 5. 登录 ECS 解压、重建镜像、重启容器
 ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 << 'EOF'
   cd /opt/quiz-system
+  # 备份旧 Dockerfile（防止覆盖后无法回滚）
+  cp Dockerfile Dockerfile.ecs-predeploy-$(date +%s).bak
+  # ⚠️ 永远不要覆盖 docker-compose.yml（tar 内容里不应含此文件）
+  tar -tzf quiz-src.tar.gz | grep docker-compose.yml && echo "❌ 错误：tar 包含 docker-compose.yml，放弃部署" && exit 1
   # 备份旧 Dockerfile（防止覆盖后无法回滚）
   cp Dockerfile Dockerfile.ecs-predeploy-$(date +%s).bak
   tar -xzf quiz-src.tar.gz
@@ -70,8 +112,25 @@ ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 << 'EOF'
   docker compose up -d
 EOF
 
-# 5. 健康检查
-curl -o /dev/null -w '%{http_code}\n' http://106.14.99.100:8000/
+# 6. 部署后必查（强制项，缺失即事故）
+sleep 5
+echo "=== 健康检查 ==="
+curl -o /dev/null -w 'HTTP:%{http_code}\n' http://106.14.99.100:8000/
+
+ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 << 'POSTCHECK'
+echo "=== ECS 数据库 users 数量（部署后）==="
+docker exec quiz-system python3 -c "
+import sqlite3
+c = sqlite3.connect('/app/data/quiz.db')
+print('users:', c.execute('SELECT COUNT(*) FROM users').fetchone())
+print('subjects:', c.execute('SELECT COUNT(*) FROM subjects').fetchone())
+c.close()
+"
+echo "=== 迁移日志（确认新迁移执行）==="
+docker logs --tail 20 quiz-system 2>&1 | grep -i migrate
+POSTCHECK
+# 若 users 数与基线不一致 → 立即停汇报阿垤（事故）
+# 若 migration 缺失 → 立即停汇报阿垚（迁移未执行）
 ```
 
 > **关于自定义基础镜像 `quiz-base:3.13`**：
@@ -117,7 +176,13 @@ ssh -i C:/Users/Yaojie/Documents/openclaw.pem root@106.14.99.100 "
 
 ## 4. 应急热更新（docker cp）
 
-> 仅用于紧急修复，**不作为常规部署方式**。
+> ⚠️ **限制**：docker cp 仅替换容器内 `/app/` 的 .py 文件。**不适用于以下情况**：
+> - 改动了 `migrations/`（迁移脚本只在镜像 build 阶段跑，`docker cp` 无法重新执行）
+> - 改动了 `Dockerfile` / `docker-compose.yml`（必须 rebuild 镜像）
+> - 改动了 `requirements.txt`（必须 rebuild 镜像才能 `pip install`）
+> - 数据需要迁移（复合唯一约束等 schema 变更）
+>
+> **通用原则**：只要改动波及 migrations/ 或 依赖、优先走标准部署 §3。
 
 ```bash
 # 1. 本地打包（排除数据库和缓存）
@@ -209,6 +274,6 @@ A: 从 `/opt/quiz-system/data/backups/` 恢复最近备份。
 
 ---
 
-> **文档版本**：v1.0（2026-08-26）
+> **文档版本**：v1.1（2026-08-31）
 > **维护者**：阿垤（姚杰）
-> **最后更新**：2026-08-26 18:00
+> **最后更新**：2026-08-31 16:40（重写 §2 目录结构 + §3 流程 + §3.1 事故记录 + §7 安全红线）
