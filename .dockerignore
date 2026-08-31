@@ -1,0 +1,41 @@
+# Python / OS
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.git/
+*.log
+.DS_Store
+
+# 数据库文件（数据卷挂载，不需要打入镜像）
+*.db
+*.db.bak*
+*.db.old
+
+# 大数据目录（quiz-data: 音频等静态资源 / data: 缓存数据）
+# 这些通过 docker cp 或数据卷挂载进容器，不需要 COPY
+quiz-data/
+data/
+
+# 压缩包 / 备份
+*.tar.gz
+*.tar
+*.zip
+*.mp3
+*.mp4
+
+# 临时文件
+tmp/
+*.tmp
+*.swp
+
+# 构建产物
+dist/
+build/
+node_modules/
+
+# Docker 文件（不需要打入镜像）
+docker/
+Dockerfile*
+docker-compose*.yml
+.dockerignore
