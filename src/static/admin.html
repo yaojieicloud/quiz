@@ -696,12 +696,13 @@ function markCompleted(id) {
 function markActive(id) {
   const s = subjects.find(x => x.id === id);
   if (!s) { toast('科目不存在', 'error'); return; }
-  try {
-    API.patch(`/api/subjects/${id}/status?status=active`).then(() => {
+  showConfirm('恢复科目', `确定将「${s.name}」恢复为活跃状态？`, async () => {
+    try {
+      await API.patch(`/api/subjects/${id}/status?status=active`);
       toast('已恢复为活跃', 'success');
       loadSubjects();
-    }).catch(e => toast(e.message, 'error'));
-  } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { toast(e.message, 'error'); }
+  });
 }
 
 // ---- 章节表单 ----
@@ -1611,7 +1612,7 @@ function showConfirm(title, msg, cb) {
   document.getElementById('confirmModal').style.display='flex';
 }
 function closeConfirm() { var m=document.getElementById('confirmModal');m.style.display='none';m.classList.remove('show');confirmCallback=null;}
-document.getElementById('confirmYesBtn').onclick = function() { closeConfirm(); if (confirmCallback) confirmCallback(); };
+document.getElementById('confirmYesBtn').onclick = function() { var cb = confirmCallback; closeConfirm(); if (cb) cb(); };
 document.getElementById('confirmNoBtn').onclick = closeConfirm;
 
 // 点击遮罩关闭弹窗
