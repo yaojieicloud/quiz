@@ -36,6 +36,8 @@
 
 本仓库遵循 **it-workflow** 流程（需求 → 方案设计 → 任务拆解 → 开发 → 文档同步 → 验收，Bug 流程同样两次确认门）；指令：`/需求` `/设计` `/任务` `/问题` `/测试` `/讨论` `/继续` `/暂停` `/帮助`；编号：需求 `REQ-{N}` / 设计 `REQ-{N}-{M}` / 任务 `REQ-{N}-{M}-{K}` / 问题单 `BUG-{N}`。骨架见 `docs/init/`、`docs/overview.md`、进度 `docs/PROGRESS.md`；历史协作铁律（教材/文档先行/安全红线）承自 `CODEBUDDY.md`，仍作项目约定。
 
+- [Git 协作规范 `docs/init/git-workflow.md`](docs/init/git-workflow.md) — AI 代推送前提、标准流程、禁止行为（credential helper 走 GitHub Desktop）
+
 - [习题人工复核规范](docs/qa/manual-review.md) — 全科目题目正确性/选项合理性/超纲判定（5 检查点 + 正材清单 + 废弃正路流程）
 - [自动核对计划 check-plan](docs/qa/python-theory-check-plan.md) — 结构/答案判定 PASS/FIX/DROP
 - 需求索引 `docs/requirements/INDEX.md`；问题单 `docs/issues/INDEX.md`
