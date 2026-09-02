@@ -144,7 +144,10 @@ def create_topic(data: TopicCreate, db: Session = Depends(get_db), _=Depends(req
         Topic.subject_id == data.subject_id
     ).scalar() or 0.0
     t = Topic(subject_id=data.subject_id, name=data.name, unit=data.unit,
-              sort_order=max_sort + 1024.0)
+              sort_order=max_sort + 1024.0,
+              tutorial_video_url=data.tutorial_video_url,  # REQ-7
+              tutorial_book_url=data.tutorial_book_url,     # REQ-7
+              tutorial_embed_html=data.tutorial_embed_html)  # REQ-7
     db.add(t)
     db.commit()
     db.refresh(t)

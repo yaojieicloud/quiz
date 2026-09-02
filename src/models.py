@@ -92,6 +92,13 @@ class Topic(Base):
     unit = Column(String(100), nullable=True)  # 单元名，文化类填，编程类留空
     sort_order = Column(Float, default=0)  # REAL，REQ-6 支持浮点插入算法
     deprecated = Column(Integer, default=0, nullable=False)  # 软删除标志（REQ-6）
+    # REQ-7：教程 URL 字段
+    # tutorial_video_url: B站视频嵌入 URL（player.bilibili.com/player.html?bvid=xxx）
+    # tutorial_book_url:  人教版在线课本 URL（book.pep.com.cn/.../mobile/index.html）
+    # 两字段独立，均可空；学员端 study.html 据此显示 iframe
+    tutorial_video_url = Column(Text, nullable=True)
+    tutorial_book_url = Column(Text, nullable=True)
+    tutorial_embed_html = Column(Text, nullable=True)  # REQ-7：管理员直接粘贴的 iframe HTML
 
     subject = relationship("Subject", back_populates="topics")
     questions = relationship("Question", back_populates="topic")

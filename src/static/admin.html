@@ -545,7 +545,10 @@ function renderSubjects() {
     el.innerHTML = '<div class="empty"><div class="icon">📭</div><p>还没有科目，点击右上角新建</p></div>';
     return;
   }
-  el.innerHTML = subjects.map(s => `
+  const active = subjects.filter(s => s.status !== 'completed');
+  const done    = subjects.filter(s => s.status === 'completed');
+
+  const subjectRow = (s) => `
     <div class="list-item" style="flex-direction:column;align-items:stretch;">
       <div style="display:flex;justify-content:space-between;align-items:center;width:100%;">
         <div class="main-info">
@@ -569,7 +572,19 @@ function renderSubjects() {
       </div>
       <div id="topics-${s.id}" style="display:none;" class="subject-expand"></div>
     </div>
-  `).join('');
+  `;
+
+  el.innerHTML =
+    (active.length ? active.map(subjectRow).join('') : '<div style="color:#9c8bb5;text-align:center;padding:12px;">暂无进行中的科目</div>')
+    + (done.length ? `
+      <div style="margin-top:20px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <span style="font-size:18px;">🏁</span>
+          <span style="font-size:13px;font-weight:bold;color:#9c8bb5;">已完成（${done.length}个科目）</span>
+          <div style="flex:1;height:1px;background:#e9ecef;"></div>
+        </div>
+        ${done.map(subjectRow).join('')}
+      </div>` : '');
 }
 
 function refreshSubjectDropdowns() {
@@ -763,6 +778,12 @@ function openTopicModal(topicId, subjectId) {
     <div class="form-group"><label>章节名称</label><input type="text" class="form-input" id="fTopicName" value="${t?esc(t.name):''}" placeholder="如：变量与标识符"></div>
     ${isCulture ? `<div class="form-group"><label>所属单元（如：三年级上册）</label><input type="text" class="form-input" id="fTopicUnit" value="${t?esc(t.unit||''):''}" placeholder="留空则归入「未分单元」"></div>` : ''}
     <div class="form-group"><label>排序（数字，越小越靠前）</label><input type="number" class="form-input" id="fTopicOrder" value="${t?t.sort_order:0}"></div>
+    <div class="form-group"><label>📺 教程内容（iframe HTML）</label>
+      <textarea class="form-input" id="fTopicEmbedHtml" rows="4"
+        placeholder="直接粘贴 &lt;iframe&gt;、&lt;video&gt; 等 HTML 代码，学员端直接渲染。&#10;&#10;示例：&#10;&lt;iframe src=&quot;https://player.bilibili.com/...&quot; allowfullscreen&gt;&lt;/iframe&gt;"
+      >${t?esc(t.tutorial_embed_html||''):''}</textarea>
+      <div style="font-size:12px;color:#9c8bb5;margin-top:4px;">支持 iframe / video / embed 等任意 HTML（安全提示：仅允许 https 协议的内容）</div>
+    </div>
     <div class="btn-row">
       <button class="btn-no" style="padding:10px 26px;border-radius:30px;border:none;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit;" onclick="closeFormModal()">取消</button>
       <button class="btn btn-primary" onclick="saveTopic(${topicId||'null'}, ${subjectId})">💾 保存</button>
@@ -776,10 +797,19 @@ async function saveTopic(topicId, subjectId) {
   const order = parseInt(document.getElementById('fTopicOrder').value) || 0;
   const unitEl = document.getElementById('fTopicUnit');
   const unit = unitEl ? (unitEl.value.trim() || null) : null;
+  // REQ-7：教程 HTML 字段（直接粘 iframe，学员端渲染）
+  const embedHtmlEl = document.getElementById('fTopicEmbedHtml');
+  const tutorial_embed_html = embedHtmlEl ? (embedHtmlEl.value.trim() || null) : null;
+  // 兼容旧字段：清空 video/book url（已迁移到 embed_html）
+  const tutorial_video_url = null;
+  const tutorial_book_url  = null;
   try {
     if (topicId) {
       // 编辑：拿后端返回的最新 topic，直接更新 cache + DOM（不重拉列表，保留展开/折叠状态）
-      const updated = await API.put('/api/topics/'+topicId, { name, unit, sort_order: order });
+      const updated = await API.put('/api/topics/'+topicId, {
+        name, unit, sort_order: order,
+        tutorial_video_url, tutorial_book_url, tutorial_embed_html  // REQ-7
+      });
       const list = topicsCache[subjectId] || [];
       const i = list.findIndex(t => t.id === topicId);
       if (i >= 0) list[i] = { ...list[i], ...updated }; else list.push(updated);
@@ -809,7 +839,10 @@ async function saveTopic(topicId, subjectId) {
       }
       toast('章节已更新', 'success');
     } else {
-      const created = await API.post('/api/topics', { subject_id: subjectId, name, unit });
+      const created = await API.post('/api/topics', {
+        subject_id: subjectId, name, unit,
+        tutorial_video_url, tutorial_book_url, tutorial_embed_html  // REQ-7
+      });
       // 新建：把新 topic 追加到 cache，然后强制刷新展开区
       const list = topicsCache[subjectId] || [];
       list.push(created);

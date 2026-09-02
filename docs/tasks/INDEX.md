@@ -19,5 +19,10 @@
 | REQ-4-1-4 | ECS 拉库验证 + 设计文档归档 | REQ-4 | P1 | ✅已完成 | REQ-4-1-3 |
 | REQ-6-1-1 | 后端：sort_order 改 REAL + reorder 接口 + 软/硬删除分流 | REQ-6 | P0 | ✅已完成（本地验证，待 ECS 部署） | - |
 | REQ-6-1-2 | 前端：科目行新建按钮 + 课程行拖动 + 删除弹窗 | REQ-6 | P0 | ✅已完成（本地 docker 验证） | REQ-6-1-1 |
+| REQ-7-1-1 | 后端：迁移 + 模型 + schema 加字段 | REQ-7 | P0 | ⏳待开发 | - |
+| REQ-7-1-2 | 管理端：admin.html 课程编辑弹窗加两 URL 字段 | REQ-7 | P0 | ⏳待开发 | REQ-7-1-1 |
+| REQ-7-1-3 | 学员端：home.html 点击分流 + 文案改动 | REQ-7 | P0 | ⏳待开发 | REQ-7-1-1 |
+| REQ-7-1-4 | 学员端：新建 study.html 课程详情页 | REQ-7 | P0 | ⏳待开发 | REQ-7-1-1, REQ-7-1-3 |
+| REQ-7-1-5 | 本地 docker 验证 + 拉 ECS 数据到本地 + 回归测试 | REQ-7 | P1 | ⏳待开发 | REQ-7-1-2, REQ-7-1-4 |
 
 进度跟踪（多任务并行）见 `docs/PROGRESS.md`；恢复中断任务用 `/继续`。

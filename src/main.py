@@ -22,7 +22,7 @@ app = FastAPI(title="题库闯关系统", version="1.0.0")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 # 注册路由
-from routers import auth, subjects, questions, exam, stats, parent, reward, reward_admin, mastery, system, analytics  # noqa: E402
+from routers import auth, subjects, questions, exam, stats, parent, reward, reward_admin, mastery, system, analytics, proxy  # noqa: E402
 
 app.include_router(auth.router)
 app.include_router(subjects.router)
@@ -35,6 +35,7 @@ app.include_router(reward_admin.router)
 app.include_router(mastery.router)
 app.include_router(system.router)
 app.include_router(analytics.router)
+app.include_router(proxy.router)
 
 
 @app.get("/api/health")

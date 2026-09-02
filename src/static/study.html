@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课程详情 - 学习中心</title>
+<link rel="stylesheet" href="css/common.css">
+<style>
+/* ============ study.html 样式（REQ-7） ============ */
+.study-page-header {
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px 26px; background: #fff; border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(58,58,85,0.06); margin-bottom: 16px;
+}
+.study-back-btn {
+  border: 2px solid #ece6f7; background: #fff; border-radius: 50%;
+  width: 40px; height: 40px; font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #3a3a55; font-family: inherit; font-weight: bold;
+}
+.study-back-btn:hover { background: #f1f3f5; }
+.study-titles { flex: 1; min-width: 0; }
+.study-subj-name { font-size: 13px; color: #9c8bb5; margin-bottom: 4px; }
+.study-topic-name {
+  font-size: 22px; font-weight: bold; color: #3a3a55;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Tab 行 */
+.study-tab-row { display: flex; gap: 10px; margin-bottom: 16px; }
+.study-tab {
+  padding: 10px 28px; border-radius: 22px; cursor: pointer;
+  background: #fff; color: #3a3a55; font-weight: bold; font-size: 15px;
+  border: 2px solid #ece6f7; transition: all 0.2s; font-family: inherit;
+}
+.study-tab:hover { background: #f8f9fc; }
+.study-tab.active {
+  background: linear-gradient(135deg,#69db7c,#51cf66);
+  color: #fff; border-color: transparent;
+}
+
+/* 主体 */
+.study-container { display: flex; gap: 16px; align-items: flex-start; }
+.study-topic-list {
+  width: 240px; flex-shrink: 0; background: #fff; border-radius: 16px;
+  padding: 14px 10px; box-shadow: 0 4px 12px rgba(58,58,85,0.06);
+  max-height: 70vh; overflow-y: auto;
+}
+.study-topic-row {
+  padding: 10px 14px; border-radius: 10px; cursor: pointer;
+  font-size: 14px; color: #3a3a55; margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.study-topic-row:hover { background: #f1f3f5; }
+.study-topic-row.active {
+  background: linear-gradient(135deg,#ffe4e6,#fff0f3);
+  color: #d6336c; font-weight: bold;
+}
+.study-topic-row .has-tut { font-size: 12px; color: #9c8bb5; margin-left: auto; }
+.study-topic-row.active .has-tut { color: #d6336c; }
+
+.study-content {
+  flex: 1; min-width: 0; background: #fff; border-radius: 16px;
+  padding: 18px; box-shadow: 0 4px 12px rgba(58,58,85,0.06);
+}
+.study-tab-content { display: none; }
+.study-tab-content.active { display: block; }
+
+/* 教程区 */
+.tutorial-box {
+  margin-bottom: 16px; background: #f8f9fc; border-radius: 12px;
+  padding: 12px; border: 2px solid #ece6f7;
+}
+.tutorial-box-label {
+  font-size: 14px; font-weight: bold; color: #3a3a55; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tutorial-frame {
+  width: 100%; border: none; border-radius: 10px;
+  background: #fff; box-shadow: inset 0 0 0 1px #e9ecef;
+}
+#embedContainer iframe,
+#embedContainer video,
+#embedContainer embed {
+  width: 100%; border-radius: 10px; margin-bottom: 8px;
+}
+#embedContainer iframe { aspect-ratio: 16/9; height: auto; }
+.tutorial-empty {
+  text-align: center; padding: 40px 20px; color: #9c8bb5; font-size: 15px;
+}
+.tutorial-empty .icon { font-size: 48px; margin-bottom: 12px; }
+
+/* 课本卡片（PEP CDN 反盗链无法 iframe，改用新窗口打开） */
+.tutorial-book-card {
+  text-align: center; padding: 32px 24px; background: #fff;
+  border-radius: 12px;
+}
+.tutorial-book-icon { font-size: 56px; margin-bottom: 8px; }
+.tutorial-book-title { font-size: 15px; color: #3a3a55; margin-bottom: 12px; font-weight: bold; }
+.tutorial-book-url {
+  font-size: 12px; color: #9c8bb5; word-break: break-all;
+  background: #f8f9fc; padding: 8px 12px; border-radius: 6px; margin-bottom: 16px;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+.tutorial-book-btn {
+  display: inline-block; padding: 12px 32px; border-radius: 26px;
+  background: linear-gradient(135deg,#69db7c,#51cf66); color: #fff;
+  text-decoration: none; font-size: 15px; font-weight: bold;
+  box-shadow: 0 4px 12px rgba(105,219,124,0.3);
+}
+.tutorial-book-btn:hover { filter: brightness(1.05); }
+.tutorial-book-note { font-size: 12px; color: #9c8bb5; margin-top: 14px; }
+
+/* 练习 Tab 内联组卷配置（复用 home.html 的 cfg-modal 风格） */
+.quiz-config-pad { padding: 4px 6px; }
+.quiz-config-pad .config-section { margin-bottom: 16px; }
+.quiz-config-pad .label {
+  font-size: 14px; color: #3a3a55; font-weight: bold; margin-bottom: 8px;
+}
+.quiz-config-pad .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiz-config-pad .chip {
+  padding: 8px 16px; border-radius: 20px; cursor: pointer;
+  background: #f1f3f5; color: #3a3a55; font-size: 14px;
+  border: 2px solid transparent;
+}
+.quiz-config-pad .chip:hover { background: #e9ecef; }
+.quiz-config-pad .chip.active {
+  background: linear-gradient(135deg,#69db7c,#51cf66);
+  color: #fff; border-color: transparent;
+}
+.quiz-config-pad .chip.locked { opacity: 0.4; cursor: not-allowed; }
+.quiz-config-pad .mastered-badge {
+  display: inline-block; background: #ffd43b; color: #3a3a55;
+  font-size: 10px; padding: 1px 6px; border-radius: 8px; margin-left: 4px;
+  vertical-align: middle;
+}
+.quiz-summary {
+  text-align: center; padding: 16px; background: #f8f9fc;
+  border-radius: 12px; margin-top: 12px; font-size: 14px; color: #7a6c8c;
+}
+
+/* 底部 */
+.study-footer {
+  display: flex; gap: 12px; justify-content: space-between; align-items: center;
+  margin-top: 18px; padding: 14px 18px; background: #fff; border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(58,58,85,0.06);
+}
+.study-nav-btn {
+  border: 2px solid #ece6f7; background: #fff; padding: 10px 22px;
+  border-radius: 22px; cursor: pointer; font-size: 14px; color: #3a3a55;
+  font-family: inherit; font-weight: bold;
+}
+.study-nav-btn:hover:not(:disabled) { background: #f1f3f5; }
+.study-nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.study-start-btn {
+  border: none; padding: 12px 32px; border-radius: 26px;
+  background: linear-gradient(135deg,#ffa94d,#ff922b);
+  color: #fff; font-size: 16px; font-weight: bold; cursor: pointer;
+  font-family: inherit; box-shadow: 0 4px 12px rgba(255,169,77,0.3);
+}
+.study-start-btn:hover { filter: brightness(1.05); }
+.study-topic-pos { font-size: 13px; color: #9c8bb5; }
+
+@media (max-width: 768px) {
+  .study-container { flex-direction: column; }
+  .study-topic-list { width: 100%; max-height: 200px; }
+}
+
+/* 加载态兜底 */
+.study-loading {
+  text-align: center; padding: 60px 20px; color: #9c8bb5;
+}
+.study-loading .icon { font-size: 48px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<div id="topbar"></div>
+
+<div id="mainContent">
+  <div class="study-loading">
+    <div class="icon">⏳</div>
+    <div>加载课程详情中...</div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script>
+// ============ study.html 主逻辑（REQ-7，重写版） ============
+// 声明必须在调用之前（const 有 TDZ，必须严格按顺序）
+const params = new URLSearchParams(location.search);
+const subjectId = parseInt(params.get('subject_id'));
+
+// 状态
+let currentSubject = null;
+let topics = [];
+let currentTopicIdx = 0;
+let selectedTopics = new Set();
+let selectedTypes = new Set();
+let selectedCount = 10;
+let selectedTier = 1;
+
+// 1) 鉴权：未登录跳 login
+if (!requireAuth()) {
+  // requireAuth 已跳走，这里不再执行
+} else {
+  start();   // 现在 subjectId 已声明，不会 TDZ
+}
+
+async function start() {
+  if (!subjectId) {
+    document.getElementById('mainContent').innerHTML = `
+      <div class="study-loading">
+        <div class="icon">⚠️</div>
+        <div>缺少 subject_id 参数</div>
+        <div style="margin-top:12px;"><a href="home.html">返回课程中心</a></div>
+      </div>`;
+    return;
+  }
+  try {
+    const allSubjects = await API.get('/api/subjects');
+    currentSubject = allSubjects.find(s => s.id === subjectId);
+    if (!currentSubject) throw new Error('科目不存在');
+    topics = await API.get(`/api/subjects/${subjectId}/topics`);
+    renderMain();
+  } catch (e) {
+    console.error('study.html 加载失败:', e);
+    const mc = document.getElementById('mainContent');
+    if (mc) mc.innerHTML = `
+      <div class="study-loading">
+        <div class="icon">❌</div>
+        <div>加载失败：${e && e.message ? e.message.slice(0, 100) : '未知错误'}</div>
+        <div style="margin-top:12px;"><a href="home.html">返回课程中心</a></div>
+      </div>`;
+  }
+}
+
+function renderMain() {
+  document.getElementById('mainContent').innerHTML = `
+    <div class="study-page-header">
+      <button class="study-back-btn" onclick="location.href='home.html'" title="返回课程中心">←</button>
+      <div class="study-titles">
+        <div class="study-subj-name" id="subjName">${esc(currentSubject.icon || '📚')} ${esc(currentSubject.name)}</div>
+        <div class="study-topic-name" id="topicName">请选择课程</div>
+      </div>
+    </div>
+
+    <div class="study-tab-row">
+      <div class="study-tab active" id="tabLearn" onclick="switchTab('learn')">📺 学习</div>
+      <div class="study-tab" id="tabQuiz" onclick="switchTab('quiz')">📝 练习</div>
+    </div>
+
+    <div class="study-container">
+      <div class="study-topic-list" id="topicList">
+        <div style="color:#9c8bb5;text-align:center;padding:20px;">加载中...</div>
+      </div>
+      <div class="study-content">
+        <!-- 学习 Tab -->
+        <div class="study-tab-content active" id="tabLearnContent">
+          <div class="tutorial-box" id="embedBox" style="display:none;">
+            <div class="tutorial-box-label">📺 教程内容</div>
+            <div id="embedContainer"></div>
+          </div>
+          <div class="tutorial-box" id="bookBox" style="display:none;">
+            <div class="tutorial-box-label">📖 在线课本</div>
+            <div class="tutorial-book-card">
+              <div class="tutorial-book-icon">📖</div>
+              <div class="tutorial-book-title">点击下方按钮在人教版官网打开电子课本</div>
+              <div class="tutorial-book-url" id="bookUrlText"></div>
+              <a class="tutorial-book-btn" id="bookOpenBtn" target="_blank" rel="noopener">🔗 打开电子课本</a>
+              <div class="tutorial-book-note">💡 在官网阅读效果更佳，图片清晰可放大</div>
+            </div>
+          </div>
+          <div class="tutorial-empty" id="emptyHint" style="display:none;">
+            <div class="icon">📭</div>
+            <div>该课暂未配置教程</div>
+            <div style="font-size:13px;margin-top:8px;">可以点击"练习"Tab 直接做题</div>
+          </div>
+        </div>
+        <!-- 练习 Tab：内联组卷配置（不跳站，方案 A） -->
+        <div class="study-tab-content" id="tabQuizContent">
+          <div class="quiz-config-pad" id="quizConfig"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="study-footer">
+      <button class="study-nav-btn" id="prevBtn" onclick="goPrev()" disabled>← 上一课</button>
+      <div class="study-topic-pos" id="topicPos">--/--</div>
+      <button class="study-nav-btn" id="nextBtn" onclick="goNext()" disabled>下一课 →</button>
+    </div>
+  `;
+  if (!topics.length) {
+    document.getElementById('topicList').innerHTML =
+      '<div style="color:#9c8bb5;text-align:center;padding:20px;">该科目暂无课程</div>';
+    document.getElementById('tabQuizContent').innerHTML =
+      '<div style="text-align:center;padding:40px;color:#9c8bb5;">该科目暂无课程</div>';
+    return;
+  }
+  renderTopicList();
+  selectTopic(0);
+}
+
+function renderTopicList() {
+  const html = topics.map((t, i) => {
+    const hasTut = t.tutorial_embed_html || t.tutorial_book_url;
+    return `
+      <div class="study-topic-row ${i === currentTopicIdx ? 'active' : ''}"
+           data-idx="${i}" onclick="selectTopic(${i})">
+        <span style="font-size:12px;color:#9c8bb5;">${i+1}.</span>
+        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(t.name)}</span>
+        ${hasTut ? '<span class="has-tut" title="已配置教程">📚</span>' : ''}
+      </div>
+    `;
+  }).join('');
+  document.getElementById('topicList').innerHTML = html;
+  document.getElementById('topicPos').textContent = `${currentTopicIdx + 1} / ${topics.length}`;
+}
+
+function selectTopic(idx) {
+  if (idx < 0 || idx >= topics.length) return;
+  currentTopicIdx = idx;
+  const t = topics[idx];
+  document.getElementById('topicName').textContent = t.name;
+
+  // 教程内容区：直接 innerHTML 渲染管理员粘的 iframe HTML
+  const eBox = document.getElementById('embedBox');
+  const eContainer = document.getElementById('embedContainer');
+  if (t.tutorial_embed_html && t.tutorial_embed_html.trim()) {
+    eBox.style.display = '';
+    eContainer.innerHTML = t.tutorial_embed_html;
+  } else {
+    eBox.style.display = 'none';
+    eContainer.innerHTML = '';
+  }
+
+  // 课本"新窗口"快捷入口（tutorial_book_url 旧字段兼容；新流程用 embed_html 粘 iframe）
+  const bBox = document.getElementById('bookBox');
+  if (t.tutorial_book_url && t.tutorial_book_url.trim()) {
+    bBox.style.display = '';
+    document.getElementById('bookOpenBtn').href = t.tutorial_book_url;
+    document.getElementById('bookUrlText').textContent = t.tutorial_book_url;
+  } else {
+    bBox.style.display = 'none';
+  }
+
+  // 降级提示
+  const empty = document.getElementById('emptyHint');
+  const hasAny = (t.tutorial_embed_html && t.tutorial_embed_html.trim()) ||
+                 (t.tutorial_book_url && t.tutorial_book_url.trim());
+  empty.style.display = hasAny ? 'none' : '';
+
+  // 上一课/下一课
+  document.getElementById('prevBtn').disabled = (idx === 0);
+  document.getElementById('nextBtn').disabled = (idx === topics.length - 1);
+
+  renderTopicList();
+  // 滚动左侧到当前项
+  const activeRow = document.querySelector('.study-topic-row.active');
+  if (activeRow) activeRow.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+
+  // 渲染练习 Tab 配置（默认选中当前课）
+  selectedTopics = new Set([t.id]);
+  selectedTypes = new Set(currentSubject.allowed_types || []);
+  renderQuizConfig();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.study-tab').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.study-tab-content').forEach(el => el.classList.remove('active'));
+  if (tab === 'learn') {
+    document.getElementById('tabLearn').classList.add('active');
+    document.getElementById('tabLearnContent').classList.add('active');
+  } else {
+    document.getElementById('tabQuiz').classList.add('active');
+    document.getElementById('tabQuizContent').classList.add('active');
+  }
+}
+
+function goPrev() { if (currentTopicIdx > 0) selectTopic(currentTopicIdx - 1); }
+function goNext() { if (currentTopicIdx < topics.length - 1) selectTopic(currentTopicIdx + 1); }
+
+// ============ 练习 Tab：内联组卷配置（方案 A） ============
+function renderQuizConfig() {
+  const allowedTypes = currentSubject.allowed_types || [];
+  const allTypes = [
+    { v: 'choice', label: '选择题' },
+    { v: 'judge',  label: '判断题' },
+    { v: 'fill',   label: '填空题' },
+    { v: 'match',  label: '连线题' },
+    { v: 'sort',   label: '排序题' },
+    { v: 'essay',  label: '应用题' },
+    { v: 'code',   label: '编程题' },
+  ];
+  const visibleTypes = allTypes.filter(t => allowedTypes.length === 0 || allowedTypes.includes(t.v));
+  // REQ-7：题数档位只有实操科目才显示"1 题"档；其他科目（文化课/Python 基础理论）从 10 题开始
+  // 判断方式：复用 currentSubject.is_practical（home.html 的 isPractical 规则）
+  const isPractical = currentSubject && currentSubject.category === 'programming' && (currentSubject.name || '').includes('实操');
+  const countOpts = isPractical ? [1, 10, 20, 30, 40, 50] : [10, 20, 30, 40, 50];
+  // 兜底：如果用户之前选了 1 但当前不在实操，强制改回 10
+  if (!isPractical && selectedCount === 1) selectedCount = 10;
+
+  const html = `
+    <div class="config-section">
+      <div class="label">🎯 已选课程（点击切换）</div>
+      <div class="chip-group" id="qcTopicChips">
+        ${topics.map(t => {
+          const sel = selectedTopics.has(t.id);
+          return `<span class="chip ${sel ? 'active' : ''}" data-tid="${t.id}" onclick="qcPickTopic(${t.id})">${esc(t.name)}</span>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="config-section">
+      <div class="label">🎚 难度档位</div>
+      <div class="chip-group">
+        <span class="chip ${selectedTier===1?'active':''}" onclick="qcPickTier(1)">🟢 初级</span>
+        <span class="chip ${selectedTier===2?'active':''}" onclick="qcPickTier(2)">🟠 进阶</span>
+        <span class="chip ${selectedTier===3?'active':''}" onclick="qcPickTier(3)">🔴 挑战</span>
+      </div>
+    </div>
+    <div class="config-section">
+      <div class="label">📝 题型（点击多选，全选=不过滤）</div>
+      <div class="chip-group" id="qcTypeChips">
+        ${visibleTypes.map(t => {
+          const sel = selectedTypes.has(t.v);
+          return `<span class="chip ${sel ? 'active' : ''}" data-type="${t.v}" onclick="qcPickType('${t.v}')">${t.label}</span>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="config-section">
+      <div class="label">🔢 题数档位</div>
+      <div class="chip-group">
+        ${countOpts.map(n => `<span class="chip ${selectedCount===n?'active':''}" onclick="qcPickCount(${n})">${n} 题</span>`).join('')}
+      </div>
+    </div>
+    <div class="quiz-summary" id="qcSummary">点击"开始组题"启动练习</div>
+    <div style="text-align:center;margin-top:16px;">
+      <button class="study-start-btn" onclick="startExam()">🎯 开始组题</button>
+    </div>
+  `;
+  document.getElementById('quizConfig').innerHTML = html;
+}
+
+function qcPickTopic(tid) {
+  if (selectedTopics.has(tid)) selectedTopics.delete(tid);
+  else selectedTopics = new Set([tid]);   // 单选
+  renderQuizConfig();
+}
+function qcPickTier(t) { selectedTier = t; renderQuizConfig(); }
+function qcPickType(v) {
+  if (selectedTypes.has(v)) selectedTypes.delete(v);
+  else selectedTypes.add(v);
+  renderQuizConfig();
+}
+function qcPickCount(n) { selectedCount = n; renderQuizConfig(); }
+
+async function startExam() {
+  if (selectedTopics.size === 0) {
+    toast('请至少选一课', 'error');
+    return;
+  }
+  // 调后端 /api/exam/start，拿到题目后跳 quiz.html
+  try {
+    const data = await API.post('/api/exam/start', {
+      subject_id: subjectId,
+      topic_ids: Array.from(selectedTopics),
+      tier: selectedTier,
+      types: selectedTypes.size === 0 ? [] : Array.from(selectedTypes),
+      count: selectedCount,
+    });
+    if (!data || !data.questions || data.questions.length === 0) {
+      toast('该条件下没有可用的题目，换一换？', 'error');
+      return;
+    }
+    // 存到 sessionStorage，quiz.html 读
+    // quiz.html 读 localStorage.quiz_exam（跟齐 home.html 的 openConfig 流程）
+    // 补齐 subject 字段，quiz.html 的 headerTitle 显示需要
+    data.subject = { id: currentSubject.id, name: currentSubject.name, icon: currentSubject.icon };
+    localStorage.setItem('quiz_exam', JSON.stringify(data));
+    location.href = 'quiz.html';
+  } catch (e) {
+    toast('组题失败：' + e.message, 'error');
+  }
+}
+
+// 顶栏（必须用 try/catch 兜底，防止 renderTopbar 抛错页面空白）
+try {
+  if (typeof renderTopbar === 'function') {
+    document.getElementById('topbar').innerHTML = renderTopbar('home');
+  }
+} catch (e) { console.warn('topbar 渲染失败：', e); }
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+</script>
+</body>
+</html>

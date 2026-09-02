@@ -82,6 +82,10 @@ class TopicOut(BaseModel):
     question_count: int = 0  # 当前档位(tier 参数)下、排除弃用的有效题数
     valid_by_tier: dict = {}  # 各档位有效题数 {1: n, 2: n, 3: n}，供前端跨档显示/校验
     done_count: int = 0  # 该 topic 下被学员做过的题目数（查 answer_records，REQ-6 删除预览用）
+    # REQ-7：教程 URL 字段（学员端 study.html 用）
+    tutorial_video_url: Optional[str] = None  # B站视频嵌入 URL
+    tutorial_book_url: Optional[str] = None   # 人教版在线课本 URL
+    tutorial_embed_html: Optional[str] = None  # 管理员直接粘贴的 iframe HTML（直接渲染）
     class Config:
         from_attributes = True
 
@@ -108,12 +112,20 @@ class TopicCreate(BaseModel):
     subject_id: int
     name: str
     unit: Optional[str] = None
+    # REQ-7：教程 URL（新建课程时可选填）
+    tutorial_video_url: Optional[str] = None
+    tutorial_book_url: Optional[str] = None
+    tutorial_embed_html: Optional[str] = None
 
 
 class TopicUpdate(BaseModel):
     name: Optional[str] = None
     unit: Optional[str] = None
     sort_order: Optional[float] = None
+    # REQ-7：教程 URL（编辑课程时可选填，传 null=清空）
+    tutorial_video_url: Optional[str] = None
+    tutorial_book_url: Optional[str] = None
+    tutorial_embed_html: Optional[str] = None
 
 
 class DeleteTopicResult(BaseModel):

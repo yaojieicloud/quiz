@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>题库闯关 - 首页</title>
+<title>课程中心 - 首页</title>
 <link rel="stylesheet" href="css/common.css">
 <style>
 /* 单元分组折叠样式（文化类科目） */
@@ -89,8 +89,8 @@
 
 <header class="page-header">
   <div class="icon">📚</div>
-  <h1>选择题库</h1>
-  <div class="subtitle">挑一个科目，开始今天的闯关吧！</div>
+  <h1>课程中心</h1>
+  <div class="subtitle">挑一个科目，开始今天的学习吧！</div>
 </header>
 
 <main>
@@ -337,9 +337,10 @@ function isPractical(sub) {
 async function startOrConfig(subjectId) {
   const sub = subjects.find(s => s.id === subjectId);
   if (isPractical(sub)) {
-    openCoursePick(subjectId);
+    openCoursePick(subjectId);   // 实操 → 现有选课弹层（不变）
   } else {
-    openConfig(subjectId);
+    // 理论 → 进课程详情页（REQ-7 学习模块）
+    location.href = `study.html?subject_id=${subjectId}`;
   }
 }
 
