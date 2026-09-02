@@ -778,11 +778,13 @@ function openTopicModal(topicId, subjectId) {
     <div class="form-group"><label>章节名称</label><input type="text" class="form-input" id="fTopicName" value="${t?esc(t.name):''}" placeholder="如：变量与标识符"></div>
     ${isCulture ? `<div class="form-group"><label>所属单元（如：三年级上册）</label><input type="text" class="form-input" id="fTopicUnit" value="${t?esc(t.unit||''):''}" placeholder="留空则归入「未分单元」"></div>` : ''}
     <div class="form-group"><label>排序（数字，越小越靠前）</label><input type="number" class="form-input" id="fTopicOrder" value="${t?t.sort_order:0}"></div>
-    <div class="form-group"><label>📺 教程内容（iframe HTML）</label>
+    <div class="form-group"><label>📺 教程内容（URL 或 iframe）</label>
       <textarea class="form-input" id="fTopicEmbedHtml" rows="4"
-        placeholder="直接粘贴 &lt;iframe&gt;、&lt;video&gt; 等 HTML 代码，学员端直接渲染。&#10;&#10;示例：&#10;&lt;iframe src=&quot;https://player.bilibili.com/...&quot; allowfullscreen&gt;&lt;/iframe&gt;"
+        placeholder="支持两种格式：&#10;&#10;1. 直接粘贴完整 iframe 标签（自动渲染）&#10;&lt;iframe src=&quot;https://player.bilibili.com/...&quot; allowfullscreen&gt;&lt;/iframe&gt;&#10;&#10;2. 只粘贴 https URL（自动包成 iframe）&#10;https://www.bilibili.com/video/BV1xxxxxxx"
       >${t?esc(t.tutorial_embed_html||''):''}</textarea>
-      <div style="font-size:12px;color:#9c8bb5;margin-top:4px;">支持 iframe / video / embed 等任意 HTML（安全提示：仅允许 https 协议的内容）</div>
+      <div style="font-size:12px;color:#9c8bb5;margin-top:4px;">
+        💡 学员端智能识别：URL 自动包成 iframe / 已有 iframe 标签直接渲染
+      </div>
     </div>
     <div class="btn-row">
       <button class="btn-no" style="padding:10px 26px;border-radius:30px;border:none;font-size:16px;font-weight:bold;cursor:pointer;font-family:inherit;" onclick="closeFormModal()">取消</button>

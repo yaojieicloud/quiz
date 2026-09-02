@@ -323,12 +323,31 @@ function selectTopic(idx) {
   const t = topics[idx];
   document.getElementById('topicName').textContent = t.name;
 
-  // 教程内容区：直接 innerHTML 渲染管理员粘的 iframe HTML
+  // 教程内容区：智能渲染，支持两种录入格式
+  //   ① 裸 URL（无 HTML 标签）  → 自动包成 iframe
+  //   ② 已有 <iframe>/<video>/<embed> 等 → 直接 innerHTML
   const eBox = document.getElementById('embedBox');
   const eContainer = document.getElementById('embedContainer');
-  if (t.tutorial_embed_html && t.tutorial_embed_html.trim()) {
+  const raw = t.tutorial_embed_html ? t.tutorial_embed_html.trim() : '';
+  if (raw) {
+    const isUrl = !/<(iframe|video|embed|object|script)/i.test(raw) && /^https?:\/\//.test(raw);
+    if (isUrl) {
+      // 裸 URL：自动包装为 iframe，检测平台加对应参数
+      const u = raw.split('?')[0].toLowerCase();
+      let iframeAttrs = 'allowfullscreen style="width:100%;aspect-ratio:16/9;border:none;border-radius:10px;"';
+      if (u.includes('bilibili.com') || u.includes('b23.tv')) {
+        iframeAttrs = 'allowfullscreen style="width:100%;aspect-ratio:16/9;border:none;border-radius:10px;"';
+      } else if (u.includes('youtube.com') || u.includes('youtu.be')) {
+        iframeAttrs = 'allowfullscreen style="width:100%;aspect-ratio:16/9;border:none;border-radius:10px;"';
+      } else if (u.endsWith('.pdf') || u.includes('pdf')) {
+        iframeAttrs = 'style="width:100%;height:600px;border:none;border-radius:10px;"';
+      }
+      eContainer.innerHTML = `<iframe src="${escAttr(raw)}" ${iframeAttrs}></iframe>`;
+    } else {
+      // 已有 HTML 标签：直接渲染（安全依赖管理员可信输入）
+      eContainer.innerHTML = raw;
+    }
     eBox.style.display = '';
-    eContainer.innerHTML = t.tutorial_embed_html;
   } else {
     eBox.style.display = 'none';
     eContainer.innerHTML = '';
@@ -495,6 +514,12 @@ function esc(s) {
   return String(s).replace(/[&<>"']/g, c => ({
     '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
   }[c]));
+}
+
+// HTML 属性值转义（只转义属性内必须的字符）
+function escAttr(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&"]/g, c => ({'&':'&amp;','"':'&quot;'}[c]));
 }
 </script>
 </body>
