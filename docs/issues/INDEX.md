@@ -9,3 +9,4 @@
 | BUG-4 | 语文/英语 topics.sort_order 全为 0，递进解锁对两科不生效（数据缺失，非代码缺陷） | 数据问题 | REQ-3 | REQ-3-1 | 🟢已关闭（2026-08-29，详见 `BUG-4.md`） |
 | BUG-5 | 精通度页/管理端矩阵 每课精通度恒显示 0%（cell 漏传 rate/total，与组卷界面不一致） | 前端字段遗漏 | REQ-1/REQ-2 | REQ-1-1 | 🟢已关闭（2026-08-29 修复，commit `6556915`, 详见 `BUG-5.md`） |
 | BUG-6 | REQ-5 完成按钮丢失 + 后端改动未部署 + confirmModal 回调 Bug | 功能缺失/Bug | REQ-5 | REQ-5-1 | 🟢已关闭（2026-09-04，详见 BUG-6.md §8） |
+| BUG-7 | Admin 录入只粘裸 URL 学员端不渲染（智能识别 URL/iframe 改造） | 体验问题 | REQ-7 | REQ-7-1 | 🟢已关闭（2026-09-02，commit `e1e01b6`，详见 BUG-7.md） |

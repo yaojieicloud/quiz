@@ -25,3 +25,5 @@
 - 2026-09-01：临时检查脚本清理 ✅（`check_css.py` / `check_js.py` / `check_syntax.py` 根目录残留删除；按 it-workflow 纪律 git 仓库不得存临时脚本）
 - 2026-09-01：**REQ-6-1-1 后端完成（本地验证）** ✅（`0008_topic_deprecated` 迁移 + `topics.sort_order` INTEGER→REAL 重建表 + `DELETE /api/topics/{id}` 软/硬分流 + `PUT /api/topics/reorder` 浮点插入；本地三场景测通：hard 删空课程 / soft 删有 67 题+1222 作答的 topic_26 / reorder 浮点 (2+12)/2=7.0；待 ECS 部署）
 - 2026-09-01：**REQ-6-1-2 前端完成（本地 docker 验证）** ✅（`vendor/sortable.min.js` 本地引用 44.5KB + admin.html 改 5 处：科目行「+ 新建课程」按钮 / 课程行 `≡` 拖拽手柄 / Sortable 初始化带失败回滚 / `confirmDeleteTopic` 传 subjectId + 用缓存题数 / CSS hover+ghost 样式；三资源 HTTP 200；`TopicOut.done_count` 后端返回被做过题数；`_safeMsg` 修复 showConfirm HTML 渲染 bug；删除后局部刷新（DOM 删行 + 缓存剔除 + 计数更新，不收拢）；本地 docker 已验证，三套提示文案均可正常渲染）
+- 2026-09-02：**REQ-7 整体完结** ✅（学员端 study.html 课程详情页 + Admin 端课题编辑 iframe 录入 + 部署 ECS 106.14.99.100:8000；commit `e1e01b6`；本地+ECS 真数据全链路验证通过）
+- 2026-09-02：**BUG-7 修复（v2 智能渲染）** ✅（admin 录入只粘 URL 时学员端不渲染问题修复；前端智能识别裸 URL/完整 HTML；XSS 防护 `escAttr`；commit `e1e01b6`；ECS 端 B 站视频正常播放）

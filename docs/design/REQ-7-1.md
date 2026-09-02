@@ -201,3 +201,48 @@ const bookUrl  = document.getElementById('fTopicBookUrl').value.trim() || null;
 ## 7. 状态
 
 - 设计状态：✅已确认
+
+---
+
+## 8. v2 补充（2026-09-02 BUG-7）
+
+### 8.1 触发
+
+实际使用中发现：admin 录入时经常只粘 URL（懒得手写 `<iframe>`），但 v1 的渲染逻辑 `embedContainer.innerHTML = raw` 对裸 URL 只会当作文本显示，学员端看不到视频。
+
+### 8.2 改动
+
+在 `study.html` 的 selectTopic 函数中增加**智能识别**：
+
+| 输入格式 | 识别方式 | 渲染行为 |
+|---------|---------|---------|
+| 裸 URL（`^https?://` 开头，无 HTML 标签）| 正则 `/<(iframe|video|embed|object|script)/i` 排除 | 自动包成 `<iframe src="..." allowfullscreen>` |
+| 完整 HTML 标签 | 含 `<iframe>`/`<video>`/`<embed>` 等 | 直接 `innerHTML = raw`（保留原属性） |
+
+### 8.3 URL 包装的差异化属性
+
+按 URL 后缀/域名自动选择不同的 iframe 属性：
+
+| URL 特征 | iframe 属性 |
+|---------|-----------|
+| `.pdf` 结尾 | `style="width:100%;height:600px"` |
+| 其他 | `allowfullscreen style="width:100%;aspect-ratio:16/9;border:none;border-radius:10px;"` |
+
+### 8.4 XSS 防护
+
+新增 `escAttr` 函数，转义 URL 中的 `&` 和 `"`，防止 attribute 注入。
+
+### 8.5 Admin 端 UX
+
+`admin.html` 的 placeholder 改写为**两种格式都展示**，并增加智能识别提示文字，降低 admin 学习成本。
+
+### 8.6 验证
+
+- ECS 端（106.14.99.100:8000）真实数据验证：topic 287（裸 URL）和 topic 288（完整 iframe）均渲染正常
+- B站视频可正常播放
+
+### 8.7 关联
+
+- BUG-7.md
+- commit `e1e01b6`
+
