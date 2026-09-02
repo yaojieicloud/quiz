@@ -93,7 +93,20 @@
 
 ---
 
-## 🏗️ 系统架构（速览）
+## 📝 出题入口
+
+收到 `/出题` 指令时，按以下顺序读文档并出题：
+- 流程：`data/template/culture_subject.md`（v2 完整流水线：搜→对齐→出题→复核→导入；搜不到/网络不通时**先停下来反馈，不自行降级**）
+- 题型字段：`data/template/question_types.md`（含 `tier` 字段：1初级/2进阶/3挑战）
+- 人工复核：`docs/qa/manual-review.md`（5 检查点）
+- 科目专属模板：`data/template/chinese_grade4.md` / `math_grade4.md` / `english_grade4.md`（按需）
+- 联网搜资料：本地 SearXNG `http://127.0.0.1:8080`（默认 Bing；`data/template/culture_subject.md` 步骤 1️⃣ 有 Python 调用模板）
+
+调用方式（任选其一）：
+- 结构化：`/出题 语文四年级上册 观潮 20道`
+- 自然语言：`/出题 给我出 2 繁星 20 题`
+
+**用户未给题数时先询问，再走流程**。题型配比同理，**用户点头前不写 JSON**。
 
 - **后端** FastAPI + SQLAlchemy + SQLite；JWT Bearer 鉴权，`require_role` 做角色网关。
 - **前端** 原生多页 HTML + JS，`common.js` 提供 API 封装 / 顶栏 / embed 模式；ECharts 画图。

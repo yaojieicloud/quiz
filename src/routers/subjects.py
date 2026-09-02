@@ -4,8 +4,8 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 
 from database import get_db
-from models import Subject, Topic, Question
-from schemas import SubjectOut, TopicOut, UnitOut, SubjectCreate, SubjectUpdate, TopicCreate, TopicUpdate
+from models import Subject, Topic, Question, AnswerRecord
+from schemas import SubjectOut, TopicOut, UnitOut, SubjectCreate, SubjectUpdate, TopicCreate, TopicUpdate, DeleteTopicResult, ReorderTopicRequest
 from core.deps import get_current_user, require_role
 
 router = APIRouter(prefix="/api", tags=["科目与章节"])
@@ -13,7 +13,10 @@ router = APIRouter(prefix="/api", tags=["科目与章节"])
 
 @router.get("/subjects", response_model=list[SubjectOut])
 def list_subjects(tier: int = 1, db: Session = Depends(get_db), _=Depends(get_current_user)):
-    subjects = db.query(Subject).order_by(Subject.sort_order, Subject.id).all()
+    # 过滤软删：只显示 deprecated=0/null（软删后学员端完全不可见，与课程/题目口径一致）
+    subjects = db.query(Subject).filter(
+        (Subject.deprecated == 0) | (Subject.deprecated == None)
+    ).order_by(Subject.sort_order, Subject.id).all()
     # 有效题数 = 排除弃用 + 按档位过滤（所有出题都必须带档位/弃用过滤，避免把弃用题或跨档题算进来）
     sub_ids = [s.id for s in subjects]
     counts = {}
@@ -61,7 +64,17 @@ def create_subject(data: SubjectCreate, db: Session = Depends(get_db), _=Depends
 
 @router.get("/subjects/{subject_id}/topics", response_model=list[TopicOut])
 def list_topics(subject_id: int, tier: int = 1, db: Session = Depends(get_db), _=Depends(get_current_user)):
-    topics = db.query(Topic).filter(Topic.subject_id == subject_id).order_by(Topic.sort_order, Topic.id).all()
+    # 软删科目下的课程也直接不可见（与 list_subjects 口径一致）
+    subj = db.query(Subject).filter(
+        Subject.id == subject_id,
+        (Subject.deprecated == 0) | (Subject.deprecated == None)
+    ).first()
+    if not subj:
+        return []
+    topics = db.query(Topic).filter(
+        Topic.subject_id == subject_id,
+        (Topic.deprecated == 0) | (Topic.deprecated == None)
+    ).order_by(Topic.sort_order, Topic.id).all()
     topic_ids = [t.id for t in topics]
     # 各课时按(课时,档位)统计有效题数（排除弃用）；一次聚合，避免 N 次查询
     counts = {}
@@ -72,11 +85,22 @@ def list_topics(subject_id: int, tier: int = 1, db: Session = Depends(get_db), _
         ).group_by(Question.topic_id, Question.tier).all()
         for tid, t, c in rows:
             counts[(tid, t)] = c
+    # 各课时被学员做过的题目数（answer_records.question_id，REQ-6 删除预览用）
+    done_counts = {}
+    if topic_ids:
+        done_rows = db.query(Question.topic_id, func.count(func.distinct(AnswerRecord.question_id))).join(
+            AnswerRecord, AnswerRecord.question_id == Question.id
+        ).filter(
+            Question.topic_id.in_(topic_ids),
+        ).group_by(Question.topic_id).all()
+        for tid, c in done_rows:
+            done_counts[tid] = c
     result = []
     for t in topics:
         out = TopicOut.model_validate(t)
         out.question_count = counts.get((t.id, tier), 0)          # 当前档位有效题数
         out.valid_by_tier = {k: counts.get((t.id, k), 0) for k in (1, 2, 3)}  # 各档位有效题数
+        out.done_count = done_counts.get(t.id, 0)  # 被学员做过的题目数
         result.append(out)
     return result
 
@@ -115,11 +139,18 @@ def list_units(subject_id: int, tier: int = 1, db: Session = Depends(get_db), _=
 
 @router.post("/topics", response_model=TopicOut)
 def create_topic(data: TopicCreate, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
-    t = Topic(subject_id=data.subject_id, name=data.name, unit=data.unit)
+    # sort_order 默认插到末尾（max + 1024），REQ-6 浮点插入算法
+    max_sort = db.query(func.max(Topic.sort_order)).filter(
+        Topic.subject_id == data.subject_id
+    ).scalar() or 0.0
+    t = Topic(subject_id=data.subject_id, name=data.name, unit=data.unit,
+              sort_order=max_sort + 1024.0)
     db.add(t)
     db.commit()
     db.refresh(t)
-    return TopicOut.model_validate(t)
+    out = TopicOut.model_validate(t)
+    out.question_count = 0
+    return out
 
 
 @router.put("/subjects/{subject_id}", response_model=SubjectOut)
@@ -139,21 +170,8 @@ def update_subject(subject_id: int, data: SubjectUpdate, db: Session = Depends(g
     return out
 
 
-@router.delete("/subjects/{subject_id}")
-def delete_subject(subject_id: int, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
-    s = db.query(Subject).filter(Subject.id == subject_id).first()
-    if not s:
-        raise HTTPException(status_code=404, detail="科目不存在")
-    qcount = db.query(Question).filter(Question.subject_id == subject_id).count()
-    if qcount > 0:
-        raise HTTPException(status_code=400, detail=f"该科目下还有 {qcount} 道题目，请先删除题目后再删除科目")
-    db.query(Topic).filter(Topic.subject_id == subject_id).delete()
-    db.delete(s)
-    db.commit()
-    return {"deleted": subject_id}
-
-
-# REQ-5：科目状态更新（active ↔ completed）
+# REQ-5（2026-08-25）：科目状态更新（active ↔ completed）
+# ⚠️ 必须放在 /subjects/{id} DELETE 之前，避免 DELETE 路由先捕获子路径
 @router.patch("/subjects/{subject_id}/status")
 def update_subject_status(
     subject_id: int,
@@ -171,6 +189,85 @@ def update_subject_status(
     return {"id": subject_id, "status": status}
 
 
+@router.delete("/subjects/{subject_id}", response_model=DeleteTopicResult)
+def delete_subject(subject_id: int, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
+    """软/硬删除分流（REQ-6-2），口径与 delete_topic 完全一致。
+
+    软删：科目+课程+题目全 deprecated=1，学员端完全不可见（做题记录保留）
+    硬删：物理删（级联清题目和课程）
+    """
+    s = db.query(Subject).filter(Subject.id == subject_id).first()
+    if not s:
+        raise HTTPException(status_code=404, detail="科目不存在")
+
+    # 统计：题数 / 有做题的题数（⚠️ 必须查 answer_records.question_id，勿查 exam_records）
+    q_ids = [r[0] for r in db.query(Question.id).filter(Question.subject_id == subject_id).all()]
+    done_q = db.query(func.count(func.distinct(AnswerRecord.question_id))).filter(
+        AnswerRecord.question_id.in_(q_ids)
+    ).scalar() if q_ids else 0
+    qcount = len(q_ids)
+
+    if qcount > 0 and done_q > 0:
+        # 软删：subjects/topics/questions 全置 deprecated=1
+        s.deprecated = 1
+        db.query(Topic).filter(Topic.subject_id == subject_id).update({"deprecated": 1})
+        db.query(Question).filter(Question.subject_id == subject_id).update({"deprecated": 1})
+        db.commit()
+        return DeleteTopicResult(
+            mode="soft", topic_count=1, question_count=qcount,
+            message=f"科目「{s.name}」及{qcount}道题目已软删，学员端不可见"
+        )
+    else:
+        # 物理删：cascade 删课程+题目+科目
+        db.query(Topic).filter(Topic.subject_id == subject_id).delete()
+        db.query(Question).filter(Question.subject_id == subject_id).delete()
+        db.delete(s)
+        db.commit()
+        return DeleteTopicResult(
+            mode="hard", topic_count=1, question_count=qcount,
+            message=f"科目「{s.name}」及{qcount}道题目已永久删除"
+        )
+
+
+@router.put("/topics/reorder", response_model=dict)
+def reorder_topic(body: ReorderTopicRequest, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
+    """拖拽重排（REQ-6）：浮点插入算法 new_sort = (prev + next) / 2。
+
+    ⚠️ 路由声明顺序：本路由必须在 /topics/{topic_id} 之前，
+       否则 FastAPI 会把 "reorder" 误解析为 topic_id。
+    """
+    topic = db.query(Topic).filter(Topic.id == body.id).first()
+    if not topic:
+        raise HTTPException(status_code=404, detail="课程不存在")
+
+    prev_sort = None
+    next_sort = None
+
+    if body.prev_id is not None:
+        prev = db.query(Topic).filter(Topic.id == body.prev_id).first()
+        if prev:
+            prev_sort = prev.sort_order
+
+    if body.next_id is not None:
+        nxt = db.query(Topic).filter(Topic.id == body.next_id).first()
+        if nxt:
+            next_sort = nxt.sort_order
+
+    if prev_sort is None and next_sort is None:
+        return {"id": topic.id, "sort_order": topic.sort_order}
+
+    if prev_sort is None:
+        new_sort = next_sort / 2.0           # 拖到最前
+    elif next_sort is None:
+        new_sort = prev_sort + 1024.0        # 拖到最后
+    else:
+        new_sort = (prev_sort + next_sort) / 2.0  # 两者之间
+
+    topic.sort_order = new_sort
+    db.commit()
+    return {"id": topic.id, "sort_order": new_sort}
+
+
 @router.put("/topics/{topic_id}", response_model=TopicOut)
 def update_topic(topic_id: int, data: TopicUpdate, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
     t = db.query(Topic).filter(Topic.id == topic_id).first()
@@ -185,14 +282,55 @@ def update_topic(topic_id: int, data: TopicUpdate, db: Session = Depends(get_db)
     return out
 
 
-@router.delete("/topics/{topic_id}")
+@router.delete("/topics/{topic_id}", response_model=DeleteTopicResult)
 def delete_topic(topic_id: int, db: Session = Depends(get_db), _=Depends(require_role("admin"))):
-    t = db.query(Topic).filter(Topic.id == topic_id).first()
-    if not t:
-        raise HTTPException(status_code=404, detail="章节不存在")
-    qcount = db.query(Question).filter(Question.topic_id == topic_id).count()
-    if qcount > 0:
-        raise HTTPException(status_code=400, detail=f"该章节下还有 {qcount} 道题目，请先删除题目后再删除章节")
-    db.delete(t)
-    db.commit()
-    return {"deleted": topic_id}
+    """软/硬删除分流（REQ-6）。
+
+    硬删：无题目 或 题目无学员做题记录 → 物理删除课程+题目。
+    软删：有题目 且 有学员做题记录 → 课程+题目置 deprecated=1，历史数据保留。
+    """
+    topic = db.query(Topic).filter(Topic.id == topic_id).first()
+    if not topic:
+        raise HTTPException(status_code=404, detail="课程不存在")
+
+    # 1. 查题目数量
+    q_count = db.query(Question).filter(Question.topic_id == topic_id).count()
+
+    # 2. 查有学员做题记录的题目数量
+    # ⚠️ 必须查 answer_records.question_id（单题作答明细表，存 question_id）
+    # exam_records 是聚合表（无 question_id），查错会导致所有有历史数据的课程被硬删
+    if q_count > 0:
+        q_ids = [r.id for r in
+                 db.query(Question.id).filter(Question.topic_id == topic_id).all()]
+        done_count = db.query(AnswerRecord.id).filter(
+            AnswerRecord.question_id.in_(q_ids)
+        ).distinct().count()
+    else:
+        done_count = 0
+
+    # 3. 分流
+    if q_count > 0 and done_count > 0:
+        topic.deprecated = 1
+        db.query(Question).filter(Question.topic_id == topic_id).update(
+            {Question.deprecated: True}, synchronize_session=False
+        )
+        db.commit()
+        return DeleteTopicResult(
+            mode="soft",
+            topic_count=1,
+            question_count=q_count,
+            message=f"课程「{topic.name}」及{q_count}道题目已软删除（不可见，历史记录保留）",
+        )
+    else:
+        db.query(Question).filter(Question.topic_id == topic_id).delete(synchronize_session=False)
+        db.delete(topic)
+        db.commit()
+        return DeleteTopicResult(
+            mode="hard",
+            topic_count=1,
+            question_count=q_count,
+            message=f"课程「{topic.name}」及{q_count}道题目已永久删除",
+        )
+
+
+

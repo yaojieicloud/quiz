@@ -5,8 +5,6 @@
 > 配合 `/继续`：列出所有进行中 + 暂停任务，用户选一个继续，选中任务原样保留其余。
 
 ## 进行中
-- 🔵 REQ-4-1-3 本地迁移验证 + 端到端测试（依赖 REQ-4-1-1/2 ✅）
-- 🔵 REQ-4-1-4 ECS 拉库验证 + 设计文档归档（依赖 REQ-4-1-3 ✅） ✅ 完成
 
 ## 已完成里程碑
 - 2026-08-24：it-workflow 项目初始化 ✅（README.md + docs 骨架 10 文件 + BUG-1 登记）
@@ -23,3 +21,7 @@
 - 2026-08-29：**BUG-5 修复 — 精通度页/管理端矩阵精通度恒显示 0%** ✅（`mastery.html` adaptMeData 补 rate/total + `mastery.py` class_mastery 补 total，算法不变；学员端 45/46/47/48→44/85/19/81% 与组卷界面一致，管理端矩阵无回归；commit `6556915`）
 - 2026-08-29：BUG-4 语文/英语 sort_order 数据问题核销/修复 ✅
 - 2026-08-29：**BUG-3 修复 — 实操每次 count=1 时连续抽到同一题** ✅（`routers/exam.py:_rank_pool` 增加冷却机制 + 时间打散，避免同一题反复出现；覃禹诺反馈）
+- 2026-09-01：REQ-4 整体完结 ✅（ECS 拉库验证 + 设计文档归档；4/4 任务全部完成）
+- 2026-09-01：临时检查脚本清理 ✅（`check_css.py` / `check_js.py` / `check_syntax.py` 根目录残留删除；按 it-workflow 纪律 git 仓库不得存临时脚本）
+- 2026-09-01：**REQ-6-1-1 后端完成（本地验证）** ✅（`0008_topic_deprecated` 迁移 + `topics.sort_order` INTEGER→REAL 重建表 + `DELETE /api/topics/{id}` 软/硬分流 + `PUT /api/topics/reorder` 浮点插入；本地三场景测通：hard 删空课程 / soft 删有 67 题+1222 作答的 topic_26 / reorder 浮点 (2+12)/2=7.0；待 ECS 部署）
+- 2026-09-01：**REQ-6-1-2 前端完成（本地 docker 验证）** ✅（`vendor/sortable.min.js` 本地引用 44.5KB + admin.html 改 5 处：科目行「+ 新建课程」按钮 / 课程行 `≡` 拖拽手柄 / Sortable 初始化带失败回滚 / `confirmDeleteTopic` 传 subjectId + 用缓存题数 / CSS hover+ghost 样式；三资源 HTTP 200；`TopicOut.done_count` 后端返回被做过题数；`_safeMsg` 修复 showConfirm HTML 渲染 bug；删除后局部刷新（DOM 删行 + 缓存剔除 + 计数更新，不收拢）；本地 docker 已验证，三套提示文案均可正常渲染）

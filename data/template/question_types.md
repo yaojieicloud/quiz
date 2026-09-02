@@ -23,6 +23,7 @@
 | `expected_output` | string | code 必填 | 参考代码运行的预期 stdout |
 | `sample_input` | string | code 可选 | 参考代码 input() 需要的 stdin 样例 |
 | `explanation` | string | 建议填 | 错题讲解，支持 HTML 标签 |
+| `tier` | int | 建议填 | 分阶档位：**1**=初级（默认）/ **2**=进阶 / **3**=挑战；影响组卷池/积分倍率/掌握度 |
 | `difficulty` | int | 建议填 | 难度 1-5，默认 1 |
 
 ### reading_items 子题结构（仅 reading 题用）

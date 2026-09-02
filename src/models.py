@@ -70,6 +70,7 @@ class Subject(Base):
     # 例如语文/英语可配置关闭 essay，数学保留 essay。
     allowed_types = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+    deprecated = Column(Integer, default=0, nullable=False)  # 1=软删，学员端不可见（REQ-6-2）
 
     topics = relationship("Topic", back_populates="subject", cascade="all, delete-orphan")
     questions = relationship("Question", back_populates="subject", cascade="all, delete-orphan")
@@ -80,6 +81,8 @@ class Topic(Base):
 
     unit: 所属单元（仅文化类科目使用，编程类留空）。
     文化类前端按 unit 分组折叠展示；编程类扁平多选。
+    sort_order: 排序字段（REAL，支持浮点插入算法 (A+C)/2；REQ-6）
+    deprecated: 软删除标志（1=已软删），学员端不可见、不参与组卷（REQ-6）
     """
     __tablename__ = "topics"
 
@@ -87,7 +90,8 @@ class Topic(Base):
     subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False, index=True)
     name = Column(String(100), nullable=False)
     unit = Column(String(100), nullable=True)  # 单元名，文化类填，编程类留空
-    sort_order = Column(Integer, default=0)
+    sort_order = Column(Float, default=0)  # REAL，REQ-6 支持浮点插入算法
+    deprecated = Column(Integer, default=0, nullable=False)  # 软删除标志（REQ-6）
 
     subject = relationship("Subject", back_populates="topics")
     questions = relationship("Question", back_populates="topic")

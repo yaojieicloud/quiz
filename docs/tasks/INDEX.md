@@ -16,6 +16,8 @@
 | REQ-4-1-1 | subjects.py 校验改为 (name, grade) 组合 | REQ-4 | P0 | ✅已完成 | - |
 | REQ-4-1-2 | schemas.py grade 字段补注释 | REQ-4 | P0 | ✅已完成 | - |
 | REQ-4-1-3 | 本地迁移验证 + 端到端测试 | REQ-4 | P1 | ✅已完成 | REQ-4-1-1, REQ-4-1-2 |
-| REQ-4-1-4 | ECS 拉库验证 + 设计文档归档 | REQ-4 | P1 | ⏳待开发 | REQ-4-1-3 |
+| REQ-4-1-4 | ECS 拉库验证 + 设计文档归档 | REQ-4 | P1 | ✅已完成 | REQ-4-1-3 |
+| REQ-6-1-1 | 后端：sort_order 改 REAL + reorder 接口 + 软/硬删除分流 | REQ-6 | P0 | ✅已完成（本地验证，待 ECS 部署） | - |
+| REQ-6-1-2 | 前端：科目行新建按钮 + 课程行拖动 + 删除弹窗 | REQ-6 | P0 | ✅已完成（本地 docker 验证） | REQ-6-1-1 |
 
 进度跟踪（多任务并行）见 `docs/PROGRESS.md`；恢复中断任务用 `/继续`。

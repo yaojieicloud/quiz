@@ -6,6 +6,8 @@
 <title>管理后台 - 题库闯关系统</title>
 <link rel="stylesheet" href="css/common.css">
 <script src="vendor/echarts.min.js"></script>
+<!-- 拖拽排序：本地引用（REQ-6），避免 ECS 网络依赖 -->
+<script src="vendor/sortable.min.js"></script>
 <style>
 /* 管理后台特有样式 */
 .admin-main { max-width: 960px; }
@@ -21,8 +23,13 @@
 .section-box { background:#fff; border-radius:18px; padding:20px; box-shadow:0 4px 14px rgba(0,0,0,0.08); margin-bottom:16px; }
 .section-box h3 { font-size:18px; color:#3a3a55; margin-bottom:14px; display:flex; align-items:center; gap:8px; }
 .topic-row { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:#f8f9fc; border-radius:12px; margin-bottom:8px; }
+.topic-row:hover { background:#f1f3f5; }
+.topic-row .drag-handle { user-select:none; flex-shrink:0; }
+.topic-row .drag-handle:hover { color:#5c940d !important; }
 .topic-row .name { font-weight:bold; color:#3a3a55; }
 .topic-row .cnt { font-size:13px; color:#9c8bb5; background:#fff; padding:2px 10px; border-radius:10px; }
+.sortable-ghost { opacity:0.4; background:#fff3bf !important; }
+.sortable-chosen { cursor:grabbing; }
 .filter-bar { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; margin-bottom:16px; }
 .filter-bar .form-group { margin:0; flex:1; min-width:140px; }
 .filter-bar select { padding:10px 14px; }
@@ -557,6 +564,7 @@ function renderSubjects() {
           }
           <button class="icon-btn" title="编辑" onclick="openSubjectModal(${s.id})">✏️</button>
           <button class="icon-btn del" title="删除" onclick="confirmDeleteSubject(${s.id})">🗑️</button>
+          <button class="btn btn-blue btn-sm" title="新建课程" onclick="openTopicModal(null, ${s.id})">+ 新建课程</button>
         </div>
       </div>
       <div id="topics-${s.id}" style="display:none;" class="subject-expand"></div>
@@ -586,19 +594,48 @@ async function toggleTopics(subjectId) {
         <button class="btn btn-blue btn-sm" onclick="openTopicModal(null, ${subjectId})">+ 新建章节</button>
       </div>
       ${topics.length === 0 ? '<div style="color:#9c8bb5;text-align:center;padding:10px;">暂无章节</div>' :
+        `<div class="topics-list">` +
         topics.map(t => `
-        <div class="topic-row">
-          <div>
+        <div class="topic-row" data-topic-id="${t.id}">
+          <div class="drag-handle" title="拖动排序" style="cursor:grab;color:#9c8bb5;padding:0 8px;font-size:18px;">≡</div>
+          <div style="flex:1;">
             ${t.unit ? `<span class="tag tag-gray" style="margin-right:6px;font-size:12px;">${esc(t.unit)}</span>` : ''}
             <span class="name">${esc(t.name)}</span>
             <span class="cnt">${t.question_count} 题</span>
           </div>
           <div class="actions">
             <button class="icon-btn" onclick="openTopicModal(${t.id}, ${subjectId})">✏️</button>
-            <button class="icon-btn del" onclick="confirmDeleteTopic(${t.id})">🗑️</button>
+            <button class="icon-btn del" onclick="confirmDeleteTopic(${t.id}, ${subjectId})">🗑️</button>
           </div>
-        </div>`).join('')}
+        </div>`).join('') +
+        `</div>`
+      }
     `;
+
+    // 初始化 Sortable 拖拽排序（REQ-6）
+    const listEl = el.querySelector('.topics-list');
+    if (listEl && typeof Sortable !== 'undefined') {
+      // 避免重复初始化：先销毁旧的
+      if (listEl._sortable) listEl._sortable.destroy();
+      listEl._sortable = Sortable.create(listEl, {
+        animation: 150,
+        handle: '.drag-handle',
+        onEnd: async (evt) => {
+          const movedId = parseInt(evt.item.dataset.topicId);
+          const prevEl = evt.item.previousElementSibling;
+          const nextEl = evt.item.nextElementSibling;
+          const prevId = prevEl ? parseInt(prevEl.dataset.topicId) : null;
+          const nextId = nextEl ? parseInt(nextEl.dataset.topicId) : null;
+          try {
+            await API.put('/api/topics/reorder', { id: movedId, prev_id: prevId, next_id: nextId });
+            toast('已重新排序', 'success');
+          } catch(e) {
+            toast('排序失败: ' + e.message, 'error');
+            toggleTopics(subjectId); // 失败回滚
+          }
+        }
+      });
+    }
   } catch(e) { el.innerHTML = `<div style="color:#c92a2a;">${esc(e.message)}</div>`; }
 }
 
@@ -673,9 +710,19 @@ async function saveSubject(id) {
 function confirmDeleteSubject(id) {
   const s = subjects.find(x => x.id === id);
   if (!s) { toast('科目不存在或已被删除', 'error'); return; }
-  showConfirm('删除科目', `确定删除「${s.name}」？该科目下的章节也会一起删除。如果科目下有题目，需要先删除题目。`, async () => {
-    try { await API.del('/api/subjects/'+id); toast('已删除', 'success'); loadSubjects(); }
-    catch(e) { toast(e.message, 'error'); }
+  const qcount = s.question_count || 0;
+  // 与后端 delete_subject 口径一致：Q>0 && Q_done>0 → soft；否则 hard
+  // 弹窗只说影响，不预知 done_count（list 接口已含 done_count，复用 subjectsCache 也可）
+  // 本期简化：只说有 X 道题，模式由后端判定
+  const msg = qcount > 0
+    ? `确定删除「${esc(s.name)}」？<br>该科目下有 <b>${qcount} 道题目</b>。`
+    : `确定删除「${esc(s.name)}」？`;
+  showConfirm('删除科目', msg, async () => {
+    try {
+      const res = await API.del('/api/subjects/'+id);
+      toast(res.message || '已删除', 'success');
+      loadSubjects();
+    } catch(e) { toast(e.message, 'error'); }
   });
 }
 
@@ -731,23 +778,99 @@ async function saveTopic(topicId, subjectId) {
   const unit = unitEl ? (unitEl.value.trim() || null) : null;
   try {
     if (topicId) {
-      await API.put('/api/topics/'+topicId, { name, unit, sort_order: order });
+      // 编辑：拿后端返回的最新 topic，直接更新 cache + DOM（不重拉列表，保留展开/折叠状态）
+      const updated = await API.put('/api/topics/'+topicId, { name, unit, sort_order: order });
+      const list = topicsCache[subjectId] || [];
+      const i = list.findIndex(t => t.id === topicId);
+      if (i >= 0) list[i] = { ...list[i], ...updated }; else list.push(updated);
+      topicsCache[subjectId] = list;
+      // 同步当前展示的 DOM（仅字段变化的几行）
+      const row = document.querySelector(`.topic-row[data-topic-id="${topicId}"]`);
+      if (row) {
+        const nameEl = row.querySelector('.name');
+        if (nameEl) nameEl.textContent = updated.name;
+        const tagEl = row.querySelector('.tag-gray');
+        if (updated.unit) {
+          if (tagEl) tagEl.textContent = updated.unit;
+          else {
+            // 有 unit 但之前没有 tag，插入到 .name 前
+            const nameSpan = row.querySelector('.name');
+            if (nameSpan) {
+              const span = document.createElement('span');
+              span.className = 'tag tag-gray';
+              span.style = 'margin-right:6px;font-size:12px;';
+              span.textContent = updated.unit;
+              nameSpan.before(span);
+            }
+          }
+        } else if (tagEl) {
+          tagEl.remove(); // 清空 unit
+        }
+      }
       toast('章节已更新', 'success');
     } else {
-      await API.post('/api/topics', { subject_id: subjectId, name, unit });
+      const created = await API.post('/api/topics', { subject_id: subjectId, name, unit });
+      // 新建：把新 topic 追加到 cache，然后强制刷新展开区
+      const list = topicsCache[subjectId] || [];
+      list.push(created);
+      topicsCache[subjectId] = list;
+      // 先收起，确保下次 toggleTopics 进入拉取分支重新渲染
+      const el = document.getElementById('topics-'+subjectId);
+      if (el) el.style.display = 'none';
       toast('章节已创建', 'success');
     }
     closeFormModal();
-    toggleTopics(subjectId);
-    document.getElementById('topics-'+subjectId).style.display = 'block';
+    // 编辑后用 DOM 局部更新即可（已在上方做），不重渲保留展开态
+    // 新建后用户通常会希望看到新条目落位——通过点击科目行再次展开即可（避免自动收起当前区造成位置丢失）
   } catch(e) { toast(e.message, 'error'); }
 }
 
-function confirmDeleteTopic(id) {
-  showConfirm('删除章节', `确定删除该章节？如果章节下有题目，需要先删除题目。`, async () => {
-    try { await API.del('/api/topics/'+id); toast('已删除', 'success'); 
-      // 刷新展开的章节列表
-      for (const sid in topicsCache) { if (topicsCache[sid].some(t=>t.id===id)) { toggleTopics(parseInt(sid)); break; } }
+function confirmDeleteTopic(id, subjectId) {
+  // 用缓存拿题数 + 被做过数（list_topics 返回的 done_count）
+  const topic = (topicsCache[subjectId] || []).find(t => t.id === id);
+  if (!topic) { toast('课程信息未找到', 'error'); return; }
+  const qcount = topic.question_count || 0;
+  const dcount = topic.done_count || 0;
+  // 判定走哪条分支：与后端 /topics/{id} DELETE 的 if 口径一致
+  // （Q > 0 && Q_done > 0 → soft；否则 hard）
+  const willSoft = qcount > 0 && dcount > 0;
+
+  let msg;
+  if (willSoft) {
+    // soft 模式：⚠️ 强调提示，历史保留
+    msg = `⚠️ <b>该课程有学员做题记录</b><br><br>` +
+          `「${esc(topic.name)}」下有 ${qcount} 道题目，其中 <b style="color:#d94e4e;">${dcount} 道已被学员做过</b>。<br><br>` +
+          `删除后：课程和题目将<b>不可见</b>，<b style="color:#4ea05e;">历史学习记录（精通度等）保留</b>。`;
+  } else if (qcount > 0) {
+    // hard 但有题：影响预估
+    msg = `确定删除「${esc(topic.name)}」？<br>该课程下有 <b>${qcount} 道题目</b>，删除后<b>不可恢复</b>。`;
+  } else {
+    // 完全空：直接删
+    msg = `确定删除「${esc(topic.name)}」？`;
+  }
+  showConfirm('删除课程', msg, async () => {
+    try {
+      const res = await API.del('/api/topics/'+id);
+      toast(res.message || '已删除', 'success');
+
+      // 局部刷新：只删除 DOM 那一条，不收拢展开状态
+      const el = document.getElementById('topics-' + subjectId);
+      const row = el && el.querySelector(`[data-topic-id="${id}"]`);
+      if (row) row.remove();
+
+      // 更新缓存：从 topicsCache 中剔除（保证下次展开数据一致）
+      if (topicsCache[subjectId]) {
+        topicsCache[subjectId] = topicsCache[subjectId].filter(t => t.id !== id);
+      }
+
+      // 更新展开区标题的课程计数
+      if (el) {
+        const hdr = el.querySelector('b[style*="章节列表"]');
+        if (hdr) {
+          const cnt = topicsCache[subjectId] ? topicsCache[subjectId].length : 0;
+          hdr.textContent = `📖 章节列表（${cnt}）`;
+        }
+      }
     } catch(e) { toast(e.message, 'error'); }
   });
 }
@@ -1605,9 +1728,21 @@ async function doBatchImport() {
 function closeFormModal() { document.getElementById('formModal').classList.remove('show'); }
 
 let confirmCallback = null;
+// 允许 <b>/<br>（含 style 属性），其余 HTML 转义（防止 showConfirm msg 含用户输入时 XSS）
+function _safeMsg(raw) {
+  if (!raw) return '';
+  return raw
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    // 放行 <b> / <b style="..."> / </b> / <br>
+    .replace(/&lt;b(\s+style="[^"]*")?&gt;/g, '<b$1>')
+    .replace(/&lt;\/b&gt;/g, '</b>')
+    .replace(/&lt;br&gt;/g, '<br>');
+}
 function showConfirm(title, msg, cb) {
   document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmMsg').textContent = msg;
+  document.getElementById('confirmMsg').innerHTML = _safeMsg(msg);  // 允许 <b>/<br> 格式
   confirmCallback = cb;
   document.getElementById('confirmModal').style.display='flex';
 }

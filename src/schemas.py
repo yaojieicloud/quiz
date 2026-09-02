@@ -1,6 +1,6 @@
 """Pydantic 数据模型 —— 入参校验与出参序列化"""
 from datetime import datetime
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Literal
 from pydantic import BaseModel, Field, field_serializer
 
 from core.times import to_iso_utc
@@ -68,6 +68,7 @@ class SubjectOut(BaseModel):
     question_count: int = 0
     available_types: List[str] = []  # 该科目实际包含的题型（去重），供前端动态显示/隐藏题型
     allowed_types: Optional[List[str]] = None  # 允许参与组卷/显示的题型（null/空=不限制）
+    deprecated: Optional[int] = None  # 1=软删，学员端不可见（REQ-6-2）
     class Config:
         from_attributes = True
 
@@ -77,9 +78,10 @@ class TopicOut(BaseModel):
     subject_id: int
     name: str
     unit: Optional[str] = None
-    sort_order: int = 0
+    sort_order: float = 0.0  # REAL，REQ-6 支持浮点插入算法
     question_count: int = 0  # 当前档位(tier 参数)下、排除弃用的有效题数
     valid_by_tier: dict = {}  # 各档位有效题数 {1: n, 2: n, 3: n}，供前端跨档显示/校验
+    done_count: int = 0  # 该 topic 下被学员做过的题目数（查 answer_records，REQ-6 删除预览用）
     class Config:
         from_attributes = True
 
@@ -111,7 +113,22 @@ class TopicCreate(BaseModel):
 class TopicUpdate(BaseModel):
     name: Optional[str] = None
     unit: Optional[str] = None
-    sort_order: Optional[int] = None
+    sort_order: Optional[float] = None
+
+
+class DeleteTopicResult(BaseModel):
+    """删除课程返回值（软/硬分流，REQ-6）"""
+    mode: Literal["soft", "hard"]
+    topic_count: int = 1
+    question_count: int = 0
+    message: str
+
+
+class ReorderTopicRequest(BaseModel):
+    """拖拽重排请求（REQ-6）"""
+    id: int                     # 被拖动的课程 ID
+    prev_id: Optional[int]      # 前一个课程 ID（None=拖到最前）
+    next_id: Optional[int]      # 后一个课程 ID（None=拖到最后）
 
 
 class UnitOut(BaseModel):

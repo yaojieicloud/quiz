@@ -10,7 +10,8 @@
 
 | 科目 | id | category | 文件格式 | 支持题型 | 模板文件 |
 |---|---|---|---|---|---|
-| 语文 | 4 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort/reading | [culture_subject.md](culture_subject.md) |
+| 语文（三年级） | 4 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort/reading | [culture_subject.md](culture_subject.md) |
+| 语文（四年级） | 待创建 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort/reading | [chinese_grade4.md](chinese_grade4.md) |
 | 数学(三年级) | 2 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort | [culture_subject.md](culture_subject.md) |
 | 英语 | 5 | culture | 纯数组 `[...]` | choice/judge/fill/essay/match/sort/reading | [culture_subject.md](culture_subject.md) |
 | Python基础理论 | 1 | programming | 嵌套 `{subject, questions}` | choice/judge/calc | [python_theory.md](python_theory.md) |
