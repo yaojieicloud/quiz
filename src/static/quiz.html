@@ -390,6 +390,20 @@ const letters = ['A','B','C','D'];
 // 每题加载时记录开始时间
 let questionStartTs = Date.now();
 const MIN_ANSWER_TIME = 10; // 最低答题时间（秒）
+// BUG-9：admin 用户不限制答题时间（阿垚调试用），普通学生才校验
+function isAdminUser() {
+  try { return (user && user.role === 'admin'); } catch (e) { return false; }
+}
+// 任何答题时间检查的入口（admin 直接通过）
+function checkAnswerTime() {
+  if (isAdminUser()) return true;
+  const elapsed = (Date.now() - questionStartTs) / 1000;
+  if (elapsed < MIN_ANSWER_TIME) {
+    showSpeedWarning('speed');
+    return false;
+  }
+  return true;
+}
 
 function resetQuestionTimer() {
   questionStartTs = Date.now();
@@ -420,13 +434,20 @@ function showSpeedWarning(type) {
   document.body.appendChild(mask);
 }
 
+let _prevCurIdx = -1; // BUG-9：追踪 curIdx 变化，防止同一题重渲染时重复 reset
+
 function renderQuestion() {
   const q = questions[curIdx];
   const [cls, label] = typeTag(q.type);
   document.getElementById('curIdx').textContent = curIdx + 1;
 
-  // 重置计时器
-  resetQuestionTimer();
+  // BUG-9 修复：仅在 curIdx 真正切换（换题）时重置计时器。
+  // 同一题内重渲染（如 pickReading 选子题、essay 输入变化）不重置，
+  // 避免阅读理解子题来回选永远计不到 10s。
+  if (curIdx !== _prevCurIdx) {
+    _prevCurIdx = curIdx;
+    resetQuestionTimer();
+  }
 
   let optsHtml = '';
   if (q.type === 'choice' || q.type === 'judge') {
@@ -643,7 +664,9 @@ function pickOption(oi) {
   updateDots();
 }
 
-// 阅读理解：选择某子题的选项，答案存为逗号分隔索引串（未答的子题留空，如 "1,,2"）
+// BUG-9 修复：阅读理解子题切换时【不要】resetQuestionTimer。
+// 阅读理解是同一个 question（同一个 curIdx），计时器应从主题加载时开始算，
+// 学生在各子题之间来回切换不应重置计时，否则永远计不到10s。
 function pickReading(subIdx, optIdx) {
   const q = questions[curIdx];
   const total = (q.reading_items || []).length;
@@ -1226,24 +1249,16 @@ function goPrev() {
 }
 
 function goNext() {
-  // 答题时间检查（< 10 秒弹窗提醒）
-  const elapsed = (Date.now() - questionStartTs) / 1000;
-  if (elapsed < MIN_ANSWER_TIME) {
-    showSpeedWarning('speed');
-    return;
-  }
+  // 答题时间检查（< 10 秒弹窗提醒，admin 跳过）
+  if (!checkAnswerTime()) return;
   if (curIdx < questions.length - 1) { curIdx++; renderQuestion(); updateDots(); }
   else { confirmSubmit(); }
 }
 
 function jumpTo(idx) {
   if (idx === curIdx) return;  // 点当前题不处理
-  // 答题时间检查（< 10 秒弹窗提醒）
-  const elapsed = (Date.now() - questionStartTs) / 1000;
-  if (elapsed < MIN_ANSWER_TIME) {
-    showSpeedWarning('speed');
-    return;
-  }
+  // 答题时间检查（< 10 秒弹窗提醒，admin 跳过）
+  if (!checkAnswerTime()) return;
   curIdx = idx;
   renderQuestion();
   updateDots();
@@ -1274,12 +1289,9 @@ function closeModal() {
 }
 
 async function doSubmit() {
-  // 答题时间检查（< 10 秒弹窗提醒）
-  const elapsed = (Date.now() - questionStartTs) / 1000;
-  if (elapsed < MIN_ANSWER_TIME) {
-    showSpeedWarning('speed');
-    return;
-  }
+  // 答题时间检查（< 10 秒弹窗提醒，admin 跳过）
+  if (!checkAnswerTime()) return;
+  // 题目已答完但 curIdx 仍停在最后一题，submit 时不重置计时（doSubmit 是提交动作）
 
   // Python 实操题代码为空检查
   if (questions[curIdx] && questions[curIdx].type === 'code') {
