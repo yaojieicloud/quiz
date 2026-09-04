@@ -1,20 +1,81 @@
 // ============ 题库闯关系统 - 公共脚本 ============
 
+// 全局错误上报：浏览器层任何未捕获错误 / API 异常都送到后端 log_error
+// 为什么不放 try/catch 里手动调？因为要兜住「try 也没接住」的情况（如异步事件、Promise rejection）
+(function setupGlobalErrorLog() {
+  const report = (kind, msg, src, line, col, stack) => {
+    try {
+      const user = (() => { try { return JSON.parse(localStorage.getItem('quiz_user') || 'null'); } catch { return null; } })();
+      const body = {
+        kind, message: msg, source: src, line, col, stack,
+        url: location.href,
+        ua: navigator.userAgent,
+        user_id: user ? user.id : null,
+        username: user ? user.username : null,
+        role: user ? user.role : null,
+      };
+      // sendBeacon：页面 unload 也能送达；普通 fetch unload 时会被丢弃
+      try {
+        const blob = new Blob([JSON.stringify(body)], { type: 'application/json' });
+        if (navigator.sendBeacon && navigator.sendBeacon('/api/log/error', blob)) return;
+      } catch (e) { /* fallback to fetch */ }
+      fetch('/api/log/error', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body), keepalive: true }).catch(() => {});
+    } catch (e) { /* 上报自身失败不递归 */ }
+  };
+  window.addEventListener('error', (ev) => {
+    report('js_error', ev.message, ev.filename, ev.lineno, ev.colno, ev.error && ev.error.stack);
+  });
+  window.addEventListener('unhandledrejection', (ev) => {
+    const r = ev.reason;
+    const msg = r && r.message ? r.message : (typeof r === 'string' ? r : JSON.stringify(r));
+    const stack = r && r.stack ? r.stack : '';
+    report('promise_rejection', msg, location.href, null, null, stack);
+  });
+})();
+
 const API = {
   // 封装 fetch，自动带 token
   async request(url, options = {}) {
     const token = localStorage.getItem('quiz_token');
     const headers = { 'Content-Type': 'application/json', ...(options.headers || {}) };
     if (token) headers['Authorization'] = 'Bearer ' + token;
-    const res = await fetch(url, { ...options, headers });
+    let res;
+    try {
+      res = await fetch(url, { ...options, headers });
+    } catch (networkErr) {
+      // 离线 / DNS / CORS / 容器挂了 — 单独打一类日志
+      try {
+        fetch('/api/log/error', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+          kind: 'network_error', message: String(networkErr && networkErr.message || networkErr),
+          url, path: location.pathname,
+        }), keepalive: true }).catch(() => {});
+      } catch (_) {}
+      throw new Error('网络异常，无法连接服务器（' + (networkErr && networkErr.message || '请检查网络') + '）');
+    }
     if (res.status === 401) {
       localStorage.removeItem('quiz_token');
       localStorage.removeItem('quiz_user');
       location.href = 'index.html';
       throw new Error('未登录');
     }
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.detail || '请求失败');
+    let data = null;
+    try { data = await res.json(); } catch (_) { data = null; }
+    if (!res.ok) {
+      // 关键：把所有非 2xx 响应都打日志（含 422/500/403/404/400/...）
+      try {
+        fetch('/api/log/error', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({
+          kind: 'api_error',
+          method: options.method || 'GET',
+          url,
+          status: res.status,
+          statusText: res.statusText,
+          response: data,
+          path: location.pathname,
+        }), keepalive: true }).catch(() => {});
+      } catch (_) {}
+      // 智能格式化 detail：字符串直接用；数组（Pydantic 422）逐项转人类可读
+      throw new Error(formatApiError(data, res.status, url));
+    }
     return data;
   },
   get(url) { return this.request(url); },
@@ -23,6 +84,24 @@ const API = {
   patch(url, body) { return this.request(url, { method: 'PATCH', body: JSON.stringify(body) }); },
   del(url) { return this.request(url, { method: 'DELETE' }); },
 };
+
+// 把后端 error 响应转成单行人类可读消息
+// 422 detail 数组 → "answers[0].question_id: Input should be a valid integer (实际值: null)"
+function formatApiError(data, status, url) {
+  if (!data) return `请求失败 (HTTP ${status})`;
+  const d = data.detail;
+  if (typeof d === 'string' && d.trim()) return d;
+  if (Array.isArray(d) && d.length) {
+    return d.map(item => {
+      const loc = Array.isArray(item.loc) ? item.loc.filter(x => x !== 'body').join('.') : '';
+      const msg = item.msg || '字段错误';
+      const input = item.input !== undefined ? ` (实际值: ${typeof item.input === 'object' ? JSON.stringify(item.input) : item.input})` : '';
+      return loc ? `${loc}: ${msg}${input}` : `${msg}${input}`;
+    }).join('\n');
+  }
+  if (data.message) return String(data.message);
+  return `请求失败 (HTTP ${status})`;
+}
 
 function getUser() {
   try { return JSON.parse(localStorage.getItem('quiz_user')); } catch { return null; }
@@ -42,12 +121,97 @@ function logout() {
   location.href = 'index.html';
 }
 
-function toast(msg, type = '') {
+// 通用 toast：默认显示 5 秒（之前 2.5 秒太短，2026-09-04 阿垚要求延长）
+// 成功提示/普通提示/前端校验 → toast(msg, 'success' | 'error' | '')
+// API 报错 → 不要调 toast，请用 showError()
+function toast(msg, type = '', durationMs = 5000) {
   const el = document.createElement('div');
   el.className = 'toast ' + type;
   el.textContent = msg;
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2500);
+  setTimeout(() => el.remove(), durationMs);
+}
+
+// ============ 错误弹窗（API 报错专用，2026-09-04 BUG-8）============
+// showError(title, body, options?)
+//   title: 弹窗标题（必填）
+//   body: 错误正文（必填，支持 \n 换行；422 数组已由 formatApiError 拼成多行）
+//   options: { copyText?: string } 自定义复制内容（默认复制 body）
+// 风格：仿 showMasteryRewardPopup 的弹层 + 居中卡片 + 「📋 复制」+「关闭」双按钮
+// 用户必须手动确认才关闭，便于截图/复制发给我排查
+function showError(title, body, options) {
+  options = options || {};
+  const copyText = options.copyText != null ? options.copyText : body;
+  // 如果已有错误弹窗，先关闭旧的（防止叠加）
+  const old = document.getElementById('showErrorMask');
+  if (old) old.remove();
+
+  const mask = document.createElement('div');
+  mask.id = 'showErrorMask';
+  mask.className = 'err-mask';
+  // 记录到控制台，便于前端开发自查
+  console.error('[showError]', title, body);
+
+  // 预渲染 body（保留 \n 换行）
+  const bodyHtml = String(body)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\n/g, '<br>');
+
+  mask.innerHTML = `
+    <div class="err-card">
+      <div class="err-emoji">⚠️</div>
+      <div class="err-title">${title}</div>
+      <div class="err-body">${bodyHtml}</div>
+      <div class="err-actions">
+        <button class="err-btn err-btn-copy" id="errCopyBtn">📋 复制错误信息</button>
+        <button class="err-btn err-btn-close" id="errCloseBtn">关闭</button>
+      </div>
+      <div class="err-tip">提示：把复制的内容发给管理员，便于排查问题</div>
+    </div>
+    <style>
+      .err-mask{position:fixed;inset:0;background:rgba(60,20,20,.78);z-index:99999;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);animation:errFade .2s ease}
+      @keyframes errFade{from{opacity:0}to{opacity:1}}
+      .err-card{position:relative;background:linear-gradient(160deg,#fff5f5,#ffe3e3);border:2px solid #ff6b6b;border-radius:20px;padding:26px 28px 22px;max-width:480px;width:calc(100% - 40px);box-shadow:0 20px 60px rgba(0,0,0,.4),0 0 0 4px rgba(255,107,107,.25);text-align:center;animation:errPop .35s cubic-bezier(.2,1.4,.4,1)}
+      @keyframes errPop{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+      .err-emoji{font-size:48px;line-height:1;animation:errShake 1.2s ease-in-out infinite}
+      @keyframes errShake{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+      .err-title{font-size:20px;font-weight:800;color:#c92a2a;margin:10px 0 8px}
+      .err-body{background:#fff;border:1px solid #ffc9c9;border-radius:12px;padding:12px 14px;font-size:14px;color:#5c1f1f;line-height:1.7;text-align:left;max-height:260px;overflow-y:auto;white-space:pre-wrap;word-break:break-all;margin:6px 0 12px;font-family:ui-monospace,Consolas,monospace}
+      .err-actions{display:flex;gap:10px;justify-content:center;margin:6px 0 4px;flex-wrap:wrap}
+      .err-btn{border:none;padding:11px 22px;font-size:15px;font-weight:700;border-radius:22px;cursor:pointer;font-family:inherit;transition:transform .12s,filter .12s}
+      .err-btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+      .err-btn-copy{background:linear-gradient(135deg,#ffa94d,#ff922b);color:#fff;box-shadow:0 4px 12px rgba(255,146,43,.4)}
+      .err-btn-close{background:linear-gradient(135deg,#ff6b6b,#fa5252);color:#fff;box-shadow:0 4px 12px rgba(250,82,82,.4)}
+      .err-tip{font-size:12px;color:#a05050;margin-top:8px;opacity:.85}
+    </style>`;
+  document.body.appendChild(mask);
+
+  // 复制（兼容旧浏览器：document.execCommand 兜底）
+  mask.querySelector('#errCopyBtn').addEventListener('click', async () => {
+    const text = `[${title}]\n${copyText}\n[时间] ${new Date().toLocaleString()}\n[页面] ${location.href}`;
+    const btn = mask.querySelector('#errCopyBtn');
+    const origText = btn.textContent;
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      btn.textContent = '✓ 已复制';
+      setTimeout(() => { btn.textContent = origText; }, 1500);
+    } catch (e) {
+      btn.textContent = '复制失败';
+      setTimeout(() => { btn.textContent = origText; }, 1500);
+    }
+  });
+
+  // 关闭（手动确认）
+  mask.querySelector('#errCloseBtn').addEventListener('click', () => mask.remove());
 }
 
 function fmtTime(iso) {

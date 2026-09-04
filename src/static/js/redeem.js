@@ -83,6 +83,6 @@ async function redeem(itemId, cost) {
     initPoints();
     loadMine();
   } catch (e) {
-    toast(e.message, 'error');
+    showError('请求失败', e.message);
   }
 }

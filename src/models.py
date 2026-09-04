@@ -426,3 +426,47 @@ class LLMCall(Base):
     latency_ms = Column(Integer, nullable=True)                   # 本次调用耗时（毫秒）
     error = Column(Text, nullable=True)                           # 失败原因（截断存储）
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
+
+
+# ============================================================================
+# 错误日志（BUG-8：前端 + API 异常全链路记录）
+# 重要：这条日志表是运维事故的命根子，任何 API 错误/JS 报错都必须记录。
+# ============================================================================
+
+class ErrorLog(Base):
+    """前端 JS 报错 + API 错误的统一审计表。
+
+    重要约束：
+    - 记录仅追加，永不删除（除非 admin 手动清理历史）；
+    - 字段尽量存原始值，便于事后复盘；
+    - content_json 存原始上报体的压缩 JSON（TEXT），便于查详情但不过度列化。
+    """
+    __tablename__ = "error_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    # 来源分类
+    kind = Column(String(30), nullable=False, index=True)  # js_error / promise_rejection / api_error / network_error / server_error
+    # HTTP 状态（api_error / server_error 时填）
+    status_code = Column(Integer, nullable=True)
+    # 请求信息（api_error / network_error 时填）
+    http_method = Column(String(10), nullable=True)
+    request_url = Column(String(500), nullable=True)
+
+    # 错误正文（已格式化，便于 admin 列表查看）
+    message = Column(Text, nullable=False)
+    # 原始堆栈或响应体（JSON 存 content_json）
+    stack = Column(Text, nullable=True)
+    content_json = Column(Text, nullable=True)  # 原始上报 JSON（含 response、input 等原始值，便于精确复盘）
+
+    # 来源上下文
+    source = Column(String(200), nullable=True)    # JS 报错时填 filename:line:col
+    page_url = Column(String(500), nullable=True)  # 发生错误的页面 URL
+
+    # 用户信息（optional：未登录时为空）
+    user_id = Column(Integer, nullable=True, index=True)
+    username = Column(String(50), nullable=True)
+    role = Column(String(20), nullable=True)
+
+    # 时间
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)

@@ -115,7 +115,7 @@ async function approve(source, id) {
     toast('已核销');
     loadPending();
   } catch (e) {
-    toast(e.message, 'error');
+    showError('请求失败', e.message);
   }
 }
 
@@ -129,7 +129,7 @@ async function doAdjust() {
     const r = await API.post('/api/admin/points/adjust', { student_id: sid, delta, reason });
     toast('调整后余额 ' + r.balance);
   } catch (e) {
-    toast(e.message, 'error');
+    showError('请求失败', e.message);
   }
 }
 
@@ -146,7 +146,7 @@ async function saveCfg() {
   try {
     await API.put('/api/admin/config/wheel_cost', { value: String(v) });
     toast('已保存');
-  } catch (e) { toast(e.message, 'error'); }
+  } catch (e) { showError('请求失败', e.message); }
 }
 
 // 精通奖励测试：调预览接口（只读），弹同款烟花弹窗
@@ -154,7 +154,7 @@ async function testMasteryReward() {
   try {
     const d = await API.post('/api/admin/test-mastery-reward', {});
     showMasteryRewardPopup(d.nickname, d.rewards);
-  } catch (e) { toast(e.message, 'error'); }
+  } catch (e) { showError('请求失败', e.message); }
 }
 
 // ================= 可编辑配置（积分矩阵 / 转盘奖品 / 直兑商城） =================
@@ -307,7 +307,7 @@ async function submitModal() {
     toast('已保存');
     closeModal();
     loadEntity(key);
-  } catch (e) { toast(e.message, 'error'); }
+  } catch (e) { showError('请求失败', e.message); }
 }
 
 async function delItem(key, id) {
@@ -317,7 +317,7 @@ async function delItem(key, id) {
     await API.del(`${cfg.api}/${id}`);
     toast('已删除');
     loadEntity(key);
-  } catch (e) { toast(e.message, 'error'); }
+  } catch (e) { showError('请求失败', e.message); }
 }
 
 function closeModal() {

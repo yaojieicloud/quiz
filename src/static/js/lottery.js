@@ -67,7 +67,7 @@ async function spin() {
   try {
     res = await API.post('/api/wheel/spin', { mode: 'wheel' });
   } catch (e) {
-    toast(e.message, 'error');
+    showError('请求失败', e.message);
     btn.disabled = false;
     spinning = false;
     return;

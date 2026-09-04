@@ -536,7 +536,7 @@ async function loadSubjects() {
     renderSubjects();
     // 刷新题目筛选和导入的科目下拉
     refreshSubjectDropdowns();
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function renderSubjects() {
@@ -719,7 +719,7 @@ async function saveSubject(id) {
     }
     closeFormModal();
     loadSubjects();
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function confirmDeleteSubject(id) {
@@ -737,7 +737,7 @@ function confirmDeleteSubject(id) {
       const res = await API.del('/api/subjects/'+id);
       toast(res.message || '已删除', 'success');
       loadSubjects();
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
   });
 }
 
@@ -750,7 +750,7 @@ function markCompleted(id) {
       await API.patch(`/api/subjects/${id}/status?status=completed`);
       toast('已标记为完成', 'success');
       loadSubjects();
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
   });
 }
 
@@ -763,7 +763,7 @@ function markActive(id) {
       await API.patch(`/api/subjects/${id}/status?status=active`);
       toast('已恢复为活跃', 'success');
       loadSubjects();
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
   });
 }
 
@@ -857,7 +857,7 @@ async function saveTopic(topicId, subjectId) {
     closeFormModal();
     // 编辑后用 DOM 局部更新即可（已在上方做），不重渲保留展开态
     // 新建后用户通常会希望看到新条目落位——通过点击科目行再次展开即可（避免自动收起当前区造成位置丢失）
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function confirmDeleteTopic(id, subjectId) {
@@ -906,7 +906,7 @@ function confirmDeleteTopic(id, subjectId) {
           hdr.textContent = `📖 章节列表（${cnt}）`;
         }
       }
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
   });
 }
 
@@ -924,7 +924,7 @@ async function onFilterSubjectChange() {
     try {
       const topics = await API.get(`/api/subjects/${sid}/topics`);
       topicSel.innerHTML = '<option value="">全部章节</option>' + topics.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
   }
   loadQuestions(1);
 }
@@ -942,7 +942,7 @@ async function loadQuestions(page) {
     questions = await API.get('/api/questions?' + params.toString());
     qTotal = questions.length;
     renderQuestions();
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function renderQuestions() {
@@ -1088,7 +1088,7 @@ async function reloadTopicOptions() {
   try {
     const topics = await API.get(`/api/subjects/${sid}/topics`);
     topicSel.innerHTML = '<option value="">请选择章节</option>' + topics.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('');
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function onTypeChange(editingQ) {
@@ -1354,7 +1354,7 @@ async function saveQuestion(id) {
       }
       closeFormModal();
       loadQuestions(qPage);
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
     return;
   } else if (type === 'match') {
     // 连线题：收集左侧项目和右侧选项
@@ -1398,7 +1398,7 @@ async function saveQuestion(id) {
       }
       closeFormModal();
       loadQuestions(qPage);
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
     return;
   } else if (type === 'sort') {
     // 排序题：收集项目和正确顺序
@@ -1434,7 +1434,7 @@ async function saveQuestion(id) {
       }
       closeFormModal();
       loadQuestions(qPage);
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
     return;
   }
 
@@ -1452,7 +1452,7 @@ async function saveQuestion(id) {
     }
     closeFormModal();
     loadQuestions(qPage);
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function confirmDeleteQuestion(id) {
@@ -1479,7 +1479,7 @@ async function loadStudents(showToast) {
       `<option value="${s.id}">${esc(s.nickname)}（${esc(s.username)}）· 共 ${s.exam_count} 次答题</option>`).join('');
     if (cur && students.some(s => String(s.id) === cur)) sel.value = cur;
     if (showToast) toast('学员列表已刷新', 'success');
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function renderStuSubjectFilter() {
@@ -1584,7 +1584,7 @@ async function deleteRecord(recordId) {
     allStuRecords = allStuRecords.filter(r => r.id !== recordId);
     expandedStuRecordId = null;
     renderStuRecordList();
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 function editAnswerRecord(arId) {
@@ -1638,7 +1638,7 @@ async function saveEditAnswer(arId) {
     }
     // 重新渲染列表（更新分数）+ 重新加载抽屉（更新评分显示）
     renderStuRecordList();
-  } catch(e) { toast(e.message, 'error'); }
+  } catch(e) { showError('请求失败', e.message); }
 }
 
 async function fillStuDrawer(recordId) {
@@ -1755,7 +1755,7 @@ async function doBatchImport() {
       toast(`导入成功！新增 ${res.created} 题`, 'success');
       document.getElementById('importJson').value = '';
       loadSubjects();
-    } catch(e) { toast(e.message, 'error'); }
+    } catch(e) { showError('请求失败', e.message); }
   });
 }
 

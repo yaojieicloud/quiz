@@ -1308,31 +1308,56 @@ async function doSubmit() {
   }
 
   // 转换连线题和排序题的答案格式
-  const answers = questions.map((q, i) => {
+  const answers = [];
+  for (let i = 0; i < questions.length; i++) {
+    const q = questions[i];
+    // 防御：q.id 缺失时跳过这条（BGU-8 老 quiz_exam localStorage 可能无 id 字段）
+    if (!q || q.id == null || q.id === undefined) {
+      console.warn('[submit] 跳过缺少 id 的题:', q);
+      continue;
+    }
     let answer = userAnswers[i];
     if (q.type === 'match' && answer) {
       // 前端存的是 JSON object {"0":2,"1":0}（键=左索引, 值=右规范索引 data-idx）
       // 提交时按左索引升序重排出 "0:2,1:0"，消除连线/插入顺序扰动，保证判分确定性
       try {
         const pairs = JSON.parse(answer);
-        answer = Object.keys(pairs).map(Number).sort((a, b) => a - b)
-          .map(k => `${k}:${pairs[k]}`).join(',');
-      } catch (e) {}
+        // 防御：只保留 value 合法数字的对
+        const valid = Object.keys(pairs).filter(k => Number.isFinite(Number(pairs[k])))
+          .sort((a, b) => Number(a) - Number(b))
+          .map(k => `${Number(k)}:${Number(pairs[k])}`);
+        answer = valid.join(',');
+      } catch (e) {
+        answer = null;  // 解析失败视为未答
+      }
     } else if (q.type === 'sort' && answer) {
       // 前端存的是 JSON array [1,0,2,3], 后端需要 "1,0,2,3"
       try {
         const arr = JSON.parse(answer);
-        answer = arr.join(',');
-      } catch (e) {}
+        // 防御：过滤非数字
+        const valid = arr.filter(x => Number.isFinite(Number(x))).map(Number);
+        answer = valid.join(',');
+      } catch (e) {
+        answer = null;
+      }
     }
-    return {
+    answers.push({
       question_id: q.id,
       user_answer: answer != null ? String(answer) : null,
-    };
-  });
+    });
+  }
 
   try {
-    const duration_seconds = Math.max(0, Math.floor((Date.now() - examStartTs) / 1000));
+    // 防御：examStartTs 被串号时 NaN兜底；超过3小时视为挂机，取min（容许最大3h）
+    const rawDuration = Math.floor((Date.now() - examStartTs) / 1000);
+    const duration_seconds = Math.max(0, Math.min(10800, isNaN(rawDuration) ? 0 : rawDuration));
+
+    // BUG-8 防御：所有题 id 都缺失（最坏情况）则拒绝提交
+    if (!answers.length) {
+      showError('提交失败', '无可作答的题目（题目数据异常，请刷新重试）');
+      submitted = false;
+      return;
+    }
     const res = await API.post('/api/exam/submit', {
       subject_id: examSubjectId,
       mode: examMode,
@@ -1348,7 +1373,8 @@ async function doSubmit() {
       showMasteryRewardPopup((user && user.nickname) || '学员', res.mastery_rewards);
     }
   } catch (e) {
-    toast(e.message, 'error');
+    // 2026-09-04 BUG-8：提交报错改用 showError 弹窗（手动关 + 复制），不再用 toast 一闪而过
+    showError('提交失败', e.message);
     submitted = false;
   } finally {
     // 隐藏加载动画
