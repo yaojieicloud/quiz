@@ -491,8 +491,12 @@ async function startExam() {
       toast('该条件下没有可用的题目，换一换？', 'error');
       return;
     }
-    // 存到 sessionStorage，quiz.html 读
-    // quiz.html 读 localStorage.quiz_exam（跟齐 home.html 的 openConfig 流程）
+    // BUG-8 修复：study.html 存的 data（来自后端 ExamStartResponse）没有 subject_id/mode/topic_ids/tier
+    // —— 必须补齐，否则 quiz.html submit 时缺 subject_id → 422 Field required
+    data.subject_id = subjectId;
+    data.mode = 'custom';
+    data.topic_ids = Array.from(selectedTopics);
+    data.tier = selectedTier;
     // 补齐 subject 字段，quiz.html 的 headerTitle 显示需要
     data.subject = { id: currentSubject.id, name: currentSubject.name, icon: currentSubject.icon };
     localStorage.setItem('quiz_exam', JSON.stringify(data));

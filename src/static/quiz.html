@@ -368,7 +368,11 @@ const examData = JSON.parse(localStorage.getItem('quiz_exam') || 'null');
 if (!examData) location.href = 'home.html';
 
 let questions = examData.questions;
-const examSubjectId = examData.subject_id;
+// BUG-8 防御：study.html 入口偶尔未补齐 subject_id（老 localStorage / 其他路径）
+// 缺则从 questions[0].subject_id 兜底，submit 422 时也不至于白等
+const examSubjectId = examData.subject_id != null
+  ? examData.subject_id
+  : (questions[0] && questions[0].subject_id) || undefined;
 const examMode = examData.mode || 'custom';
 const examTopicIds = examData.topic_ids || [];
 const examTier = examData.tier || 1;  // 分阶档位（来自组卷时选择，随提交回传后端算积分倍率）
